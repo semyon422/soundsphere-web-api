@@ -13,4 +13,10 @@ policy_set.policies = {
 
 policy_set.policy_combine_algorithm = require("abac.combine.only_one_applicable")
 
+policy_set.context_loaders = {
+    require("context_loaders.user"),
+    require("context_loaders.user_roles"),
+    require("context_loaders.community"),
+}
+
 return policy_set
