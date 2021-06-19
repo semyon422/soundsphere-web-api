@@ -21,7 +21,7 @@ Authorization: {{bearer_authorization}}
 }
 
 ###
-GET http://localhost/api/users/12
+GET http://localhost/api/users/13
 Authorization: {{bearer_authorization}}
 
 ###
@@ -30,5 +30,6 @@ Authorization: {{bearer_authorization}}
 
 ###
 PUT http://localhost/api/communities/1/users/1
+Authorization: {{bearer_authorization}}
 
 ###

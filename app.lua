@@ -1,4 +1,6 @@
 local app = require("weblit-app")
+package.loaded.http = require("http")
+
 
 app.bind({
 	host = "0.0.0.0",
@@ -49,3 +51,5 @@ for _, endpoint in ipairs(endpoints) do
 end
 
 app.start()
+
+require("tests")
