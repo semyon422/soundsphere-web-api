@@ -5,22 +5,34 @@ local domain_types = require("domain_types")
 
 local context_loader = {}
 
-local function load_role_info(roles, entry_role)
-	local role_name = entry_role.role.name
+local etot = {}
+local etot_mt = {
+	__index = function(t, k)
+		local v = rawget(t, k)
+		if v then return v end
+		if type(k) == "string" then
+			return etot
+		end
+	end
+}
+setmetatable(etot, etot_mt)
+
+local function load_role(roles, role_entry)
+	local domain_id = role_entry.domain_id
+	local type_id = role_entry.domain.type_id
+	local role_name = role_entry.role.name
+
 	roles[role_name] = roles[role_name] or {}
 	local role_info = roles[role_name]
-	role_info.domains = role_info.domains or {}
-	role_info.domain_types = role_info.domain_types or {}
-	return role_info
-end
 
-local function load_role(roles, entry_role)
-	local domain_id = entry_role.domain_id
-	local type_id = entry_role.domain.type_id
-	local role_info = load_role_info(roles, entry_role)
-	role_info.domains[domain_id] = true
+	role_info[domain_id] = true
 	local type_name = domain_types[type_id]
-	role_info.domain_types[type_name] = (role_info.domain_types[type_name] or 0) + 1
+	role_info[type_name] = role_info[type_name] or {}
+	local role_info_type = role_info[type_name]
+	table.insert(role_info_type, domain_id)
+
+	setmetatable(role_info, etot_mt)
+	setmetatable(role_info_type, etot_mt)
 end
 
 local function load_roles(user)
@@ -43,14 +55,16 @@ local function load_roles(user)
 		end
 	end
 
+	setmetatable(roles, etot_mt)
+
 	user.roles = roles
 end
 
 function context_loader:load_context(context)
-	if context.user then
+	if context.user and not context.user.roles then
 		load_roles(context.user)
 	end
-	if context.token_user then
+	if context.token_user and not context.token_user.roles then
 		load_roles(context.token_user)
 	end
 end
