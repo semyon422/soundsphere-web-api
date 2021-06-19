@@ -7,7 +7,8 @@ function policy:target(context)
 end
 
 policy.rules = {
-	require("rules.donator")
+	require("rules.donator"),
+	require("rules.is_not_community_creator")
 }
 
 policy.rule_combine_algorithm = require("abac.combine.permit_all_or_deny")
