@@ -35,7 +35,7 @@ token_c.GET = function(req, res, go)
 		}
 		local token, err = jwt.encode(payload, key, "HS256")
 		if token then
-			json_response.token = util.to_json({token = token})
+			json_response.token = token
 		end
 	end
 
