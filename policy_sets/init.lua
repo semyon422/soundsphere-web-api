@@ -16,6 +16,7 @@ policy_set.policies = {
 	require("policy_sets.user.groups"),
 	require("policy_sets.user.password"),
 	require("policy_sets.user.roles"),
+	require("policy_sets.user.statistics"),
 	require("policy_sets.users"),
 	require("policy_sets.communities"),
 	require("policy_sets.community"),
@@ -30,6 +31,18 @@ policy_set.policies = {
 	require("policy_sets.group.user"),
 	require("policy_sets.group.users"),
 	require("policy_sets.groups"),
+	require("policy_sets.container"),
+	require("policy_sets.containers"),
+	require("policy_sets.format"),
+	require("policy_sets.formats"),
+	require("policy_sets.input_mode"),
+	require("policy_sets.input_modes"),
+	require("policy_sets.modifier"),
+	require("policy_sets.modifiers"),
+	require("policy_sets.notechart"),
+	require("policy_sets.notecharts"),
+	require("policy_sets.score"),
+	require("policy_sets.scores"),
 }
 
 policy_set.policy_combine_algorithm = require("abac.combine.only_one_applicable")

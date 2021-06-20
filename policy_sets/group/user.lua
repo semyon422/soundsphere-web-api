@@ -3,7 +3,7 @@ local PolicySet = require("abac.PolicySet")
 local policy_set = PolicySet:new()
 
 function policy_set:target(context)
-	return context.name == "group_user"
+	return context.name == "group.user"
 end
 
 policy_set.policies = {

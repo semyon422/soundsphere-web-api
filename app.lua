@@ -46,7 +46,7 @@ end
 local endpoints = require("endpoints")
 
 for _, endpoint in ipairs(endpoints) do
-	local controller = require("controllers." .. endpoint.name:gsub("_", "."))
+	local controller = require("controllers." .. endpoint.name)
 	route("/api" .. endpoint.path, endpoint.name, controller)
 end
 

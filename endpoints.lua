@@ -12,16 +12,20 @@ local endpoints = {
 		path = "/users/:user_id"
 	},
 	{
-		name = "user_password",
+		name = "user.password",
 		path = "/users/:user_id/password"
 	},
 	{
-		name = "user_roles",
+		name = "user.roles",
 		path = "/users/:user_id/roles"
 	},
 	{
-		name = "user_groups",
+		name = "user.groups",
 		path = "/users/:user_id/groups"
+	},
+	{
+		name = "user.statistics",
+		path = "/users/:user_id/statistics"
 	},
 	{
 		name = "groups",
@@ -32,15 +36,15 @@ local endpoints = {
 		path = "/groups/:group_id"
 	},
 	{
-		name = "group_roles",
+		name = "group.roles",
 		path = "/groups/:group_id/roles"
 	},
 	{
-		name = "group_users",
+		name = "group.users",
 		path = "/groups/:group_id/users"
 	},
 	{
-		name = "group_user",
+		name = "group.user",
 		path = "/groups/:group_id/users/:user_id"
 	},
 	{
@@ -68,19 +72,19 @@ local endpoints = {
 		path = "/communities/:community_id"
 	},
 	{
-		name = "community_users",
+		name = "community.users",
 		path = "/communities/:community_id/users"
 	},
 	{
-		name = "community_user",
+		name = "community.user",
 		path = "/communities/:community_id/users/:user_id"
 	},
 	{
-		name = "community_leaderboards",
+		name = "community.leaderboards",
 		path = "/communities/:community_id/leaderboards"
 	},
 	{
-		name = "community_leaderboard",
+		name = "community.leaderboard",
 		path = "/communities/:community_id/leaderboards/:leaderboard_id"
 	},
 	{
@@ -92,11 +96,11 @@ local endpoints = {
 		path = "/leaderboards/:leaderboard_id"
 	},
 	{
-		name = "leaderboard_tables",
+		name = "leaderboard.tables",
 		path = "/leaderboards/:leaderboard_id/tables"
 	},
 	{
-		name = "leaderboard_table",
+		name = "leaderboard.table",
 		path = "/leaderboards/:leaderboard_id/tables/:table_id"
 	},
 	{
@@ -106,6 +110,54 @@ local endpoints = {
 	{
 		name = "table",
 		path = "/tables/:table_id"
+	},
+	{
+		name = "containers",
+		path = "/containers"
+	},
+	{
+		name = "container",
+		path = "/containers/:container_id"
+	},
+	{
+		name = "formats",
+		path = "/formats"
+	},
+	{
+		name = "format",
+		path = "/formats/:format_id"
+	},
+	{
+		name = "input_modes",
+		path = "/input_modes"
+	},
+	{
+		name = "input_mode",
+		path = "/input_modes/:input_mode_id"
+	},
+	{
+		name = "modifiers",
+		path = "/modifiers"
+	},
+	{
+		name = "modifier",
+		path = "/modifiers/:modifier_id"
+	},
+	{
+		name = "notecharts",
+		path = "/notecharts"
+	},
+	{
+		name = "notechart",
+		path = "/notecharts/:notechart_id"
+	},
+	{
+		name = "scores",
+		path = "/scores"
+	},
+	{
+		name = "score",
+		path = "/scores/:score_id"
 	},
 }
 
