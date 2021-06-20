@@ -32,6 +32,8 @@ local type_id = types.id({null = false, unsigned = true})
 local type_fk_id = types.integer({null = false, unsigned = true})
 local type_size = types.integer({null = false, unsigned = true, default = 0})
 local type_hash = "char(32) CHARACTER SET latin1 NOT NULL"
+local type_time = types.bigint({unsigned = true})
+
 local options = {
 	engine = "InnoDB",
 	charset = "utf8mb4 COLLATE=utf8mb4_unicode_ci"
@@ -78,8 +80,8 @@ table_declarations.users = {
 	{"tag", types.varchar},
 	"`email` VARCHAR(100) NOT NULL",
 	{"password", types.varchar},
-	"`latest_activity` timestamp NULL DEFAULT NULL",
-	"`creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP",
+	{"latest_activity", type_time},
+	{"creation_time", type_time},
 	"UNIQUE KEY `email` (`email`)"
 }
 
@@ -136,7 +138,7 @@ table_declarations.containers = {
 	{"uploaded", types.boolean},
 	{"size", type_size},
 	{"imported", types.boolean},
-	{"creation_time", types.timestamp},
+	{"creation_time", type_time},
 	[[
 		UNIQUE KEY `hash` (`hash`),
 		KEY `format_id` (`format_id`),
@@ -165,7 +167,7 @@ table_declarations.notecharts = {
 	{"id", type_id},
 	{"container_id", type_fk_id},
 	{"index", type_fk_id},
-	{"creation_time", types.timestamp},
+	{"creation_time", type_time},
 	{"play_count", type_size},
 	{"input_mode_id", type_fk_id},
 	{"difficulty", types.float},
@@ -190,7 +192,7 @@ table_declarations.scores = {
 	{"calculated", types.boolean},
 	{"replay_uploaded", types.boolean},
 	{"replay_size", type_size},
-	{"creation_time", types.timestamp},
+	{"creation_time", type_time},
 	{"score", types.float},
 	{"accuracy", types.float},
 	{"max_combo", type_size},
