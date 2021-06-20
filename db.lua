@@ -17,12 +17,21 @@ local tables = {
 	"group_roles",
 	"group_users",
 	"groups",
+	"containers",
+	"formats",
+	"input_modes",
+	"modifiers",
+	"notecharts",
+	"scores",
+	"user_statistics",
 }
 
 local table_declarations = {}
 
 local type_id = types.id({null = false, unsigned = true})
 local type_fk_id = types.integer({null = false, unsigned = true})
+local type_size = types.integer({null = false, unsigned = true, default = 0})
+local type_hash = "char(32) CHARACTER SET latin1 NOT NULL"
 local options = {
 	engine = "InnoDB",
 	charset = "utf8mb4 COLLATE=utf8mb4_unicode_ci"
@@ -70,7 +79,7 @@ table_declarations.users = {
 	"`email` VARCHAR(100) NOT NULL",
 	{"password", types.varchar},
 	"`latest_activity` timestamp NULL DEFAULT NULL",
-	"`creation_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP",
+	"`creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP",
 	"UNIQUE KEY `email` (`email`)"
 }
 
@@ -118,6 +127,93 @@ table_declarations.group_users = {
 table_declarations.groups = {
 	{"id", type_id},
 	{"name", types.varchar},
+}
+
+table_declarations.containers = {
+	{"id", type_id},
+	{"hash", type_hash},
+	{"format_id", type_fk_id},
+	{"uploaded", types.boolean},
+	{"size", type_size},
+	{"imported", types.boolean},
+	{"creation_time", types.timestamp},
+	[[
+		UNIQUE KEY `hash` (`hash`),
+		KEY `format_id` (`format_id`),
+		KEY `imported` (`imported`)
+	]]
+}
+
+table_declarations.formats = {
+	{"id", type_id},
+	{"extension", types.varchar({length = 4})},
+	{"blocked", types.boolean({default = 0})},
+}
+
+table_declarations.input_modes = {
+	{"id", type_id},
+	{"name", types.varchar},
+}
+
+table_declarations.modifiers = {
+	{"id", type_id},
+	"`name` VARCHAR(100) NOT NULL",
+	"UNIQUE KEY `name` (`name`)"
+}
+
+table_declarations.notecharts = {
+	{"id", type_id},
+	{"container_id", type_fk_id},
+	{"index", type_fk_id},
+	{"creation_time", types.timestamp},
+	{"play_count", type_size},
+	{"input_mode_id", type_fk_id},
+	{"difficulty", types.float},
+	{"song_title", types.text},
+	{"song_artist", types.text},
+	{"difficulty_name", types.text},
+	{"difficulty_creator", types.text},
+	[[
+		UNIQUE KEY `hashindex` (`container_id`,`index`),
+		KEY `input_mode_id` (`input_mode_id`)
+	]]
+}
+
+table_declarations.scores = {
+	{"id", type_id},
+	{"user_id", type_fk_id},
+	{"notechart_id", type_fk_id},
+	{"modifier_id", type_fk_id},
+	{"input_mode_id", type_fk_id},
+	{"replay_hash", type_hash},
+	{"is_valid", types.boolean},
+	{"calculated", types.boolean},
+	{"replay_uploaded", types.boolean},
+	{"replay_size", type_size},
+	{"creation_time", types.timestamp},
+	{"score", types.float},
+	{"accuracy", types.float},
+	{"max_combo", type_size},
+	{"performance", types.float},
+	[[
+		UNIQUE KEY `replay_hash` (`replay_hash`),
+		KEY `user_id` (`user_id`),
+		KEY `notechart_id` (`notechart_id`),
+		KEY `modifier_id` (`modifier_id`),
+		KEY `input_mode_id` (`input_mode_id`),
+		KEY `performance` (`performance`),
+		KEY `calculated` (`calculated`)
+	]]
+}
+
+table_declarations.user_statistics = {
+	{"id", type_id},
+	{"user_id", type_fk_id},
+	{"leaderboard_id", type_fk_id},
+	{"active", types.boolean},
+	{"play_count", type_size},
+	{"total_performance", types.float},
+	{"total_accuracy", types.float},
 }
 
 function db.drop()
