@@ -1,4 +1,4 @@
-@bearer_authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMywibmJmIjoxNjIzNTk2NjU0fQ.HgFe5KlWI00Aw1_sUs5mVN4sEmsXCxIJj5CKJtooxow
+@bearer_authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJuYmYiOjE2MjQ3MTc3NjF9.b4kX9uq1JlJW3JI2zH6e7tsAn1jUqSMQW9g9mjtc4Y4
 @login_authorization = Basic YWFhYTpwYXNzd29yZA==
 # aaaa:password
 
@@ -21,7 +21,7 @@ Authorization: {{bearer_authorization}}
 }
 
 ###
-GET http://localhost/api/users/13
+GET http://localhost/api/users/1
 Authorization: {{bearer_authorization}}
 
 ###

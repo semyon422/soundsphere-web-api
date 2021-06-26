@@ -52,4 +52,5 @@ end
 
 app.start()
 
-require("tests")
+local tests = require("tests")
+tests.start()

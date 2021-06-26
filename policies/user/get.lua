@@ -7,7 +7,7 @@ function policy:target(context)
 end
 
 policy.rules = {
-	require("rules.user_profile")
+	require("rules.permit")
 }
 
 policy.rule_combine_algorithm = require("abac.combine.permit_all_or_deny")

@@ -1,2 +1,0 @@
-luvit tests.lua
-pause
