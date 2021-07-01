@@ -1,6 +1,6 @@
-@bearer_authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJuYmYiOjE2MjQ3MTc3NjF9.b4kX9uq1JlJW3JI2zH6e7tsAn1jUqSMQW9g9mjtc4Y4
-@login_authorization = Basic YWFhYTpwYXNzd29yZA==
-# aaaa:password
+@bearer_authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJuYmYiOjE2MjUxNDk2NDl9.FIHNyJtApaGHuFFhBbvcr0zutikmGvbdAEbe52BbCRE
+@login_authorization = Basic YWRtaW5AYWRtaW46cGFzc3dvcmQ=
+# admin@admin:password
 
 GET http://localhost/api/token
 Authorization: {{login_authorization}}
@@ -25,11 +25,7 @@ GET http://localhost/api/users/1
 Authorization: {{bearer_authorization}}
 
 ###
-GET http://localhost/api/users/2
-Authorization: {{bearer_authorization}}
-
-###
-PUT http://localhost/api/communities/1/users/1
+GET http://localhost/ac/users?method=GET&method=POST
 Authorization: {{bearer_authorization}}
 
 ###

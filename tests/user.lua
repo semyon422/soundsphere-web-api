@@ -8,7 +8,7 @@ local fetch = require("tests.fetch")
 local admin = {
 	name = "admin",
 	tag = "0000",
-	email = "admin@soundsphere.xyz",
+	email = "admin@admin",
 	password = "password"
 }
 
@@ -62,6 +62,7 @@ end
 
 local function token_get(email, password)
 	local token
+	p(base64.encode(email .. ":" .. password))
 	fetch(
 		"/api/token",
 		{
@@ -85,6 +86,7 @@ coro = coroutine.create(function()
 	assert(#users == 1)
 	local token = token_get(admin.email, admin.password)
 	p(user_get(1))
+	p(token)
 end)
 
 coroutine.resume(coro)
