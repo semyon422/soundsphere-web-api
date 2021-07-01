@@ -75,9 +75,11 @@ users_c.POST = function(req, res, go)
 
 	if db_user_entry then
 		res.body = util.to_json({
-			id = db_user_entry.id,
-			name = db_user_entry.name,
-			tag = db_user_entry.tag
+			user = {
+				id = db_user_entry.id,
+				name = db_user_entry.name,
+				tag = db_user_entry.tag
+			}
 		})
 		res.code = 201
 		return
