@@ -34,7 +34,13 @@ users_c.GET = function(params)
 		)
 	end
 
-	return 200, {users = user_entries}
+	local count = users:count()
+
+	return 200, {
+        total = count,
+        filtered = count,
+		users = user_entries
+	}
 end
 
 local function register(name, email, password)

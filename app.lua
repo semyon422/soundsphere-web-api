@@ -69,9 +69,10 @@ local function route_datatables(path, name, controller, datatable)
 			basic_auth(req)
 			local permit, context = pep:check(name, req)
 			if permit and controller.GET then
-				local code, response = controller.GET(datatable.params(params(req)))
+				local _params = params(req)
+				local code, response = controller.GET(datatable.params(_params))
 				res.code = code
-				res.body = util.to_json(datatable.response(response))
+				res.body = util.to_json(datatable.response(response, _params))
 			else
 				res.code = 200
 				res.body = util.to_json({decision = context.decision})
@@ -127,5 +128,5 @@ end
 
 app.start()
 
-local tests = require("tests")
-tests.start()
+-- local tests = require("tests")
+-- tests.start()
