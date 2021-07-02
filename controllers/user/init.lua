@@ -3,8 +3,8 @@ local util = require("lapis.util")
 
 local user_c = {}
 
-user_c.GET = function(req, res, go)
-	local db_user_entry = users:find(req.params.user_id)
+user_c.GET = function(params)
+	local db_user_entry = users:find(params.user_id)
 
 	local user = {
         id = db_user_entry.id,
@@ -13,9 +13,7 @@ user_c.GET = function(req, res, go)
         latest_activity = db_user_entry.latest_activity,
     }
 
-	res.body = util.to_json({user = user})
-	res.code = 200
-	res.headers["Content-Type"] = "application/json"
+	return 200, {user = user}
 end
 
 return user_c

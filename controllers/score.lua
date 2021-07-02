@@ -3,12 +3,14 @@ local util = require("lapis.util")
 
 local score_c = {}
 
-score_c.GET = function(req, res, go)
-	local db_score_entry = scores:find(req.params.score_id)
+score_c.GET = function(params)
+	local db_score_entry = scores:find(params.score_id)
 
-	res.body = util.to_json({score = db_score_entry})
-	res.code = 200
-	res.headers["Content-Type"] = "application/json"
+	if db_score_entry then
+		return 200, {score = db_score_entry}
+	end
+
+	return 404, {error = "Not found"}
 end
 
 return score_c

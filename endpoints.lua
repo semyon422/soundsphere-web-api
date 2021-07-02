@@ -56,14 +56,6 @@ local endpoints = {
 		path = "/roles/:role_id"
 	},
 	{
-		name = "domains",
-		path = "/domains"
-	},
-	{
-		name = "domain",
-		path = "/domains/:role_id"
-	},
-	{
 		name = "communities",
 		path = "/communities"
 	},
@@ -110,38 +102,6 @@ local endpoints = {
 	{
 		name = "table",
 		path = "/tables/:table_id"
-	},
-	{
-		name = "containers",
-		path = "/containers"
-	},
-	{
-		name = "container",
-		path = "/containers/:container_id"
-	},
-	{
-		name = "formats",
-		path = "/formats"
-	},
-	{
-		name = "format",
-		path = "/formats/:format_id"
-	},
-	{
-		name = "input_modes",
-		path = "/input_modes"
-	},
-	{
-		name = "input_mode",
-		path = "/input_modes/:input_mode_id"
-	},
-	{
-		name = "modifiers",
-		path = "/modifiers"
-	},
-	{
-		name = "modifier",
-		path = "/modifiers/:modifier_id"
 	},
 	{
 		name = "notecharts",

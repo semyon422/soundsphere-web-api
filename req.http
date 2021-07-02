@@ -13,6 +13,7 @@ GET http://localhost/api/users
 ###
 POST http://localhost/api/users
 Authorization: {{bearer_authorization}}
+Content-Type: application/json
 
 {
     "name": "new user",

@@ -1,14 +1,15 @@
 local roles = require("models.roles")
-local util = require("lapis.util")
 
 local role_c = {}
 
-role_c.GET = function(req, res, go)
-	local db_role_entry = roles:find(req.params.role_id)
+role_c.GET = function(params)
+	local db_role_entry = roles:find(params.role_id)
 
-	res.body = util.to_json({role = db_role_entry})
-	res.code = 200
-	res.headers["Content-Type"] = "application/json"
+	if db_role_entry then
+		return 200, {role = db_role_entry}
+	end
+
+	return 404, {error = "Not found"}
 end
 
 return role_c

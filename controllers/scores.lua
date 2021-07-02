@@ -1,11 +1,10 @@
 local scores = require("models.scores")
-local util = require("lapis.util")
 
 local scores_c = {}
 
-scores_c.GET = function(req, res, go)
-	local per_page = req.query and tonumber(req.query.per_page) or 10
-	local page_num = req.query and tonumber(req.query.page_num) or 1
+scores_c.GET = function(params)
+	local per_page = tonumber(params.per_page) or 10
+	local page_num = tonumber(params.page_num) or 1
 
 	local paginator = scores:paginated(
 		"order by id asc",
@@ -15,9 +14,7 @@ scores_c.GET = function(req, res, go)
 	)
 	local db_score_entries = paginator:get_page(page_num)
 
-	res.body = util.to_json({scores = db_score_entries})
-	res.code = 200
-	res.headers["Content-Type"] = "application/json"
+	return 200, {scores = db_score_entries}
 end
 
 return scores_c

@@ -3,9 +3,9 @@ local util = require("lapis.util")
 
 local notecharts_c = {}
 
-notecharts_c.GET = function(req, res, go)
-	local per_page = req.query and tonumber(req.query.per_page) or 10
-	local page_num = req.query and tonumber(req.query.page_num) or 1
+notecharts_c.GET = function(params)
+	local per_page = tonumber(params.per_page) or 10
+	local page_num = tonumber(params.page_num) or 1
 
 	local paginator = notecharts:paginated(
 		"order by id asc",
@@ -15,9 +15,7 @@ notecharts_c.GET = function(req, res, go)
 	)
 	local db_notechart_entries = paginator:get_page(page_num)
 
-	res.body = util.to_json({notecharts = db_notechart_entries})
-	res.code = 200
-	res.headers["Content-Type"] = "application/json"
+	return 200, {notecharts = db_notechart_entries}
 end
 
 return notecharts_c

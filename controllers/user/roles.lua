@@ -1,14 +1,13 @@
 local group_users = require("models.group_users")
 local user_roles = require("models.user_roles")
-local util = require("lapis.util")
 local preload = require("lapis.db.model").preload
 
 local user_roles_c = {}
 
-user_roles_c.GET = function(req, res, go)
+user_roles_c.GET = function(params)
     local roles = {}
 
-    local sub_user_roles = user_roles:find_all({req.params.user_id}, "user_id")
+    local sub_user_roles = user_roles:find_all({params.user_id}, "user_id")
 	preload(sub_user_roles, "role", "domain")
 	for _, user_role in ipairs(sub_user_roles) do
 		table.insert(roles, {
@@ -17,7 +16,7 @@ user_roles_c.GET = function(req, res, go)
         })
 	end
 
-	local sub_group_users = group_users:find_all({req.params.user_id}, "user_id")
+	local sub_group_users = group_users:find_all({params.user_id}, "user_id")
 	preload(sub_group_users, {group = {group_roles = {"role", "domain"}}})
 	for _, group_user in ipairs(sub_group_users) do
 		local group_roles = group_user.group.group_roles
@@ -29,9 +28,7 @@ user_roles_c.GET = function(req, res, go)
 		end
 	end
 
-	res.body = util.to_json({roles = roles})
-	res.code = 200
-	res.headers["Content-Type"] = "application/json"
+	return 200, {roles = roles}
 end
 
 return user_roles_c

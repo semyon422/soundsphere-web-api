@@ -3,34 +3,30 @@ local util = require("lapis.util")
 
 local leaderboard_tables_c = {}
 
-leaderboard_tables_c.PUT = function(req, res, go)
+leaderboard_tables_c.PUT = function(params)
     local entry = {
-        leaderboard_id = req.params.leaderboard_id,
-        table_id = req.params.table_id,
+        leaderboard_id = params.leaderboard_id,
+        table_id = params.table_id,
     }
     local leaderboard_table = leaderboard_tables:find(entry)
     if not leaderboard_table then
         leaderboard_tables:create(entry)
     end
 
-	res.body = util.to_json({leaderboard_table = entry})
-	res.code = 200
-	res.headers["Content-Type"] = "application/json"
+	return 200, {leaderboard_table = entry}
 end
 
-leaderboard_tables_c.DELETE = function(req, res, go)
+leaderboard_tables_c.DELETE = function(params)
     local entry = {
-        leaderboard_id = req.params.leaderboard_id,
-        table_id = req.params.table_id,
+        leaderboard_id = params.leaderboard_id,
+        table_id = params.table_id,
     }
     local leaderboard_table = leaderboard_tables:find(entry)
     if leaderboard_table then
         leaderboard_table:delete()
     end
 
-	res.body = util.to_json({})
-	res.code = 200
-	res.headers["Content-Type"] = "application/json"
+	return 200, {}
 end
 
 return leaderboard_tables_c

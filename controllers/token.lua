@@ -18,15 +18,10 @@ local login = function(email, password)
 	return false, failed
 end
 
-token_c.GET = function(req, res, go)
-	local basic = req.basic
-	if not basic then return end
-	local user_entry, err = login(basic.email, basic.password)
+token_c.GET = function(params)
+	local user_entry, err = login(params.email, params.password)
 
-	local json_response = {}
-
-	res.code = 200
-	res.headers["Content-Type"] = "application/json"
+	local response = {}
 
 	if user_entry then
 		local payload = {
@@ -35,11 +30,11 @@ token_c.GET = function(req, res, go)
 		}
 		local token, err = jwt.encode(payload, key, "HS256")
 		if token then
-			json_response.token = token
+			response.token = token
 		end
 	end
 
-	res.body = util.to_json(json_response)
+	return 200, response
 end
 
 return token_c

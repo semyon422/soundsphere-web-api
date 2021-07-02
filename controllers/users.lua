@@ -1,13 +1,12 @@
 local preload = require("lapis.db.model").preload
 local users = require("models.users")
-local util = require("lapis.util")
 local bcrypt = require("bcrypt")
 
 local users_c = {}
 
-users_c.GET = function(req, res, go)
-	local per_page = req.query and tonumber(req.query.per_page) or 10
-	local page_num = req.query and tonumber(req.query.page_num) or 1
+users_c.GET = function(params)
+	local per_page = tonumber(params.per_page) or 10
+	local page_num = tonumber(params.page_num) or 1
 
 	local paginator = users:paginated(
 		"order by id asc",
@@ -35,9 +34,7 @@ users_c.GET = function(req, res, go)
 		)
 	end
 
-	res.body = util.to_json({users = user_entries})
-	res.code = 200
-	res.headers["Content-Type"] = "application/json"
+	return 200, {users = user_entries}
 end
 
 local function register(name, email, password)
@@ -68,25 +65,20 @@ local function register(name, email, password)
 	return user_entry
 end
 
-users_c.POST = function(req, res, go)
-	local body = util.from_json(req.body)
-
-	local db_user_entry, err = register(body.name, body.email, body.password)
+users_c.POST = function(params)
+	local db_user_entry, err = register(params.name, params.email, params.password)
 
 	if db_user_entry then
-		res.body = util.to_json({
+		return 200, {
 			user = {
 				id = db_user_entry.id,
 				name = db_user_entry.name,
 				tag = db_user_entry.tag
 			}
-		})
-		res.code = 201
-		return
+		}
 	end
 
-	res.body = err
-	res.code = 400
+	return 400, {error = err}
 end
 
 return users_c

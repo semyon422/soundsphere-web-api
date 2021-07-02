@@ -3,12 +3,10 @@ local util = require("lapis.util")
 
 local group_c = {}
 
-group_c.GET = function(req, res, go)
-	local db_group_entry = groups:find(req.params.group_id)
+group_c.GET = function(params)
+	local db_group_entry = groups:find(params.group_id)
 
-	res.body = util.to_json({group = db_group_entry})
-	res.code = 200
-	res.headers["Content-Type"] = "application/json"
+	return 200, {group = db_group_entry}
 end
 
 return group_c
