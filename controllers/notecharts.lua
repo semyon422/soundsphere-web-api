@@ -1,5 +1,4 @@
 local notecharts = require("models.notecharts")
-local util = require("lapis.util")
 
 local notecharts_c = {}
 
@@ -15,7 +14,13 @@ notecharts_c.GET = function(params)
 	)
 	local db_notechart_entries = paginator:get_page(page_num)
 
-	return 200, {notecharts = db_notechart_entries}
+	local count = notecharts:count()
+
+	return 200, {
+		total = count,
+		filtered = count,
+		notecharts = db_notechart_entries
+	}
 end
 
 return notecharts_c

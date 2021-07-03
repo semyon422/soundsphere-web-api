@@ -1,5 +1,9 @@
 {
     "Lua.diagnostics.globals": [
         "p"
-    ]
+    ],
+    "editor.stickyTabStops": true,
+    "editor.formatOnSave": true,
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": false
 }

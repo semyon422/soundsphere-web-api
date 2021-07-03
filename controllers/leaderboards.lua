@@ -1,5 +1,4 @@
 local leaderboards = require("models.leaderboards")
-local util = require("lapis.util")
 
 local leaderboards_c = {}
 
@@ -15,7 +14,13 @@ leaderboards_c.GET = function(params)
 	)
 	local db_leaderboard_entries = paginator:get_page(page_num)
 
-	return 200, {leaderboards = db_leaderboard_entries}
+	local count = leaderboards:count()
+
+	return 200, {
+		total = count,
+		filtered = count,
+		leaderboards = db_leaderboard_entries
+	}
 end
 
 return leaderboards_c

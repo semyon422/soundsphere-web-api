@@ -14,7 +14,13 @@ scores_c.GET = function(params)
 	)
 	local db_score_entries = paginator:get_page(page_num)
 
-	return 200, {scores = db_score_entries}
+	local count = scores:count()
+
+	return 200, {
+		total = count,
+		filtered = count,
+		scores = db_score_entries
+	}
 end
 
 return scores_c

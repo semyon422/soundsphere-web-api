@@ -37,8 +37,8 @@ users_c.GET = function(params)
 	local count = users:count()
 
 	return 200, {
-        total = count,
-        filtered = count,
+		total = count,
+		filtered = count,
 		users = user_entries
 	}
 end

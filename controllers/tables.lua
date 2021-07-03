@@ -14,7 +14,13 @@ tables_c.GET = function(params)
 	)
 	local db_table_entries = paginator:get_page(page_num)
 
-	return 200, {tables = db_table_entries}
+	local count = tables:count()
+
+	return 200, {
+		total = count,
+		filtered = count,
+		tables = db_table_entries
+	}
 end
 
 return tables_c
