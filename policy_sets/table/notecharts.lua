@@ -3,7 +3,7 @@ local PolicySet = require("abac.PolicySet")
 local policy_set = PolicySet:new()
 
 function policy_set:target(context)
-	return context.name == "table"
+	return context.name == "table.notecharts"
 end
 
 policy_set.policies = {
