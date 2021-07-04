@@ -7,7 +7,13 @@ leaderboard_users_c.GET = function(params)
     local sub_leaderboard_users = leaderboard_users:find_all({params.leaderboard_id}, "leaderboard_id")
 	preload(sub_leaderboard_users, "leaderboard", "user")
 
-	return 200, {users = sub_leaderboard_users}
+	local count = leaderboard_users:count()
+
+	return 200, {
+		total = count,
+		filtered = count,
+		users = sub_leaderboard_users
+	}
 end
 
 return leaderboard_users_c

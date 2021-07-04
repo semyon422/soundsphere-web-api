@@ -15,7 +15,13 @@ groups_c.GET = function(params)
 	)
 	local db_group_entries = paginator:get_page(page_num)
 
-	return 200, {groups = db_group_entries}
+	local count = groups:count()
+
+	return 200, {
+		total = count,
+		filtered = count,
+		groups = db_group_entries
+	}
 end
 
 return groups_c

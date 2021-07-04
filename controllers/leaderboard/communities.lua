@@ -7,7 +7,13 @@ leaderboard_communities_c.GET = function(params)
     local sub_leaderboard_communities = community_leaderboards:find_all({params.leaderboard_id}, "leaderboard_id")
 	preload(sub_leaderboard_communities, "leaderboard", "community")
 
-	return 200, {communities = sub_leaderboard_communities}
+	local count = community_leaderboards:count()
+
+	return 200, {
+		total = count,
+		filtered = count,
+		communities = sub_leaderboard_communities
+	}
 end
 
 return leaderboard_communities_c
