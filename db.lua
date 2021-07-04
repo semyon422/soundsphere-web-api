@@ -64,6 +64,7 @@ table_declarations.leaderboards = {
 	{"id", type_id},
 	{"domain_id", type_fk_id},
 	{"name", types.varchar},
+	{"description", types.varchar},
 }
 
 table_declarations.tables = {
