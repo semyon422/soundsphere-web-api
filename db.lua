@@ -5,14 +5,17 @@ local db = {}
 
 local tables = {
 	"leaderboard_tables",
+	"leaderboard_users",
 	"leaderboards",
 	"roles",
 	"tables",
+	"table_notecharts",
 	"user_roles",
 	"users",
 	"communities",
 	"community_leaderboards",
 	"community_users",
+	"community_tables",
 	"domains",
 	"group_roles",
 	"group_users",
@@ -50,6 +53,13 @@ table_declarations.leaderboard_tables = {
 	"UNIQUE KEY `leaderboard_tables` (`leaderboard_id`,`table_id`)"
 }
 
+table_declarations.leaderboard_users = {
+	{"id", type_id},
+	{"leaderboard_id", type_fk_id},
+	{"user_id", type_fk_id},
+	"UNIQUE KEY `leaderboard_users` (`leaderboard_id`,`user_id`)"
+}
+
 table_declarations.leaderboards = {
 	{"id", type_id},
 	{"domain_id", type_fk_id},
@@ -64,6 +74,13 @@ table_declarations.roles = {
 table_declarations.tables = {
 	{"id", type_id},
 	{"name", types.varchar},
+}
+
+table_declarations.table_notecharts = {
+	{"id", type_id},
+	{"table_id", type_fk_id},
+	{"notechart_id", type_fk_id},
+	"UNIQUE KEY `table_notecharts` (`table_id`,`notechart_id`)"
 }
 
 table_declarations.user_roles = {
@@ -104,6 +121,13 @@ table_declarations.community_users = {
 	{"user_id", type_fk_id},
 	{"accepted", types.boolean},
 	"UNIQUE KEY `community_users` (`community_id`,`user_id`), INDEX `accepted` (`accepted`)"
+}
+
+table_declarations.community_tables = {
+	{"id", type_id},
+	{"community_id", type_fk_id},
+	{"table_id", type_fk_id},
+	"UNIQUE KEY `community_tables` (`community_id`,`table_id`)"
 }
 
 table_declarations.domains = {

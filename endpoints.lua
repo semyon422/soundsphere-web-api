@@ -96,6 +96,22 @@ local endpoints = {
 		path = "/leaderboards/:leaderboard_id/tables/:table_id"
 	},
 	{
+		name = "leaderboard.communities",
+		path = "/leaderboards/:leaderboard_id/communities"
+	},
+	{
+		name = "leaderboard.community",
+		path = "/leaderboards/:leaderboard_id/communities/:community_id"
+	},
+	{
+		name = "leaderboard.users",
+		path = "/leaderboards/:leaderboard_id/users"
+	},
+	{
+		name = "leaderboard.user",
+		path = "/leaderboards/:leaderboard_id/users/:user_id"
+	},
+	{
 		name = "tables",
 		path = "/tables"
 	},
@@ -104,12 +120,28 @@ local endpoints = {
 		path = "/tables/:table_id"
 	},
 	{
+		name = "table.communities",
+		path = "/tables/:table_id/communities"
+	},
+	{
+		name = "table.leaderboards",
+		path = "/tables/:table_id/leaderboards"
+	},
+	{
+		name = "table.notecharts",
+		path = "/tables/:table_id/notecharts"
+	},
+	{
 		name = "notecharts",
 		path = "/notecharts"
 	},
 	{
 		name = "notechart",
 		path = "/notecharts/:notechart_id"
+	},
+	{
+		name = "notechart.scores",
+		path = "/notecharts/:notechart_id/scores"
 	},
 	{
 		name = "scores",

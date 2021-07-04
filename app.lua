@@ -128,5 +128,5 @@ end
 
 app.start()
 
--- local tests = require("tests")
--- tests.start()
+local tests = require("tests")
+tests.start()
