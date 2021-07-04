@@ -9,12 +9,7 @@ community_leaderboards_c.GET = function(params)
 
 	local leaderboards = {}
 	for _, community_leaderboard in ipairs(sub_community_leaderboards) do
-		local leaderboard = community_leaderboard.leaderboard
-		table.insert(leaderboards, {
-			id = leaderboard.id,
-			name = leaderboard.name,
-			description = leaderboard.description,
-		})
+		table.insert(leaderboards, community_leaderboard.leaderboard)
 	end
 
 	local count = community_leaderboards:count()
