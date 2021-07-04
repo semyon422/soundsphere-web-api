@@ -7,7 +7,6 @@ local tables = {
 	"leaderboard_tables",
 	"leaderboard_users",
 	"leaderboards",
-	"roles",
 	"tables",
 	"table_notecharts",
 	"user_roles",
@@ -16,13 +15,14 @@ local tables = {
 	"community_leaderboards",
 	"community_users",
 	"community_tables",
+	"community_inputmodes",
 	"domains",
 	"group_roles",
 	"group_users",
 	"groups",
 	"containers",
 	"formats",
-	"input_modes",
+	"inputmodes",
 	"modifiers",
 	"notecharts",
 	"scores",
@@ -66,11 +66,6 @@ table_declarations.leaderboards = {
 	{"name", types.varchar},
 }
 
-table_declarations.roles = {
-	{"id", type_id},
-	{"name", types.varchar},
-}
-
 table_declarations.tables = {
 	{"id", type_id},
 	{"name", types.varchar},
@@ -106,6 +101,10 @@ table_declarations.communities = {
 	{"id", type_id},
 	{"domain_id", type_fk_id},
 	{"name", types.varchar},
+	{"alias", types.varchar},
+	{"short_description", types.varchar},
+	{"description", types.varchar},
+	{"user_count", type_size},
 }
 
 table_declarations.community_leaderboards = {
@@ -128,6 +127,13 @@ table_declarations.community_tables = {
 	{"community_id", type_fk_id},
 	{"table_id", type_fk_id},
 	"UNIQUE KEY `community_tables` (`community_id`,`table_id`)"
+}
+
+table_declarations.community_inputmodes = {
+	{"id", type_id},
+	{"community_id", type_fk_id},
+	{"inputmode_id", type_fk_id},
+	"UNIQUE KEY `community_tables` (`community_id`,`inputmode_id`)"
 }
 
 table_declarations.domains = {
@@ -176,7 +182,7 @@ table_declarations.formats = {
 	{"blocked", types.boolean({default = 0})},
 }
 
-table_declarations.input_modes = {
+table_declarations.inputmodes = {
 	{"id", type_id},
 	{"name", types.varchar},
 }
@@ -193,7 +199,7 @@ table_declarations.notecharts = {
 	{"index", type_fk_id},
 	{"creation_time", type_time},
 	{"play_count", type_size},
-	{"input_mode_id", type_fk_id},
+	{"inputmode_id", type_fk_id},
 	{"difficulty", types.float},
 	{"song_title", types.text},
 	{"song_artist", types.text},
@@ -201,7 +207,7 @@ table_declarations.notecharts = {
 	{"difficulty_creator", types.text},
 	[[
 		UNIQUE KEY `hashindex` (`container_id`,`index`),
-		KEY `input_mode_id` (`input_mode_id`)
+		KEY `inputmode_id` (`inputmode_id`)
 	]]
 }
 
@@ -210,7 +216,7 @@ table_declarations.scores = {
 	{"user_id", type_fk_id},
 	{"notechart_id", type_fk_id},
 	{"modifier_id", type_fk_id},
-	{"input_mode_id", type_fk_id},
+	{"inputmode_id", type_fk_id},
 	{"replay_hash", type_hash},
 	{"is_valid", types.boolean},
 	{"calculated", types.boolean},
@@ -226,7 +232,7 @@ table_declarations.scores = {
 		KEY `user_id` (`user_id`),
 		KEY `notechart_id` (`notechart_id`),
 		KEY `modifier_id` (`modifier_id`),
-		KEY `input_mode_id` (`input_mode_id`),
+		KEY `inputmode_id` (`inputmode_id`),
 		KEY `performance` (`performance`),
 		KEY `calculated` (`calculated`)
 	]]
