@@ -1,7 +1,7 @@
 local user_roles = require("models.user_roles")
 local group_users = require("models.group_users")
 local preload = require("lapis.db.model").preload
-local domain_types = require("domain_types")
+local domains = require("models.domains")
 
 local context_loader = {}
 
@@ -26,7 +26,7 @@ local function load_role(roles, role_entry)
 	local role_info = roles[role_name]
 
 	role_info[domain_id] = true
-	local type_name = domain_types[type_id]
+	local type_name = domains.types:to_name(type_id)
 	role_info[type_name] = role_info[type_name] or {}
 	local role_info_type = role_info[type_name]
 	table.insert(role_info_type, domain_id)

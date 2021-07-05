@@ -1,4 +1,5 @@
-local Model = require("lapis.db.model").Model
+local model = require("lapis.db.model")
+local Model, enum = model.Model, model.enum
 
 local domains = Model:extend(
 	"domains",
@@ -9,5 +10,11 @@ local domains = Model:extend(
 		}
 	}
 )
+
+domains.types = enum({
+	root = 1,
+	community = 2,
+	leaderboard = 3,
+})
 
 return domains

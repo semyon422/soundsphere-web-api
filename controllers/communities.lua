@@ -2,8 +2,7 @@ local communities = require("models.communities")
 local domains = require("models.domains")
 local user_roles = require("models.user_roles")
 local community_users = require("models.community_users")
-local domain_types = require("domain_types")
-local roles = require("roles")
+local roles = require("models.roles")
 local preload = require("lapis.db.model").preload
 
 local communities_c = {}
@@ -44,7 +43,7 @@ communities_c.GET = function(params)
 end
 
 communities_c.POST = function(params)
-	local domain_entry = domains:create({type_id = domain_types.community})
+	local domain_entry = domains:create({type_id = domains.types.community})
 	local community_entry = {
 		domain_id = domain_entry.id,
 		name = params.name or "Community",
@@ -56,7 +55,7 @@ communities_c.POST = function(params)
 
 	user_roles:create({
 		user_id = params.user_id,
-		role_id = roles.creator,
+		role_id = roles.types.creator,
 		domain_id = domain_entry.id
 	})
 	community_users:create({

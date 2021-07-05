@@ -1,4 +1,5 @@
-local Model = require("lapis.db.model").Model
+local model = require("lapis.db.model")
+local Model, enum = model.Model, model.enum
 
 local roles = Model:extend(
 	"roles",
@@ -9,5 +10,10 @@ local roles = Model:extend(
 		}
 	}
 )
+
+roles.types = enum({
+	creator = 1,
+	admin = 2,
+})
 
 return roles

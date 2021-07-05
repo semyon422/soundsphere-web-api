@@ -2,8 +2,7 @@ local leaderboards = require("models.leaderboards")
 local domains = require("models.domains")
 local user_roles = require("models.user_roles")
 local community_leaderboards = require("models.community_leaderboards")
-local domain_types = require("domain_types")
-local roles = require("roles")
+local roles = require("models.roles")
 local preload = require("lapis.db.model").preload
 
 local leaderboards_c = {}
@@ -30,7 +29,7 @@ leaderboards_c.GET = function(params)
 end
 
 leaderboards_c.POST = function(params)
-	local domain_entry = domains:create({type_id = domain_types.leaderboard})
+	local domain_entry = domains:create({type_id = domains.types.leaderboard})
 	local leaderboard_entry = {
 		domain_id = domain_entry.id,
 		name = params.name or "Leaderboard",
@@ -40,7 +39,7 @@ leaderboards_c.POST = function(params)
 
 	user_roles:create({
 		user_id = params.user_id,
-		role_id = roles.creator,
+		role_id = roles.types.creator,
 		domain_id = domain_entry.id
 	})
 	community_leaderboards:create({
