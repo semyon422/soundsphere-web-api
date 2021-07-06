@@ -9,7 +9,7 @@ community_c.GET = function(params)
 end
 
 community_c.PATCH = function(params)
-	local community = Communities:find(params.community.id)
+	local community = Communities:find(params.community_id)
 
 	community.name = params.community.name
 	community.alias = params.community.alias

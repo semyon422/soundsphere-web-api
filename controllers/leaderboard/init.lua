@@ -9,7 +9,7 @@ leaderboard_c.GET = function(params)
 end
 
 leaderboard_c.PATCH = function(params)
-	local leaderboard = Leaderboards:find(params.leaderboard.id)
+	local leaderboard = Leaderboards:find(params.leaderboard_id)
 
 	leaderboard.name = params.leaderboard.name
 	leaderboard.description = params.leaderboard.description
