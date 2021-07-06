@@ -41,7 +41,7 @@ communities_c.GET = function(params)
 end
 
 communities_c.POST = function(params)
-	local domain_entry = Domains:create({type_id = Domains.types.community})
+	local domain_entry = Domains:create({domaintype = Domains.types.community})
 	local community = Communities:create({
 		domain_id = domain_entry.id,
 		name = params.name or "Community",
@@ -52,7 +52,7 @@ communities_c.POST = function(params)
 
 	User_roles:create({
 		user_id = params.user_id,
-		role_id = Roles.types.creator,
+		roletype = Roles.types.creator,
 		domain_id = domain_entry.id
 	})
 	Community_users:create({

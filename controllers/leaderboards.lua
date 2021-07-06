@@ -3,6 +3,7 @@ local Domains = require("models.domains")
 local User_roles = require("models.user_roles")
 local Community_leaderboards = require("models.community_leaderboards")
 local Roles = require("models.roles")
+local domain = require "context_loaders.domain"
 
 local leaderboards_c = {}
 
@@ -28,7 +29,7 @@ leaderboards_c.GET = function(params)
 end
 
 leaderboards_c.POST = function(params)
-	local domain = Domains:create({type_id = Domains.types.leaderboard})
+	local domain = Domains:create({domaintype = Domains.types.leaderboard})
 	local leaderboard = Leaderboards:create({
 		domain_id = domain.id,
 		name = params.name or "Leaderboard",
@@ -37,7 +38,7 @@ leaderboards_c.POST = function(params)
 
 	User_roles:create({
 		user_id = params.user_id,
-		role_id = Roles.types.creator,
+		roletype = Roles.types.creator,
 		domain_id = domain.id
 	})
 	Community_leaderboards:create({

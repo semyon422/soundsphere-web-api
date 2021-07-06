@@ -82,9 +82,9 @@ table_declarations.table_notecharts = {
 table_declarations.user_roles = {
 	{"id", type_id},
 	{"user_id", type_fk_id},
-	{"role_id", type_fk_id},
+	{"roletype", type_fk_id},
 	{"domain_id", type_fk_id},
-	"UNIQUE KEY `user_role_domain` (`user_id`,`role_id`,`domain_id`)"
+	"UNIQUE KEY `user_role_domain` (`user_id`,`roletype`,`domain_id`)"
 }
 
 table_declarations.users = {
@@ -95,6 +95,7 @@ table_declarations.users = {
 	{"password", types.varchar},
 	{"latest_activity", type_time},
 	{"creation_time", type_time},
+	{"description", types.varchar},
 	"UNIQUE KEY `email` (`email`)"
 }
 
@@ -139,15 +140,15 @@ table_declarations.community_inputmodes = {
 
 table_declarations.domains = {
 	{"id", type_id},
-	{"type_id", type_fk_id},
+	{"domaintype", type_fk_id},
 }
 
 table_declarations.group_roles = {
 	{"id", type_id},
 	{"group_id", type_fk_id},
-	{"role_id", type_fk_id},
+	{"roletype", type_fk_id},
 	{"domain_id", type_fk_id},
-	"UNIQUE KEY `group_role_domain` (`group_id`,`role_id`,`domain_id`)"
+	"UNIQUE KEY `group_role_domain` (`group_id`,`roletype`,`domain_id`)"
 }
 
 table_declarations.group_users = {
