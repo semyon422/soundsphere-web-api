@@ -7,20 +7,18 @@ community_users_c.PUT = function(params)
         community_id = params.community_id,
         user_id = params.user_id,
     }
-    community_user = Community_users:find(community_user)
-    if not community_user then
+    if not Community_users:find(community_user) then
         Community_users:create(community_user)
     end
 
-	return 200, {community_user = community_user}
+	return 200, {}
 end
 
 community_users_c.DELETE = function(params)
-    local community_user = {
+    local community_user = Community_users:find({
         community_id = params.community_id,
         user_id = params.user_id,
-    }
-    community_user = Community_users:find(community_user)
+    })
     if community_user then
         community_user:delete()
     end

@@ -29,12 +29,11 @@ end
 
 leaderboards_c.POST = function(params)
 	local domain = Domains:create({type_id = Domains.types.leaderboard})
-	local leaderboard = {
+	local leaderboard = Leaderboards:create({
 		domain_id = domain.id,
 		name = params.name or "Leaderboard",
 		description = params.description,
-	}
-	leaderboard = Leaderboards:create(leaderboard)
+	})
 
 	User_roles:create({
 		user_id = params.user_id,

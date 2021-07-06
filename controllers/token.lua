@@ -20,20 +20,16 @@ end
 token_c.GET = function(params)
 	local user, err = login(params.email, params.password)
 
-	local response = {}
-
+	local token
 	if user then
 		local payload = {
 			user_id = user.id,
 			nbf = os.time(),
 		}
-		local token, err = jwt.encode(payload, key, "HS256")
-		if token then
-			response.token = token
-		end
+		token, err = jwt.encode(payload, key, "HS256")
 	end
 
-	return 200, response
+	return 200, {token = token}
 end
 
 return token_c

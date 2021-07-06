@@ -5,16 +5,6 @@ local community_c = {}
 community_c.GET = function(params)
 	local community = Communities:find(params.community_id)
 
-	if community then
-		local inputmodes = {}
-		community.inputmodes = inputmodes
-
-		local community_inputmodes = community:get_community_inputmodes()
-		for _, community_inputmode in ipairs(community_inputmodes) do
-			table.insert(inputmodes, community_inputmode:get_inputmode())
-		end
-	end
-
 	return 200, {community = community}
 end
 

@@ -1,6 +1,7 @@
 local User_roles = require("models.user_roles")
 local Group_users = require("models.group_users")
 local Domains = require("models.domains")
+local Roles = require("models.roles")
 local preload = require("lapis.db.model").preload
 
 local context_loader = {}
@@ -19,16 +20,15 @@ setmetatable(etot, etot_mt)
 
 local function load_role(roles, role_entry)
 	local domain_id = role_entry.domain_id
-	local type_id = role_entry.domain.type_id
-	local role_name = role_entry.role.name
+	local roletype = Roles.types:to_name(role_entry.roletype)
+	local domaintype = Domains.types:to_name(role_entry.domain.domaintype)
 
-	roles[role_name] = roles[role_name] or {}
-	local role_info = roles[role_name]
+	roles[roletype] = roles[roletype] or {}
+	local role_info = roles[roletype]
 
 	role_info[domain_id] = true
-	local type_name = Domains.types:to_name(type_id)
-	role_info[type_name] = role_info[type_name] or {}
-	local role_info_type = role_info[type_name]
+	role_info[domaintype] = role_info[domaintype] or {}
+	local role_info_type = role_info[domaintype]
 	table.insert(role_info_type, domain_id)
 
 	setmetatable(role_info, etot_mt)
@@ -41,13 +41,13 @@ local function load_roles(user)
 	local roles = {}
 
 	local user_roles = User_roles:find_all({user.id}, "user_id")
-	preload(user_roles, "role", "domain")
+	preload(user_roles, "domain")
 	for _, user_role in ipairs(user_roles) do
 		load_role(roles, user_role)
 	end
 
 	local group_users = Group_users:find_all({user.id}, "user_id")
-	preload(group_users, {group = {group_roles = {"role", "domain"}}})
+	preload(group_users, {group = {group_roles = "domain"}})
 	for _, group_user in ipairs(group_users) do
 		local group_roles = group_user.group.group_roles
 		for _, group_role in ipairs(group_roles) do

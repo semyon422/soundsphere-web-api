@@ -5,7 +5,6 @@ local Group_roles = Model:extend(
 	{
 		relations = {
 			{"group", belongs_to = "groups", key = "group_id"},
-			{"role", belongs_to = "roles", key = "role_id"},
 			{"domain", belongs_to = "domains", key = "domain_id"},
 		}
 	}

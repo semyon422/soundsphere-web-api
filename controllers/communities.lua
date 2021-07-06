@@ -16,19 +16,17 @@ communities_c.GET = function(params)
 		{
 			per_page = per_page,
 			prepare_results = function(entries)
-				preload(entries, {community_inputmode = "inputmode"})
+				preload(entries, {community_inputmodes = "inputmode"})
 				return entries
 			end
 		}
 	)
 	local communities = paginator:get_page(page_num)
 	for _, community in ipairs(communities) do
-		local community_inputmode = community.community_inputmode
+		local community_inputmodes = community.community_inputmodes
 		local inputmodes = {}
-		if community_inputmode then
-			for _, entry in ipairs(community_inputmode) do
-				table.insert(inputmodes, entry.inputmode.name)
-			end
+		for _, entry in ipairs(community_inputmodes) do
+			table.insert(inputmodes, entry.inputmode.name)
 		end
 		community.inputmodes = inputmodes
 	end
@@ -44,14 +42,13 @@ end
 
 communities_c.POST = function(params)
 	local domain_entry = Domains:create({type_id = Domains.types.community})
-	local community_entry = {
+	local community = Communities:create({
 		domain_id = domain_entry.id,
 		name = params.name or "Community",
 		alias = params.alias or "???",
 		short_description = params.short_description,
 		description = params.description,
-	}
-	community_entry = Communities:create(community_entry)
+	})
 
 	User_roles:create({
 		user_id = params.user_id,
@@ -59,14 +56,12 @@ communities_c.POST = function(params)
 		domain_id = domain_entry.id
 	})
 	Community_users:create({
-		community_id = community_entry.id,
+		community_id = community.id,
 		user_id = params.user_id,
 		accepted = true,
 	})
 
-	return 200, {
-		community = community_entry
-	}
+	return 200, {community = community}
 end
 
 return communities_c

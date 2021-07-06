@@ -10,11 +10,7 @@ users_c.GET = function(params)
 	local paginator = Users:paginated(
 		"order by id asc",
 		{
-			per_page = per_page,
-			prepare_results = function(user_entries)
-				-- preload(user_entries, "user_groups")
-				return user_entries
-			end
+			per_page = per_page
 		}
 	)
 	local users = paginator:get_page(page_num)
@@ -28,7 +24,6 @@ users_c.GET = function(params)
 				name = db_user_entry.name,
 				tag = db_user_entry.tag,
 				latest_activity = db_user_entry.latest_activity,
-				user_groups = db_user_entry.user_groups,
 			}
 		)
 	end

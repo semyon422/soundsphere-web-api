@@ -12,7 +12,13 @@ user_groups_c.GET = function(params)
         table.insert(groups, group_user.group)
 	end
 
-	return 200, {groups = groups}
+	local count = Group_users:count()
+
+	return 200, {
+		total = count,
+		filtered = count,
+		groups = groups
+	}
 end
 
 return user_groups_c

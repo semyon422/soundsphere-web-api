@@ -1,1 +1,1 @@
-return {}
+return require("controllers.community.leaderboard")
