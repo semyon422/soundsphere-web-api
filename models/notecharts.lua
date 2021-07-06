@@ -5,7 +5,7 @@ local notecharts = Model:extend(
 	{
 		relations = {
 			{"container", belongs_to = "containers", key = "container_id"},
-			{"input_mode", belongs_to = "input_modes", key = "input_mode_id"},
+			{"inputmode", belongs_to = "inputmodes", key = "inputmode_id"},
 		}
 	}
 )

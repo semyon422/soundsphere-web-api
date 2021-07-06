@@ -9,8 +9,8 @@ community_c.GET = function(params)
 		local inputmodes = {}
 		community_entry.inputmodes = inputmodes
 
-		local community_inputmode = community_entry:get_community_inputmode()
-		if community_inputmode then
+		local community_inputmodes = community_entry:get_community_inputmodes()
+		for _, community_inputmode in ipairs(community_inputmodes) do
 			table.insert(inputmodes, community_inputmode:get_inputmode())
 		end
 	end

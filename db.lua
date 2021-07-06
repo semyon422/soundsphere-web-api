@@ -134,7 +134,7 @@ table_declarations.community_inputmodes = {
 	{"id", type_id},
 	{"community_id", type_fk_id},
 	{"inputmode_id", type_fk_id},
-	"UNIQUE KEY `community_tables` (`community_id`,`inputmode_id`)"
+	"UNIQUE KEY `community_inputmodes` (`community_id`,`inputmode_id`)"
 }
 
 table_declarations.domains = {

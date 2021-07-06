@@ -1,5 +1,5 @@
 local Model = require("lapis.db.model").Model
 
-local input_modes = Model:extend("input_modes")
+local inputmodes = Model:extend("inputmodes")
 
-return input_modes
+return inputmodes

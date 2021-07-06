@@ -6,7 +6,7 @@ local communities = Model:extend(
 		relations = {
 			{"community_leaderboards", has_many = "community_leaderboards", key = "community_id"},
 			{"community_users", has_many = "community_users", key = "community_id"},
-			{"community_inputmode", has_many = "community_inputmodes", key = "community_id"},
+			{"community_inputmodes", has_many = "community_inputmodes", key = "community_id"},
 		}
 	}
 )
