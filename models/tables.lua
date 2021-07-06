@@ -1,6 +1,6 @@
 local Model = require("lapis.db.model").Model
 
-local tables = Model:extend(
+local Tables = Model:extend(
 	"tables",
 	{
 		relations = {
@@ -9,4 +9,4 @@ local tables = Model:extend(
 	}
 )
 
-return tables
+return Tables

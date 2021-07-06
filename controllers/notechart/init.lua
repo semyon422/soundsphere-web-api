@@ -1,12 +1,12 @@
-local notecharts = require("models.notecharts")
+local Notecharts = require("models.notecharts")
 
 local notechart_c = {}
 
 notechart_c.GET = function(params)
-	local db_notechart_entry = notecharts:find(params.notechart_id)
+	local notechart = Notecharts:find(params.notechart_id)
 
-	if db_notechart_entry then
-		return 200, {notechart = db_notechart_entry}
+	if notechart then
+		return 200, {notechart = notechart}
 	end
 
 	return 404, {error = "Not found"}

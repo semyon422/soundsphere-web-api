@@ -1,5 +1,5 @@
 local Model = require("lapis.db.model").Model
 
-local formats = Model:extend("formats")
+local Formats = Model:extend("formats")
 
-return formats
+return Formats

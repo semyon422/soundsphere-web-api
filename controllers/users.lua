@@ -1,5 +1,4 @@
-local preload = require("lapis.db.model").preload
-local users = require("models.users")
+local Users = require("models.users")
 local bcrypt = require("bcrypt")
 
 local users_c = {}
@@ -8,7 +7,7 @@ users_c.GET = function(params)
 	local per_page = tonumber(params.per_page) or 10
 	local page_num = tonumber(params.page_num) or 1
 
-	local paginator = users:paginated(
+	local paginator = Users:paginated(
 		"order by id asc",
 		{
 			per_page = per_page,
@@ -18,12 +17,12 @@ users_c.GET = function(params)
 			end
 		}
 	)
-	local db_user_entries = paginator:get_page(page_num)
+	local users = paginator:get_page(page_num)
 
-	local user_entries = {}
-	for _, db_user_entry in ipairs(db_user_entries) do
+	local new_users = {}
+	for _, db_user_entry in ipairs(users) do
 		table.insert(
-			user_entries,
+			new_users,
 			{
 				id = db_user_entry.id,
 				name = db_user_entry.name,
@@ -34,12 +33,12 @@ users_c.GET = function(params)
 		)
 	end
 
-	local count = users:count()
+	local count = Users:count()
 
 	return 200, {
 		total = count,
 		filtered = count,
-		users = user_entries
+		users = new_users
 	}
 end
 
@@ -55,31 +54,31 @@ local function register(name, email, password)
 	email = email:lower()
 	local digest = bcrypt.digest(password, 5)
 
-	local user_entry = users:find({email = email})
+	local user = Users:find({email = email})
 
-	if user_entry then
+	if user then
 		return false, "This email is already registered"
 	end
 
-	user_entry = users:create({
+	user = Users:create({
 		name = name,
 		tag = ("%4d"):format(math.random(1, 9999)),
 		email = email,
 		password = digest,
 	})
 
-	return user_entry
+	return user
 end
 
 users_c.POST = function(params)
-	local db_user_entry, err = register(params.name, params.email, params.password)
+	local user, err = register(params.name, params.email, params.password)
 
-	if db_user_entry then
+	if user then
 		return 200, {
 			user = {
-				id = db_user_entry.id,
-				name = db_user_entry.name,
-				tag = db_user_entry.tag
+				id = user.id,
+				name = user.name,
+				tag = user.tag
 			}
 		}
 	end

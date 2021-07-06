@@ -1,13 +1,12 @@
-local scores = require("models.scores")
-local util = require("lapis.util")
+local Scores = require("models.scores")
 
 local score_c = {}
 
 score_c.GET = function(params)
-	local db_score_entry = scores:find(params.score_id)
+	local score = Scores:find(params.score_id)
 
-	if db_score_entry then
-		return 200, {score = db_score_entry}
+	if score then
+		return 200, {score = score}
 	end
 
 	return 404, {error = "Not found"}

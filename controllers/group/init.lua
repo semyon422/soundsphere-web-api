@@ -1,12 +1,11 @@
-local groups = require("models.groups")
-local util = require("lapis.util")
+local Groups = require("models.groups")
 
 local group_c = {}
 
 group_c.GET = function(params)
-	local db_group_entry = groups:find(params.group_id)
+	local group = Groups:find(params.group_id)
 
-	return 200, {group = db_group_entry}
+	return 200, {group = group}
 end
 
 return group_c

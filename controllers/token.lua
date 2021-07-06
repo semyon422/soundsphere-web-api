@@ -1,6 +1,5 @@
 local preload = require("lapis.db.model").preload
-local users = require("models.users")
-local util = require("lapis.util")
+local Users = require("models.users")
 local bcrypt = require("bcrypt")
 local jwt = require("luajwt")
 
@@ -11,21 +10,21 @@ local token_c = {}
 local failed = "Login failed. Invalid email or password"
 local login = function(email, password)
 	if not email or not password then return false, failed end
-	local entry = users:find({email = email:lower()})
-	if not entry then return false, failed end
-	local valid = bcrypt.verify(password, entry.password)
-	if valid then return entry end
+	local user = Users:find({email = email:lower()})
+	if not user then return false, failed end
+	local valid = bcrypt.verify(password, user.password)
+	if valid then return user end
 	return false, failed
 end
 
 token_c.GET = function(params)
-	local user_entry, err = login(params.email, params.password)
+	local user, err = login(params.email, params.password)
 
 	local response = {}
 
-	if user_entry then
+	if user then
 		local payload = {
-			user_id = user_entry.id,
+			user_id = user.id,
 			nbf = os.time(),
 		}
 		local token, err = jwt.encode(payload, key, "HS256")

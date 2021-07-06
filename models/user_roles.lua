@@ -1,6 +1,6 @@
 local Model = require("lapis.db.model").Model
 
-local user_roles = Model:extend(
+local User_roles = Model:extend(
 	"user_roles",
 	{
 		relations = {
@@ -11,4 +11,4 @@ local user_roles = Model:extend(
 	}
 )
 
-return user_roles
+return User_roles

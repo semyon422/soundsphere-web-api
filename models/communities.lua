@@ -1,6 +1,6 @@
 local Model = require("lapis.db.model").Model
 
-local communities = Model:extend(
+local Communities = Model:extend(
 	"communities",
 	{
 		relations = {
@@ -11,4 +11,4 @@ local communities = Model:extend(
 	}
 )
 
-return communities
+return Communities

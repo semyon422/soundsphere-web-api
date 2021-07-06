@@ -1,7 +1,7 @@
 local Model = require("lapis.db.model").Model
 
-local group_roles = Model:extend(
-	"group_roles",
+local Group_roles = Model:extend(
+	"Group_roles",
 	{
 		relations = {
 			{"group", belongs_to = "groups", key = "group_id"},
@@ -11,4 +11,4 @@ local group_roles = Model:extend(
 	}
 )
 
-return group_roles
+return Group_roles

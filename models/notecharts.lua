@@ -1,6 +1,6 @@
 local Model = require("lapis.db.model").Model
 
-local notecharts = Model:extend(
+local Notecharts = Model:extend(
 	"notecharts",
 	{
 		relations = {
@@ -10,4 +10,4 @@ local notecharts = Model:extend(
 	}
 )
 
-return notecharts
+return Notecharts

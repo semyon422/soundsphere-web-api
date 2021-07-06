@@ -1,6 +1,6 @@
 local Model = require("lapis.db.model").Model
 
-local community_inputmodes = Model:extend(
+local Community_inputmodes = Model:extend(
 	"community_inputmodes",
 	{
 		relations = {
@@ -10,4 +10,4 @@ local community_inputmodes = Model:extend(
 	}
 )
 
-return community_inputmodes
+return Community_inputmodes

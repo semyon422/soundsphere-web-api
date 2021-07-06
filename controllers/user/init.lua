@@ -1,16 +1,15 @@
-local users = require("models.users")
-local util = require("lapis.util")
+local Users = require("models.users")
 
 local user_c = {}
 
 user_c.GET = function(params)
-	local db_user_entry = users:find(params.user_id)
+	local user = Users:find(params.user_id)
 
-	local user = {
-        id = db_user_entry.id,
-        name = db_user_entry.name,
-        tag = db_user_entry.tag,
-        latest_activity = db_user_entry.latest_activity,
+	user = {
+        id = user.id,
+        name = user.name,
+        tag = user.tag,
+        latest_activity = user.latest_activity,
     }
 
 	return 200, {user = user}

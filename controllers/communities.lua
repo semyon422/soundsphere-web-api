@@ -1,8 +1,8 @@
-local communities = require("models.communities")
-local domains = require("models.domains")
-local user_roles = require("models.user_roles")
-local community_users = require("models.community_users")
-local roles = require("models.roles")
+local Communities = require("models.communities")
+local Domains = require("models.domains")
+local User_roles = require("models.user_roles")
+local Community_users = require("models.community_users")
+local Roles = require("models.roles")
 local preload = require("lapis.db.model").preload
 
 local communities_c = {}
@@ -11,7 +11,7 @@ communities_c.GET = function(params)
 	local per_page = tonumber(params.per_page) or 10
 	local page_num = tonumber(params.page_num) or 1
 
-	local paginator = communities:paginated(
+	local paginator = Communities:paginated(
 		"order by id asc",
 		{
 			per_page = per_page,
@@ -21,8 +21,8 @@ communities_c.GET = function(params)
 			end
 		}
 	)
-	local db_community_entries = paginator:get_page(page_num)
-	for _, community in ipairs(db_community_entries) do
+	local communities = paginator:get_page(page_num)
+	for _, community in ipairs(communities) do
 		local community_inputmode = community.community_inputmode
 		local inputmodes = {}
 		if community_inputmode then
@@ -33,17 +33,17 @@ communities_c.GET = function(params)
 		community.inputmodes = inputmodes
 	end
 
-	local count = communities:count()
+	local count = Communities:count()
 
 	return 200, {
 		total = count,
 		filtered = count,
-		communities = db_community_entries
+		communities = communities
 	}
 end
 
 communities_c.POST = function(params)
-	local domain_entry = domains:create({type_id = domains.types.community})
+	local domain_entry = Domains:create({type_id = Domains.types.community})
 	local community_entry = {
 		domain_id = domain_entry.id,
 		name = params.name or "Community",
@@ -51,14 +51,14 @@ communities_c.POST = function(params)
 		short_description = params.short_description,
 		description = params.description,
 	}
-	community_entry = communities:create(community_entry)
+	community_entry = Communities:create(community_entry)
 
-	user_roles:create({
+	User_roles:create({
 		user_id = params.user_id,
-		role_id = roles.types.creator,
+		role_id = Roles.types.creator,
 		domain_id = domain_entry.id
 	})
-	community_users:create({
+	Community_users:create({
 		community_id = community_entry.id,
 		user_id = params.user_id,
 		accepted = true,

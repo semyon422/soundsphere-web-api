@@ -12,10 +12,6 @@ local endpoints = {
 		path = "/users/:user_id"
 	},
 	{
-		name = "user.password",
-		path = "/users/:user_id/password"
-	},
-	{
 		name = "user.roles",
 		path = "/users/:user_id/roles"
 	},

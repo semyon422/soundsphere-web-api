@@ -1,7 +1,7 @@
 local Model = require("lapis.db.model").Model
 
-local scoers = Model:extend(
-	"scoers",
+local Scores = Model:extend(
+	"scores",
 	{
 		relations = {
 			{"user", belongs_to = "user", key = "user_id"},
@@ -12,4 +12,4 @@ local scoers = Model:extend(
 	}
 )
 
-return scoers
+return Scores

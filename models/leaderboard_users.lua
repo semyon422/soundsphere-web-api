@@ -1,6 +1,6 @@
 local Model = require("lapis.db.model").Model
 
-local leaderboard_users = Model:extend(
+local Leaderboard_users = Model:extend(
 	"leaderboard_users",
 	{
 		relations = {
@@ -10,4 +10,4 @@ local leaderboard_users = Model:extend(
 	}
 )
 
-return leaderboard_users
+return Leaderboard_users

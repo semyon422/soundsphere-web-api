@@ -1,6 +1,6 @@
 local Model = require("lapis.db.model").Model
 
-local user_statistics = Model:extend(
+local User_statistics = Model:extend(
 	"user_statistics",
 	{
 		relations = {
@@ -10,4 +10,4 @@ local user_statistics = Model:extend(
 	}
 )
 
-return user_statistics
+return User_statistics

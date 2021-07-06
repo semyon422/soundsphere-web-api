@@ -1,11 +1,11 @@
-local user_roles = require("models.user_roles")
-local group_users = require("models.group_users")
+local User_roles = require("models.user_roles")
+local Group_users = require("models.group_users")
+local Domains = require("models.domains")
 local preload = require("lapis.db.model").preload
-local domains = require("models.domains")
 
 local context_loader = {}
 
-local etot = {}
+local etot = {}  -- empty table of tables
 local etot_mt = {
 	__index = function(t, k)
 		local v = rawget(t, k)
@@ -26,7 +26,7 @@ local function load_role(roles, role_entry)
 	local role_info = roles[role_name]
 
 	role_info[domain_id] = true
-	local type_name = domains.types:to_name(type_id)
+	local type_name = Domains.types:to_name(type_id)
 	role_info[type_name] = role_info[type_name] or {}
 	local role_info_type = role_info[type_name]
 	table.insert(role_info_type, domain_id)
@@ -40,15 +40,15 @@ local function load_roles(user)
 
 	local roles = {}
 
-	local sub_user_roles = user_roles:find_all({user.id}, "user_id")
-	preload(sub_user_roles, "role", "domain")
-	for _, user_role in ipairs(sub_user_roles) do
+	local user_roles = User_roles:find_all({user.id}, "user_id")
+	preload(user_roles, "role", "domain")
+	for _, user_role in ipairs(user_roles) do
 		load_role(roles, user_role)
 	end
 
-	local sub_group_users = group_users:find_all({user.id}, "user_id")
-	preload(sub_group_users, {group = {group_roles = {"role", "domain"}}})
-	for _, group_user in ipairs(sub_group_users) do
+	local group_users = Group_users:find_all({user.id}, "user_id")
+	preload(group_users, {group = {group_roles = {"role", "domain"}}})
+	for _, group_user in ipairs(group_users) do
 		local group_roles = group_user.group.group_roles
 		for _, group_role in ipairs(group_roles) do
 			load_role(roles, group_role)

@@ -1,5 +1,5 @@
 local Model = require("lapis.db.model").Model
 
-local modifiers = Model:extend("modifiers")
+local Modifiers = Model:extend("modifiers")
 
-return modifiers
+return Modifiers

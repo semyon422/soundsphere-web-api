@@ -1,12 +1,12 @@
-local tables = require("models.tables")
+local Tables = require("models.tables")
 
 local table_c = {}
 
 table_c.GET = function(params)
-	local db_table_entry = tables:find(params.table_id)
+	local table = Tables:find(params.table_id)
 
-	if db_table_entry then
-		return 200, {table = db_table_entry}
+	if table then
+		return 200, {table = table}
 	end
 
 	return 404, {error = "Not found"}

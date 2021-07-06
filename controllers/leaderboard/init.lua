@@ -1,22 +1,22 @@
-local leaderboards = require("models.leaderboards")
+local Leaderboards = require("models.leaderboards")
 
 local leaderboard_c = {}
 
 leaderboard_c.GET = function(params)
-	local db_leaderboard_entry = leaderboards:find(params.leaderboard_id)
+	local leaderboard = Leaderboards:find(params.leaderboard_id)
 
-	return 200, {leaderboard = db_leaderboard_entry}
+	return 200, {leaderboard = leaderboard}
 end
 
 leaderboard_c.PATCH = function(params)
-	local leaderboard_entry = leaderboards:find(params.leaderboard.id)
+	local leaderboard = Leaderboards:find(params.leaderboard.id)
 
-	leaderboard_entry.name = params.leaderboard.name
-	leaderboard_entry.description = params.leaderboard.description
+	leaderboard.name = params.leaderboard.name
+	leaderboard.description = params.leaderboard.description
 
-	leaderboard_entry:update("name", "description")
+	leaderboard:update("name", "description")
 
-	return 200, {leaderboard = leaderboard_entry}
+	return 200, {leaderboard = leaderboard}
 end
 
 return leaderboard_c

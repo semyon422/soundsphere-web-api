@@ -1,6 +1,6 @@
 local Model = require("lapis.db.model").Model
 
-local table_notecharts = Model:extend(
+local Table_notecharts = Model:extend(
 	"table_notecharts",
 	{
 		relations = {
@@ -10,4 +10,4 @@ local table_notecharts = Model:extend(
 	}
 )
 
-return table_notecharts
+return Table_notecharts
