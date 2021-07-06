@@ -24,6 +24,8 @@ policy_set.policies = {
 	require("policy_sets.user.password"),
 	require("policy_sets.user.roles"),
 	require("policy_sets.user.statistics"),
+	require("policy_sets.user.communities"),
+	require("policy_sets.user.leaderboards"),
 	require("policy_sets.users"),
 	require("policy_sets.communities"),
 	require("policy_sets.community"),

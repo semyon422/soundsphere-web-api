@@ -24,6 +24,14 @@ local endpoints = {
 		path = "/users/:user_id/statistics"
 	},
 	{
+		name = "user.communities",
+		path = "/users/:user_id/communities"
+	},
+	{
+		name = "user.leaderboards",
+		path = "/users/:user_id/leaderboards"
+	},
+	{
 		name = "groups",
 		path = "/groups"
 	},
