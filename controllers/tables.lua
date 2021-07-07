@@ -23,4 +23,13 @@ tables_c.GET = function(params)
 	}
 end
 
+tables_c.POST = function(params)
+	local table = Tables:create({
+		name = params.name,
+		url = params.url,
+	})
+
+	return 200, {table = table}
+end
+
 return tables_c

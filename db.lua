@@ -70,6 +70,8 @@ table_declarations.leaderboards = {
 table_declarations.tables = {
 	{"id", type_id},
 	{"name", types.varchar},
+	{"url", types.varchar},
+	{"play_count", type_size},
 }
 
 table_declarations.table_notecharts = {
