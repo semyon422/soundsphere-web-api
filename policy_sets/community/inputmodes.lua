@@ -3,12 +3,11 @@ local PolicySet = require("abac.PolicySet")
 local policy_set = PolicySet:new()
 
 function policy_set:target(context)
-	return context.name == "leaderboard.community"
+	return context.name == "community.inputmodes"
 end
 
 policy_set.policies = {
-	require("policies.leaderboard.community.delete"),
-	require("policies.leaderboard.community.put"),
+	require("policies.community.inputmodes.get"),
 }
 
 policy_set.policy_combine_algorithm = require("abac.combine.only_one_applicable")

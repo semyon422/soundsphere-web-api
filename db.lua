@@ -60,6 +60,13 @@ table_declarations.leaderboard_users = {
 	"UNIQUE KEY `leaderboard_users` (`leaderboard_id`,`user_id`)"
 }
 
+table_declarations.leaderboard_inputmodes = {
+	{"id", type_id},
+	{"leaderboard_id", type_fk_id},
+	{"inputmode_id", type_fk_id},
+	"UNIQUE KEY `leaderboard_inputmodes` (`leaderboard_id`,`inputmode_id`)"
+}
+
 table_declarations.leaderboards = {
 	{"id", type_id},
 	{"domain_id", type_fk_id},
@@ -108,7 +115,6 @@ table_declarations.communities = {
 	{"alias", types.varchar},
 	{"short_description", types.varchar},
 	{"description", types.varchar},
-	{"user_count", type_size},
 }
 
 table_declarations.community_leaderboards = {

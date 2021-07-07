@@ -1,29 +1,30 @@
 local Leaderboard_users = require("models.leaderboard_users")
+local preload = require("lapis.db.model").preload
 
 local leaderboard_users_c = {}
 
-leaderboard_users_c.PUT = function(params)
-    local leaderboard_user = {
-        leaderboard_id = params.leaderboard_id,
-        user_id = params.user_id,
-    }
-    if not Leaderboard_users:find(leaderboard_user) then
-        Leaderboard_users:create(leaderboard_user)
-    end
+leaderboard_users_c.GET = function(params)
+    local leaderboard_users = Leaderboard_users:find_all({params.leaderboard_id}, "leaderboard_id")
+	preload(leaderboard_users, "user")
 
-	return 200, {}
-end
+	local users = {}
+	for _, leaderboard_user in ipairs(leaderboard_users) do
+		local user = leaderboard_user.user
+		table.insert(users, {
+			id = user.id,
+			name = user.name,
+			tag = user.tag,
+			latest_activity = user.latest_activity,
+		})
+	end
 
-leaderboard_users_c.DELETE = function(params)
-    local leaderboard_user = Leaderboard_users:find({
-        leaderboard_id = params.leaderboard_id,
-        user_id = params.user_id,
-    })
-    if leaderboard_user then
-        leaderboard_user:delete()
-    end
+	local count = Leaderboard_users:count()
 
-	return 200, {}
+	return 200, {
+		total = count,
+		filtered = count,
+		users = users
+	}
 end
 
 return leaderboard_users_c

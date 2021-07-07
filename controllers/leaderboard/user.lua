@@ -1,8 +1,8 @@
 local Leaderboard_users = require("models.leaderboard_users")
 
-local leaderboard_users_c = {}
+local leaderboard_user_c = {}
 
-leaderboard_users_c.PUT = function(params)
+leaderboard_user_c.PUT = function(params)
     local leaderboard_user = {
         leaderboard_id = params.leaderboard_id,
         user_id = params.user_id,
@@ -14,7 +14,7 @@ leaderboard_users_c.PUT = function(params)
 	return 200, {}
 end
 
-leaderboard_users_c.DELETE = function(params)
+leaderboard_user_c.DELETE = function(params)
     local leaderboard_user = Leaderboard_users:find({
         leaderboard_id = params.leaderboard_id,
         user_id = params.user_id,
@@ -26,4 +26,4 @@ leaderboard_users_c.DELETE = function(params)
 	return 200, {}
 end
 
-return leaderboard_users_c
+return leaderboard_user_c

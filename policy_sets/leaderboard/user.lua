@@ -7,7 +7,8 @@ function policy_set:target(context)
 end
 
 policy_set.policies = {
-	require("policies.leaderboard.user.get")
+	require("policies.leaderboard.user.delete"),
+	require("policies.leaderboard.user.put"),
 }
 
 policy_set.policy_combine_algorithm = require("abac.combine.only_one_applicable")
