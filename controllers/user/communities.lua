@@ -4,7 +4,19 @@ local preload = require("lapis.db.model").preload
 local user_communities_c = {}
 
 user_communities_c.GET = function(params)
-    local community_users = Community_users:find_all({params.user_id}, "user_id")
+	local where = {accepted = true}
+	if params.invitations then
+		where.invitations = true
+		where.accepted = false
+	elseif params.requests then
+		where.requests = true
+		where.accepted = false
+	end
+
+    local community_users = Community_users:find_all({params.user_id}, {
+		key = "user_id",
+		where = where
+	})
 	preload(community_users, "community")
 
     local communities = {}

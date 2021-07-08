@@ -129,7 +129,12 @@ table_declarations.community_users = {
 	{"community_id", type_fk_id},
 	{"user_id", type_fk_id},
 	{"accepted", types.boolean},
-	"UNIQUE KEY `community_users` (`community_id`,`user_id`), INDEX `accepted` (`accepted`)"
+	{"invitation", types.boolean},
+	[[
+		UNIQUE KEY `community_users` (`community_id`,`user_id`),
+		KEY `accepted` (`accepted`),
+		KEY `invitation` (`invitation`)
+	]]
 }
 
 table_declarations.community_tables = {
