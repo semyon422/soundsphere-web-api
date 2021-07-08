@@ -1,27 +1,34 @@
 local Leaderboards = require("models.leaderboards")
-local leaderboard_tables_c = require("controllers.leaderboard.tables")
-local leaderboard_communities_c = require("controllers.leaderboard.communities")
-local leaderboard_users_c = require("controllers.leaderboard.users")
+
+local additions = {
+	tables = require("controllers.leaderboard.tables"),
+	communities = require("controllers.leaderboard.communities"),
+	users = require("controllers.leaderboard.users"),
+}
 
 local leaderboard_c = {}
 
 leaderboard_c.GET = function(params)
 	local leaderboard = Leaderboards:find(params.leaderboard_id)
 
-	if params.tables then
-		local _, response = leaderboard_tables_c.GET(params)
-		leaderboard.tables = response.tables
-		leaderboard.tables_count = response.total
+	local fields = {}
+	for param, controller in pairs(additions) do
+		local value = tonumber(params[param])
+		if value then
+			local param_count = param .. "_count"
+			local _, response = controller.GET({
+				leaderboard_id = params.leaderboard_id,
+				per_page = value >= 0 and value
+			})
+			leaderboard[param] = response[param]
+			if leaderboard[param_count] ~= response.total then
+				leaderboard[param_count] = response.total
+				table.insert(fields, param_count)
+			end
+		end
 	end
-	if params.communities then
-		local _, response = leaderboard_communities_c.GET(params)
-		leaderboard.communities = response.communities
-		leaderboard.communities_count = response.total
-	end
-	if params.users then
-		local _, response = leaderboard_users_c.GET(params)
-		leaderboard.users = response.users
-		leaderboard.users_count = response.total
+	if #fields > 0 then
+		leaderboard:update(unpack(fields))
 	end
 
 	return 200, {leaderboard = leaderboard}

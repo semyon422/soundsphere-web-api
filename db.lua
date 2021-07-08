@@ -6,6 +6,7 @@ local db = {}
 local tables = {
 	"leaderboard_tables",
 	"leaderboard_users",
+	"leaderboard_inputmodes",
 	"leaderboards",
 	"tables",
 	"table_notecharts",
@@ -72,6 +73,10 @@ table_declarations.leaderboards = {
 	{"domain_id", type_fk_id},
 	{"name", types.varchar},
 	{"description", types.varchar},
+	{"communities_count", type_size},
+	{"tables_count", type_size},
+	{"users_count", type_size},
+	{"top_user_id", type_fk_id},
 }
 
 table_declarations.tables = {
@@ -115,6 +120,9 @@ table_declarations.communities = {
 	{"alias", types.varchar},
 	{"short_description", types.varchar},
 	{"description", types.varchar},
+	{"users_count", type_size},
+	{"leaderboards_count", type_size},
+	{"inputmodes_count", type_size},
 }
 
 table_declarations.community_leaderboards = {

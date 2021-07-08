@@ -3,7 +3,7 @@ local Domains = require("models.domains")
 local User_roles = require("models.user_roles")
 local Community_leaderboards = require("models.community_leaderboards")
 local Roles = require("models.roles")
-local domain = require "context_loaders.domain"
+local preload = require("lapis.db.model").preload
 
 local leaderboards_c = {}
 
@@ -14,10 +14,23 @@ leaderboards_c.GET = function(params)
 	local paginator = Leaderboards:paginated(
 		"order by id asc",
 		{
-			per_page = per_page
+			per_page = per_page,
+			prepare_results = function(entries)
+				preload(entries, {leaderboard_inputmodes = "inputmode"})
+				return entries
+			end
 		}
 	)
 	local leaderboards = paginator:get_page(page_num)
+
+	for _, leaderboard in ipairs(leaderboards) do
+		local inputmodes = {}
+		for _, entry in ipairs(leaderboard.leaderboard_inputmodes) do
+			table.insert(inputmodes, entry.inputmode)
+		end
+		leaderboard.inputmodes = inputmodes
+		leaderboard.leaderboard_inputmodes = nil
+	end
 
 	local count = Leaderboards:count()
 

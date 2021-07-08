@@ -22,13 +22,14 @@ communities_c.GET = function(params)
 		}
 	)
 	local communities = paginator:get_page(page_num)
+
 	for _, community in ipairs(communities) do
-		local community_inputmodes = community.community_inputmodes
 		local inputmodes = {}
-		for _, entry in ipairs(community_inputmodes) do
-			table.insert(inputmodes, entry.inputmode.name)
+		for _, entry in ipairs(community.community_inputmodes) do
+			table.insert(inputmodes, entry.inputmode)
 		end
 		community.inputmodes = inputmodes
+		community.community_inputmodes = nil
 	end
 
 	local count = Communities:count()

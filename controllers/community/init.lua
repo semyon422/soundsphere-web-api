@@ -1,27 +1,35 @@
 local Communities = require("models.communities")
-local community_inputmodes_c = require("controllers.community.inputmodes")
-local community_leaderboards_c = require("controllers.community.leaderboards")
-local community_users_c = require("controllers.community.users")
+
+local additions = {
+	inputmodes = require("controllers.community.inputmodes"),
+	leaderboards = require("controllers.community.leaderboards"),
+	users = require("controllers.community.users"),
+}
 
 local community_c = {}
 
 community_c.GET = function(params)
 	local community = Communities:find(params.community_id)
 
-	if params.inputmodes then
-		local _, response = community_inputmodes_c.GET(params)
-		community.inputmodes = response.inputmodes
-		community.inputmodes_count = response.total
+	local fields = {}
+	for param, controller in pairs(additions) do
+		local value = tonumber(params[param])
+		if value then
+			local param_count = param .. "_count"
+			local _, response = controller.GET({
+				community_id = params.community_id,
+				per_page = value >= 0 and value
+			})
+			community[param] = response[param]
+			if community[param_count] ~= response.total then
+				community[param_count] = response.total
+				table.insert(fields, param_count)
+			end
+		end
 	end
-	if params.leaderboards then
-		local _, response = community_leaderboards_c.GET(params)
-		community.leaderboards = response.leaderboards
-		community.leaderboards_count = response.total
-	end
-	if params.users then
-		local _, response = community_users_c.GET(params)
-		community.users = response.users
-		community.users_count = response.total
+	if #fields > 0 then
+		print(unpack(fields))
+		community:update(unpack(fields))
 	end
 
 	return 200, {community = community}
