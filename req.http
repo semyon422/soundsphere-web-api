@@ -30,3 +30,12 @@ GET http://localhost/ac/users?method=GET&method=POST
 Authorization: {{bearer_authorization}}
 
 ###
+GET http://localhost/api/communities/1/users
+###
+PUT http://localhost/api/communities/1/users/1
+###
+PUT http://localhost/api/communities/1/users/1?invitation=1
+###
+DELETE http://localhost:8081/api/communities/1/users/1
+###
+

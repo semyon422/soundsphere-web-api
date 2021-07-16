@@ -4,3 +4,5 @@ lit.exe
 lua51.dll
 luvi.exe
 luvit.exe
+curl.exe
+libcurl-x64.dll
