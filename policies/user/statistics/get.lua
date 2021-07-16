@@ -1,15 +1,1 @@
-local Policy = require("abac.Policy")
-
-local policy = Policy:new()
-
-function policy:target(context)
-	return context.req.method == "GET"
-end
-
-policy.rules = {
-	require("rules.user_profile")
-}
-
-policy.rule_combine_algorithm = require("abac.combine.permit_all_or_deny")
-
-return policy
+return require("policies.public_get")
