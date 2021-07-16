@@ -36,79 +36,79 @@ local function params(req)
 end
 
 local function route_api(path, name, controller)
-	return app.route(
-		{
-			path = path
-		},
-		function(req, res, go)
-			token_auth(req)
-			basic_auth(req)
-			local permit, context = pep:check(name, req)
-			if permit and controller[req.method] then
-				local code, response = controller[req.method](params(req))
-				res.code = code
-				res.body = util.to_json(response)
-			else
-				res.code = 200
-				res.body = util.to_json({decision = context.decision})
-			end
-			res.headers["Content-Type"] = "application/json"
-			return go()
+	return app.route({path = path}, function(req, res, go)
+		token_auth(req)
+		basic_auth(req)
+		local permit, context = pep:check(name, req)
+		if permit and controller[req.method] then
+			local code, response = controller[req.method](params(req))
+			res.code = code
+			res.body = util.to_json(response)
+		else
+			res.code = 200
+			res.body = util.to_json({decision = context.decision})
 		end
-	)
+		res.headers["Content-Type"] = "application/json"
+		return go()
+	end)
+end
+
+local function route_api_debug(path, name, controller)
+	return app.route({path = path}, function(req, res, go)
+		token_auth(req)
+		basic_auth(req)
+		if controller[req.method] then
+			local code, response = controller[req.method](params(req))
+			res.code = code
+			res.body = util.to_json(response)
+		else
+			res.code = 200
+			res.body = "{}"
+		end
+		res.headers["Content-Type"] = "application/json"
+		return go()
+	end)
 end
 
 local function route_datatables(path, name, controller, datatable)
-	return app.route(
-		{
-			path = path,
-			method = "GET"
-		},
-		function(req, res, go)
-			token_auth(req)
-			basic_auth(req)
-			local permit, context = pep:check(name, req)
-			if permit and controller.GET then
-				local _params = params(req)
-				local code, response = controller.GET(datatable.params(_params))
-				res.code = code
-				res.body = util.to_json(datatable.response(response, _params))
-			else
-				res.code = 200
-				res.body = util.to_json({decision = context.decision})
-			end
-			res.headers["Content-Type"] = "application/json"
-			return go()
+	return app.route({path = path, method = "GET"}, function(req, res, go)
+		token_auth(req)
+		basic_auth(req)
+		local permit, context = pep:check(name, req)
+		if permit and controller.GET then
+			local _params = params(req)
+			local code, response = controller.GET(datatable.params(_params))
+			res.code = code
+			res.body = util.to_json(datatable.response(response, _params))
+		else
+			res.code = 200
+			res.body = util.to_json({decision = context.decision})
 		end
-	)
+		res.headers["Content-Type"] = "application/json"
+		return go()
+	end)
 end
 
 local function route_ac(path, name)
-	return app.route(
-		{
-			path = path,
-			method = "GET"
-		},
-		function(req, res, go)
-			token_auth(req)
-			basic_auth(req)
-			if not req.query or not req.query.method then
-				return
-			end
-			local query_method = req.query.method
-			local methods = type(query_method) == "string" and {query_method} or query_method
-			local decisions = {}
-			for _, method in ipairs(methods) do
-				req.method = method
-				local permit, context = pep:check(name, req)
-				decisions[method] = context.decision
-			end
-			res.code = 200
-			res.body = util.to_json({decisions = decisions})
-			res.headers["Content-Type"] = "application/json"
-			return go()
+	return app.route({path = path, method = "GET"}, function(req, res, go)
+		token_auth(req)
+		basic_auth(req)
+		if not req.query or not req.query.method then
+			return
 		end
-	)
+		local query_method = req.query.method
+		local methods = type(query_method) == "string" and {query_method} or query_method
+		local decisions = {}
+		for _, method in ipairs(methods) do
+			req.method = method
+			local permit, context = pep:check(name, req)
+			decisions[method] = context.decision
+		end
+		res.code = 200
+		res.body = util.to_json({decisions = decisions})
+		res.headers["Content-Type"] = "application/json"
+		return go()
+	end)
 end
 
 -- permit, deny, not_applicable, indeterminate
@@ -118,6 +118,7 @@ local endpoints = require("endpoints")
 for _, endpoint in ipairs(endpoints) do
 	local controller = require("controllers." .. endpoint.name)
 	route_api("/api" .. endpoint.path, endpoint.name, controller)
+	route_api_debug("/api_debug" .. endpoint.path, endpoint.name, controller)
 	route_ac("/ac" .. endpoint.path, endpoint.name)
 
 	local ok, datatable = pcall(require, "datatables." .. endpoint.name)

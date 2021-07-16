@@ -1,17 +1,19 @@
+@api = http://localhost/api_debug
+
 @bearer_authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJuYmYiOjE2MjUxNDk2NDl9.FIHNyJtApaGHuFFhBbvcr0zutikmGvbdAEbe52BbCRE
 @login_authorization = Basic YWRtaW5AYWRtaW46cGFzc3dvcmQ=
 # admin@admin:password
 
-GET http://localhost/api/token
+GET {{api}}/token
 Authorization: {{login_authorization}}
 
 ###
-GET http://localhost/api/users
+GET {{api}}/users
     ?page_num=1
     &per_page=10
 
 ###
-POST http://localhost/api/users
+POST {{api}}/users
 Authorization: {{bearer_authorization}}
 Content-Type: application/json
 
@@ -22,7 +24,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost/api/users/1
+GET {{api}}/users/1
 Authorization: {{bearer_authorization}}
 
 ###
@@ -30,11 +32,11 @@ GET http://localhost/ac/users?method=GET&method=POST
 Authorization: {{bearer_authorization}}
 
 ###
-GET http://localhost/api/communities/1/users
+GET {{api}}/communities/1/users
 ###
-PUT http://localhost/api/communities/1/users/1
+PUT {{api}}/communities/1/users/1
 ###
-PUT http://localhost/api/communities/1/users/1?invitation=1
+PUT {{api}}/communities/1/users/1?invitation=1
 ###
 DELETE http://localhost:8081/api/communities/1/users/1
 ###
