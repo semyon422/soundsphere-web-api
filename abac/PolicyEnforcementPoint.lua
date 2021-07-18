@@ -23,22 +23,13 @@ function PolicyEnforcementPoint:check(endpoint, req)
 	local decision
 	for i = 0, #policies - 1 do
 		local policy = policies[i + 1]
-		local rules = policy.rules
 		local policy_decision
 		for j = 0, #policy.rules - 1 do
-			local rule = rules[j + 1]
+			local rule = policy.rules[j + 1]
 			local rule_decision = rule:evaluate(context)
-			if policy_decision then
-				policy_decision = policy.rule_combine_algorithm(policy_decision, rule_decision)
-			else
-				policy_decision = rule_decision
-			end
+			policy_decision = policy_decision and policy.combine(policy_decision, rule_decision) or rule_decision
 		end
-		if decision then
-			decision = first_applicable(decision, policy_decision)
-		else
-			decision = policy_decision
-		end
+		decision = decision and first_applicable(decision, policy_decision) or policy_decision
 	end
 
 	context.decision = decision
