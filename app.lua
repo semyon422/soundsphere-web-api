@@ -14,7 +14,7 @@ app.use(require("weblit-etag-cache"))
 local PolicyEnforcementPoint = require("abac.PolicyEnforcementPoint")
 
 local pep = PolicyEnforcementPoint:new()
-pep.policy_sets = require("policy_sets")
+-- pep.policy_sets = require("policy_sets")
 
 local token_auth = require("token_auth")
 local basic_auth = require("basic_auth")
@@ -35,11 +35,11 @@ local function params(req)
 	return t
 end
 
-local function route_api(path, name, controller)
+local function route_api(path, endpoint, controller)
 	return app.route({path = path}, function(req, res, go)
 		token_auth(req)
 		basic_auth(req)
-		local permit, context = pep:check(name, req)
+		local permit, context = pep:check(endpoint, req)
 		if permit and controller[req.method] then
 			local code, response = controller[req.method](params(req))
 			res.code = code
@@ -53,7 +53,7 @@ local function route_api(path, name, controller)
 	end)
 end
 
-local function route_api_debug(path, name, controller)
+local function route_api_debug(path, endpoint, controller)
 	return app.route({path = path}, function(req, res, go)
 		token_auth(req)
 		basic_auth(req)
@@ -70,11 +70,11 @@ local function route_api_debug(path, name, controller)
 	end)
 end
 
-local function route_datatables(path, name, controller, datatable)
+local function route_datatables(path, endpoint, controller, datatable)
 	return app.route({path = path, method = "GET"}, function(req, res, go)
 		token_auth(req)
 		basic_auth(req)
-		local permit, context = pep:check(name, req)
+		local permit, context = pep:check(endpoint, req)
 		if permit and controller.GET then
 			local _params = params(req)
 			local code, response = controller.GET(datatable.params(_params))
@@ -89,7 +89,7 @@ local function route_datatables(path, name, controller, datatable)
 	end)
 end
 
-local function route_ac(path, name)
+local function route_ac(path, endpoint)
 	return app.route({path = path, method = "GET"}, function(req, res, go)
 		token_auth(req)
 		basic_auth(req)
@@ -101,7 +101,7 @@ local function route_ac(path, name)
 		local decisions = {}
 		for _, method in ipairs(methods) do
 			req.method = method
-			local permit, context = pep:check(name, req)
+			local permit, context = pep:check(endpoint, req)
 			decisions[method] = context.decision
 		end
 		res.code = 200
@@ -117,13 +117,13 @@ local endpoints = require("endpoints")
 
 for _, endpoint in ipairs(endpoints) do
 	local controller = require("controllers." .. endpoint.name)
-	route_api("/api" .. endpoint.path, endpoint.name, controller)
-	route_api_debug("/api_debug" .. endpoint.path, endpoint.name, controller)
-	route_ac("/ac" .. endpoint.path, endpoint.name)
+	route_api("/api" .. endpoint.path, endpoint, controller)
+	route_api_debug("/api_debug" .. endpoint.path, endpoint, controller)
+	route_ac("/ac" .. endpoint.path, endpoint)
 
 	local ok, datatable = pcall(require, "datatables." .. endpoint.name)
 	if ok then
-		route_datatables("/dt" .. endpoint.path, endpoint.name, controller, datatable)
+		route_datatables("/dt" .. endpoint.path, endpoint, controller, datatable)
 	end
 end
 
