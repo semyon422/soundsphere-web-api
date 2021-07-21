@@ -110,11 +110,11 @@ table_declarations.table_notecharts = {
 
 table_declarations.roles = {
 	{"id", type_id},
-	{"roletype", type_fk_id},
+	{"roletype", types.enum},
 	{"subject_id", type_fk_id},
-	{"subject_type", schema.types.enum},
+	{"subject_type", types.enum},
 	{"object_id", type_fk_id},
-	{"object_type", schema.types.enum},
+	{"object_type", types.enum},
 	"UNIQUE KEY `subject_object` (`roletype`,`subject_id`,`subject_type`,`object_id`,`object_type`)"
 }
 
@@ -211,7 +211,7 @@ table_declarations.modifiers = {
 table_declarations.notecharts = {
 	{"id", type_id},
 	{"container_id", type_fk_id},
-	{"index", type_fk_id},
+	{"index", types.enum},
 	{"creation_time", type_time},
 	{"play_count", type_size},
 	{"inputmode", types.enum},
