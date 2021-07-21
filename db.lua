@@ -22,8 +22,6 @@ local tables = {
 	"group_users",
 	"groups",
 	"containers",
-	"formats",
-	"inputmodes",
 	"modifiers",
 	"notecharts",
 	"scores",
@@ -82,8 +80,8 @@ table_declarations.leaderboard_scores = {
 table_declarations.leaderboard_inputmodes = {
 	{"id", type_id},
 	{"leaderboard_id", type_fk_id},
-	{"inputmode_id", type_fk_id},
-	"UNIQUE KEY `leaderboard_inputmodes` (`leaderboard_id`,`inputmode_id`)"
+	{"inputmode", types.enum},
+	"UNIQUE KEY `leaderboard_inputmodes` (`leaderboard_id`,`inputmode`)"
 }
 
 table_declarations.leaderboards = {
@@ -173,8 +171,8 @@ table_declarations.community_tables = {
 table_declarations.community_inputmodes = {
 	{"id", type_id},
 	{"community_id", type_fk_id},
-	{"inputmode_id", type_fk_id},
-	"UNIQUE KEY `community_inputmodes` (`community_id`,`inputmode_id`)"
+	{"inputmode", types.enum},
+	"UNIQUE KEY `community_inputmodes` (`community_id`,`inputmode`)"
 }
 
 table_declarations.group_users = {
@@ -192,27 +190,16 @@ table_declarations.groups = {
 table_declarations.containers = {
 	{"id", type_id},
 	{"hash", type_hash},
-	{"format_id", type_fk_id},
+	{"format", types.enum},
 	{"uploaded", types.boolean},
 	{"size", type_size},
 	{"imported", types.boolean},
 	{"creation_time", type_time},
 	[[
 		UNIQUE KEY `hash` (`hash`),
-		KEY `format_id` (`format_id`),
+		KEY `format` (`format`),
 		KEY `imported` (`imported`)
 	]]
-}
-
-table_declarations.formats = {
-	{"id", type_id},
-	{"extension", types.varchar({length = 4})},
-	{"blocked", types.boolean({default = 0})},
-}
-
-table_declarations.inputmodes = {
-	{"id", type_id},
-	{"name", types.varchar},
 }
 
 table_declarations.modifiers = {
@@ -227,7 +214,7 @@ table_declarations.notecharts = {
 	{"index", type_fk_id},
 	{"creation_time", type_time},
 	{"play_count", type_size},
-	{"inputmode_id", type_fk_id},
+	{"inputmode", types.enum},
 	{"difficulty", types.float},
 	{"song_title", types.text},
 	{"song_artist", types.text},
@@ -235,7 +222,7 @@ table_declarations.notecharts = {
 	{"difficulty_creator", types.text},
 	[[
 		UNIQUE KEY `hashindex` (`container_id`,`index`),
-		KEY `inputmode_id` (`inputmode_id`)
+		KEY `inputmode` (`inputmode`)
 	]]
 }
 
@@ -244,7 +231,7 @@ table_declarations.scores = {
 	{"user_id", type_fk_id},
 	{"notechart_id", type_fk_id},
 	{"modifier_id", type_fk_id},
-	{"inputmode_id", type_fk_id},
+	{"inputmode", types.enum},
 	{"replay_hash", type_hash},
 	{"is_valid", types.boolean},
 	{"calculated", types.boolean},
@@ -260,7 +247,7 @@ table_declarations.scores = {
 		KEY `user_id` (`user_id`),
 		KEY `notechart_id` (`notechart_id`),
 		KEY `modifier_id` (`modifier_id`),
-		KEY `inputmode_id` (`inputmode_id`),
+		KEY `inputmode` (`inputmode`),
 		KEY `performance` (`performance`),
 		KEY `calculated` (`calculated`)
 	]]

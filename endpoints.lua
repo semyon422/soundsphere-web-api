@@ -98,8 +98,8 @@ local endpoints = {
 	},
 	{
 		name = "community.inputmode",
-		path = "/communities/:community_id/inputmodes/:inputmode_id",
-		context = {"community", "inputmode"},
+		path = "/communities/:community_id/inputmodes/:inputmode",
+		context = {"community"},
 	},
 	{
 		name = "leaderboards",

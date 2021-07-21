@@ -18,7 +18,7 @@ leaderboard_c.GET = function(params)
 			local param_count = param .. "_count"
 			local _, response = controller.GET({
 				leaderboard_id = params.leaderboard_id,
-				per_page = value >= 0 and value
+				per_page = value == 0 and value
 			})
 			leaderboard[param] = response[param]
 			if leaderboard[param_count] ~= response.total then

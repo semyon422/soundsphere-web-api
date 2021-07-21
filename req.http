@@ -38,6 +38,7 @@ PUT {{api}}/communities/1/users/1
 ###
 PUT {{api}}/communities/1/users/1?invitation=1
 ###
-DELETE http://localhost:8081/api/communities/1/users/1
+DELETE {{api}}/api/communities/1/users/1
 ###
-
+PUT {{api}}/communities/1/inputmodes/4key
+###
