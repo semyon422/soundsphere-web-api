@@ -1,10 +1,11 @@
 local Model = require("lapis.db.model").Model
+local Roles = require("models.roles")
 
 local Users = Model:extend(
 	"users",
 	{
 		relations = {
-			{"user_roles", has_many = "user_roles", key = "user_id"}
+			{"roles", has_many = "roles", key = "subject_id", where = {subject_type = Roles.subject_types.users}}
 		}
 	}
 )

@@ -17,8 +17,8 @@ local login = function(email, password)
 	return false, failed
 end
 
-token_c.GET = function(params)
-	local user, err = login(params.email, params.password)
+token_c.GET = function(params, context)
+	local user, err = login(context.basic.email, context.basic.password)
 
 	local token
 	if user then

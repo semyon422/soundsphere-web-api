@@ -1,4 +1,4 @@
-@api = http://localhost/api_debug
+@api = http://localhost/api
 
 @bearer_authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJuYmYiOjE2MjUxNDk2NDl9.FIHNyJtApaGHuFFhBbvcr0zutikmGvbdAEbe52BbCRE
 @login_authorization = Basic YWRtaW5AYWRtaW46cGFzc3dvcmQ=

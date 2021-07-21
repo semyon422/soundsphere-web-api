@@ -4,21 +4,21 @@ local types = schema.types
 local db = {}
 
 local tables = {
+	"scopes",
 	"leaderboard_tables",
 	"leaderboard_users",
+	"leaderboard_scores",
 	"leaderboard_inputmodes",
 	"leaderboards",
 	"tables",
 	"table_notecharts",
-	"user_roles",
+	"roles",
 	"users",
 	"communities",
 	"community_leaderboards",
 	"community_users",
 	"community_tables",
 	"community_inputmodes",
-	"domains",
-	"group_roles",
 	"group_users",
 	"groups",
 	"containers",
@@ -27,7 +27,6 @@ local tables = {
 	"modifiers",
 	"notecharts",
 	"scores",
-	"user_statistics",
 }
 
 local table_declarations = {}
@@ -47,6 +46,12 @@ local options = {
 -- COLLATE=utf8mb4_0900_ai_ci
 -- COLLATE=utf8mb4_unicode_520_ci
 
+table_declarations.scopes = {
+	{"id", type_id},
+	{"name", type_fk_id},
+	"UNIQUE KEY `name` (`name`)"
+}
+
 table_declarations.leaderboard_tables = {
 	{"id", type_id},
 	{"leaderboard_id", type_fk_id},
@@ -58,7 +63,20 @@ table_declarations.leaderboard_users = {
 	{"id", type_id},
 	{"leaderboard_id", type_fk_id},
 	{"user_id", type_fk_id},
+	{"active", types.boolean},
+	{"play_count", type_size},
+	{"total_performance", types.float},
+	{"total_accuracy", types.float},
 	"UNIQUE KEY `leaderboard_users` (`leaderboard_id`,`user_id`)"
+}
+
+table_declarations.leaderboard_scores = {
+	{"id", type_id},
+	{"leaderboard_id", type_fk_id},
+	{"user_id", type_fk_id},
+	{"notechart_id", type_fk_id},
+	{"score_id", type_fk_id},
+	"UNIQUE KEY `leaderboard_user_notechart` (`leaderboard_id`,`user_id`,`notechart_id`)"
 }
 
 table_declarations.leaderboard_inputmodes = {
@@ -70,7 +88,6 @@ table_declarations.leaderboard_inputmodes = {
 
 table_declarations.leaderboards = {
 	{"id", type_id},
-	{"domain_id", type_fk_id},
 	{"name", types.varchar},
 	{"description", types.varchar},
 	{"communities_count", type_size},
@@ -93,12 +110,14 @@ table_declarations.table_notecharts = {
 	"UNIQUE KEY `table_notecharts` (`table_id`,`notechart_id`)"
 }
 
-table_declarations.user_roles = {
+table_declarations.roles = {
 	{"id", type_id},
-	{"user_id", type_fk_id},
 	{"roletype", type_fk_id},
-	{"domain_id", type_fk_id},
-	"UNIQUE KEY `user_role_domain` (`user_id`,`roletype`,`domain_id`)"
+	{"subject_id", type_fk_id},
+	{"subject_type", schema.types.enum},
+	{"object_id", type_fk_id},
+	{"object_type", schema.types.enum},
+	"UNIQUE KEY `subject_object` (`roletype`,`subject_id`,`subject_type`,`object_id`,`object_type`)"
 }
 
 table_declarations.users = {
@@ -115,7 +134,6 @@ table_declarations.users = {
 
 table_declarations.communities = {
 	{"id", type_id},
-	{"domain_id", type_fk_id},
 	{"name", types.varchar},
 	{"alias", types.varchar},
 	{"short_description", types.varchar},
@@ -157,19 +175,6 @@ table_declarations.community_inputmodes = {
 	{"community_id", type_fk_id},
 	{"inputmode_id", type_fk_id},
 	"UNIQUE KEY `community_inputmodes` (`community_id`,`inputmode_id`)"
-}
-
-table_declarations.domains = {
-	{"id", type_id},
-	{"domaintype", type_fk_id},
-}
-
-table_declarations.group_roles = {
-	{"id", type_id},
-	{"group_id", type_fk_id},
-	{"roletype", type_fk_id},
-	{"domain_id", type_fk_id},
-	"UNIQUE KEY `group_role_domain` (`group_id`,`roletype`,`domain_id`)"
 }
 
 table_declarations.group_users = {
@@ -259,16 +264,6 @@ table_declarations.scores = {
 		KEY `performance` (`performance`),
 		KEY `calculated` (`calculated`)
 	]]
-}
-
-table_declarations.user_statistics = {
-	{"id", type_id},
-	{"user_id", type_fk_id},
-	{"leaderboard_id", type_fk_id},
-	{"active", types.boolean},
-	{"play_count", type_size},
-	{"total_performance", types.float},
-	{"total_accuracy", types.float},
 }
 
 function db.drop()

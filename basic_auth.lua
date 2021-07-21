@@ -12,7 +12,7 @@ return function(req)
     if not email then
         return
     end
-	req.basic = {
+	return {
         email = email,
         password = password
     }

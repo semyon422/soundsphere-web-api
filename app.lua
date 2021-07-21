@@ -19,7 +19,7 @@ local pep = PolicyEnforcementPoint:new()
 local token_auth = require("token_auth")
 local basic_auth = require("basic_auth")
 
-local function params(req)
+local function get_params(req)
 	local t = {}
 	for k, v in pairs(req.params) do t[k] = v end
 	if req.query then
@@ -29,19 +29,24 @@ local function params(req)
 		local json_body = util.from_json(req.body)
 		for k, v in pairs(json_body) do t[k] = v end
 	end
-	if req.basic then
-		for k, v in pairs(req.basic) do t[k] = v end
-	end
 	return t
+end
+
+local function get_context(req)
+	return {
+		req = req,
+		params = get_params(req),
+		basic = basic_auth(req),
+		token = token_auth(req),
+	}
 end
 
 local function route_api(path, endpoint, controller)
 	return app.route({path = path}, function(req, res, go)
-		token_auth(req)
-		basic_auth(req)
-		local permit, context = pep:check(endpoint, req)
+		local context = get_context(req)
+		local permit = pep:check(endpoint, context)
 		if permit and controller[req.method] then
-			local code, response = controller[req.method](params(req))
+			local code, response = controller[req.method](context.params, context)
 			res.code = code
 			res.body = util.to_json(response)
 		else
@@ -55,10 +60,9 @@ end
 
 local function route_api_debug(path, endpoint, controller)
 	return app.route({path = path}, function(req, res, go)
-		token_auth(req)
-		basic_auth(req)
+		local context = get_context(req)
 		if controller[req.method] then
-			local code, response = controller[req.method](params(req))
+			local code, response = controller[req.method](context.params, context)
 			res.code = code
 			res.body = util.to_json(response)
 		else
@@ -72,14 +76,12 @@ end
 
 local function route_datatables(path, endpoint, controller, datatable)
 	return app.route({path = path, method = "GET"}, function(req, res, go)
-		token_auth(req)
-		basic_auth(req)
-		local permit, context = pep:check(endpoint, req)
+		local context = get_context(req)
+		local permit = pep:check(endpoint, context)
 		if permit and controller.GET then
-			local _params = params(req)
-			local code, response = controller.GET(datatable.params(_params))
+			local code, response = controller.GET(datatable.params(context.params), context)
 			res.code = code
-			res.body = util.to_json(datatable.response(response, _params))
+			res.body = util.to_json(datatable.response(response, context.params))
 		else
 			res.code = 200
 			res.body = util.to_json({decision = context.decision})
@@ -91,17 +93,16 @@ end
 
 local function route_ac(path, endpoint)
 	return app.route({path = path, method = "GET"}, function(req, res, go)
-		token_auth(req)
-		basic_auth(req)
 		if not req.query or not req.query.method then
 			return
 		end
+		local context = get_context(req)
 		local query_method = req.query.method
 		local methods = type(query_method) == "string" and {query_method} or query_method
 		local decisions = {}
 		for _, method in ipairs(methods) do
 			req.method = method
-			local permit, context = pep:check(endpoint, req)
+			local permit = pep:check(endpoint, context)
 			decisions[method] = context.decision
 		end
 		res.code = 200

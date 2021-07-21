@@ -5,15 +5,85 @@ local Roles = Model:extend(
 	"roles",
 	{
 		relations = {
-			{"user_roles", has_many = "user_roles", key = "role_id"},
-			{"group_roles", has_many = "group_roles", key = "role_id"},
+			{"subject", polymorphic_belongs_to = {
+				[1] = {"users"},
+				[2] = {"groups"},
+			}},
+			{"object", polymorphic_belongs_to = {
+				[1] = {"scopes"},
+				[2] = {"communities"},
+				[3] = {"leaderboards"},
+			}},
+		},
+		constraints = {
+			subject_type = function(self, value, key, obj)
+				if value ~= 1 and obj.object_type ~= 1 then
+					return "Group can have a role only in a scope"
+				end
+			end
 		}
 	}
 )
 
 Roles.types = enum({
 	creator = 1,
-	admin = 2,
+	user = 2,
+	admin = 3,
+	moderator = 4,
 })
+
+local table_names = {
+	user = "users",
+	group = "groups",
+	scope = "scopes",
+	community = "communities",
+	leaderboard = "leaderboards",
+}
+
+local entry_names = {
+	users = "user",
+	groups = "group",
+	scopes = "scope",
+	communities = "community",
+	leaderboards = "leaderboard",
+}
+
+function Roles:assign(roletype, obj)
+	local role = {}
+	role.roletype = self.types:for_db(roletype)
+	for key, value in pairs(obj) do
+		local table_name = table_names[key:match("^(.+)_id$")]
+		if self.object_types[table_name] then
+			role.object_type = self.object_types:for_db(table_name)
+			role.object_id = value
+		elseif self.subject_types[table_name] then
+			role.subject_type = self.subject_types:for_db(table_name)
+			role.subject_id = value
+		end
+	end
+	return self:create(role)
+end
+
+function Roles:extract_list(obj)
+	local rows = {}
+	for key, value in pairs(obj) do
+		local table_name = table_names[key:match("^(.+)_id$")]
+		if self.subject_types[table_name] then
+			rows = self:select({where = {
+				subject_type = self.subject_types:for_db(table_name),
+				subject_id = value
+			}})
+		end
+	end
+	local roles = {}
+	for _, row in ipairs(rows) do
+		table.insert(roles, {
+			roletype = Roles.types:to_name(row.roletype),
+			object_type = self.object_types:to_name(row.object_type),
+			object_id = row.object_id
+		})
+	end
+	return roles
+end
 
 return Roles

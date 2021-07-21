@@ -10,5 +10,5 @@ return function(req)
 	if not token then return end
 	local payload, err = jwt.decode(token, key)
 	if not payload then return end
-	req.token = payload
+	return payload
 end
