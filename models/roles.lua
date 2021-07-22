@@ -14,13 +14,6 @@ local Roles = Model:extend(
 				[2] = {"communities"},
 				[3] = {"leaderboards"},
 			}},
-		},
-		constraints = {
-			subject_type = function(self, value, key, obj)
-				if value ~= 1 and obj.object_type ~= 1 then
-					return "Group can have a role only in a scope"
-				end
-			end
 		}
 	}
 )
@@ -48,20 +41,37 @@ local entry_names = {
 	leaderboards = "leaderboard",
 }
 
-function Roles:assign(roletype, obj)
+local function get_role(roletype, obj)
 	local role = {}
-	role.roletype = self.types:for_db(roletype)
+	role.roletype = Roles.types:for_db(roletype)
 	for key, value in pairs(obj) do
 		local table_name = table_names[key:match("^(.+)_id$")]
-		if self.object_types[table_name] then
-			role.object_type = self.object_types:for_db(table_name)
+		if Roles.object_types[table_name] then
+			role.object_type = Roles.object_types:for_db(table_name)
 			role.object_id = value
-		elseif self.subject_types[table_name] then
-			role.subject_type = self.subject_types:for_db(table_name)
+		elseif Roles.subject_types[table_name] then
+			role.subject_type = Roles.subject_types:for_db(table_name)
 			role.subject_id = value
 		end
 	end
-	return self:create(role)
+	return role
+end
+
+function Roles:assign(roletype, obj)
+	local role = get_role(roletype, obj)
+	local found_role = self:find(role)
+	if not found_role then
+		return self:create(role)
+	end
+	return found_role
+end
+
+function Roles:reject(roletype, obj)
+	local role = get_role(roletype, obj)
+	role = self:find(role)
+	if role then
+		role:delete()
+	end
 end
 
 function Roles:extract_list(obj)

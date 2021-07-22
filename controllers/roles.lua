@@ -23,4 +23,16 @@ roles_c.GET = function(params)
 	}
 end
 
+roles_c.POST = function(params)
+	local role = Roles:assign(params.roletype, params)
+
+	return 200, {role = role}
+end
+
+roles_c.DELETE = function(params)
+	Roles:reject(params.roletype, params)
+
+	return 200, {}
+end
+
 return roles_c

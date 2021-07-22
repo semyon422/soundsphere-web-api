@@ -18,7 +18,7 @@ Authorization: {{bearer_authorization}}
 Content-Type: application/json
 
 {
-    "name": "new user",
+	"name": "new user",
     "email": "aaaa1",
     "password": "password"
 }
@@ -42,3 +42,23 @@ DELETE {{api}}/api/communities/1/users/1
 ###
 PUT {{api}}/communities/1/inputmodes/4key
 ###
+POST {{api}}/roles
+Content-Type: application/json
+
+{
+	"roletype": "moderator",
+	"user_id": 22,
+	"leaderboard_id": 99
+}
+###
+DELETE {{api}}/roles
+Content-Type: application/json
+
+{
+	"roletype": "moderator",
+	"user_id": 22,
+	"leaderboard_id": 99
+}
+###
+
+GET {{api}}/users/22/roles
