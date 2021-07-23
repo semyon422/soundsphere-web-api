@@ -6,15 +6,8 @@ function PolicyEnforcementPoint:new()
 	return setmetatable({}, {__index = PolicyEnforcementPoint})
 end
 
-function PolicyEnforcementPoint:check(endpoint, context)
-	if endpoint.context then
-		for _, name in ipairs(endpoint.context) do
-			local context_loader = require("context_loaders." .. name)
-			context_loader:load_context(context)
-		end
-	end
-
-	local policies = require("policies." .. endpoint.name)[context.req.method]
+function PolicyEnforcementPoint:check(context, name, method)
+	local policies = require("policies." .. name)[method]
 	local decision
 	for i = 0, #policies - 1 do
 		local policy = policies[i + 1]

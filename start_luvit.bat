@@ -2,7 +2,7 @@ call setpaths.bat
 
 :start
 
-luvit app.lua
+luvit app_luvit.lua
 
 timeout /t 1
 

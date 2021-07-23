@@ -14,7 +14,6 @@ app.use(require("weblit-etag-cache"))
 local PolicyEnforcementPoint = require("abac.PolicyEnforcementPoint")
 
 local pep = PolicyEnforcementPoint:new()
--- pep.policy_sets = require("policy_sets")
 
 local token_auth = require("token_auth")
 local basic_auth = require("basic_auth")
@@ -32,19 +31,27 @@ local function get_params(req)
 	return t
 end
 
-local function get_context(req)
-	return {
-		req = req,
+local function get_context(endpoint, req)
+	local context = {
 		params = get_params(req),
 		basic = basic_auth(req),
 		token = token_auth(req),
 	}
+
+	if endpoint.context then
+		for _, name in ipairs(endpoint.context) do
+			local context_loader = require("context_loaders." .. name)
+			context_loader:load_context(context)
+		end
+	end
+
+	return context
 end
 
 local function route_api(path, endpoint, controller)
 	return app.route({path = path}, function(req, res, go)
-		local context = get_context(req)
-		local permit = pep:check(endpoint, context)
+		local context = get_context(endpoint, req)
+		local permit = pep:check(context, endpoint.name, req.method)
 		if permit and controller[req.method] then
 			local code, response = controller[req.method](context.params, context)
 			res.code = code
@@ -60,7 +67,7 @@ end
 
 local function route_api_debug(path, endpoint, controller)
 	return app.route({path = path}, function(req, res, go)
-		local context = get_context(req)
+		local context = get_context(endpoint, req)
 		if controller[req.method] then
 			local code, response = controller[req.method](context.params, context)
 			res.code = code
@@ -76,8 +83,8 @@ end
 
 local function route_datatables(path, endpoint, controller, datatable)
 	return app.route({path = path, method = "GET"}, function(req, res, go)
-		local context = get_context(req)
-		local permit = pep:check(endpoint, context)
+		local context = get_context(endpoint, req)
+		local permit = pep:check(context, endpoint.name, req.method)
 		if permit and controller.GET then
 			local code, response = controller.GET(datatable.params(context.params), context)
 			res.code = code
@@ -96,13 +103,12 @@ local function route_ac(path, endpoint)
 		if not req.query or not req.query.method then
 			return
 		end
-		local context = get_context(req)
+		local context = get_context(endpoint, req)
 		local query_method = req.query.method
 		local methods = type(query_method) == "string" and {query_method} or query_method
 		local decisions = {}
 		for _, method in ipairs(methods) do
-			req.method = method
-			local permit = pep:check(endpoint, context)
+			local permit = pep:check(context, endpoint.name, method)
 			decisions[method] = context.decision
 		end
 		res.code = 200
