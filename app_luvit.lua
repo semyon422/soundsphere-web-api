@@ -15,8 +15,8 @@ local PolicyEnforcementPoint = require("abac.PolicyEnforcementPoint")
 
 local pep = PolicyEnforcementPoint:new()
 
-local token_auth = require("token_auth")
-local basic_auth = require("basic_auth")
+local token_auth = require("auth.token")
+local basic_auth = require("auth.basic")
 
 local function get_params(req)
 	local t = {}
