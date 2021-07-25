@@ -1,14 +1,11 @@
 deps/*
 lapis/*
+temp/*
 nginx-1.19.10/*
 lit.exe
 lua51.dll
 luvi.exe
 luvit.exe
-scgi_temp
-uwsgi_temp
-client_body_temp
-fastcgi_temp
-proxy_temp
 logs
 secret.lua
+nginx.conf.compiled
