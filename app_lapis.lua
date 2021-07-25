@@ -111,4 +111,27 @@ for _, endpoint in ipairs(endpoints) do
 	end
 end
 
+app:match("/create_db", function(self)
+	local db = require("db")
+	db.drop()
+	db.create()
+
+	local admin = {
+		name = "admin",
+		tag = "0000",
+		email = "admin@admin",
+		password = "password"
+	}
+
+	local lapisdb = require("lapis.db")
+	local bcrypt = require("bcrypt")
+	lapisdb.query(
+		"INSERT INTO `users` (`name`, `tag`, `email`, `password`) VALUES (?, ?, ?, ?);",
+		admin.name,
+		admin.tag,
+		admin.email,
+		bcrypt.digest(admin.password, 5)
+	)
+end)
+
 return app
