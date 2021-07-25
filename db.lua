@@ -4,7 +4,6 @@ local types = schema.types
 local db = {}
 
 local tables = {
-	"scopes",
 	"leaderboard_tables",
 	"leaderboard_users",
 	"leaderboard_scores",
@@ -33,7 +32,8 @@ local type_id = types.id({null = false, unsigned = true})
 local type_fk_id = types.integer({null = false, unsigned = true})
 local type_size = types.integer({null = false, unsigned = true, default = 0})
 local type_hash = "char(32) CHARACTER SET latin1 NOT NULL"
-local type_time = types.bigint({unsigned = true})
+-- local type_time = types.bigint({unsigned = true})
+local type_time = "TIMESTAMP NOT NULL DEFAULT 0"
 
 local options = {
 	engine = "InnoDB",
@@ -43,12 +43,6 @@ local options = {
 -- https://stackoverflow.com/questions/766809/whats-the-difference-between-utf8-general-ci-and-utf8-unicode-ci
 -- COLLATE=utf8mb4_0900_ai_ci
 -- COLLATE=utf8mb4_unicode_520_ci
-
-table_declarations.scopes = {
-	{"id", type_id},
-	{"name", type_fk_id},
-	"UNIQUE KEY `name` (`name`)"
-}
 
 table_declarations.leaderboard_tables = {
 	{"id", type_id},
@@ -115,6 +109,7 @@ table_declarations.roles = {
 	{"subject_type", types.enum},
 	{"object_id", type_fk_id},
 	{"object_type", types.enum},
+	{"expires_at", type_time},
 	"UNIQUE KEY `subject_object` (`roletype`,`subject_id`,`subject_type`,`object_id`,`object_type`)"
 }
 
