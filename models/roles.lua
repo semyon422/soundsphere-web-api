@@ -10,9 +10,8 @@ local Roles = Model:extend(
 				[2] = {"groups"},
 			}},
 			{"object", polymorphic_belongs_to = {
-				[1] = {"scopes"},
-				[2] = {"communities"},
-				[3] = {"leaderboards"},
+				[1] = {"communities"},
+				[2] = {"leaderboards"},
 			}},
 		}
 	}
@@ -28,7 +27,6 @@ Roles.types = enum({
 local table_names = {
 	user = "users",
 	group = "groups",
-	scope = "scopes",
 	community = "communities",
 	leaderboard = "leaderboards",
 }
@@ -36,13 +34,13 @@ local table_names = {
 local entry_names = {
 	users = "user",
 	groups = "group",
-	scopes = "scope",
 	communities = "community",
 	leaderboards = "leaderboard",
 }
 
+
 local function get_role(roletype, obj)
-	local role = {}
+	local role = {object_type = 0, object_id = 0}
 	role.roletype = Roles.types:for_db(roletype)
 	for key, value in pairs(obj) do
 		local table_name = table_names[key:match("^(.+)_id$")]
@@ -87,11 +85,16 @@ function Roles:extract_list(obj)
 	end
 	local roles = {}
 	for _, row in ipairs(rows) do
-		table.insert(roles, {
+		local role = {
 			roletype = Roles.types:to_name(row.roletype),
-			object_type = self.object_types:to_name(row.object_type),
-			object_id = row.object_id
-		})
+		}
+		if row.object_type ~= 0 then
+			local table_name = self.object_types:to_name(row.object_type)
+			role.object_type = entry_names[table_name]
+			role.object_id = row.object_id
+			role.resource = ("/%s/%d"):format(table_name, row.object_id)
+		end
+		table.insert(roles, role)
 	end
 	return roles
 end

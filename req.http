@@ -51,6 +51,14 @@ Content-Type: application/json
 	"leaderboard_id": 99
 }
 ###
+POST {{api}}/roles
+Content-Type: application/json
+
+{
+	"roletype": "moderator",
+	"user_id": 22
+}
+###
 DELETE {{api}}/roles
 Content-Type: application/json
 
