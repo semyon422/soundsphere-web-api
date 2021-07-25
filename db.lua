@@ -13,6 +13,7 @@ local tables = {
 	"table_notecharts",
 	"roles",
 	"users",
+	"user_rivals",
 	"communities",
 	"community_leaderboards",
 	"community_users",
@@ -123,6 +124,13 @@ table_declarations.users = {
 	{"creation_time", type_time},
 	{"description", types.varchar},
 	"UNIQUE KEY `email` (`email`)"
+}
+
+table_declarations.user_rivals = {
+	{"id", type_id},
+	{"user_id", type_fk_id},
+	{"rival_id", type_fk_id},
+	"UNIQUE KEY `user_rivals` (`user_id`,`rival_id`)"
 }
 
 table_declarations.communities = {

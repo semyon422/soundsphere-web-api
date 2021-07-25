@@ -35,6 +35,14 @@ local endpoints = {
 		path = "/users/:user_id/leaderboards",
 	},
 	{
+		name = "user.rivals",
+		path = "/users/:user_id/rivals",
+	},
+	{
+		name = "user.rival",
+		path = "/users/:user_id/rivals/:rival_id",
+	},
+	{
 		name = "groups",
 		path = "/groups",
 	},
