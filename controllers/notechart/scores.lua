@@ -1,23 +1,30 @@
 local Scores = require("models.scores")
-local User_rivals = require("models.user_rivals")
+local User_relations = require("models.user_relations")
 local Leaderboard_scores = require("models.leaderboard_scores")
 local preload = require("lapis.db.model").preload
 
 local notechart_c = {}
 
-local function get_rivals_scores(params)
-	local user_id = tonumber(params.rivals)
+local function get_relations_scores(params, relationtype, mutual)
+	local user_id = tonumber(params[relationtype .. "s"])
 
-	local rival_ids = {user_id}
-	local user_rivals = User_rivals:find_all(rival_ids, "user_id")
-	for _, user_rival in ipairs(user_rivals) do
-		table.insert(rival_ids, user_rival.rival_id)
+	local user_ids = {user_id}
+	local user_relations = User_relations:find_all(
+		user_ids,
+		"user_id",
+		{where = {relationtype = User_relations.types[relationtype]}}
+	)
+	for _, user_relation in ipairs(user_relations) do
+		table.insert(user_ids, user_relation.relative_user_id)
 	end
 
 	local leaderboard_scores = Leaderboard_scores:find_all(
-		rival_ids,
+		user_ids,
 		"user_id",
-		{where = {notechart_id = params.notechart_id}}
+		{where = {
+			notechart_id = params.notechart_id,
+			mutual = mutual
+		}}
 	)
 	preload(leaderboard_scores, {"user", "score"})
 
@@ -38,10 +45,13 @@ end
 
 notechart_c.GET = function(params)
 	local scores
+	local notechart_id = params.notechart_id
 	if params.rivals then
-		scores = get_rivals_scores(params)
+		scores = get_relations_scores(params, "rival")
+	elseif params.friends then
+		scores = get_relations_scores(params, "friend", true)
 	else
-		scores = Scores:find_all({params.notechart_id}, "notechart_id")
+		scores = Scores:find_all({notechart_id}, "notechart_id")
 	end
 
 	local count = #scores

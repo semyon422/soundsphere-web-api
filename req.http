@@ -70,3 +70,13 @@ Content-Type: application/json
 ###
 
 GET {{api}}/users/22/roles
+###
+
+GET {{api}}/users/1/rivals
+###
+PUT {{api}}/users/1/rivals/2
+###
+PUT {{api}}/users/2/rivals/1
+###
+DELETE {{api}}/users/1/rivals/2
+###

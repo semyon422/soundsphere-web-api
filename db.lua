@@ -13,7 +13,7 @@ local tables = {
 	"table_notecharts",
 	"roles",
 	"users",
-	"user_rivals",
+	"user_relations",
 	"communities",
 	"community_leaderboards",
 	"community_users",
@@ -126,11 +126,13 @@ table_declarations.users = {
 	"UNIQUE KEY `email` (`email`)"
 }
 
-table_declarations.user_rivals = {
+table_declarations.user_relations = {
 	{"id", type_id},
+	{"relationtype", types.enum},
 	{"user_id", type_fk_id},
-	{"rival_id", type_fk_id},
-	"UNIQUE KEY `user_rivals` (`user_id`,`rival_id`)"
+	{"relative_user_id", type_fk_id},
+	{"mutual", types.boolean},
+	"UNIQUE KEY `user_relations` (`relationtype`,`user_id`,`relative_user_id`)"
 }
 
 table_declarations.communities = {
