@@ -72,8 +72,8 @@ local function route_datatables(path, endpoint, controller, datatable)
 		local context = get_context(endpoint, self)
 		local permit = pep:check(context, endpoint.name, "GET")
 		if permit and controller.GET then
-			local code, response = controller.GET(context.params, context)
-			return {json = response, status = code}
+			local code, response = controller.GET(datatable.params(context.params), context)
+			return {json = datatable.response(response, context.params), status = code}
 		else
 			return {json = {decision = context.decision}, status = 200}
 		end
