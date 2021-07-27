@@ -7,7 +7,7 @@ function PolicyEnforcementPoint:new()
 end
 
 function PolicyEnforcementPoint:check(context, name, method)
-	local policies = require("policies." .. name)[method]
+	local policies = require("policies." .. name)[method] or {}
 	local decision
 	for i = 0, #policies - 1 do
 		local policy = policies[i + 1]
@@ -20,7 +20,7 @@ function PolicyEnforcementPoint:check(context, name, method)
 		decision = decision and first_applicable(decision, policy_decision) or policy_decision
 	end
 
-	context.decision = decision
+	context.decision = decision or "deny"
 	return decision == "permit"
 end
 
