@@ -38,17 +38,37 @@ local function json_respond_to(path, respond)
 	})))
 end
 
+local function get_permited_methods(endpoint, context)
+	local methods = {}
+	for _, method in ipairs(endpoint.methods) do
+		if pep:check(context, endpoint.name, method) then
+			table.insert(methods, method)
+		end
+	end
+	return methods
+end
+
+local function includes(list, item)
+	for _, included_item in ipairs(list) do
+		if item == included_item then
+			return true
+		end
+	end
+end
+
 local function route_api(path, endpoint, controller)
 	local function respond(self)
 		local context = get_context(endpoint, self)
+		local methods = get_permited_methods(endpoint, context)
 		local method = self.req.method
-		local permit = pep:check(context, endpoint.name, method)
-		if permit and controller[method] then
-			local code, response = controller[method](context.params, context)
-			return {json = response, status = code}
+		local code, response
+		if includes(methods, method) and controller[method] then
+			code, response = controller[method](context.params, context)
 		else
-			return {json = {decision = context.decision}, status = 200}
+			code, response = 200, {decision = context.decision}
 		end
+		response.methods = methods
+		return {json = response, status = code}
 	end
 	json_respond_to(path, respond)
 end
@@ -81,20 +101,6 @@ local function route_datatables(path, endpoint, controller, datatable)
 	json_respond_to(path, respond)
 end
 
-local function route_ac(path, endpoint)
-	local function respond(self)
-		if not self.params.methods then return end
-		local context = get_context(endpoint, self)
-		local decisions = {}
-		for method in self.params.methods:gmatch("([A-Z]+)") do
-			local permit = pep:check(context, endpoint.name, method)
-			decisions[method] = context.decision
-		end
-		return {json = {decisions = decisions}, status = 200}
-	end
-	json_respond_to(path, respond)
-end
-
 -- permit, deny, not_applicable, indeterminate
 
 local endpoints = require("endpoints")
@@ -103,7 +109,6 @@ for _, endpoint in ipairs(endpoints) do
 	local controller = require("controllers." .. endpoint.name)
 	route_api("/api" .. endpoint.path, endpoint, controller)
 	route_api_debug("/api_debug" .. endpoint.path, endpoint, controller)
-	route_ac("/ac" .. endpoint.path, endpoint)
 
 	local ok, datatable = pcall(require, "datatables." .. endpoint.name)
 	if ok then

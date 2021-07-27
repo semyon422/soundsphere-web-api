@@ -48,18 +48,38 @@ local function get_context(endpoint, req)
 	return context
 end
 
+local function get_permited_methods(endpoint, context)
+	local methods = {}
+	for _, method in ipairs(endpoint.methods) do
+		if pep:check(context, endpoint.name, method) then
+			table.insert(methods, method)
+		end
+	end
+	return methods
+end
+
+local function includes(list, item)
+	for _, included_item in ipairs(list) do
+		if item == included_item then
+			return true
+		end
+	end
+end
+
 local function route_api(path, endpoint, controller)
 	return app.route({path = path}, function(req, res, go)
 		local context = get_context(endpoint, req)
-		local permit = pep:check(context, endpoint.name, req.method)
-		if permit and controller[req.method] then
-			local code, response = controller[req.method](context.params, context)
-			res.code = code
-			res.body = util.to_json(response)
+		local methods = get_permited_methods(endpoint, context)
+		local method = req.method
+		local code, response
+		if includes(methods, method) and controller[method] then
+			code, response = controller[method](context.params, context)
 		else
-			res.code = 200
-			res.body = util.to_json({decision = context.decision})
+			code, response = 200, {decision = context.decision}
 		end
+		response.methods = methods
+		res.code = code
+		res.body = util.to_json(response)
 		res.headers["Content-Type"] = "application/json"
 		return go()
 	end)
@@ -98,26 +118,6 @@ local function route_datatables(path, endpoint, controller, datatable)
 	end)
 end
 
-local function route_ac(path, endpoint)
-	return app.route({path = path, method = "GET"}, function(req, res, go)
-		if not req.query or not req.query.method then
-			return
-		end
-		local context = get_context(endpoint, req)
-		local query_method = req.query.method
-		local methods = type(query_method) == "string" and {query_method} or query_method
-		local decisions = {}
-		for _, method in ipairs(methods) do
-			local permit = pep:check(context, endpoint.name, method)
-			decisions[method] = context.decision
-		end
-		res.code = 200
-		res.body = util.to_json({decisions = decisions})
-		res.headers["Content-Type"] = "application/json"
-		return go()
-	end)
-end
-
 -- permit, deny, not_applicable, indeterminate
 
 local endpoints = require("endpoints")
@@ -126,7 +126,6 @@ for _, endpoint in ipairs(endpoints) do
 	local controller = require("controllers." .. endpoint.name)
 	route_api("/api" .. endpoint.path, endpoint, controller)
 	route_api_debug("/api_debug" .. endpoint.path, endpoint, controller)
-	route_ac("/ac" .. endpoint.path, endpoint)
 
 	local ok, datatable = pcall(require, "datatables." .. endpoint.name)
 	if ok then

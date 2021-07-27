@@ -28,10 +28,6 @@ GET {{api}}/users/1
 Authorization: {{bearer_authorization}}
 
 ###
-GET http://localhost/ac/users?methods=GET,POST
-Authorization: {{bearer_authorization}}
-
-###
 GET {{api}}/communities/1/users
 ###
 PUT {{api}}/communities/1/users/1
