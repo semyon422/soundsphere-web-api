@@ -1,11 +1,6 @@
 deps/*
 lapis/*
 temp/*
-nginx-1.19.10/*
-lit.exe
-lua51.dll
-luvi.exe
-luvit.exe
 logs
 secret.lua
 nginx.conf.compiled
