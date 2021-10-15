@@ -29,7 +29,7 @@ local function get_context(endpoint, self)
 end
 
 local function json_respond_to(path, respond)
-	app:match(path, json_params(respond_to({
+	return app:match(path, json_params(respond_to({
 		GET = respond,
 		POST = respond,
 		PUT = respond,
@@ -56,8 +56,8 @@ local function includes(list, item)
 	end
 end
 
-local function route_api(path, endpoint, controller)
-	local function respond(self)
+local function route_api(endpoint, controller)
+	return json_respond_to("/api" .. endpoint.path, function(self)
 		local context = get_context(endpoint, self)
 		local methods = get_permited_methods(endpoint, context)
 		local method = self.req.method
@@ -69,12 +69,11 @@ local function route_api(path, endpoint, controller)
 		end
 		response.methods = methods
 		return {json = response, status = code}
-	end
-	json_respond_to(path, respond)
+	end)
 end
 
-local function route_api_debug(path, endpoint, controller)
-	local function respond(self)
+local function route_api_debug(endpoint, controller)
+	return json_respond_to("/api_debug" .. endpoint.path, function(self)
 		local context = get_context(endpoint, self)
 		local method = self.req.method
 		if controller[method] then
@@ -83,22 +82,23 @@ local function route_api_debug(path, endpoint, controller)
 		else
 			return {json = {}, status = 200}
 		end
-	end
-	json_respond_to(path, respond)
+	end)
 end
 
-local function route_datatables(path, endpoint, controller, datatable)
-	local function respond(self)
+local function route_datatables(endpoint, controller)
+	local ok, datatable = pcall(require, "datatables." .. endpoint.name)
+	if not ok then
+		return
+	end
+	return json_respond_to("/dt" .. endpoint.path, function(self)
 		local context = get_context(endpoint, self)
-		local permit = pep:check(context, endpoint.name, "GET")
-		if permit and controller.GET then
+		if pep:check(context, endpoint.name, "GET") and controller.GET then
 			local code, response = controller.GET(datatable.params(context.params), context)
 			return {json = datatable.response(response, context.params), status = code}
 		else
 			return {json = {decision = context.decision}, status = 200}
 		end
-	end
-	json_respond_to(path, respond)
+	end)
 end
 
 -- permit, deny, not_applicable, indeterminate
@@ -107,13 +107,9 @@ local endpoints = require("endpoints")
 
 for _, endpoint in ipairs(endpoints) do
 	local controller = require("controllers." .. endpoint.name)
-	route_api("/api" .. endpoint.path, endpoint, controller)
-	route_api_debug("/api_debug" .. endpoint.path, endpoint, controller)
-
-	local ok, datatable = pcall(require, "datatables." .. endpoint.name)
-	if ok then
-		route_datatables("/dt" .. endpoint.path, endpoint, controller, datatable)
-	end
+	route_api(endpoint, controller)
+	route_api_debug(endpoint, controller)
+	route_datatables(endpoint, controller)
 end
 
 app:match("/create_db", function(self)
