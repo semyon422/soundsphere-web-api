@@ -16,6 +16,7 @@ local function get_context(endpoint, self)
 		params = self.params,
 		basic = basic_auth(self.req),
 		token = token_auth(self.req),
+		ip = self.req.headers["X-Real-IP"]
 	}
 
 	if endpoint.context then
@@ -112,7 +113,7 @@ for _, endpoint in ipairs(endpoints) do
 	route_datatables(endpoint, controller)
 end
 
-app:match("/create_db", function(self)
+app:match("/api/create_db", function(self)
 	local db = require("db")
 	db.drop()
 	db.create()
@@ -134,5 +135,10 @@ app:match("/create_db", function(self)
 		bcrypt.digest(admin.password, 5)
 	)
 end)
+
+app:match("/api/test_session", json_params(function(self)
+	self.session.user = "semyon422"
+	return {json = self.session}
+end))
 
 return app

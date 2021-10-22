@@ -8,5 +8,7 @@ secret.mysql_user = "root"
 secret.mysql_password = ""
 secret.mysql_database = "backend"
 
+secret.token_key = "token_key"
+
 return secret
 

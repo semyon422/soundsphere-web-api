@@ -4,8 +4,29 @@
 @login_authorization = Basic YWRtaW5AYWRtaW46cGFzc3dvcmQ=
 # admin@admin:password
 
-GET {{api}}/token
+
+###
+POST http://localhost/api/create_db
+
+###
+POST {{api}}/auth/login
 Authorization: {{login_authorization}}
+
+###
+POST {{api}}/auth/update
+Content-Type: application/json
+
+{
+	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXBkYXRlZF9hdCI6MTYzNDg5ODg4NCwidXNlcl9pZCI6MSwiY3JlYXRlZF9hdCI6MTYzNDg5ODI5NX0.HBdPA_X95w2FWiSPiOrXW2CaBWUFCDCWXfbt28Dfsuo"
+}
+###
+GET {{api}}/auth/quick
+###
+GET {{api}}/auth/quick?key=0644ada2bc46142c2e8a30b1b36af63d
+
+###
+POST {{api}}/auth/quick?user_id=1&key=0644ada2bc46142c2e8a30b1b36af63d
+
 
 ###
 GET {{api}}/users

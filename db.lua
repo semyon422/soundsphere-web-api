@@ -25,6 +25,8 @@ local tables = {
 	"modifiers",
 	"notecharts",
 	"scores",
+	"sessions",
+	"quick_logins",
 }
 
 local table_declarations = {}
@@ -33,11 +35,12 @@ local type_id = types.id({null = false, unsigned = true})
 local type_fk_id = types.integer({null = false, unsigned = true})
 local type_size = types.integer({null = false, unsigned = true, default = 0})
 local type_hash = "char(32) CHARACTER SET latin1 NOT NULL"
--- local type_time = types.bigint({unsigned = true})
-local type_time = "TIMESTAMP NOT NULL DEFAULT 0"
+local type_time = types.bigint({unsigned = true})
+-- local type_time = "TIMESTAMP NOT NULL DEFAULT 0"
 
 local options = {
 	engine = "InnoDB",
+	-- charset = "utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
 	charset = "utf8mb4 COLLATE=utf8mb4_unicode_ci"
 }
 
@@ -255,6 +258,33 @@ table_declarations.scores = {
 		KEY `inputmode` (`inputmode`),
 		KEY `performance` (`performance`),
 		KEY `calculated` (`calculated`)
+	]]
+}
+
+table_declarations.sessions = {
+	{"id", type_id},
+	{"user_id", type_fk_id},
+	{"active", types.boolean},
+	"`ip` VARCHAR(15) NOT NULL",
+	{"created_at", type_time},
+	{"updated_at", type_time},
+	[[
+		KEY `created_at` (`created_at`),
+		KEY `user_id` (`user_id`),
+		KEY `ip` (`ip`)
+	]]
+}
+
+table_declarations.quick_logins = {
+	{"id", type_id},
+	"`ip` VARCHAR(15) NOT NULL",
+	"`key` VARCHAR(32) NOT NULL",
+	{"next_update_time", type_time},
+	{"user_id", type_fk_id},
+	{"complete", types.boolean},
+	[[
+		KEY `ip` (`ip`),
+		KEY `user_id` (`user_id`)
 	]]
 }
 

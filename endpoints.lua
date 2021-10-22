@@ -1,8 +1,23 @@
 local endpoints = {
 	{
-		name = "token",
-		path = "/token",
-		methods = {"GET"},
+		name = "auth.login",
+		path = "/auth/login",
+		methods = {"POST"},
+	},
+	{
+		name = "auth.logout",
+		path = "/auth/logout",
+		methods = {"POST"},
+	},
+	{
+		name = "auth.quick",
+		path = "/auth/quick",
+		methods = {"GET", "POST"},
+	},
+	{
+		name = "auth.update",
+		path = "/auth/update",
+		methods = {"POST"},
 	},
 	{
 		name = "users",
@@ -61,6 +76,16 @@ local endpoints = {
 		name = "user.friend",
 		path = "/users/:user_id/friends/:friend_id",
 		methods = {"PUT", "DELETE"},
+	},
+	{
+		name = "user.sessions",
+		path = "/users/:user_id/sessions",
+		methods = {"GET"},
+	},
+	{
+		name = "user.session",
+		path = "/users/:user_id/sessions/:session_id",
+		methods = {"DELETE"},
 	},
 	{
 		name = "groups",
