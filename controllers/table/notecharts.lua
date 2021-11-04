@@ -3,7 +3,8 @@ local preload = require("lapis.db.model").preload
 
 local notecharts_c = {}
 
-notecharts_c.GET = function(params)
+notecharts_c.GET = function(request)
+	local params = request.params
 	local table_notecharts = Table_notecharts:find_all({params.table_id}, "table_id")
 	preload(table_notecharts, "notechart")
 

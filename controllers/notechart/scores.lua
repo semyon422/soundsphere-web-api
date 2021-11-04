@@ -43,7 +43,8 @@ local function get_relations_scores(params, relationtype, mutual)
 	return scores
 end
 
-notechart_c.GET = function(params)
+notechart_c.GET = function(request)
+	local params = request.params
 	local scores
 	local notechart_id = params.notechart_id
 	if params.rivals then

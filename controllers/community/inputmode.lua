@@ -3,7 +3,8 @@ local Inputmodes = require("enums.inputmodes")
 
 local community_inputmodes_c = {}
 
-community_inputmodes_c.PUT = function(params)
+community_inputmodes_c.PUT = function(request)
+	local params = request.params
     local community_inputmode = {
         community_id = params.community_id,
         inputmode = Inputmodes:for_db(params.inputmode),
@@ -15,7 +16,8 @@ community_inputmodes_c.PUT = function(params)
 	return 200, {}
 end
 
-community_inputmodes_c.DELETE = function(params)
+community_inputmodes_c.DELETE = function(request)
+	local params = request.params
     local community_inputmode = Community_inputmodes:find({
         community_id = params.community_id,
         inputmode = Inputmodes:for_db(params.inputmode),

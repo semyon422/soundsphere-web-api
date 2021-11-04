@@ -2,7 +2,8 @@ local Roles = require("models.roles")
 
 local user_roles_c = {}
 
-user_roles_c.GET = function(params)
+user_roles_c.GET = function(request)
+	local params = request.params
     local roles = Roles:extract_list({user_id = params.user_id})
 
 	local count = Roles:count()

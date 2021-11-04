@@ -2,7 +2,8 @@ local Community_users = require("models.community_users")
 
 local community_user_c = {}
 
-community_user_c.PUT = function(params)
+community_user_c.PUT = function(request)
+	local params = request.params
     local community_user = {
         community_id = params.community_id,
         user_id = params.user_id,
@@ -26,7 +27,8 @@ community_user_c.PUT = function(params)
 	return 200, {}
 end
 
-community_user_c.DELETE = function(params)
+community_user_c.DELETE = function(request)
+	local params = request.params
     local community_user = Community_users:find({
         community_id = params.community_id,
         user_id = params.user_id,

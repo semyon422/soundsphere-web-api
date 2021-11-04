@@ -2,7 +2,8 @@ local Groups = require("models.groups")
 
 local groups_c = {}
 
-groups_c.GET = function(params)
+groups_c.GET = function(request)
+	local params = request.params
 	local per_page = tonumber(params.per_page) or 10
 	local page_num = tonumber(params.page_num) or 1
 

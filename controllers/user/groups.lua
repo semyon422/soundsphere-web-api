@@ -3,7 +3,8 @@ local preload = require("lapis.db.model").preload
 
 local user_groups_c = {}
 
-user_groups_c.GET = function(params)
+user_groups_c.GET = function(request)
+	local params = request.params
     local group_users = Group_users:find_all({params.user_id}, "user_id")
 	preload(group_users, "group")
 

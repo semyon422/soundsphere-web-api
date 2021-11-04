@@ -1,9 +1,8 @@
 local base64 = require("base64")
 
-return function(req)
-	local authorization = req.headers.Authorization
-	if not authorization then return end
-	local schema, token = authorization:match("^(.+) (.+)$")
+return function(header)
+	if not header then return end
+	local schema, token = header:match("^(.+) (.+)$")
 	if schema ~= "Basic" then return end
 	if not token then return end
 	local email_password = base64.decode(token)

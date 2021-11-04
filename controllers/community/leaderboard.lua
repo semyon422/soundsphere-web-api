@@ -2,7 +2,8 @@ local Community_leaderboards = require("models.community_leaderboards")
 
 local community_leaderboard_c = {}
 
-community_leaderboard_c.PUT = function(params)
+community_leaderboard_c.PUT = function(request)
+	local params = request.params
     local community_leaderboard = {
         community_id = params.community_id,
         leaderboard_id = params.leaderboard_id,
@@ -14,7 +15,8 @@ community_leaderboard_c.PUT = function(params)
 	return 200, {}
 end
 
-community_leaderboard_c.DELETE = function(params)
+community_leaderboard_c.DELETE = function(request)
+	local params = request.params
     local community_leaderboard = Community_leaderboards:find({
         community_id = params.community_id,
         leaderboard_id = params.leaderboard_id,

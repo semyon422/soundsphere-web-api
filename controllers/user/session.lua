@@ -2,7 +2,8 @@ local Sessions = require("models.sessions")
 
 local session_c = {}
 
-session_c.DELETE = function(params)
+session_c.DELETE = function(request)
+	local params = request.params
 	local session = Sessions:find(params.session_id)
 	if session then
 		session.active = false

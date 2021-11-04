@@ -57,7 +57,8 @@ local function load_roles(user)
 	user.roles = roles
 end
 
-function context_loader:load_context(context)
+function context_loader:load_context(request)
+	local context = request.context
 	if context.user and not context.user.roles then
 		load_roles(context.user)
 	end

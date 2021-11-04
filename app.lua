@@ -11,22 +11,21 @@ local pep = PolicyEnforcementPoint:new()
 local token_auth = require("auth.token")
 local basic_auth = require("auth.basic")
 
-local function get_context(endpoint, self)
-	local context = {
-		params = self.params,
-		basic = basic_auth(self.req),
-		token = token_auth(self.req),
+local function get_context(self, endpoint)
+	self.context = {
+		basic = basic_auth(self.req.headers.Authorization),
+		token = token_auth(self.req.headers.Authorization),
 		ip = self.req.headers["X-Real-IP"]
 	}
 
 	if endpoint.context then
 		for _, name in ipairs(endpoint.context) do
 			local context_loader = require("context_loaders." .. name)
-			context_loader:load_context(context)
+			context_loader:load_context(self)
 		end
 	end
 
-	return context
+	return self.context
 end
 
 local function json_respond_to(path, respond)
@@ -39,10 +38,10 @@ local function json_respond_to(path, respond)
 	})))
 end
 
-local function get_permited_methods(endpoint, context)
+local function get_permited_methods(self, endpoint)
 	local methods = {}
 	for _, method in ipairs(endpoint.methods) do
-		if pep:check(context, endpoint.name, method) then
+		if pep:check(self, endpoint.name, method) then
 			table.insert(methods, method)
 		end
 	end
@@ -59,14 +58,14 @@ end
 
 local function route_api(endpoint, controller)
 	return json_respond_to("/api" .. endpoint.path, function(self)
-		local context = get_context(endpoint, self)
-		local methods = get_permited_methods(endpoint, context)
+		local context = get_context(self, endpoint)
+		local methods = get_permited_methods(self, endpoint)
 		local method = self.req.method
 		local code, response
 		if includes(methods, method) and controller[method] then
-			code, response = controller[method](context.params, context)
+			code, response = controller[method](self)
 		else
-			code, response = 200, {decision = context.decision}
+			code, response = 500, {}
 		end
 		response.methods = methods
 		return {json = response, status = code}
@@ -75,10 +74,10 @@ end
 
 local function route_api_debug(endpoint, controller)
 	return json_respond_to("/api_debug" .. endpoint.path, function(self)
-		local context = get_context(endpoint, self)
+		local context = get_context(self, endpoint)
 		local method = self.req.method
 		if controller[method] then
-			local code, response = controller[method](context.params, context)
+			local code, response = controller[method](self)
 			return {json = response, status = code}
 		else
 			return {json = {}, status = 200}
@@ -92,8 +91,8 @@ local function route_datatables(endpoint, controller)
 		return
 	end
 	return json_respond_to("/dt" .. endpoint.path, function(self)
-		local context = get_context(endpoint, self)
-		if pep:check(context, endpoint.name, "GET") and controller.GET then
+		local context = get_context(self, endpoint)
+		if pep:check(self, endpoint.name, "GET") and controller.GET then
 			local code, response = controller.GET(datatable.params(context.params), context)
 			return {json = datatable.response(response, context.params), status = code}
 		else

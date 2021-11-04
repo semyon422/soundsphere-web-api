@@ -8,7 +8,8 @@ local additions = {
 
 local community_c = {}
 
-community_c.GET = function(params)
+community_c.GET = function(request)
+	local params = request.params
 	local community = Communities:find(params.community_id)
 
 	local fields = {}
@@ -35,7 +36,8 @@ community_c.GET = function(params)
 	return 200, {community = community}
 end
 
-community_c.PATCH = function(params)
+community_c.PATCH = function(request)
+	local params = request.params
 	local community = Communities:find(params.community_id)
 
 	community.name = params.community.name

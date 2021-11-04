@@ -3,7 +3,8 @@ local preload = require("lapis.db.model").preload
 
 local communities_c = {}
 
-communities_c.GET = function(params)
+communities_c.GET = function(request)
+	local params = request.params
 	local community_tables = Community_tables:find_all({params.table_id}, "table_id")
 	preload(community_tables, "communities")
 

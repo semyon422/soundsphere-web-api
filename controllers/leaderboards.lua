@@ -5,7 +5,8 @@ local preload = require("lapis.db.model").preload
 
 local leaderboards_c = {}
 
-leaderboards_c.GET = function(params)
+leaderboards_c.GET = function(request)
+	local params = request.params
 	local per_page = tonumber(params.per_page) or 10
 	local page_num = tonumber(params.page_num) or 1
 
@@ -39,7 +40,8 @@ leaderboards_c.GET = function(params)
 	}
 end
 
-leaderboards_c.POST = function(params)
+leaderboards_c.POST = function(request)
+	local params = request.params
 	local leaderboard = Leaderboards:create({
 		name = params.name or "Leaderboard",
 		description = params.description,

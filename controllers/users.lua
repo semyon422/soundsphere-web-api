@@ -3,7 +3,8 @@ local bcrypt = require("bcrypt")
 
 local users_c = {}
 
-users_c.GET = function(params)
+users_c.GET = function(request)
+	local params = request.params
 	local per_page = tonumber(params.per_page) or 10
 	local page_num = tonumber(params.page_num) or 1
 
@@ -65,7 +66,8 @@ local function register(name, email, password)
 	return user
 end
 
-users_c.POST = function(params)
+users_c.POST = function(request)
+	local params = request.params
 	local user, err = register(params.name, params.email, params.password)
 
 	if user then

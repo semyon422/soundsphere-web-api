@@ -3,7 +3,8 @@ local preload = require("lapis.db.model").preload
 
 local community_leaderboards_c = {}
 
-community_leaderboards_c.GET = function(params)
+community_leaderboards_c.GET = function(request)
+	local params = request.params
     local community_leaderboards = Community_leaderboards:find_all({params.community_id}, "community_id")
 	preload(community_leaderboards, "leaderboard")
 

@@ -3,7 +3,8 @@ local Inputmodes = require("enums.inputmodes")
 
 local leaderboard_inputmodes_c = {}
 
-leaderboard_inputmodes_c.PUT = function(params)
+leaderboard_inputmodes_c.PUT = function(request)
+	local params = request.params
     local leaderboard_inputmode = {
         leaderboard_id = params.leaderboard_id,
         inputmode = Inputmodes:for_db(params.inputmode),
@@ -15,7 +16,8 @@ leaderboard_inputmodes_c.PUT = function(params)
 	return 200, {}
 end
 
-leaderboard_inputmodes_c.DELETE = function(params)
+leaderboard_inputmodes_c.DELETE = function(request)
+	local params = request.params
     local leaderboard_inputmode = Leaderboard_inputmodes:find({
         leaderboard_id = params.leaderboard_id,
         inputmode = Inputmodes:for_db(params.inputmode),

@@ -4,8 +4,8 @@ local secret = require("secret")
 
 local logout_c = {}
 
-logout_c.POST = function(params, context)
-	local token = params.token
+logout_c.POST = function(request)
+	local token = request.params.token
 	local decoded, err = jwt.decode(token, secret.token_key, true)
 
 	if not decoded then

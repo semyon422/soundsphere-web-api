@@ -2,10 +2,11 @@ local Users = require("models.users")
 
 local user_c = {}
 
-user_c.GET = function(params)
+user_c.GET = function(request)
+	local params = request.params
 	local user = Users:find(params.user_id)
 
-	user = {
+	user = user and {
         id = user.id,
         name = user.name,
         tag = user.tag,
@@ -16,7 +17,8 @@ user_c.GET = function(params)
 	return 200, {user = user}
 end
 
-user_c.PATCH = function(params)
+user_c.PATCH = function(request)
+	local params = request.params
 	local user = Users:find(params.user_id)
 
 	user.name = params.user.name

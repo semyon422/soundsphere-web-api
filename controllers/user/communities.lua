@@ -3,7 +3,8 @@ local preload = require("lapis.db.model").preload
 
 local user_communities_c = {}
 
-user_communities_c.GET = function(params)
+user_communities_c.GET = function(request)
+	local params = request.params
 	local where = {accepted = true}
 	if params.invitations then
 		where.invitations = true

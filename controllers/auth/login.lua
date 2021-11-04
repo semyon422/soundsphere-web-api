@@ -38,7 +38,8 @@ login_c.new_token = function(user, ip)
 	return token, payload
 end
 
-login_c.POST = function(params, context)
+login_c.POST = function(request)
+	local context = request.context
 	local user, err = login(context.basic.email, context.basic.password)
 
 	if not user then

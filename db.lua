@@ -142,6 +142,7 @@ table_declarations.communities = {
 	{"id", type_id},
 	{"name", types.varchar},
 	{"alias", types.varchar},
+	{"public", types.boolean},
 	{"short_description", types.varchar},
 	{"description", types.varchar},
 	{"users_count", type_size},

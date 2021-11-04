@@ -2,7 +2,8 @@ local Group_users = require("models.group_users")
 
 local group_users_c = {}
 
-group_users_c.GET = function(params)
+group_users_c.GET = function(request)
+	local params = request.params
     local group_users = Group_users:find_all({params.group_id}, "group_id")
 
 	return 200, {users = group_users}

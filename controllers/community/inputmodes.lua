@@ -3,7 +3,8 @@ local Inputmodes = require("enums.inputmodes")
 
 local inputmodes_c = {}
 
-inputmodes_c.GET = function(params)
+inputmodes_c.GET = function(request)
+	local params = request.params
 	local community_inputmodes = Community_inputmodes:find_all({params.community_id}, "community_id")
 
 	local inputmodes = {}

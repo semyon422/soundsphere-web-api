@@ -2,7 +2,8 @@ local Leaderboard_tables = require("models.leaderboard_tables")
 
 local leaderboard_table_c = {}
 
-leaderboard_table_c.PUT = function(params)
+leaderboard_table_c.PUT = function(request)
+	local params = request.params
     local leaderboard_table = {
         leaderboard_id = params.leaderboard_id,
         table_id = params.table_id,
@@ -14,7 +15,8 @@ leaderboard_table_c.PUT = function(params)
 	return 200, {}
 end
 
-leaderboard_table_c.DELETE = function(params)
+leaderboard_table_c.DELETE = function(request)
+	local params = request.params
     local leaderboard_table = Leaderboard_tables:find({
         leaderboard_id = params.leaderboard_id,
         table_id = params.table_id,

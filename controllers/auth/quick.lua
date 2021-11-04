@@ -12,8 +12,9 @@ end
 
 local not_allowed = "Quick login is not allowed"
 
-quick_c.GET = function(params, context)
-	local ip = context.ip
+quick_c.GET = function(request)
+	local params = request.params
+	local ip = request.context.ip
 	local time = os.time()
 	local quick_login = quick_logins:find({ip = ip})
 
@@ -64,8 +65,9 @@ quick_c.GET = function(params, context)
 	}}
 end
 
-quick_c.POST = function(params, context)
-	-- self.session
+quick_c.POST = function(request)
+	local params = request.params
+	local context = request.context
 	local user_id = params.user_id
 	local key = params.key
 

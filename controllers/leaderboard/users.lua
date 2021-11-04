@@ -3,7 +3,8 @@ local preload = require("lapis.db.model").preload
 
 local leaderboard_users_c = {}
 
-leaderboard_users_c.GET = function(params)
+leaderboard_users_c.GET = function(request)
+	local params = request.params
     local leaderboard_users = Leaderboard_users:find_all({params.leaderboard_id}, "leaderboard_id")
 	preload(leaderboard_users, "user")
 

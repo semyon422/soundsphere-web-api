@@ -2,7 +2,8 @@ local Tables = require("models.tables")
 
 local tables_c = {}
 
-tables_c.GET = function(params)
+tables_c.GET = function(request)
+	local params = request.params
 	local per_page = tonumber(params.per_page) or 10
 	local page_num = tonumber(params.page_num) or 1
 
@@ -23,7 +24,8 @@ tables_c.GET = function(params)
 	}
 end
 
-tables_c.POST = function(params)
+tables_c.POST = function(request)
+	local params = request.params
 	local table = Tables:create({
 		name = params.name,
 		url = params.url,

@@ -2,7 +2,8 @@ local Tables = require("models.tables")
 
 local table_c = {}
 
-table_c.GET = function(params)
+table_c.GET = function(request)
+	local params = request.params
 	local table = Tables:find(params.table_id)
 
 	if table then

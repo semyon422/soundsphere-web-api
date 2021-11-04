@@ -2,7 +2,8 @@ local Roles = require("models.roles")
 
 local roles_c = {}
 
-roles_c.GET = function(params)
+roles_c.GET = function(request)
+	local params = request.params
 	local per_page = tonumber(params.per_page) or 10
 	local page_num = tonumber(params.page_num) or 1
 
@@ -23,13 +24,15 @@ roles_c.GET = function(params)
 	}
 end
 
-roles_c.POST = function(params)
+roles_c.POST = function(request)
+	local params = request.params
 	local role = Roles:assign(params.roletype, params)
 
 	return 200, {role = role}
 end
 
-roles_c.DELETE = function(params)
+roles_c.DELETE = function(request)
+	local params = request.params
 	Roles:reject(params.roletype, params)
 
 	return 200, {}

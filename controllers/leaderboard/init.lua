@@ -8,7 +8,8 @@ local additions = {
 
 local leaderboard_c = {}
 
-leaderboard_c.GET = function(params)
+leaderboard_c.GET = function(request)
+	local params = request.params
 	local leaderboard = Leaderboards:find(params.leaderboard_id)
 
 	local fields = {}
@@ -34,7 +35,8 @@ leaderboard_c.GET = function(params)
 	return 200, {leaderboard = leaderboard}
 end
 
-leaderboard_c.PATCH = function(params)
+leaderboard_c.PATCH = function(request)
+	local params = request.params
 	local leaderboard = Leaderboards:find(params.leaderboard_id)
 
 	leaderboard.name = params.leaderboard.name

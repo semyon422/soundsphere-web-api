@@ -3,7 +3,8 @@ local preload = require("lapis.db.model").preload
 
 local user_friends_c = {}
 
-user_friends_c.GET = function(params)
+user_friends_c.GET = function(request)
+	local params = request.params
 	local friends = {}
 	local user_relations = User_relations:find_all(
 		{params.user_id},

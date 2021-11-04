@@ -5,7 +5,8 @@ local preload = require("lapis.db.model").preload
 
 local communities_c = {}
 
-communities_c.GET = function(params)
+communities_c.GET = function(request)
+	local params = request.params
 	local per_page = tonumber(params.per_page) or 10
 	local page_num = tonumber(params.page_num) or 1
 
@@ -39,7 +40,8 @@ communities_c.GET = function(params)
 	}
 end
 
-communities_c.POST = function(params)
+communities_c.POST = function(request)
+	local params = request.params
 	local community = Communities:create({
 		name = params.name or "Community",
 		alias = params.alias or "???",
