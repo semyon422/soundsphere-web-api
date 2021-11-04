@@ -48,6 +48,12 @@ login_c.POST = function(request)
 
 	local token, payload = login_c.new_token(user, context.ip)
 
+	request.session.session = payload
+	request.session.user = {
+		id = user.id,
+		name = user.name,
+	}
+
 	return 200, {
 		token = token,
 		session = payload,
