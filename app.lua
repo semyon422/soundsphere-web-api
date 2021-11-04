@@ -93,8 +93,11 @@ local function route_datatables(endpoint, controller)
 	return json_respond_to("/dt" .. endpoint.path, function(self)
 		local context = get_context(self, endpoint)
 		if pep:check(self, endpoint.name, "GET") and controller.GET then
-			local code, response = controller.GET(datatable.params(context.params), context)
-			return {json = datatable.response(response, context.params), status = code}
+			self.params.start = self.params.start or 1
+			self.params.length = self.params.length or 1
+			datatable.params(self)
+			local code, response = controller.GET(self)
+			return {json = datatable.response(response, self), status = code}
 		else
 			return {json = {decision = context.decision}, status = 200}
 		end

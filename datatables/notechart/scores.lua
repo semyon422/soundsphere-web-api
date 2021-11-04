@@ -1,12 +1,14 @@
 local scores = {}
 
-function scores.params(params)
+function scores.params(request)
+	local params = request.params
 	params.page_num = math.floor(params.start / params.length) + 1
 	params.per_page = params.length
 	return params
 end
 
-function scores.response(response, params)
+function scores.response(response, request)
+	local params = request.params
 	return {
 		draw = params.draw,
 		recordsTotal = response.total,
