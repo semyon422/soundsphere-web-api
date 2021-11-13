@@ -4,6 +4,8 @@ local respond_to = require("lapis.application").respond_to
 local json_params = require("lapis.application").json_params
 local app = lapis.Application()
 
+local secret = require("secret")
+
 local PolicyEnforcementPoint = require("abac.PolicyEnforcementPoint")
 
 local pep = PolicyEnforcementPoint:new()
@@ -11,10 +13,20 @@ local pep = PolicyEnforcementPoint:new()
 local token_auth = require("auth.token")
 local basic_auth = require("auth.basic")
 
+local function copy_table(src, dst)
+	if not src then
+		return
+	end
+	for k, v in pairs(src) do
+		dst[k] = v
+	end
+end
+
 local function get_context(self, endpoint)
+	copy_table(basic_auth(self.req.headers.Authorization), self.params)
+	copy_table(token_auth(self.req.headers.Authorization), self.session)
+
 	self.context = {
-		basic = basic_auth(self.req.headers.Authorization),
-		token = token_auth(self.req.headers.Authorization),
 		ip = self.req.headers["X-Real-IP"]
 	}
 
@@ -137,6 +149,17 @@ app:match("/api/create_db", function(self)
 		bcrypt.digest(admin.password, 5)
 	)
 end)
+
+function app:handle_error(err, trace)
+	if secret.custom_error_page then
+		return {json = {
+			err = err,
+			trace = trace,
+		}, status = 500}
+	else
+		return lapis.Application.handle_error(self, err, trace)
+	end
+end
 
 app:match("/api/test_session", json_params(function(self)
 	self.session.user = "semyon422"

@@ -66,19 +66,16 @@ quick_c.GET = function(request)
 end
 
 quick_c.POST = function(request)
-	local params = request.params
-	local context = request.context
-	local user_id = params.user_id
-	local key = params.key
+	local key = request.params.key
 
-	if not key or not user_id then
+	if not key then
 		return 200, {json = {
 			message = not_allowed
 		}}
 	end
 
 	local quick_login = quick_logins:find({
-		ip = context.ip,
+		ip = request.context.ip,
 		key = key
 	})
 
@@ -88,7 +85,7 @@ quick_c.POST = function(request)
 		}}
 	end
 
-	quick_login.user_id = user_id
+	quick_login.user_id = request.context.session.user_id
 	quick_login.complete = 1
 	quick_login:update("user_id", "complete")
 

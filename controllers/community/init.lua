@@ -17,10 +17,7 @@ community_c.GET = function(request)
 		local value = tonumber(params[param])
 		if value then
 			local param_count = param .. "_count"
-			local _, response = controller.GET({
-				community_id = params.community_id,
-				per_page = value == 0 and value
-			})
+			local _, response = controller.GET(request)
 			community[param] = response[param]
 			if community[param_count] ~= response.total then
 				community[param_count] = response.total

@@ -8,16 +8,19 @@ local endpoints = {
 		name = "auth.logout",
 		path = "/auth/logout",
 		methods = {"POST"},
+		context = {"session"},
 	},
 	{
 		name = "auth.quick",
 		path = "/auth/quick",
 		methods = {"GET", "POST"},
+		context = {"session"},
 	},
 	{
 		name = "auth.update",
 		path = "/auth/update",
 		methods = {"POST"},
+		context = {"session"},
 	},
 	{
 		name = "users",

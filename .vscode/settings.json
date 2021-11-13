@@ -6,5 +6,6 @@
 	"editor.formatOnSave": true,
 	"editor.detectIndentation": false,
 	"editor.insertSpaces": false,
-	"Lua.runtime.version": "LuaJIT"
+	"Lua.runtime.version": "LuaJIT",
+	"rest-client.rememberCookiesForSubsequentRequests": false
 }
