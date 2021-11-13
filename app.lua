@@ -118,9 +118,13 @@ end
 
 -- permit, deny, not_applicable, indeterminate
 
+local names, paths = {}, {}
 for _, name in ipairs(require("endpoints")) do
+	names[name] = names[name] and error(name) or name
 	local controller = require("controllers." .. name)
-	if controller.path then
+	local path = controller.path
+	if path then
+		names[path] = names[path] and error(names[path] .. " " .. name .. " " .. path) or name
 		route_api(controller)
 		route_api_debug(controller)
 		route_datatables(controller, name)

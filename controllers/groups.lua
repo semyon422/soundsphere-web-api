@@ -2,7 +2,7 @@ local Groups = require("models.groups")
 
 local groups_c = {}
 
-groups_c.path = "/users"
+groups_c.path = "/groups"
 groups_c.methods = {"GET"}
 groups_c.context = {}
 groups_c.policies = {
