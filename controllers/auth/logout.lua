@@ -7,10 +7,7 @@ logout_c.path = "/auth/logout"
 logout_c.methods = {"POST"}
 logout_c.context = {"session"}
 logout_c.policies = {
-	POST = {{
-		rules = {require("rules.authenticated")},
-		combine = require("abac.combine.permit_all_or_deny"),
-	}},
+	POST = require("policies.public"),
 }
 
 logout_c.POST = function(request)

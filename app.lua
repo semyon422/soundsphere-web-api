@@ -69,7 +69,7 @@ local function includes(list, item)
 end
 
 local function route_api(controller)
-	return json_respond_to("/api" .. controller.path, function(self)
+	json_respond_to("/api" .. controller.path, function(self)
 		local context = get_context(self, controller)
 		local methods = get_permited_methods(self, controller)
 		local method = self.req.method
@@ -81,6 +81,10 @@ local function route_api(controller)
 		end
 		response.methods = methods
 		return {json = response, status = code}
+	end)
+	json_respond_to("/ac" .. controller.path, function(self)
+		local context = get_context(self, controller)
+		return {json = {methods = get_permited_methods(self, controller)}, status = 200}
 	end)
 end
 

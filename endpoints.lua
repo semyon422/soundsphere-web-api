@@ -1,4 +1,5 @@
 return {
+	"auth.check",
 	"auth.login",
 	"auth.logout",
 	"auth.quick",
