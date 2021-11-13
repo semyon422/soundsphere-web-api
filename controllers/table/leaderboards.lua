@@ -1,9 +1,16 @@
 local Leaderboard_tables = require("models.leaderboard_tables")
 local preload = require("lapis.db.model").preload
 
-local leaderboards_c = {}
+local table_leaderboards_c = {}
 
-leaderboards_c.GET = function(request)
+table_leaderboards_c.path = "/tables/:table_id/leaderboards"
+table_leaderboards_c.methods = {"GET"}
+table_leaderboards_c.context = {"table"}
+table_leaderboards_c.policies = {
+	GET = require("policies.public"),
+}
+
+table_leaderboards_c.GET = function(request)
 	local params = request.params
 	local leaderboard_tables = Leaderboard_tables:find_all({params.table_id}, "table_id")
 	preload(leaderboard_tables, "leaderboards")
@@ -22,4 +29,4 @@ leaderboards_c.GET = function(request)
 	}
 end
 
-return leaderboards_c
+return table_leaderboards_c

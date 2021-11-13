@@ -3,6 +3,13 @@ local preload = require("lapis.db.model").preload
 
 local community_leaderboards_c = {}
 
+community_leaderboards_c.path = "/communities/:community_id/leaderboards"
+community_leaderboards_c.methods = {"GET"}
+community_leaderboards_c.context = {}
+community_leaderboards_c.policies = {
+	GET = require("policies.public"),
+}
+
 community_leaderboards_c.GET = function(request)
 	local params = request.params
     local community_leaderboards = Community_leaderboards:find_all({params.community_id}, "community_id")

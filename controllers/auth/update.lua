@@ -4,6 +4,16 @@ local login_c = require("controllers.auth.login")
 
 local update_c = {}
 
+update_c.path = "/auth/update"
+update_c.methods = {"POST"}
+update_c.context = {"session"}
+update_c.policies = {
+	POST = {{
+		rules = {require("rules.authenticated")},
+		combine = require("abac.combine.permit_all_or_deny"),
+	}},
+}
+
 update_c.POST = function(request)
 	local session = request.context.session
 

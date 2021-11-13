@@ -7,6 +7,13 @@ local secret = require("secret")
 
 local login_c = {}
 
+login_c.path = "/auth/login"
+login_c.methods = {"POST"}
+login_c.context = {}
+login_c.policies = {
+	POST = require("policies.public"),
+}
+
 local failed = "Login failed. Invalid email or password"
 local function login(email, password)
 	if not email or not password then return false, failed end

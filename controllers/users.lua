@@ -3,6 +3,14 @@ local bcrypt = require("bcrypt")
 
 local users_c = {}
 
+users_c.path = "/users"
+users_c.methods = {"GET", "POST"}
+users_c.context = {}
+users_c.policies = {
+	GET = require("policies.public"),
+	POST = require("policies.public"),
+}
+
 users_c.GET = function(request)
 	local params = request.params
 	local per_page = tonumber(params.per_page) or 10

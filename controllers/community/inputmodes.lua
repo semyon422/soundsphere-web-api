@@ -1,9 +1,16 @@
 local Community_inputmodes = require("models.community_inputmodes")
 local Inputmodes = require("enums.inputmodes")
 
-local inputmodes_c = {}
+local community_inputmodes_c = {}
 
-inputmodes_c.GET = function(request)
+community_inputmodes_c.path = "/communities/:community_id/inputmodes"
+community_inputmodes_c.methods = {"GET"}
+community_inputmodes_c.context = {}
+community_inputmodes_c.policies = {
+	GET = require("policies.public"),
+}
+
+community_inputmodes_c.GET = function(request)
 	local params = request.params
 	local community_inputmodes = Community_inputmodes:find_all({params.community_id}, "community_id")
 
@@ -21,4 +28,4 @@ inputmodes_c.GET = function(request)
 	}
 end
 
-return inputmodes_c
+return community_inputmodes_c

@@ -2,6 +2,14 @@ local Leaderboard_users = require("models.leaderboard_users")
 
 local leaderboard_user_c = {}
 
+leaderboard_user_c.path = "/leaderboards/:leaderboard_id/users/:user_id"
+leaderboard_user_c.methods = {"PUT", "DELETE"}
+leaderboard_user_c.context = {}
+leaderboard_user_c.policies = {
+	PUT = require("policies.public"),
+	DELETE = require("policies.public"),
+}
+
 leaderboard_user_c.PUT = function(request)
 	local params = request.params
     local leaderboard_user = {

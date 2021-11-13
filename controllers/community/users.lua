@@ -3,6 +3,13 @@ local preload = require("lapis.db.model").preload
 
 local community_users_c = {}
 
+community_users_c.path = "/communities/:community_id/users"
+community_users_c.methods = {"GET"}
+community_users_c.context = {}
+community_users_c.policies = {
+	GET = require("policies.public"),
+}
+
 community_users_c.GET = function(request)
 	local params = request.params
 	local where = {accepted = true}

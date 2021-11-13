@@ -5,6 +5,14 @@ local preload = require("lapis.db.model").preload
 
 local communities_c = {}
 
+communities_c.path = "/communities"
+communities_c.methods = {"GET", "POST"}
+communities_c.context = {}
+communities_c.policies = {
+	GET = require("policies.public"),
+	POST = require("policies.public"),
+}
+
 communities_c.GET = function(request)
 	local params = request.params
 	local per_page = tonumber(params.per_page) or 10

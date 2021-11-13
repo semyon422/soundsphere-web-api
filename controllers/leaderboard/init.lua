@@ -8,6 +8,15 @@ local additions = {
 
 local leaderboard_c = {}
 
+leaderboard_c.path = "/leaderboards/:leaderboard_id"
+leaderboard_c.methods = {"GET", "PATCH", "DELETE"}
+leaderboard_c.context = {"leaderboard"}
+leaderboard_c.policies = {
+	PUT = require("policies.public"),
+	PATCH = require("policies.public"),
+	DELETE = require("policies.public"),
+}
+
 leaderboard_c.GET = function(request)
 	local params = request.params
 	local leaderboard = Leaderboards:find(params.leaderboard_id)

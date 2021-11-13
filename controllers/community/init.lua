@@ -8,6 +8,15 @@ local additions = {
 
 local community_c = {}
 
+community_c.path = "/communities/:community_id"
+community_c.methods = {"GET", "PATCH", "DELETE"}
+community_c.context = {"community"}
+community_c.policies = {
+	GET = require("policies.public"),
+	PATCH = require("policies.public"),
+	DELETE = require("policies.public"),
+}
+
 community_c.GET = function(request)
 	local params = request.params
 	local community = Communities:find(params.community_id)
@@ -45,6 +54,10 @@ community_c.PATCH = function(request)
 	community:update("name", "alias", "short_description", "description")
 
 	return 200, {community = community}
+end
+
+community_c.DELETE = function(request)
+	return 200, {}
 end
 
 return community_c

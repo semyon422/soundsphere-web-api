@@ -6,6 +6,17 @@ local secret = require("secret")
 
 local quick_c = {}
 
+quick_c.path = "/auth/quick"
+quick_c.methods = {"GET", "POST"}
+quick_c.context = {"session"}
+quick_c.policies = {
+	GET = require("policies.public"),
+	POST = {{
+		rules = {require("rules.authenticated")},
+		combine = require("abac.combine.permit_all_or_deny"),
+	}},
+}
+
 local new_key = function()
 	return md5.sumhexa(crypto.hmac.digest("sha256", ngx.time() + ngx.worker.pid(), secret.token_key, true))
 end

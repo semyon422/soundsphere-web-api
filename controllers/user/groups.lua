@@ -3,6 +3,13 @@ local preload = require("lapis.db.model").preload
 
 local user_groups_c = {}
 
+user_groups_c.path = "/users/:user_id/groups"
+user_groups_c.methods = {"GET"}
+user_groups_c.context = {}
+user_groups_c.policies = {
+	GET = require("policies.public"),
+}
+
 user_groups_c.GET = function(request)
 	local params = request.params
     local group_users = Group_users:find_all({params.user_id}, "user_id")

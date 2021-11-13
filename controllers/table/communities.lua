@@ -1,9 +1,16 @@
 local Community_tables = require("models.community_tables")
 local preload = require("lapis.db.model").preload
 
-local communities_c = {}
+local table_communities_c = {}
 
-communities_c.GET = function(request)
+table_communities_c.path = "/tables/:table_id/communities"
+table_communities_c.methods = {"GET"}
+table_communities_c.context = {"table"}
+table_communities_c.policies = {
+	GET = require("policies.public"),
+}
+
+table_communities_c.GET = function(request)
 	local params = request.params
 	local community_tables = Community_tables:find_all({params.table_id}, "table_id")
 	preload(community_tables, "communities")
@@ -22,4 +29,4 @@ communities_c.GET = function(request)
 	}
 end
 
-return communities_c
+return table_communities_c

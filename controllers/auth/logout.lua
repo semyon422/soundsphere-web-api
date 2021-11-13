@@ -3,6 +3,16 @@ local secret = require("secret")
 
 local logout_c = {}
 
+logout_c.path = "/auth/logout"
+logout_c.methods = {"POST"}
+logout_c.context = {"session"}
+logout_c.policies = {
+	POST = {{
+		rules = {require("rules.authenticated")},
+		combine = require("abac.combine.permit_all_or_deny"),
+	}},
+}
+
 logout_c.POST = function(request)
 	local session = request.context.session
 

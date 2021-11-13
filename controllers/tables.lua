@@ -2,6 +2,14 @@ local Tables = require("models.tables")
 
 local tables_c = {}
 
+tables_c.path = "/tables"
+tables_c.methods = {"GET", "POST"}
+tables_c.context = {}
+tables_c.policies = {
+	GET = require("policies.public"),
+	POST = require("policies.public"),
+}
+
 tables_c.GET = function(request)
 	local params = request.params
 	local per_page = tonumber(params.per_page) or 10

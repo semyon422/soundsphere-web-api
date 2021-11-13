@@ -2,6 +2,14 @@ local Roles = require("models.roles")
 
 local roles_c = {}
 
+roles_c.path = "/roles"
+roles_c.methods = {"GET", "POST"}
+roles_c.context = {}
+roles_c.policies = {
+	GET = require("policies.public"),
+	POST = require("policies.public"),
+}
+
 roles_c.GET = function(request)
 	local params = request.params
 	local per_page = tonumber(params.per_page) or 10

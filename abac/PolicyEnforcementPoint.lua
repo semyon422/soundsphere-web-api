@@ -6,14 +6,14 @@ function PolicyEnforcementPoint:new()
 	return setmetatable({}, {__index = PolicyEnforcementPoint})
 end
 
-function PolicyEnforcementPoint:check(request, name, method)
-	local policies = require("policies." .. name)[method] or {}
+function PolicyEnforcementPoint:check(request, controller, method)
+	local policies = controller.policies[method] or {}
 	local decision
-	for i = 0, #policies - 1 do
-		local policy = policies[i + 1]
+	for i = 1, #policies do
+		local policy = policies[i]
 		local policy_decision
-		for j = 0, #policy.rules - 1 do
-			local rule = policy.rules[j + 1]
+		for j = 1, #policy.rules do
+			local rule = policy.rules[j]
 			local rule_decision = rule:evaluate(request)
 			policy_decision = policy_decision and policy.combine(policy_decision, rule_decision) or rule_decision
 		end

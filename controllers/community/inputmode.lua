@@ -1,9 +1,17 @@
 local Community_inputmodes = require("models.community_inputmodes")
 local Inputmodes = require("enums.inputmodes")
 
-local community_inputmodes_c = {}
+local community_inputmode_c = {}
 
-community_inputmodes_c.PUT = function(request)
+community_inputmode_c.path = "/communities/:community_id/inputmodes/:inputmode"
+community_inputmode_c.methods = {"PUT", "DELETE"}
+community_inputmode_c.context = {"community"}
+community_inputmode_c.policies = {
+	PUT = require("policies.public"),
+	DELETE = require("policies.public"),
+}
+
+community_inputmode_c.PUT = function(request)
 	local params = request.params
     local community_inputmode = {
         community_id = params.community_id,
@@ -16,7 +24,7 @@ community_inputmodes_c.PUT = function(request)
 	return 200, {}
 end
 
-community_inputmodes_c.DELETE = function(request)
+community_inputmode_c.DELETE = function(request)
 	local params = request.params
     local community_inputmode = Community_inputmodes:find({
         community_id = params.community_id,
@@ -29,4 +37,4 @@ community_inputmodes_c.DELETE = function(request)
 	return 200, {}
 end
 
-return community_inputmodes_c
+return community_inputmode_c

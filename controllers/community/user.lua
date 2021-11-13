@@ -2,6 +2,14 @@ local Community_users = require("models.community_users")
 
 local community_user_c = {}
 
+community_user_c.path = "/communities/:community_id/users/:user_id"
+community_user_c.methods = {"PUT", "DELETE"}
+community_user_c.context = {"community", "user", "user_roles"}
+community_user_c.policies = {
+	PUT = require("policies.public"),
+	DELETE = require("policies.public"),
+}
+
 community_user_c.PUT = function(request)
 	local params = request.params
     local community_user = {

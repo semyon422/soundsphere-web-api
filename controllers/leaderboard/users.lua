@@ -3,6 +3,13 @@ local preload = require("lapis.db.model").preload
 
 local leaderboard_users_c = {}
 
+leaderboard_users_c.path = "/leaderboards/:leaderboard_id/users"
+leaderboard_users_c.methods = {"GET"}
+leaderboard_users_c.context = {}
+leaderboard_users_c.policies = {
+	GET = require("policies.public"),
+}
+
 leaderboard_users_c.GET = function(request)
 	local params = request.params
     local leaderboard_users = Leaderboard_users:find_all({params.leaderboard_id}, "leaderboard_id")
