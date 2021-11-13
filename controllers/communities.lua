@@ -7,10 +7,13 @@ local communities_c = {}
 
 communities_c.path = "/communities"
 communities_c.methods = {"GET", "POST"}
-communities_c.context = {}
+communities_c.context = {"session"}
 communities_c.policies = {
 	GET = require("policies.public"),
-	POST = require("policies.public"),
+	POST = {{
+		rules = {require("rules.authenticated")},
+		combine = require("abac.combine.permit_all_or_deny"),
+	}},
 }
 
 communities_c.GET = function(request)
@@ -50,6 +53,8 @@ end
 
 communities_c.POST = function(request)
 	local params = request.params
+	local session = request.session
+
 	local community = Communities:create({
 		name = params.name or "Community",
 		alias = params.alias or "???",
@@ -58,12 +63,12 @@ communities_c.POST = function(request)
 	})
 
 	Roles:assign("creator", {
-		user_id = params.user_id,
+		user_id = session.user_id,
 		community_id = community.id
 	})
 	Community_users:create({
 		community_id = community.id,
-		user_id = params.user_id,
+		user_id = session.user_id,
 		accepted = true,
 	})
 

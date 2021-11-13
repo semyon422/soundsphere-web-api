@@ -21,7 +21,7 @@ community_users_c.GET = function(request)
 		where.accepted = false
 	end
 
-    local community_users = Community_users:select({params.community_id}, {
+    local community_users = Community_users:find_all({params.community_id}, {
 		key = "community_id",
 		where = where
 	})
