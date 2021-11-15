@@ -58,8 +58,11 @@ communities_c.POST = function(request)
 	local community = Communities:create({
 		name = params.name or "Community",
 		alias = params.alias or "???",
+		link = params.link,
 		short_description = params.short_description,
 		description = params.description,
+		banner = params.banner,
+		is_public = params.is_public,
 	})
 
 	Roles:assign("creator", {

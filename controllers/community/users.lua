@@ -12,7 +12,9 @@ community_users_c.policies = {
 
 community_users_c.GET = function(request)
 	local params = request.params
+
 	local where = {accepted = true}
+	where.community_id = params.community_id
 	if params.invitations then
 		where.invitations = true
 		where.accepted = false
@@ -20,11 +22,20 @@ community_users_c.GET = function(request)
 		where.requests = true
 		where.accepted = false
 	end
+	local clause = Community_users.db.encode_clause(where)
 
-    local community_users = Community_users:find_all({params.community_id}, {
-		key = "community_id",
-		where = where
-	})
+	local per_page = tonumber(params.per_page) or 10
+	local page_num = tonumber(params.page_num) or 1
+
+	local paginator = Community_users:paginated(
+		"where " .. clause .. " order by id asc",
+		{
+			per_page = per_page,
+			page_num = page_num
+		}
+	)
+	local community_users = paginator:get_page(page_num)
+
 	preload(community_users, "user")
 
 	local users = {}
@@ -38,11 +49,9 @@ community_users_c.GET = function(request)
 		})
 	end
 
-	local count = Community_users:count()
-
 	return 200, {
-		total = count,
-		filtered = count,
+		total = Community_users:count(clause),
+		filtered = #community_users,
 		users = users
 	}
 end

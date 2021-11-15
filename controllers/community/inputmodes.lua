@@ -19,7 +19,7 @@ community_inputmodes_c.GET = function(request)
 		table.insert(inputmodes, Inputmodes:to_name(community_inputmode.inputmode))
 	end
 
-	local count = Community_inputmodes:count()
+	local count = #community_inputmodes
 
 	return 200, {
 		total = count,
