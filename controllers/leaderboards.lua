@@ -50,9 +50,10 @@ end
 
 leaderboards_c.POST = function(request)
 	local params = request.params
-	local leaderboard = Leaderboards:create({
-		name = params.name or "Leaderboard",
-		description = params.description,
+	local leaderboard = params.leaderboard
+	leaderboard = Leaderboards:create({
+		name = leaderboard.name or "Leaderboard",
+		description = leaderboard.description,
 	})
 
 	Roles:assign("creator", {

@@ -76,7 +76,8 @@ end
 
 users_c.POST = function(request)
 	local params = request.params
-	local user, err = register(params.name, params.email, params.password)
+	local user = params.user
+	user, err = register(user.name, user.email, user.password)
 
 	if user then
 		return 200, {
