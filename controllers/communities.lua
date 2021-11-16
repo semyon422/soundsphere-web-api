@@ -21,8 +21,24 @@ communities_c.GET = function(request)
 	local per_page = tonumber(params.per_page) or 10
 	local page_num = tonumber(params.page_num) or 1
 
+	local db = Communities.db
+	local joined_clause = ""
+	if tonumber(params.hide_joined) == 1 and request.session.user_id then
+		local community_users = Community_users:find_all({request.session.user_id}, {
+			key = "user_id",
+			fields = "community_id"
+		})
+		local community_ids = {}
+		for _, community_user in ipairs(community_users) do
+			table.insert(community_ids, community_user.community_id)
+		end
+		joined_clause = "where " .. db.encode_clause({
+			id = db.list(community_ids)
+		}):gsub("IN", "NOT IN")
+	end
+
 	local paginator = Communities:paginated(
-		"order by id asc",
+		joined_clause .. " order by id asc",
 		{
 			per_page = per_page,
 			prepare_results = function(entries)
