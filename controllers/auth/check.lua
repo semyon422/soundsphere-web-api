@@ -11,15 +11,10 @@ check_c.policies = {
 }
 
 check_c.GET = function(request)
-	local session = request.context.session
-
-	if not session or session.active == 0 then
-		return 200, {
-			message = "not session or session.active == 0"
-		}
-	end
-
-	return 200, {session = session}
+	return 200, {
+		session = request.context.session,
+		request_session_id = request.session.id,
+	}
 end
 
 return check_c
