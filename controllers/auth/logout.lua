@@ -22,6 +22,10 @@ logout_c.POST = function(request)
 	session.active = 0
 	session:update("active")
 
+	for key, value in pairs(session) do
+		request.session[key] = nil
+	end
+
 	return 200, {}
 end
 
