@@ -23,18 +23,23 @@ communities_c.GET = function(request)
 
 	local db = Communities.db
 	local joined_clause = ""
-	if tonumber(params.hide_joined) == 1 and request.session.user_id then
+	local joined_community_ids = {}
+	local joined_community_ids_map = {}
+	if request.session.user_id then
 		local community_users = Community_users:find_all({request.session.user_id}, {
 			key = "user_id",
 			fields = "community_id"
 		})
-		local community_ids = {}
 		for _, community_user in ipairs(community_users) do
-			table.insert(community_ids, community_user.community_id)
+			local id = community_user.community_id
+			table.insert(joined_community_ids, id)
+			joined_community_ids_map[id] = true
 		end
-		joined_clause = "where " .. db.encode_clause({
-			id = db.list(community_ids)
-		}):gsub("IN", "NOT IN")
+		if tonumber(params.hide_joined) == 1 then
+			joined_clause = "where " .. db.encode_clause({
+				id = db.list(joined_community_ids)
+			}):gsub("IN", "NOT IN")
+		end
 	end
 
 	local paginator = Communities:paginated(
@@ -56,6 +61,7 @@ communities_c.GET = function(request)
 		end
 		community.inputmodes = inputmodes
 		community.community_inputmodes = nil
+		community.joined = joined_community_ids_map[community.id]
 	end
 
 	local count = Communities:count()
@@ -63,7 +69,7 @@ communities_c.GET = function(request)
 	return 200, {
 		total = count,
 		filtered = count,
-		communities = communities
+		communities = communities,
 	}
 end
 
