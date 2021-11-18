@@ -13,11 +13,9 @@ user_roles_c.GET = function(request)
 	local params = request.params
     local roles = Roles:extract_list({user_id = params.user_id})
 
-	local count = Roles:count()
-
 	return 200, {
-		total = count,
-		filtered = count,
+		total = #roles,
+		filtered = #roles,
 		roles = roles
 	}
 end

@@ -55,13 +55,21 @@ local function get_role(roletype, obj)
 	return role
 end
 
+function Roles:format_row(row)
+	local role = {roletype = Roles.types:to_name(row.roletype)}
+	if row.object_type ~= 0 then
+		local table_name = self.object_types:to_name(row.object_type)
+		role[entry_names[table_name] .. "_id"] = row.object_id
+	end
+	return role
+end
+
 function Roles:assign(roletype, obj)
 	local role = get_role(roletype, obj)
-	local found_role = self:find(role)
-	if not found_role then
-		return self:create(role)
+	if not self:find(role) then
+		role = self:create(role)
 	end
-	return found_role
+	return self:format_row(role)
 end
 
 function Roles:reject(roletype, obj)
@@ -69,6 +77,7 @@ function Roles:reject(roletype, obj)
 	role = self:find(role)
 	if role then
 		role:delete()
+		return self:format_row(role)
 	end
 end
 
@@ -77,24 +86,15 @@ function Roles:extract_list(obj)
 	for key, value in pairs(obj) do
 		local table_name = table_names[key:match("^(.+)_id$")]
 		if self.subject_types[table_name] then
-			rows = self:select({where = {
+			rows = self:select("where " .. self.db.encode_clause({
 				subject_type = self.subject_types:for_db(table_name),
 				subject_id = value
-			}})
+			}))
 		end
 	end
 	local roles = {}
 	for _, row in ipairs(rows) do
-		local role = {
-			roletype = Roles.types:to_name(row.roletype),
-		}
-		if row.object_type ~= 0 then
-			local table_name = self.object_types:to_name(row.object_type)
-			role.object_type = entry_names[table_name]
-			role.object_id = row.object_id
-			role.resource = ("/%s/%d"):format(table_name, row.object_id)
-		end
-		table.insert(roles, role)
+		table.insert(roles, self:format_row(row))
 	end
 	return roles
 end
