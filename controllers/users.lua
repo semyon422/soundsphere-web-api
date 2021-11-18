@@ -25,14 +25,14 @@ users_c.GET = function(request)
 	local users = paginator:get_page(page_num)
 
 	local new_users = {}
-	for _, db_user_entry in ipairs(users) do
+	for _, user in ipairs(users) do
 		table.insert(
 			new_users,
 			{
-				id = db_user_entry.id,
-				name = db_user_entry.name,
-				tag = db_user_entry.tag,
-				latest_activity = db_user_entry.latest_activity,
+				id = user.id,
+				name = user.name,
+				tag = user.tag,
+				latest_activity = user.latest_activity,
 			}
 		)
 	end
