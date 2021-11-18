@@ -30,6 +30,7 @@ return {
 	"community.user",
 	"community.leaderboards",
 	"community.leaderboard",
+	"community.leaderboard.users",
 	"community.inputmodes",
 	"community.inputmode",
 	"leaderboards",
