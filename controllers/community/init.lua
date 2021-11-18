@@ -36,7 +36,6 @@ community_c.GET = function(request)
 		end
 	end
 	if #fields > 0 then
-		print(unpack(fields))
 		community:update(unpack(fields))
 	end
 
@@ -49,10 +48,21 @@ community_c.PATCH = function(request)
 
 	community.name = params.community.name
 	community.alias = params.community.alias
+	community.link = params.community.link
 	community.short_description = params.community.short_description
 	community.description = params.community.description
+	community.banner = params.community.banner
+	community.is_public = params.community.is_public
 
-	community:update("name", "alias", "short_description", "description")
+	community:update(
+		"name",
+		"alias",
+		"link",
+		"short_description",
+		"description",
+		"banner",
+		"is_public"
+	)
 
 	return 200, {community = community}
 end

@@ -17,14 +17,14 @@ update_c.policies = {
 update_c.POST = function(request)
 	local session = request.context.session
 
-	if not session or session.active == 0 then
+	if not session or not session.active then
 		return 200, {
-			message = "not session or session.active == 0"
+			message = "not session or not session.active"
 		}
 	end
 
 	if session.updated_at - request.session.updated_at ~= 0 then
-		session.active = 0
+		session.active = false
 		session:update("active")
 		return 200, {
 			message = "session.updated_at ~= request.session.updated_at"

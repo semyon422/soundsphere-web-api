@@ -1,4 +1,5 @@
 local Model = require("lapis.db.model").Model
+local toboolean = require("toboolean")
 
 local Communities = Model:extend(
 	"communities",
@@ -10,5 +11,11 @@ local Communities = Model:extend(
 		}
 	}
 )
+
+local _load = Communities.load
+function Communities:load(row)
+	row.is_public = toboolean(row.is_public)
+	return _load(self, row)
+end
 
 return Communities

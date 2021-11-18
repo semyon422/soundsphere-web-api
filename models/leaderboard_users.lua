@@ -1,4 +1,5 @@
 local Model = require("lapis.db.model").Model
+local toboolean = require("toboolean")
 
 local Leaderboard_users = Model:extend(
 	"leaderboard_users",
@@ -9,5 +10,11 @@ local Leaderboard_users = Model:extend(
 		}
 	}
 )
+
+local _load = Leaderboard_users.load
+function Leaderboard_users:load(row)
+	row.active = toboolean(row.active)
+	return _load(self, row)
+end
 
 return Leaderboard_users

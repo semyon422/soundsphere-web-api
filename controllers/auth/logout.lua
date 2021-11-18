@@ -13,13 +13,13 @@ logout_c.policies = {
 logout_c.POST = function(request)
 	local session = request.context.session
 
-	if not session or session.active == 0 then
+	if not session or not session.active then
 		return 200, {
-			message = "not session or session.active == 0"
+			message = "not session or not session.active"
 		}
 	end
 
-	session.active = 0
+	session.active = false
 	session:update("active")
 
 	for key, value in pairs(session) do
