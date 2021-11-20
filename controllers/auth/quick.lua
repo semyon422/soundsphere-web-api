@@ -6,11 +6,24 @@ local secret = require("secret")
 
 local quick_c = {}
 
+quick_c.path = "/auth/quick"
+quick_c.methods = {"GET", "POST"}
+quick_c.context = {"session"}
+quick_c.policies = {
+	GET = require("policies.public"),
+	POST = {{
+		rules = {require("rules.authenticated")},
+		combine = require("abac.combine.permit_all_or_deny"),
+	}},
+}
+
 local new_key = function()
 	return md5.sumhexa(crypto.hmac.digest("sha256", ngx.time() + ngx.worker.pid(), secret.token_key, true))
 end
 
-local not_allowed = "Quick login is not allowed"
+local messages = {}
+messages.not_allowed = "Quick login is not allowed"
+messages.success = "Success"
 
 quick_c.GET = function(request)
 	local params = request.params
@@ -26,27 +39,21 @@ quick_c.GET = function(request)
 			next_update_time = time + 5 * 60,
 		})
 
-		return 200, {json = {
-			key = key
-		}}
+		return 200, {key = key}
 	end
 
 	if tonumber(quick_login.next_update_time) < time or not params.key then
 		local key = new_key()
 		quick_login.key = key
 		quick_login.next_update_time = time + 5 * 60
-		quick_login.complete = 0
+		quick_login.complete = false
 		quick_login:update("key", "next_update_time", "complete")
 
-		return 200, {json = {
-			key = key
-		}}
+		return 200, {key = key}
 	end
 
-	if quick_login.key ~= params.key or quick_login.complete == 0 then
-		return 200, {json = {
-			message = not_allowed
-		}}
+	if quick_login.key ~= params.key or not quick_login.complete then
+		return 200, {message = messages.not_allowed}
 	end
 
 	local user = users:find(quick_login.user_id)
@@ -60,39 +67,30 @@ quick_c.GET = function(request)
 		}
 	end
 
-	return 200, {json = {
-		message = not_allowed
-	}}
+	return 200, {message = messages.not_allowed}
 end
 
 quick_c.POST = function(request)
-	local params = request.params
-	local context = request.context
-	local user_id = params.user_id
-	local key = params.key
+	local key = request.params.key
 
-	if not key or not user_id then
-		return 200, {json = {
-			message = not_allowed
-		}}
+	if not key then
+		return 200, {message = messages.not_allowed}
 	end
 
 	local quick_login = quick_logins:find({
-		ip = context.ip,
+		ip = request.context.ip,
 		key = key
 	})
 
-	if not quick_login or quick_login.complete == 1 then
-		return 200, {json = {
-			message = not_allowed
-		}}
+	if not quick_login or quick_login.complete then
+		return 200, {message = messages.not_allowed}
 	end
 
-	quick_login.user_id = user_id
-	quick_login.complete = 1
+	quick_login.user_id = request.context.session.user_id
+	quick_login.complete = true
 	quick_login:update("user_id", "complete")
 
-	return 200, {json = {}}
+	return 200, {message = messages.success}
 end
 
 return quick_c

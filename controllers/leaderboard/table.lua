@@ -2,6 +2,14 @@ local Leaderboard_tables = require("models.leaderboard_tables")
 
 local leaderboard_table_c = {}
 
+leaderboard_table_c.path = "/leaderboards/:leaderboard_id/tables/:table_id"
+leaderboard_table_c.methods = {"PUT", "DELETE"}
+leaderboard_table_c.context = {"leaderboard", "table"}
+leaderboard_table_c.policies = {
+	PUT = require("policies.public"),
+	DELETE = require("policies.public"),
+}
+
 leaderboard_table_c.PUT = function(request)
 	local params = request.params
     local leaderboard_table = {

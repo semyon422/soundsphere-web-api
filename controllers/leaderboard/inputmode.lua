@@ -1,9 +1,17 @@
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Inputmodes = require("enums.inputmodes")
 
-local leaderboard_inputmodes_c = {}
+local leaderboard_inputmode_c = {}
 
-leaderboard_inputmodes_c.PUT = function(request)
+leaderboard_inputmode_c.path = "/leaderboards/:leaderboard_id/inputmodes/:inputmode"
+leaderboard_inputmode_c.methods = {"PUT", "DELETE"}
+leaderboard_inputmode_c.context = {"leaderboard"}
+leaderboard_inputmode_c.policies = {
+	PUT = require("policies.public"),
+	DELETE = require("policies.public"),
+}
+
+leaderboard_inputmode_c.PUT = function(request)
 	local params = request.params
     local leaderboard_inputmode = {
         leaderboard_id = params.leaderboard_id,
@@ -16,7 +24,7 @@ leaderboard_inputmodes_c.PUT = function(request)
 	return 200, {}
 end
 
-leaderboard_inputmodes_c.DELETE = function(request)
+leaderboard_inputmode_c.DELETE = function(request)
 	local params = request.params
     local leaderboard_inputmode = Leaderboard_inputmodes:find({
         leaderboard_id = params.leaderboard_id,
@@ -29,4 +37,4 @@ leaderboard_inputmodes_c.DELETE = function(request)
 	return 200, {}
 end
 
-return leaderboard_inputmodes_c
+return leaderboard_inputmode_c

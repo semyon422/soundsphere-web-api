@@ -2,6 +2,13 @@ local Notecharts = require("models.notecharts")
 
 local notechart_c = {}
 
+notechart_c.path = "/notecharts/:notechart_id"
+notechart_c.methods = {"GET"}
+notechart_c.context = {}
+notechart_c.policies = {
+	GET = require("policies.public"),
+}
+
 notechart_c.GET = function(request)
 	local params = request.params
 	local notechart = Notecharts:find(params.notechart_id)

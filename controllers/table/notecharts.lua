@@ -1,9 +1,16 @@
 local Table_notecharts = require("models.table_notecharts")
 local preload = require("lapis.db.model").preload
 
-local notecharts_c = {}
+local table_notecharts_c = {}
 
-notecharts_c.GET = function(request)
+table_notecharts_c.path = "/tables/:table_id/notecharts"
+table_notecharts_c.methods = {"GET"}
+table_notecharts_c.context = {"table"}
+table_notecharts_c.policies = {
+	GET = require("policies.public"),
+}
+
+table_notecharts_c.GET = function(request)
 	local params = request.params
 	local table_notecharts = Table_notecharts:find_all({params.table_id}, "table_id")
 	preload(table_notecharts, "notechart")
@@ -22,4 +29,4 @@ notecharts_c.GET = function(request)
 	}
 end
 
-return notecharts_c
+return table_notecharts_c

@@ -3,6 +3,13 @@ local preload = require("lapis.db.model").preload
 
 local user_rivals_c = {}
 
+user_rivals_c.path = "/users/:user_id/rivals"
+user_rivals_c.methods = {"GET"}
+user_rivals_c.context = {}
+user_rivals_c.policies = {
+	GET = require("policies.public"),
+}
+
 user_rivals_c.GET = function(request)
 	local params = request.params
 	local rivals = {}

@@ -4,6 +4,8 @@ local respond_to = require("lapis.application").respond_to
 local json_params = require("lapis.application").json_params
 local app = lapis.Application()
 
+local secret = require("secret")
+
 local PolicyEnforcementPoint = require("abac.PolicyEnforcementPoint")
 
 local pep = PolicyEnforcementPoint:new()
@@ -11,15 +13,25 @@ local pep = PolicyEnforcementPoint:new()
 local token_auth = require("auth.token")
 local basic_auth = require("auth.basic")
 
-local function get_context(self, endpoint)
+local function copy_table(src, dst)
+	if not src then
+		return
+	end
+	for k, v in pairs(src) do
+		dst[k] = v
+	end
+end
+
+local function get_context(self, controller)
+	copy_table(basic_auth(self.req.headers.Authorization), self.params)
+	copy_table(token_auth(self.req.headers.Authorization), self.session)
+
 	self.context = {
-		basic = basic_auth(self.req.headers.Authorization),
-		token = token_auth(self.req.headers.Authorization),
 		ip = self.req.headers["X-Real-IP"]
 	}
 
-	if endpoint.context then
-		for _, name in ipairs(endpoint.context) do
+	if controller.context then
+		for _, name in ipairs(controller.context) do
 			local context_loader = require("context_loaders." .. name)
 			context_loader:load_context(self)
 		end
@@ -38,10 +50,10 @@ local function json_respond_to(path, respond)
 	})))
 end
 
-local function get_permited_methods(self, endpoint)
+local function get_permited_methods(self, controller)
 	local methods = {}
-	for _, method in ipairs(endpoint.methods) do
-		if pep:check(self, endpoint.name, method) then
+	for _, method in ipairs(controller.methods) do
+		if pep:check(self, controller, method) then
 			table.insert(methods, method)
 		end
 	end
@@ -56,10 +68,10 @@ local function includes(list, item)
 	end
 end
 
-local function route_api(endpoint, controller)
-	return json_respond_to("/api" .. endpoint.path, function(self)
-		local context = get_context(self, endpoint)
-		local methods = get_permited_methods(self, endpoint)
+local function route_api(controller)
+	json_respond_to("/api" .. controller.path, function(self)
+		local context = get_context(self, controller)
+		local methods = get_permited_methods(self, controller)
 		local method = self.req.method
 		local code, response
 		if includes(methods, method) and controller[method] then
@@ -70,11 +82,15 @@ local function route_api(endpoint, controller)
 		response.methods = methods
 		return {json = response, status = code}
 	end)
+	json_respond_to("/ac" .. controller.path, function(self)
+		local context = get_context(self, controller)
+		return {json = {methods = get_permited_methods(self, controller)}, status = 200}
+	end)
 end
 
-local function route_api_debug(endpoint, controller)
-	return json_respond_to("/api_debug" .. endpoint.path, function(self)
-		local context = get_context(self, endpoint)
+local function route_api_debug(controller)
+	return json_respond_to("/api_debug" .. controller.path, function(self)
+		local context = get_context(self, controller)
 		local method = self.req.method
 		if controller[method] then
 			local code, response = controller[method](self)
@@ -85,14 +101,14 @@ local function route_api_debug(endpoint, controller)
 	end)
 end
 
-local function route_datatables(endpoint, controller)
-	local ok, datatable = pcall(require, "datatables." .. endpoint.name)
+local function route_datatables(controller, name)
+	local ok, datatable = pcall(require, "datatables." .. name)
 	if not ok then
 		return
 	end
-	return json_respond_to("/dt" .. endpoint.path, function(self)
-		local context = get_context(self, endpoint)
-		if pep:check(self, endpoint.name, "GET") and controller.GET then
+	return json_respond_to("/dt" .. controller.path, function(self)
+		local context = get_context(self, controller)
+		if pep:check(self, controller, "GET") and controller.GET then
 			self.params.start = self.params.start or 1
 			self.params.length = self.params.length or 1
 			datatable.params(self)
@@ -106,13 +122,17 @@ end
 
 -- permit, deny, not_applicable, indeterminate
 
-local endpoints = require("endpoints")
-
-for _, endpoint in ipairs(endpoints) do
-	local controller = require("controllers." .. endpoint.name)
-	route_api(endpoint, controller)
-	route_api_debug(endpoint, controller)
-	route_datatables(endpoint, controller)
+local names, paths = {}, {}
+for _, name in ipairs(require("endpoints")) do
+	names[name] = names[name] and error(name) or name
+	local controller = require("controllers." .. name)
+	local path = controller.path
+	if path then
+		names[path] = names[path] and error(names[path] .. " " .. name .. " " .. path) or name
+		route_api(controller)
+		route_api_debug(controller)
+		route_datatables(controller, name)
+	end
 end
 
 app:match("/api/create_db", function(self)
@@ -141,6 +161,17 @@ app:match("/api/create_db", function(self)
 		description = "",
 	})
 end)
+
+function app:handle_error(err, trace)
+	if secret.custom_error_page then
+		return {json = {
+			err = err,
+			trace = trace,
+		}, status = 500}
+	else
+		return lapis.Application.handle_error(self, err, trace)
+	end
+end
 
 app:match("/api/test_session", json_params(function(self)
 	self.session.user = "semyon422"

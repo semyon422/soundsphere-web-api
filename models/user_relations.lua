@@ -1,5 +1,6 @@
 local model = require("lapis.db.model")
 local Model, enum = model.Model, model.enum
+local toboolean = require("toboolean")
 
 local User_relations = Model:extend(
 	"user_relations",
@@ -10,6 +11,12 @@ local User_relations = Model:extend(
 		}
 	}
 )
+
+local _load = User_relations.load
+function User_relations:load(row)
+	row.mutual = toboolean(row.mutual)
+	return _load(self, row)
+end
 
 User_relations.types = enum({
 	friend = 1,

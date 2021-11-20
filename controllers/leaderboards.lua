@@ -5,6 +5,14 @@ local preload = require("lapis.db.model").preload
 
 local leaderboards_c = {}
 
+leaderboards_c.path = "/leaderboards"
+leaderboards_c.methods = {"GET", "POST"}
+leaderboards_c.context = {}
+leaderboards_c.policies = {
+	GET = require("policies.public"),
+	POST = require("policies.public"),
+}
+
 leaderboards_c.GET = function(request)
 	local params = request.params
 	local per_page = tonumber(params.per_page) or 10
@@ -42,9 +50,10 @@ end
 
 leaderboards_c.POST = function(request)
 	local params = request.params
-	local leaderboard = Leaderboards:create({
-		name = params.name or "Leaderboard",
-		description = params.description,
+	local leaderboard = params.leaderboard
+	leaderboard = Leaderboards:create({
+		name = leaderboard.name or "Leaderboard",
+		description = leaderboard.description,
 	})
 
 	Roles:assign("creator", {

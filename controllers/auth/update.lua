@@ -1,44 +1,40 @@
-local Sessions = require("models.sessions")
 local jwt = require("luajwt")
 local secret = require("secret")
+local login_c = require("controllers.auth.login")
 
 local update_c = {}
 
+update_c.path = "/auth/update"
+update_c.methods = {"POST"}
+update_c.context = {"session"}
+update_c.policies = {
+	POST = {{
+		rules = {require("rules.authenticated")},
+		combine = require("abac.combine.permit_all_or_deny"),
+	}},
+}
+
 update_c.POST = function(request)
-	local token = request.params.token
-	local decoded, err = jwt.decode(token, secret.token_key, true)
+	local session = request.context.session
 
-	if not decoded then
+	if not session or not session.active then
 		return 200, {
-			message = "not decoded"
+			message = "not session or not session.active"
 		}
 	end
 
-	local session = Sessions:find(decoded.id)
-
-	if not session or session.active == 0 then
-		return 200, {
-			message = "not session or session.active == 0"
-		}
-	end
-
-	if tonumber(session.updated_at) ~= tonumber(decoded.updated_at) then
-		session.active = 0
+	if session.updated_at - request.session.updated_at ~= 0 then
+		session.active = false
 		session:update("active")
 		return 200, {
-			message = "session.updated_at ~= decoded.updated_at"
+			message = "session.updated_at ~= request.session.updated_at"
 		}
 	end
 
 	session.updated_at = os.time()
 	session:update("updated_at")
 
-	local payload = {
-		id = session.id,
-		user_id = session.user_id,
-		created_at = tonumber(session.created_at),
-		updated_at = tonumber(session.updated_at),
-	}
+	local payload = login_c.copy_session(session)
 	local token, err = jwt.encode(payload, secret.token_key, "HS256")
 
 	return 200, {

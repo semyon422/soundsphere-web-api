@@ -3,7 +3,14 @@ local User_relations = require("models.user_relations")
 local Leaderboard_scores = require("models.leaderboard_scores")
 local preload = require("lapis.db.model").preload
 
-local notechart_c = {}
+local notechart_scores_c = {}
+
+notechart_scores_c.path = "/notecharts/:notechart_id/scores"
+notechart_scores_c.methods = {"GET"}
+notechart_scores_c.context = {}
+notechart_scores_c.policies = {
+	GET = require("policies.public"),
+}
 
 local function get_relations_scores(params, relationtype, mutual)
 	local user_id = tonumber(params[relationtype .. "s"])
@@ -43,7 +50,7 @@ local function get_relations_scores(params, relationtype, mutual)
 	return scores
 end
 
-notechart_c.GET = function(request)
+notechart_scores_c.GET = function(request)
 	local params = request.params
 	local scores
 	local notechart_id = params.notechart_id
@@ -64,4 +71,4 @@ notechart_c.GET = function(request)
 	}
 end
 
-return notechart_c
+return notechart_scores_c

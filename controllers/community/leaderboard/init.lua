@@ -2,6 +2,14 @@ local Community_leaderboards = require("models.community_leaderboards")
 
 local community_leaderboard_c = {}
 
+community_leaderboard_c.path = "/communities/:community_id/leaderboards/:leaderboard_id"
+community_leaderboard_c.methods = {"PUT", "DELETE"}
+community_leaderboard_c.context = {"community", "leaderboard"}
+community_leaderboard_c.policies = {
+	PUT = require("policies.public"),
+	DELETE = require("policies.public"),
+}
+
 community_leaderboard_c.PUT = function(request)
 	local params = request.params
     local community_leaderboard = {

@@ -1,8 +1,15 @@
 local Sessions = require("models.sessions")
 
-local session_c = {}
+local user_session_c = {}
 
-session_c.DELETE = function(request)
+user_session_c.path = "/users/:user_id/sessions/:session_id"
+user_session_c.methods = {"DELETE"}
+user_session_c.context = {}
+user_session_c.policies = {
+	DELETE = require("policies.public"),
+}
+
+user_session_c.DELETE = function(request)
 	local params = request.params
 	local session = Sessions:find(params.session_id)
 	if session then
@@ -13,4 +20,4 @@ session_c.DELETE = function(request)
 	return 200, {}
 end
 
-return session_c
+return user_session_c

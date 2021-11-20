@@ -10,5 +10,7 @@ secret.mysql_database = "backend"
 
 secret.token_key = "token_key"
 
+secret.custom_error_page = false
+
 return secret
 

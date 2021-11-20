@@ -1,1 +1,13 @@
-return require("controllers.community.leaderboard")
+local community_leaderboard_c = require("controllers.community.leaderboard")
+
+local leaderboard_community_c = {}
+
+community_leaderboard_c.path = "/communities/:community_id/leaderboards/:leaderboard_id"
+leaderboard_community_c.methods = community_leaderboard_c.methods
+leaderboard_community_c.context = community_leaderboard_c.context
+leaderboard_community_c.policies = community_leaderboard_c.policies
+
+leaderboard_community_c.PUT = community_leaderboard_c.PUT
+leaderboard_community_c.DELETE = community_leaderboard_c.DELETE
+
+return leaderboard_community_c

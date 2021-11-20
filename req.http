@@ -4,6 +4,14 @@
 @login_authorization = Basic YWRtaW5AYWRtaW46cGFzc3dvcmQ=
 # admin@admin:password
 
+@cookie = lapis_session=eyJzZXNzaW9uIjp7ImlkIjo3LCJjcmVhdGVkX2F0IjoxNjM2MDI2OTU1LCJ1cGRhdGVkX2F0IjoxNjM2MDI2OTU1LCJ1c2VyX2lkIjoxfSwidXNlciI6eyJpZCI6MSwibmFtZSI6ImFkbWluIn19%0a%2d%2dwW7iQtNfc7TmzSd8yvGCa%2b9MRz8%3d; Path=/; HttpOnly
+
+###
+POST http://localhost/api/test_session
+Content-Type: application/json
+Cookie: {{cookie}}
+
+{}
 
 ###
 POST http://localhost/api/create_db
@@ -14,18 +22,16 @@ Authorization: {{login_authorization}}
 
 ###
 POST {{api}}/auth/update
-Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cGRhdGVkX2F0IjoxNjM2Nzc3NDU1LCJjcmVhdGVkX2F0IjoxNjM2Nzc3NDM3LCJ1c2VyX2lkIjoxLCJpZCI6MjN9.tc-KAOW33HBuNQkOHW9w3lWYGou_qp21-SnzSFQgAkM
 
-{
-	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXBkYXRlZF9hdCI6MTYzNDg5ODg4NCwidXNlcl9pZCI6MSwiY3JlYXRlZF9hdCI6MTYzNDg5ODI5NX0.HBdPA_X95w2FWiSPiOrXW2CaBWUFCDCWXfbt28Dfsuo"
-}
 ###
 GET {{api}}/auth/quick
 ###
-GET {{api}}/auth/quick?key=0644ada2bc46142c2e8a30b1b36af63d
+GET {{api}}/auth/quick?key=8a495d6d1aa985951d88adbe2caa6361
 
 ###
-POST {{api}}/auth/quick?user_id=1&key=0644ada2bc46142c2e8a30b1b36af63d
+POST {{api}}/auth/quick?key=8a495d6d1aa985951d88adbe2caa6361
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cGRhdGVkX2F0IjoxNjM2Nzc3NDU1LCJjcmVhdGVkX2F0IjoxNjM2Nzc3NDM3LCJ1c2VyX2lkIjoxLCJpZCI6MjN9.tc-KAOW33HBuNQkOHW9w3lWYGou_qp21-SnzSFQgAkM
 
 
 ###

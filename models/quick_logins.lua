@@ -1,6 +1,7 @@
 local Model = require("lapis.db.model").Model
+local toboolean = require("toboolean")
 
-local quick_logins = Model:extend(
+local Quick_logins = Model:extend(
 	"quick_logins",
 	{
 		relations = {
@@ -9,4 +10,10 @@ local quick_logins = Model:extend(
 	}
 )
 
-return quick_logins
+local _load = Quick_logins.load
+function Quick_logins:load(row)
+	row.complete = toboolean(row.complete)
+	return _load(self, row)
+end
+
+return Quick_logins

@@ -2,6 +2,13 @@ local Groups = require("models.groups")
 
 local group_c = {}
 
+group_c.path = "/groups/:group_id"
+group_c.methods = {"GET"}
+group_c.context = {"group"}
+group_c.policies = {
+	GET = require("policies.public"),
+}
+
 group_c.GET = function(request)
 	local params = request.params
 	local group = Groups:find(params.group_id)

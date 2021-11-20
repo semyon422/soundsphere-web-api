@@ -3,6 +3,14 @@ local bcrypt = require("bcrypt")
 
 local users_c = {}
 
+users_c.path = "/users"
+users_c.methods = {"GET", "POST"}
+users_c.context = {}
+users_c.policies = {
+	GET = require("policies.public"),
+	POST = require("policies.public"),
+}
+
 users_c.GET = function(request)
 	local params = request.params
 	local per_page = tonumber(params.per_page) or 10
@@ -17,14 +25,14 @@ users_c.GET = function(request)
 	local users = paginator:get_page(page_num)
 
 	local new_users = {}
-	for _, db_user_entry in ipairs(users) do
+	for _, user in ipairs(users) do
 		table.insert(
 			new_users,
 			{
-				id = db_user_entry.id,
-				name = db_user_entry.name,
-				tag = db_user_entry.tag,
-				latest_activity = db_user_entry.latest_activity,
+				id = user.id,
+				name = user.name,
+				tag = user.tag,
+				latest_activity = user.latest_activity,
 			}
 		)
 	end
@@ -68,7 +76,8 @@ end
 
 users_c.POST = function(request)
 	local params = request.params
-	local user, err = register(params.name, params.email, params.password)
+	local user = params.user
+	user, err = register(user.name, user.email, user.password)
 
 	if user then
 		return 200, {

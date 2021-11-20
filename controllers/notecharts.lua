@@ -2,6 +2,13 @@ local Notecharts = require("models.notecharts")
 
 local notecharts_c = {}
 
+notecharts_c.path = "/notecharts"
+notecharts_c.methods = {"GET", "POST"}
+notecharts_c.context = {}
+notecharts_c.policies = {
+	GET = require("policies.public"),
+}
+
 notecharts_c.GET = function(request)
 	local params = request.params
 	local per_page = tonumber(params.per_page) or 10
