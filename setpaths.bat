@@ -21,5 +21,5 @@ set PATH=%PATH%;D:\msys64\mingw64\bin
 set LUA_PATH=%LUA_PATH%;%LUA_ROOT%\openresty\lua\?.lua;%LUA_ROOT%\openresty\lua\?\init.lua;
 set LUA_CPATH=%LUA_CPATH%;%LUA_ROOT%\openresty\lualib\?.so;%LUA_ROOT%\openresty\?.dll;%LUA_ROOT%\openresty\loadall.dll
 
-set LUA_PATH=%LUA_PATH%;%LUA_ROOT%\openresty\lualib\?.lua;%LUA_ROOT%\luarocks\lualib\?\init.lua
+set LUA_PATH=%LUA_PATH%;%LUA_ROOT%\openresty\lualib\?.lua;%LUA_ROOT%\openresty\lualib\?\init.lua
 

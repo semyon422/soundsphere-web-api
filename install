@@ -1,0 +1,6 @@
+#!/bin/bash
+. ./setpaths
+$LUAROCKS install lapis
+$LUAROCKS install base64
+$LUAROCKS install md5
+$LUAROCKS install bcrypt

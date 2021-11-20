@@ -3,6 +3,8 @@ local types = schema.types
 
 local db = {}
 
+-- CREATE DATABASE backend;
+
 local tables = {
 	"leaderboard_tables",
 	"leaderboard_users",

@@ -129,13 +129,17 @@ app:match("/api/create_db", function(self)
 
 	local lapisdb = require("lapis.db")
 	local bcrypt = require("bcrypt")
-	lapisdb.query(
-		"INSERT INTO `users` (`name`, `tag`, `email`, `password`) VALUES (?, ?, ?, ?);",
-		admin.name,
-		admin.tag,
-		admin.email,
-		bcrypt.digest(admin.password, 5)
-	)
+
+	local Users = require("models.users")
+	Users:create({
+		name = admin.name,
+		tag = admin.tag,
+		email = admin.email,
+		password = bcrypt.digest(admin.password, 5),
+		latest_activity = 0,
+		creation_time = 0,
+		description = "",
+	})
 end)
 
 app:match("/api/test_session", json_params(function(self)
