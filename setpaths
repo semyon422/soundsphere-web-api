@@ -9,6 +9,7 @@ PATH=$OR_ROOT/bin:$PATH
 PATH=$OR_ROOT/luajit/bin:$PATH
 PATH=$LUA_ROOT/tree/bin:$PATH
 
+LUA_PATH="$LUA_PATH;$LUA_ROOT/share/?.lua;$LUA_ROOT/share/?/init.lua"
 LUA_PATH="$LUA_PATH;$LUA_ROOT/tree/share/lua/5.1/?.lua;$LUA_ROOT/tree/share/lua/5.1/?/init.lua"
 LUA_CPATH="$LUA_CPATH;$LUA_ROOT/tree/lib/lua/5.1/?.so"
 
