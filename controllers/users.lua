@@ -56,7 +56,6 @@ local function register(name, email, password)
 	end
 
 	email = email:lower()
-	local digest = bcrypt.digest(password, 5)
 
 	local user = Users:find({email = email})
 
@@ -68,7 +67,10 @@ local function register(name, email, password)
 		name = name,
 		tag = ("%4d"):format(math.random(1, 9999)),
 		email = email,
-		password = digest,
+		password = bcrypt.digest(password, 5),
+		latest_activity = 0,
+		creation_time = 0,
+		description = "",
 	})
 
 	return user
@@ -77,6 +79,7 @@ end
 users_c.POST = function(request)
 	local params = request.params
 	local user = params.user
+	local err
 	user, err = register(user.name, user.email, user.password)
 
 	if user then
@@ -89,7 +92,7 @@ users_c.POST = function(request)
 		}
 	end
 
-	return 400, {error = err}
+	return 200, {message = err}
 end
 
 return users_c

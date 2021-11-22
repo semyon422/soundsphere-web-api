@@ -55,7 +55,7 @@ login_c.POST = function(request)
 	local user, err = login(params.email, params.password)
 
 	if not user then
-		return 200, {}
+		return 200, {message = err}
 	end
 
 	local token, payload = login_c.new_token(user, request.context.ip)
