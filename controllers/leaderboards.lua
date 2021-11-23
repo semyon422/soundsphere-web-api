@@ -57,7 +57,7 @@ leaderboards_c.POST = function(request)
 	})
 
 	Roles:assign("creator", {
-		user_id = params.user_id,
+		user_id = request.session.user_id,
 		leaderboard_id = leaderboard.id
 	})
 	Community_leaderboards:create({

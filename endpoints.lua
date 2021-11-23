@@ -42,6 +42,8 @@ return {
 	"leaderboard.community",
 	"leaderboard.users",
 	"leaderboard.user",
+	"leaderboard.inputmodes",
+	"leaderboard.inputmode",
 	"tables",
 	"table",
 	"table.communities",

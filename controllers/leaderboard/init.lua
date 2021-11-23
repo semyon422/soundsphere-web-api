@@ -4,6 +4,7 @@ local additions = {
 	tables = require("controllers.leaderboard.tables"),
 	communities = require("controllers.leaderboard.communities"),
 	users = require("controllers.leaderboard.users"),
+	inputmodes = require("controllers.leaderboard.inputmodes"),
 }
 
 local leaderboard_c = {}
@@ -12,7 +13,7 @@ leaderboard_c.path = "/leaderboards/:leaderboard_id"
 leaderboard_c.methods = {"GET", "PATCH", "DELETE"}
 leaderboard_c.context = {"leaderboard"}
 leaderboard_c.policies = {
-	PUT = require("policies.public"),
+	GET = require("policies.public"),
 	PATCH = require("policies.public"),
 	DELETE = require("policies.public"),
 }
@@ -26,12 +27,10 @@ leaderboard_c.GET = function(request)
 		local value = tonumber(params[param])
 		if value then
 			local param_count = param .. "_count"
-			local _, response = controller.GET({
-				leaderboard_id = params.leaderboard_id,
-				per_page = value == 0 and value
-			})
+			params.per_page = value == 0 and value
+			local _, response = controller.GET(request)
 			leaderboard[param] = response[param]
-			if leaderboard[param_count] ~= response.total then
+			if leaderboard[param_count] and leaderboard[param_count] ~= response.total then
 				leaderboard[param_count] = response.total
 				table.insert(fields, param_count)
 			end

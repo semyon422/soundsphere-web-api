@@ -29,7 +29,7 @@ community_c.GET = function(request)
 			params.per_page = value == 0 and value
 			local _, response = controller.GET(request)
 			community[param] = response[param]
-			if community[param_count] ~= response.total then
+			if community[param_count] and community[param_count] ~= response.total then
 				community[param_count] = response.total
 				table.insert(fields, param_count)
 			end

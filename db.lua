@@ -35,7 +35,7 @@ local table_declarations = {}
 local _types = schema.types
 local types = {
 	id = _types.id({null = false, unsigned = true}),
-	fk_id = _types.integer({null = false, unsigned = true}),
+	fk_id = _types.integer({null = false, unsigned = true, default = 0}),
 	size = _types.integer({null = false, unsigned = true, default = 0}),
 	md5_hash = "char(32) CHARACTER SET latin1 NOT NULL",
 	time = _types.bigint({unsigned = true, default = 0}),
@@ -96,10 +96,10 @@ table_declarations.leaderboards = {
 	{"id", types.id},
 	{"name", types.varchar},
 	{"description", types.varchar},
+	{"top_user_id", types.fk_id},
 	{"communities_count", types.size},
 	{"tables_count", types.size},
 	{"users_count", types.size},
-	{"top_user_id", types.fk_id},
 }
 
 table_declarations.tables = {
