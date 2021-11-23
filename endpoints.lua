@@ -17,6 +17,7 @@ return {
 	"user.friend",
 	"user.sessions",
 	"user.session",
+	"user.scores",
 	"groups",
 	"group",
 	"group.roles",
