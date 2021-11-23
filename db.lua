@@ -1,5 +1,4 @@
 local schema = require("lapis.db.schema")
-local types = schema.types
 
 local db = {}
 
@@ -33,12 +32,21 @@ local tables = {
 
 local table_declarations = {}
 
-local type_id = types.id({null = false, unsigned = true})
-local type_fk_id = types.integer({null = false, unsigned = true})
-local type_size = types.integer({null = false, unsigned = true, default = 0})
-local type_hash = "char(32) CHARACTER SET latin1 NOT NULL"
-local type_time = types.bigint({unsigned = true})
--- local type_time = "TIMESTAMP NOT NULL DEFAULT 0"
+local _types = schema.types
+local types = {
+	id = _types.id({null = false, unsigned = true}),
+	fk_id = _types.integer({null = false, unsigned = true}),
+	size = _types.integer({null = false, unsigned = true, default = 0}),
+	md5_hash = "char(32) CHARACTER SET latin1 NOT NULL",
+	time = _types.bigint({unsigned = true, default = 0}),
+	-- time = "TIMESTAMP NOT NULL DEFAULT 0",
+	boolean = _types.boolean({default = false}),
+	float = _types.float({default = 0}),
+	varchar = _types.varchar,
+	enum = _types.enum,
+	text = _types.text,
+	varchar_ip = "VARCHAR(15) NOT NULL",
+}
 
 local options = {
 	engine = "InnoDB",
@@ -51,97 +59,97 @@ local options = {
 -- COLLATE=utf8mb4_unicode_520_ci
 
 table_declarations.leaderboard_tables = {
-	{"id", type_id},
-	{"leaderboard_id", type_fk_id},
-	{"table_id", type_fk_id},
+	{"id", types.id},
+	{"leaderboard_id", types.fk_id},
+	{"table_id", types.fk_id},
 	"UNIQUE KEY `leaderboard_tables` (`leaderboard_id`,`table_id`)"
 }
 
 table_declarations.leaderboard_users = {
-	{"id", type_id},
-	{"leaderboard_id", type_fk_id},
-	{"user_id", type_fk_id},
+	{"id", types.id},
+	{"leaderboard_id", types.fk_id},
+	{"user_id", types.fk_id},
 	{"active", types.boolean},
-	{"play_count", type_size},
+	{"play_count", types.size},
 	{"total_performance", types.float},
 	{"total_accuracy", types.float},
 	"UNIQUE KEY `leaderboard_users` (`leaderboard_id`,`user_id`)"
 }
 
 table_declarations.leaderboard_scores = {
-	{"id", type_id},
-	{"leaderboard_id", type_fk_id},
-	{"user_id", type_fk_id},
-	{"notechart_id", type_fk_id},
-	{"score_id", type_fk_id},
+	{"id", types.id},
+	{"leaderboard_id", types.fk_id},
+	{"user_id", types.fk_id},
+	{"notechart_id", types.fk_id},
+	{"score_id", types.fk_id},
 	"UNIQUE KEY `leaderboard_user_notechart` (`leaderboard_id`,`user_id`,`notechart_id`)"
 }
 
 table_declarations.leaderboard_inputmodes = {
-	{"id", type_id},
-	{"leaderboard_id", type_fk_id},
+	{"id", types.id},
+	{"leaderboard_id", types.fk_id},
 	{"inputmode", types.enum},
 	"UNIQUE KEY `leaderboard_inputmodes` (`leaderboard_id`,`inputmode`)"
 }
 
 table_declarations.leaderboards = {
-	{"id", type_id},
+	{"id", types.id},
 	{"name", types.varchar},
 	{"description", types.varchar},
-	{"communities_count", type_size},
-	{"tables_count", type_size},
-	{"users_count", type_size},
-	{"top_user_id", type_fk_id},
+	{"communities_count", types.size},
+	{"tables_count", types.size},
+	{"users_count", types.size},
+	{"top_user_id", types.fk_id},
 }
 
 table_declarations.tables = {
-	{"id", type_id},
+	{"id", types.id},
 	{"name", types.varchar},
 	{"url", types.varchar},
-	{"play_count", type_size},
+	{"play_count", types.size},
 }
 
 table_declarations.table_notecharts = {
-	{"id", type_id},
-	{"table_id", type_fk_id},
-	{"notechart_id", type_fk_id},
+	{"id", types.id},
+	{"table_id", types.fk_id},
+	{"notechart_id", types.fk_id},
 	"UNIQUE KEY `table_notecharts` (`table_id`,`notechart_id`)"
 }
 
 table_declarations.roles = {
-	{"id", type_id},
+	{"id", types.id},
 	{"roletype", types.enum},
-	{"subject_id", type_fk_id},
+	{"subject_id", types.fk_id},
 	{"subject_type", types.enum},
-	{"object_id", type_fk_id},
+	{"object_id", types.fk_id},
 	{"object_type", types.enum},
-	{"expires_at", type_time},
+	{"expires_at", types.time},
 	"UNIQUE KEY `subject_object` (`roletype`,`subject_id`,`subject_type`,`object_id`,`object_type`)"
 }
 
 table_declarations.users = {
-	{"id", type_id},
+	{"id", types.id},
 	{"name", types.varchar},
 	{"tag", types.varchar},
-	"`email` VARCHAR(100) NOT NULL",
+	{"email", "VARCHAR(100) NOT NULL"},
 	{"password", types.varchar},
-	{"latest_activity", type_time},
-	{"creation_time", type_time},
+	{"latest_activity", types.time},
+	{"creation_time", types.time},
 	{"description", types.varchar},
 	"UNIQUE KEY `email` (`email`)"
 }
 
 table_declarations.user_relations = {
-	{"id", type_id},
+	{"id", types.id},
 	{"relationtype", types.enum},
-	{"user_id", type_fk_id},
-	{"relative_user_id", type_fk_id},
+	{"user_id", types.fk_id},
+	{"relative_user_id", types.fk_id},
 	{"mutual", types.boolean},
 	"UNIQUE KEY `user_relations` (`relationtype`,`user_id`,`relative_user_id`)"
 }
 
 table_declarations.communities = {
-	{"id", type_id},
+	{"id", types.id},
 	{"name", types.varchar},
 	{"alias", types.varchar},
 	{"is_public", types.boolean},
@@ -149,22 +157,22 @@ table_declarations.communities = {
 	{"short_description", types.varchar},
 	{"description", types.varchar},
 	{"banner", types.varchar},
-	{"users_count", type_size},
-	{"leaderboards_count", type_size},
-	{"inputmodes_count", type_size},
+	{"users_count", types.size},
+	{"leaderboards_count", types.size},
+	{"inputmodes_count", types.size},
 }
 
 table_declarations.community_leaderboards = {
-	{"id", type_id},
-	{"community_id", type_fk_id},
-	{"leaderboard_id", type_fk_id},
+	{"id", types.id},
+	{"community_id", types.fk_id},
+	{"leaderboard_id", types.fk_id},
 	"UNIQUE KEY `community_leaderboards` (`community_id`,`leaderboard_id`)"
 }
 
 table_declarations.community_users = {
-	{"id", type_id},
-	{"community_id", type_fk_id},
-	{"user_id", type_fk_id},
+	{"id", types.id},
+	{"community_id", types.fk_id},
+	{"user_id", types.fk_id},
 	{"accepted", types.boolean},
 	{"invitation", types.boolean},
 	[[
@@ -175,39 +183,39 @@ table_declarations.community_users = {
 }
 
 table_declarations.community_tables = {
-	{"id", type_id},
-	{"community_id", type_fk_id},
-	{"table_id", type_fk_id},
+	{"id", types.id},
+	{"community_id", types.fk_id},
+	{"table_id", types.fk_id},
 	"UNIQUE KEY `community_tables` (`community_id`,`table_id`)"
 }
 
 table_declarations.community_inputmodes = {
-	{"id", type_id},
-	{"community_id", type_fk_id},
+	{"id", types.id},
+	{"community_id", types.fk_id},
 	{"inputmode", types.enum},
 	"UNIQUE KEY `community_inputmodes` (`community_id`,`inputmode`)"
 }
 
 table_declarations.group_users = {
-	{"id", type_id},
-	{"group_id", type_fk_id},
-	{"user_id", type_fk_id},
+	{"id", types.id},
+	{"group_id", types.fk_id},
+	{"user_id", types.fk_id},
 	"UNIQUE KEY `group_users` (`group_id`,`user_id`)"
 }
 
 table_declarations.groups = {
-	{"id", type_id},
+	{"id", types.id},
 	{"name", types.varchar},
 }
 
 table_declarations.containers = {
-	{"id", type_id},
-	{"hash", type_hash},
+	{"id", types.id},
+	{"hash", types.md5_hash},
 	{"format", types.enum},
 	{"uploaded", types.boolean},
-	{"size", type_size},
+	{"size", types.size},
 	{"imported", types.boolean},
-	{"creation_time", type_time},
+	{"creation_time", types.time},
 	[[
 		UNIQUE KEY `hash` (`hash`),
 		KEY `format` (`format`),
@@ -216,17 +224,17 @@ table_declarations.containers = {
 }
 
 table_declarations.modifiers = {
-	{"id", type_id},
-	"`name` VARCHAR(100) NOT NULL",
+	{"id", types.id},
+	{"name", "VARCHAR(100) NOT NULL"},
 	"UNIQUE KEY `name` (`name`)"
 }
 
 table_declarations.notecharts = {
-	{"id", type_id},
-	{"container_id", type_fk_id},
+	{"id", types.id},
+	{"container_id", types.fk_id},
 	{"index", types.enum},
-	{"creation_time", type_time},
-	{"play_count", type_size},
+	{"creation_time", types.time},
+	{"play_count", types.size},
 	{"inputmode", types.enum},
 	{"difficulty", types.float},
 	{"song_title", types.text},
@@ -240,20 +248,20 @@ table_declarations.notecharts = {
 }
 
 table_declarations.scores = {
-	{"id", type_id},
-	{"user_id", type_fk_id},
-	{"notechart_id", type_fk_id},
-	{"modifier_id", type_fk_id},
+	{"id", types.id},
+	{"user_id", types.fk_id},
+	{"notechart_id", types.fk_id},
+	{"modifier_id", types.fk_id},
 	{"inputmode", types.enum},
-	{"replay_hash", type_hash},
+	{"replay_hash", types.md5_hash},
 	{"is_valid", types.boolean},
 	{"calculated", types.boolean},
 	{"replay_uploaded", types.boolean},
-	{"replay_size", type_size},
-	{"creation_time", type_time},
+	{"replay_size", types.size},
+	{"creation_time", types.time},
 	{"score", types.float},
 	{"accuracy", types.float},
-	{"max_combo", type_size},
+	{"max_combo", types.size},
 	{"performance", types.float},
 	[[
 		UNIQUE KEY `replay_hash` (`replay_hash`),
@@ -267,12 +275,12 @@ table_declarations.scores = {
 }
 
 table_declarations.sessions = {
-	{"id", type_id},
-	{"user_id", type_fk_id},
+	{"id", types.id},
+	{"user_id", types.fk_id},
 	{"active", types.boolean},
-	"`ip` VARCHAR(15) NOT NULL",
-	{"created_at", type_time},
-	{"updated_at", type_time},
+	{"ip", types.varchar_ip},
+	{"created_at", types.time},
+	{"updated_at", types.time},
 	[[
 		KEY `created_at` (`created_at`),
 		KEY `user_id` (`user_id`),
@@ -281,11 +289,11 @@ table_declarations.sessions = {
 }
 
 table_declarations.quick_logins = {
-	{"id", type_id},
-	"`ip` VARCHAR(15) NOT NULL",
-	"`key` VARCHAR(32) NOT NULL",
-	{"next_update_time", type_time},
-	{"user_id", type_fk_id},
+	{"id", types.id},
+	{"ip", types.varchar_ip},
+	{"key", types.md5_hash},
+	{"next_update_time", types.time},
+	{"user_id", types.fk_id},
 	{"complete", types.boolean},
 	[[
 		KEY `ip` (`ip`),
