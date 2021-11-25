@@ -1,6 +1,6 @@
 local Communities = require("models.communities")
 local Community_users = require("models.community_users")
-local Community_inputmodes = require("models.Community_inputmodes")
+local Community_inputmodes = require("models.community_inputmodes")
 local Roles = require("models.roles")
 local preload = require("lapis.db.model").preload
 
