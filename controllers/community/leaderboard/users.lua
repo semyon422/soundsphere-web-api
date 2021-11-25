@@ -1,4 +1,5 @@
 local Community_users = require("models.community_users")
+local Users = require("models.users")
 local preload = require("lapis.db.model").preload
 
 local community_leaderboard_users_c = {}
@@ -32,15 +33,10 @@ community_leaderboard_users_c.GET = function(request)
 
 	local users = {}
 	for i, community_leaderboard_user in ipairs(community_leaderboard_users) do
-		local user = community_leaderboard_user.user
-		table.insert(users, {
-			id = user.id,
-			name = user.name,
-			tag = user.tag,
-			latest_activity = user.latest_activity,
-			total_performance = community_leaderboard_user.total_performance,
-			rank = (page_num - 1) * per_page + i
-		})
+		local user = Users:safe_copy(community_leaderboard_user.user)
+		user.total_performance = community_leaderboard_user.total_performance
+		user.rank = (page_num - 1) * per_page + i
+		table.insert(users, user)
 	end
 
 	return 200, {

@@ -1,4 +1,5 @@
 local Scores = require("models.scores")
+local Users = require("models.users")
 local User_relations = require("models.user_relations")
 local Leaderboard_scores = require("models.leaderboard_scores")
 local preload = require("lapis.db.model").preload
@@ -37,14 +38,8 @@ local function get_relations_scores(params, relationtype, mutual)
 
 	local scores = {}
 	for _, leaderboard_score in ipairs(leaderboard_scores) do
-		local user = leaderboard_score.user
 		local score = leaderboard_score.score
-		score.user = {
-			id = user.id,
-			name = user.name,
-			tag = user.tag,
-			latest_activity = user.latest_activity,
-		}
+		score.user = Users:safe_copy(leaderboard_score.user)
 		table.insert(scores, score)
 	end
 	return scores

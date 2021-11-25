@@ -24,17 +24,9 @@ users_c.GET = function(request)
 	)
 	local users = paginator:get_page(page_num)
 
-	local new_users = {}
+	local safe_users = {}
 	for _, user in ipairs(users) do
-		table.insert(
-			new_users,
-			{
-				id = user.id,
-				name = user.name,
-				tag = user.tag,
-				latest_activity = user.latest_activity,
-			}
-		)
+		table.insert(safe_users, Users:safe_copy(user))
 	end
 
 	local count = Users:count()
@@ -42,7 +34,7 @@ users_c.GET = function(request)
 	return 200, {
 		total = count,
 		filtered = count,
-		users = new_users
+		users = safe_users
 	}
 end
 
@@ -83,13 +75,7 @@ users_c.POST = function(request)
 	user, err = register(user.name, user.email, user.password)
 
 	if user then
-		return 200, {
-			user = {
-				id = user.id,
-				name = user.name,
-				tag = user.tag
-			}
-		}
+		return 200, {user = Users:safe_copy(user)}
 	end
 
 	return 200, {message = err}

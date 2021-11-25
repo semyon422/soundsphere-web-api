@@ -10,4 +10,15 @@ local Users = Model:extend(
 	}
 )
 
+Users.safe_copy = function(self, user)
+	local safe_user = {}
+	safe_user.id = user.id
+	safe_user.name = user.name
+	safe_user.tag = user.tag
+	safe_user.latest_activity = user.latest_activity
+	safe_user.creation_time = user.creation_time
+	safe_user.description = user.description
+	return safe_user
+end
+
 return Users

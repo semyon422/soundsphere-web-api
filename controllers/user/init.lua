@@ -15,15 +15,7 @@ user_c.GET = function(request)
 	local params = request.params
 	local user = Users:find(params.user_id)
 
-	user = user and {
-        id = user.id,
-        name = user.name,
-        tag = user.tag,
-        latest_activity = user.latest_activity,
-        description = user.description,
-    }
-
-	return 200, {user = user}
+	return 200, {user = user and Users:safe_copy(user)}
 end
 
 user_c.PATCH = function(request)

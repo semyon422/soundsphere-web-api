@@ -1,4 +1,5 @@
 local Leaderboard_users = require("models.leaderboard_users")
+local Users = require("models.users")
 local preload = require("lapis.db.model").preload
 
 local leaderboard_users_c = {}
@@ -17,13 +18,7 @@ leaderboard_users_c.GET = function(request)
 
 	local users = {}
 	for _, leaderboard_user in ipairs(leaderboard_users) do
-		local user = leaderboard_user.user
-		table.insert(users, {
-			id = user.id,
-			name = user.name,
-			tag = user.tag,
-			latest_activity = user.latest_activity,
-		})
+		table.insert(users, Users:safe_copy(leaderboard_user.user))
 	end
 
 	local count = Leaderboard_users:count()

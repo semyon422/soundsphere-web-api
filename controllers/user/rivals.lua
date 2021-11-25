@@ -1,4 +1,5 @@
 local User_relations = require("models.user_relations")
+local Users = require("models.users")
 local preload = require("lapis.db.model").preload
 
 local user_rivals_c = {}
@@ -20,14 +21,9 @@ user_rivals_c.GET = function(request)
 	)
 	preload(user_relations, "relative_user")
 	for _, user_relation in ipairs(user_relations) do
-		local rival = user_relation.relative_user
-		table.insert(rivals, {
-			id = rival.id,
-			name = rival.name,
-			tag = rival.tag,
-			latest_activity = rival.latest_activity,
-			mutual = user_relation.mutual
-		})
+		local rival = Users:safe_copy(user_relation.relative_user)
+		rival.mutual = user_relation.mutual
+		table.insert(rivals, rival)
 	end
 
 	local count = User_relations:count()

@@ -1,4 +1,5 @@
 local Community_users = require("models.community_users")
+local Users = require("models.users")
 local preload = require("lapis.db.model").preload
 
 local community_users_c = {}
@@ -40,13 +41,7 @@ community_users_c.GET = function(request)
 
 	local users = {}
 	for _, community_user in ipairs(community_users) do
-		local user = community_user.user
-		table.insert(users, {
-			id = user.id,
-			name = user.name,
-			tag = user.tag,
-			latest_activity = user.latest_activity,
-		})
+		table.insert(users, Users:safe_copy(community_user.user))
 	end
 
 	return 200, {
