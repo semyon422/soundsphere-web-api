@@ -24,7 +24,7 @@ leaderboards_c.GET = function(request)
 		{
 			per_page = per_page,
 			prepare_results = function(entries)
-				preload(entries, {leaderboard_inputmodes = "inputmode"})
+				preload(entries, "leaderboard_inputmodes")
 				return entries
 			end
 		}
