@@ -166,7 +166,9 @@ table_declarations.community_leaderboards = {
 	{"id", types.id},
 	{"community_id", types.fk_id},
 	{"leaderboard_id", types.fk_id},
-	"UNIQUE KEY `community_leaderboards` (`community_id`,`leaderboard_id`)"
+	{"is_owner", types.boolean},
+	"UNIQUE KEY `community_leaderboards` (`community_id`,`leaderboard_id`)",
+	"KEY `is_owner` (`is_owner`)",
 }
 
 table_declarations.community_users = {

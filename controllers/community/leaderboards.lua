@@ -22,6 +22,7 @@ community_leaderboards_c.GET = function(request)
 		local leaderboard = community_leaderboard.leaderboard
 		leaderboard.inputmodes = Leaderboard_inputmodes:get_inputmodes(leaderboard.leaderboard_inputmodes)
 		leaderboard.leaderboard_inputmodes = nil
+		leaderboard.is_owner = community_leaderboard.is_owner
 		table.insert(leaderboards, leaderboard)
 	end
 

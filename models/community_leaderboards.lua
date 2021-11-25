@@ -1,4 +1,5 @@
 local Model = require("lapis.db.model").Model
+local toboolean = require("toboolean")
 
 local Community_leaderboards = Model:extend(
 	"community_leaderboards",
@@ -9,5 +10,11 @@ local Community_leaderboards = Model:extend(
 		}
 	}
 )
+
+local _load = Community_leaderboards.load
+function Community_leaderboards:load(row)
+	row.is_owner = toboolean(row.is_owner)
+	return _load(self, row)
+end
 
 return Community_leaderboards

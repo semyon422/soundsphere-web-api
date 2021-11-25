@@ -61,7 +61,8 @@ leaderboards_c.POST = function(request)
 	})
 	Community_leaderboards:create({
 		community_id = params.community_id,
-		leaderboard_id = leaderboard.id
+		leaderboard_id = leaderboard.id,
+		is_owner = true,
 	})
 
 	return 200, {leaderboard = leaderboard}
