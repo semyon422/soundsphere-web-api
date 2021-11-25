@@ -6,8 +6,10 @@ function PolicyEnforcementPoint:new()
 	return setmetatable({}, {__index = PolicyEnforcementPoint})
 end
 
-function PolicyEnforcementPoint:check(request, controller, method)
-	local policies = controller.policies[method] or {}
+function PolicyEnforcementPoint:check(request, policies)
+	if not policies then
+		return false
+	end
 	local decision
 	for i = 1, #policies do
 		local policy = policies[i]

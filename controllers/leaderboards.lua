@@ -9,10 +9,13 @@ local leaderboards_c = {}
 
 leaderboards_c.path = "/leaderboards"
 leaderboards_c.methods = {"GET", "POST"}
-leaderboards_c.context = {}
+leaderboards_c.context = {"session"}
 leaderboards_c.policies = {
 	GET = require("policies.public"),
-	POST = require("policies.public"),
+	POST = {{
+		rules = {require("rules.authenticated")},
+		combine = require("abac.combine.permit_all_or_deny"),
+	}},
 }
 
 leaderboards_c.GET = function(request)

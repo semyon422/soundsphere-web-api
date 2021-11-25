@@ -53,7 +53,8 @@ end
 local function get_permited_methods(self, controller)
 	local methods = {}
 	for _, method in ipairs(controller.methods) do
-		if pep:check(self, controller, method) then
+		local policies = controller.policies[method]
+		if pep:check(self, policies) then
 			table.insert(methods, method)
 		end
 	end
