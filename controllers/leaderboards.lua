@@ -1,4 +1,5 @@
 local Leaderboards = require("models.leaderboards")
+local Users = require("models.users")
 local Community_leaderboards = require("models.community_leaderboards")
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Roles = require("models.roles")
@@ -24,7 +25,7 @@ leaderboards_c.GET = function(request)
 		{
 			per_page = per_page,
 			prepare_results = function(entries)
-				preload(entries, "leaderboard_inputmodes")
+				preload(entries, {"leaderboard_inputmodes", "top_user"})
 				return entries
 			end
 		}
@@ -32,6 +33,7 @@ leaderboards_c.GET = function(request)
 	local leaderboards = paginator:get_page(page_num)
 
 	for _, leaderboard in ipairs(leaderboards) do
+		leaderboard.top_user = Users:safe_copy(leaderboard.top_user)
 		leaderboard.inputmodes = Leaderboard_inputmodes:get_inputmodes(leaderboard.leaderboard_inputmodes)
 		leaderboard.leaderboard_inputmodes = nil
 	end

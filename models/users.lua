@@ -11,6 +11,7 @@ local Users = Model:extend(
 )
 
 Users.safe_copy = function(self, user)
+	if not user then return end
 	local safe_user = {}
 	safe_user.id = user.id
 	safe_user.name = user.name
