@@ -33,7 +33,6 @@ return {
 	"community.leaderboard",
 	"community.leaderboard.users",
 	"community.inputmodes",
-	"community.inputmode",
 	"leaderboards",
 	"leaderboard",
 	"leaderboard.tables",
