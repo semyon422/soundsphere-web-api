@@ -1,5 +1,4 @@
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
-local Inputmodes = require("enums.inputmodes")
 
 local leaderboard_inputmodes_c = {}
 
@@ -13,17 +12,11 @@ leaderboard_inputmodes_c.policies = {
 leaderboard_inputmodes_c.GET = function(request)
 	local params = request.params
 	local leaderboard_inputmodes = Leaderboard_inputmodes:find_all({params.leaderboard_id}, "leaderboard_id")
-
-	local inputmodes = {}
-	for _, leaderboard_inputmode in ipairs(leaderboard_inputmodes) do
-		table.insert(inputmodes, Inputmodes:to_name(leaderboard_inputmode.inputmode))
-	end
-
-	local count = Leaderboard_inputmodes:count()
+	local inputmodes = Leaderboard_inputmodes:get_inputmodes(leaderboard_inputmodes)
 
 	return 200, {
-		total = count,
-		filtered = count,
+		total = #inputmodes,
+		filtered = #inputmodes,
 		inputmodes = inputmodes
 	}
 end

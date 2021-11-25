@@ -1,7 +1,7 @@
 local Communities = require("models.communities")
 local Community_users = require("models.community_users")
+local Community_inputmodes = require("models.Community_inputmodes")
 local Roles = require("models.roles")
-local Inputmodes = require("enums.inputmodes")
 local preload = require("lapis.db.model").preload
 
 local communities_c = {}
@@ -56,11 +56,7 @@ communities_c.GET = function(request)
 	local communities = paginator:get_page(page_num)
 
 	for _, community in ipairs(communities) do
-		local inputmodes = {}
-		for _, community_inputmode in ipairs(community.community_inputmodes) do
-			table.insert(inputmodes, Inputmodes:to_name(community_inputmode.inputmode))
-		end
-		community.inputmodes = inputmodes
+		community.inputmodes = Community_inputmodes:get_inputmodes(community.community_inputmodes)
 		community.community_inputmodes = nil
 		community.joined = joined_community_ids_map[community.id]
 	end

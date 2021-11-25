@@ -5,7 +5,6 @@ local Notecharts = Model:extend(
 	{
 		relations = {
 			{"container", belongs_to = "containers", key = "container_id"},
-			{"inputmode", belongs_to = "inputmodes", key = "inputmode_id"},
 		}
 	}
 )

@@ -1,4 +1,5 @@
 local Community_leaderboards = require("models.community_leaderboards")
+local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Inputmodes = require("enums.inputmodes")
 local preload = require("lapis.db.model").preload
 
@@ -19,11 +20,7 @@ community_leaderboards_c.GET = function(request)
 	local leaderboards = {}
 	for _, community_leaderboard in ipairs(community_leaderboards) do
 		local leaderboard = community_leaderboard.leaderboard
-		local inputmodes = {}
-		for _, leaderboard_inputmode in ipairs(leaderboard.leaderboard_inputmodes) do
-			table.insert(inputmodes, Inputmodes:to_name(leaderboard_inputmode.inputmode))
-		end
-		leaderboard.inputmodes = inputmodes
+		leaderboard.inputmodes = Leaderboard_inputmodes:get_inputmodes(leaderboard.leaderboard_inputmodes)
 		leaderboard.leaderboard_inputmodes = nil
 		table.insert(leaderboards, leaderboard)
 	end

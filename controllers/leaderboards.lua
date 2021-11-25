@@ -1,7 +1,7 @@
 local Leaderboards = require("models.leaderboards")
 local Community_leaderboards = require("models.community_leaderboards")
+local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Roles = require("models.roles")
-local Inputmodes = require("enums.inputmodes")
 local preload = require("lapis.db.model").preload
 
 local leaderboards_c = {}
@@ -32,11 +32,7 @@ leaderboards_c.GET = function(request)
 	local leaderboards = paginator:get_page(page_num)
 
 	for _, leaderboard in ipairs(leaderboards) do
-		local inputmodes = {}
-		for _, leaderboard_inputmode in ipairs(leaderboard.leaderboard_inputmodes) do
-			table.insert(inputmodes, Inputmodes:to_name(leaderboard_inputmode.inputmode))
-		end
-		leaderboard.inputmodes = inputmodes
+		leaderboard.inputmodes = Leaderboard_inputmodes:get_inputmodes(leaderboard.leaderboard_inputmodes)
 		leaderboard.leaderboard_inputmodes = nil
 	end
 
