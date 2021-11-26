@@ -65,34 +65,17 @@ DELETE {{api}}/api/communities/1/users/1
 ###
 PUT {{api}}/communities/1/inputmodes/4key
 ###
-POST {{api}}/roles
-Content-Type: application/json
-
-{
-	"roletype": "moderator",
-	"user_id": 22,
-	"leaderboard_id": 99
-}
+GET {{api}}/communities/1/users
 ###
-POST {{api}}/roles
-Content-Type: application/json
-
-{
-	"roletype": "moderator",
-	"user_id": 22
-}
+PATCH {{api}}/communities/1/users/1?role=creator
 ###
-DELETE {{api}}/roles
-Content-Type: application/json
-
-{
-	"roletype": "moderator",
-	"user_id": 22,
-	"leaderboard_id": 99
-}
+GET {{api}}/users/1/communities?requests
 ###
-
-GET {{api}}/users/22/roles
+GET {{api}}/users/1/roles
+###
+PUT {{api}}/users/1/roles/admin
+###
+DELETE {{api}}/users/1/roles/admin
 ###
 
 GET {{api}}/users/1/rivals
