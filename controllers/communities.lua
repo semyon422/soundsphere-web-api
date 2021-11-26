@@ -1,7 +1,7 @@
 local Communities = require("models.communities")
 local Community_users = require("models.community_users")
 local Community_inputmodes = require("models.community_inputmodes")
-local Roles = require("models.roles")
+local Roles = require("enums.roles")
 local preload = require("lapis.db.model").preload
 
 local communities_c = {}
@@ -85,13 +85,10 @@ communities_c.POST = function(request)
 		is_public = community.is_public,
 	})
 
-	Roles:assign("creator", {
-		user_id = session.user_id,
-		community_id = community.id
-	})
 	Community_users:create({
 		community_id = community.id,
 		user_id = session.user_id,
+		role = Roles:for_db("creator"),
 		accepted = true,
 	})
 

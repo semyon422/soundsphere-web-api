@@ -2,7 +2,6 @@ local Leaderboards = require("models.leaderboards")
 local Users = require("models.users")
 local Community_leaderboards = require("models.community_leaderboards")
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
-local Roles = require("models.roles")
 local preload = require("lapis.db.model").preload
 
 local leaderboards_c = {}
@@ -58,10 +57,6 @@ leaderboards_c.POST = function(request)
 		description = leaderboard.description,
 	})
 
-	Roles:assign("creator", {
-		user_id = request.session.user_id,
-		leaderboard_id = leaderboard.id
-	})
 	Community_leaderboards:create({
 		community_id = params.community_id,
 		leaderboard_id = leaderboard.id,

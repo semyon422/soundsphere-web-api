@@ -1,4 +1,5 @@
 local Community_users = require("models.community_users")
+local Roles = require("enums.roles")
 local preload = require("lapis.db.model").preload
 
 local user_communities_c = {}
@@ -14,10 +15,10 @@ user_communities_c.GET = function(request)
 	local params = request.params
 	local where = {accepted = true}
 	if params.invitations then
-		where.invitations = true
+		where.invitation = true
 		where.accepted = false
 	elseif params.requests then
-		where.requests = true
+		where.invitation = false
 		where.accepted = false
 	end
 
@@ -29,7 +30,9 @@ user_communities_c.GET = function(request)
 
     local communities = {}
 	for _, community_user in ipairs(community_users) do
-        table.insert(communities, community_user.community)
+		local community = community_user.community
+		community.role = Roles:to_name(community_user.role)
+        table.insert(communities, community)
 	end
 
 	local count = Community_users:count()

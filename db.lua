@@ -12,16 +12,14 @@ local tables = {
 	"leaderboards",
 	"tables",
 	"table_notecharts",
-	"roles",
 	"users",
 	"user_relations",
+	"user_roles",
 	"communities",
 	"community_leaderboards",
 	"community_users",
 	"community_tables",
 	"community_inputmodes",
-	"group_users",
-	"groups",
 	"containers",
 	"modifiers",
 	"notecharts",
@@ -116,15 +114,12 @@ table_declarations.table_notecharts = {
 	"UNIQUE KEY `table_notecharts` (`table_id`,`notechart_id`)"
 }
 
-table_declarations.roles = {
+table_declarations.user_roles = {
 	{"id", types.id},
-	{"roletype", types.enum},
-	{"subject_id", types.fk_id},
-	{"subject_type", types.enum},
-	{"object_id", types.fk_id},
-	{"object_type", types.enum},
+	{"user_id", types.fk_id},
+	{"role", types.enum},
 	{"expires_at", types.time},
-	"UNIQUE KEY `subject_object` (`roletype`,`subject_id`,`subject_type`,`object_id`,`object_type`)"
+	"UNIQUE KEY `subject_object` (`user_id`, `role`)"
 }
 
 table_declarations.users = {
@@ -176,11 +171,12 @@ table_declarations.community_users = {
 	{"community_id", types.fk_id},
 	{"user_id", types.fk_id},
 	{"accepted", types.boolean},
+	{"role", types.enum},
 	{"invitation", types.boolean},
 	[[
 		UNIQUE KEY `community_users` (`community_id`,`user_id`),
-		KEY `accepted` (`accepted`),
-		KEY `invitation` (`invitation`)
+		KEY `invitation` (`invitation`),
+		KEY `accepted` (`accepted`)
 	]]
 }
 
@@ -196,18 +192,6 @@ table_declarations.community_inputmodes = {
 	{"community_id", types.fk_id},
 	{"inputmode", types.enum},
 	"UNIQUE KEY `community_inputmodes` (`community_id`,`inputmode`)"
-}
-
-table_declarations.group_users = {
-	{"id", types.id},
-	{"group_id", types.fk_id},
-	{"user_id", types.fk_id},
-	"UNIQUE KEY `group_users` (`group_id`,`user_id`)"
-}
-
-table_declarations.groups = {
-	{"id", types.id},
-	{"name", types.varchar},
 }
 
 table_declarations.containers = {

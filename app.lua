@@ -109,7 +109,7 @@ local function route_datatables(controller, name)
 	end
 	return json_respond_to("/dt" .. controller.path, function(self)
 		local context = get_context(self, controller)
-		if pep:check(self, controller, "GET") and controller.GET then
+		if pep:check(self, controller.policies.GET) and controller.GET then
 			self.params.start = self.params.start or 1
 			self.params.length = self.params.length or 1
 			datatable.params(self)
