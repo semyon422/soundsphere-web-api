@@ -1,5 +1,6 @@
 local Community_users = require("models.community_users")
 local Users = require("models.users")
+local Roles = require("enums.roles")
 local preload = require("lapis.db.model").preload
 
 local community_users_c = {}
@@ -41,7 +42,9 @@ community_users_c.GET = function(request)
 
 	local users = {}
 	for _, community_user in ipairs(community_users) do
-		table.insert(users, Users:safe_copy(community_user.user))
+		local user = Users:safe_copy(community_user.user)
+		user.role = Roles:to_name(community_user.role)
+		table.insert(users, user)
 	end
 
 	return 200, {

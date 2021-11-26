@@ -15,7 +15,7 @@ user_roles_c.GET = function(request)
     local user_roles = User_roles:find_all({params.user_id}, "user_id")
     local roles = {}
 	for _, user_role in ipairs(user_roles) do
-		table.insert(roles, Roles:for_db(user_role.role))
+		table.insert(roles, Roles:to_name(user_role.role))
 	end
 
 	return 200, {roles = roles}

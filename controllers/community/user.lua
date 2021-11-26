@@ -1,4 +1,5 @@
 local Community_users = require("models.community_users")
+local Roles = require("enums.roles")
 
 local community_user_c = {}
 
@@ -57,6 +58,9 @@ community_user_c.GET = function(request)
         community_id = params.community_id,
         user_id = params.user_id,
     })
+	if community_user then
+		community_user.role = Roles:to_name(community_user.role)
+	end
 
 	return 200, {community_user = community_user}
 end
@@ -69,6 +73,7 @@ community_user_c.PATCH = function(request)
     })
     if community_user then
 		Community_users:set_role(community_user, params.role, true)
+		community_user.role = Roles:to_name(community_user.role)
     end
 
 	return 200, {community_user = community_user}
