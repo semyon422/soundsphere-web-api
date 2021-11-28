@@ -94,6 +94,7 @@ table_declarations.leaderboards = {
 	{"id", types.id},
 	{"name", types.varchar},
 	{"description", types.varchar},
+	{"banner", types.varchar},
 	{"top_user_id", types.fk_id},
 	{"communities_count", types.size},
 	{"tables_count", types.size},

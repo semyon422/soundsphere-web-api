@@ -1,4 +1,7 @@
 local Leaderboards = require("models.leaderboards")
+local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
+local Inputmodes = require("enums.inputmodes")
+local array_update = require("array_update")
 
 local additions = {
 	tables = require("controllers.leaderboard.tables"),
@@ -17,6 +20,32 @@ leaderboard_c.policies = {
 	PATCH = require("policies.public"),
 	DELETE = require("policies.public"),
 }
+
+leaderboard_c.update_inputmodes = function(leaderboard_id, inputmodes)
+	if not inputmodes then
+		return
+	end
+
+	local leaderboard_inputmodes = Leaderboard_inputmodes:find_all({leaderboard_id}, "leaderboard_id")
+
+	local new_inputmodes, old_inputmodes = array_update(
+		inputmodes,
+		leaderboard_inputmodes,
+		function(i) return Inputmodes:for_db(i) end,
+		function(li) return li.inputmode end
+	)
+
+	local db = Leaderboard_inputmodes.db
+	if old_inputmodes[1] then
+		db.delete("leaderboard_inputmodes", {inputmode = db.list(old_inputmodes)})
+	end
+	for _, inputmode in ipairs(new_inputmodes) do
+		db.insert("leaderboard_inputmodes", {
+			leaderboard_id = leaderboard_id,
+			inputmode = inputmode,
+		})
+	end
+end
 
 leaderboard_c.GET = function(request)
 	local params = request.params
@@ -49,8 +78,10 @@ leaderboard_c.PATCH = function(request)
 
 	leaderboard.name = params.leaderboard.name
 	leaderboard.description = params.leaderboard.description
+	leaderboard.banner = params.leaderboard.banner
+	leaderboard:update("name", "description", "banner")
 
-	leaderboard:update("name", "description")
+	leaderboard_c.update_inputmodes(leaderboard.id, params.leaderboard.inputmodes)
 
 	return 200, {leaderboard = leaderboard}
 end

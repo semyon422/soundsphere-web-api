@@ -2,6 +2,7 @@ local Community_inputmodes = require("models.community_inputmodes")
 local Community_leaderboards = require("models.community_leaderboards")
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Inputmodes = require("enums.inputmodes")
+local array_update = require("array_update")
 local preload = require("lapis.db.model").preload
 
 local community_inputmodes_c = {}
@@ -19,33 +20,19 @@ community_inputmodes_c.GET = function(request)
 	local community_leaderboards = Community_leaderboards:find_all({params.community_id}, "community_id")
 	preload(community_leaderboards, {leaderboard = "leaderboard_inputmodes"})
 
-	local actual_inputmodes = {}
+	local leaderboard_inputmodes = {}
 	for _, community_leaderboard in ipairs(community_leaderboards) do
-		local leaderboard_inputmodes = community_leaderboard.leaderboard.leaderboard_inputmodes
-		for _, leaderboard_inputmode in ipairs(leaderboard_inputmodes) do
-			actual_inputmodes[leaderboard_inputmode.inputmode] = true
+		for _, leaderboard_inputmode in ipairs(community_leaderboard.leaderboard.leaderboard_inputmodes) do
+			table.insert(leaderboard_inputmodes, leaderboard_inputmode)
 		end
 	end
 
-	local community_inputmodes = Community_inputmodes:find_all({params.community_id}, "community_id")
-
-	local cached_inputmodes = {}
-	for _, community_inputmode in ipairs(community_inputmodes) do
-		cached_inputmodes[community_inputmode.inputmode] = true
-	end
-
-	local new_inputmodes = {}
-	local old_inputmodes = {}
-	for inputmode in pairs(actual_inputmodes) do
-		if not cached_inputmodes[inputmode] then
-			table.insert(new_inputmodes, inputmode)
-		end
-	end
-	for inputmode in pairs(cached_inputmodes) do
-		if not actual_inputmodes[inputmode] then
-			table.insert(old_inputmodes, inputmode)
-		end
-	end
+	local new_inputmodes, old_inputmodes, all_inputmodes = array_update(
+		leaderboard_inputmodes,
+		Community_inputmodes:find_all({params.community_id}, "community_id"),
+		function(li) return li.inputmode end,
+		function(ci) return ci.inputmode end
+	)
 
 	local db = Community_inputmodes.db
 	if old_inputmodes[1] then
@@ -59,7 +46,7 @@ community_inputmodes_c.GET = function(request)
 	end
 
 	local inputmodes = {}
-	for inputmode in pairs(actual_inputmodes) do
+	for _, inputmode in ipairs(all_inputmodes) do
 		table.insert(inputmodes, Inputmodes:to_name(inputmode))
 	end
 

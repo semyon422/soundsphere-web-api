@@ -3,6 +3,7 @@ local Users = require("models.users")
 local Community_leaderboards = require("models.community_leaderboards")
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local preload = require("lapis.db.model").preload
+local leaderboard_c = require("controllers.leaderboard")
 
 local leaderboards_c = {}
 
@@ -51,10 +52,10 @@ end
 
 leaderboards_c.POST = function(request)
 	local params = request.params
-	local leaderboard = params.leaderboard
 	leaderboard = Leaderboards:create({
-		name = leaderboard.name or "Leaderboard",
-		description = leaderboard.description,
+		name = params.leaderboard.name or "Leaderboard",
+		description = params.leaderboard.description,
+		banner = params.leaderboard.banner,
 	})
 
 	Community_leaderboards:create({
@@ -62,6 +63,8 @@ leaderboards_c.POST = function(request)
 		leaderboard_id = leaderboard.id,
 		is_owner = true,
 	})
+
+	leaderboard_c.update_inputmodes(leaderboard.id, params.leaderboard.inputmodes)
 
 	return 200, {leaderboard = leaderboard}
 end
