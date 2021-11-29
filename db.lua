@@ -5,20 +5,20 @@ local db = {}
 -- CREATE DATABASE backend;
 
 local tables = {
-	"leaderboard_tables",
+	"leaderboard_difftables",
 	"leaderboard_users",
 	"leaderboard_scores",
 	"leaderboard_inputmodes",
 	"leaderboards",
-	"tables",
-	"table_notecharts",
+	"difftables",
+	"difftable_notecharts",
 	"users",
 	"user_relations",
 	"user_roles",
 	"communities",
 	"community_leaderboards",
 	"community_users",
-	"community_tables",
+	"community_difftables",
 	"community_inputmodes",
 	"containers",
 	"modifiers",
@@ -56,11 +56,11 @@ local options = {
 -- COLLATE=utf8mb4_0900_ai_ci
 -- COLLATE=utf8mb4_unicode_520_ci
 
-table_declarations.leaderboard_tables = {
+table_declarations.leaderboard_difftables = {
 	{"id", types.id},
 	{"leaderboard_id", types.fk_id},
-	{"table_id", types.fk_id},
-	"UNIQUE KEY `leaderboard_tables` (`leaderboard_id`,`table_id`)"
+	{"difftable_id", types.fk_id},
+	"UNIQUE KEY `leaderboard_difftables` (`leaderboard_id`,`difftable_id`)"
 }
 
 table_declarations.leaderboard_users = {
@@ -97,22 +97,22 @@ table_declarations.leaderboards = {
 	{"banner", types.varchar},
 	{"top_user_id", types.fk_id},
 	{"communities_count", types.size},
-	{"tables_count", types.size},
+	{"difftables_count", types.size},
 	{"users_count", types.size},
 }
 
-table_declarations.tables = {
+table_declarations.difftables = {
 	{"id", types.id},
 	{"name", types.varchar},
 	{"url", types.varchar},
 	{"play_count", types.size},
 }
 
-table_declarations.table_notecharts = {
+table_declarations.difftable_notecharts = {
 	{"id", types.id},
-	{"table_id", types.fk_id},
+	{"difftable_id", types.fk_id},
 	{"notechart_id", types.fk_id},
-	"UNIQUE KEY `table_notecharts` (`table_id`,`notechart_id`)"
+	"UNIQUE KEY `difftable_notecharts` (`difftable_id`,`notechart_id`)"
 }
 
 table_declarations.user_roles = {
@@ -181,11 +181,11 @@ table_declarations.community_users = {
 	]]
 }
 
-table_declarations.community_tables = {
+table_declarations.community_difftables = {
 	{"id", types.id},
 	{"community_id", types.fk_id},
-	{"table_id", types.fk_id},
-	"UNIQUE KEY `community_tables` (`community_id`,`table_id`)"
+	{"difftable_id", types.fk_id},
+	"UNIQUE KEY `community_difftables` (`community_id`,`difftable_id`)"
 }
 
 table_declarations.community_inputmodes = {

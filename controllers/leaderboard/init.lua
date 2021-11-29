@@ -4,7 +4,7 @@ local Inputmodes = require("enums.inputmodes")
 local array_update = require("array_update")
 
 local additions = {
-	tables = require("controllers.leaderboard.tables"),
+	difftables = require("controllers.leaderboard.difftables"),
 	communities = require("controllers.leaderboard.communities"),
 	users = require("controllers.leaderboard.users"),
 	inputmodes = require("controllers.leaderboard.inputmodes"),
