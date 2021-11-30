@@ -12,6 +12,7 @@ difftable_notecharts_c.policies = {
 
 difftable_notecharts_c.GET = function(request)
 	local params = request.params
+
 	local difftable_notecharts = Difftable_notecharts:find_all({params.difftable_id}, "difftable_id")
 	preload(difftable_notecharts, "notechart")
 
@@ -25,7 +26,7 @@ difftable_notecharts_c.GET = function(request)
 	return 200, {
 		total = count,
 		filtered = count,
-		notecharts = notecharts
+		notecharts = notecharts,
 	}
 end
 

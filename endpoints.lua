@@ -41,6 +41,7 @@ return {
 	"difftable.communities",
 	"difftable.leaderboards",
 	"difftable.notecharts",
+	"difftable.notechart",
 	"notecharts",
 	"notechart",
 	"notechart.scores",

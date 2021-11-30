@@ -112,7 +112,15 @@ table_declarations.difftable_notecharts = {
 	{"id", types.id},
 	{"difftable_id", types.fk_id},
 	{"notechart_id", types.fk_id},
+	{"difficulty", types.float},
 	"UNIQUE KEY `difftable_notecharts` (`difftable_id`,`notechart_id`)"
+}
+
+table_declarations.difftable_inputmodes = {
+	{"id", types.id},
+	{"difftable_id", types.fk_id},
+	{"inputmode", types.enum},
+	"UNIQUE KEY `difftable_inputmodes` (`difftable_id`,`inputmode`)"
 }
 
 table_declarations.user_roles = {
@@ -185,7 +193,9 @@ table_declarations.community_difftables = {
 	{"id", types.id},
 	{"community_id", types.fk_id},
 	{"difftable_id", types.fk_id},
-	"UNIQUE KEY `community_difftables` (`community_id`,`difftable_id`)"
+	{"is_owner", types.boolean},
+	"UNIQUE KEY `community_difftables` (`community_id`,`difftable_id`)",
+	"KEY `is_owner` (`is_owner`)",
 }
 
 table_declarations.community_inputmodes = {
