@@ -13,7 +13,7 @@ difftable_leaderboards_c.policies = {
 difftable_leaderboards_c.GET = function(request)
 	local params = request.params
 	local leaderboard_difftables = Leaderboard_difftables:find_all({params.difftable_id}, "difftable_id")
-	preload(leaderboard_difftables, "leaderboards")
+	preload(leaderboard_difftables, "leaderboard")
 
 	local leaderboards = {}
 	for _, leaderboard_difftable in ipairs(leaderboard_difftables) do

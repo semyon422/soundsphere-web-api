@@ -13,7 +13,7 @@ difftable_communities_c.policies = {
 difftable_communities_c.GET = function(request)
 	local params = request.params
 	local community_difftables = Community_difftables:find_all({params.difftable_id}, "difftable_id")
-	preload(community_difftables, "communities")
+	preload(community_difftables, "community")
 
 	local communities = {}
 	for _, community_difftable in ipairs(community_difftables) do

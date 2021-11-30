@@ -6,7 +6,7 @@ function context_loader:load_context(request)
 	if request.context.difftable then return print("context.difftable") end
 	local difftable_id = request.params.difftable_id
 	if difftable_id then
-		request.context.difftable = Difftable:find(difftable_id)
+		request.context.difftable = Difftables:find(difftable_id)
 	end
 end
 

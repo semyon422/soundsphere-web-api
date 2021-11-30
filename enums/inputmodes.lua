@@ -26,4 +26,12 @@ local Inputmodes = enum({
 	["4bt2fx2laserleft2laserright"] = 255,
 })
 
+Inputmodes.entries_to_list = function(self, entries)
+	local inputmodes = {}
+	for _, entry in ipairs(entries) do
+		table.insert(inputmodes, Inputmodes:to_name(entry.inputmode))
+	end
+	return inputmodes
+end
+
 return Inputmodes

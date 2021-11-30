@@ -12,6 +12,7 @@ local tables = {
 	"leaderboards",
 	"difftables",
 	"difftable_notecharts",
+	"difftable_inputmodes",
 	"users",
 	"user_relations",
 	"user_roles",
@@ -68,7 +69,7 @@ table_declarations.leaderboard_users = {
 	{"leaderboard_id", types.fk_id},
 	{"user_id", types.fk_id},
 	{"active", types.boolean},
-	{"play_count", types.size},
+	{"scores_count", types.size},
 	{"total_performance", types.float},
 	{"total_accuracy", types.float},
 	"UNIQUE KEY `leaderboard_users` (`leaderboard_id`,`user_id`)"
@@ -104,8 +105,10 @@ table_declarations.leaderboards = {
 table_declarations.difftables = {
 	{"id", types.id},
 	{"name", types.varchar},
-	{"url", types.varchar},
-	{"play_count", types.size},
+	{"link", types.varchar},
+	{"description", types.varchar},
+	{"scores_count", types.size},
+	{"notecharts_count", types.size},
 }
 
 table_declarations.difftable_notecharts = {
@@ -231,7 +234,7 @@ table_declarations.notecharts = {
 	{"container_id", types.fk_id},
 	{"index", types.enum},
 	{"creation_time", types.time},
-	{"play_count", types.size},
+	{"scores_count", types.size},
 	{"inputmode", types.enum},
 	{"difficulty", types.float},
 	{"song_title", types.text},

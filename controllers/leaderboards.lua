@@ -1,7 +1,7 @@
 local Leaderboards = require("models.leaderboards")
 local Users = require("models.users")
 local Community_leaderboards = require("models.community_leaderboards")
-local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
+local Inputmodes = require("enums.inputmodes")
 local preload = require("lapis.db.model").preload
 local leaderboard_c = require("controllers.leaderboard")
 
@@ -37,7 +37,7 @@ leaderboards_c.GET = function(request)
 
 	for _, leaderboard in ipairs(leaderboards) do
 		leaderboard.top_user = Users:safe_copy(leaderboard.top_user)
-		leaderboard.inputmodes = Leaderboard_inputmodes:get_inputmodes(leaderboard.leaderboard_inputmodes)
+		leaderboard.inputmodes = Inputmodes:entries_to_list(leaderboard.leaderboard_inputmodes)
 		leaderboard.leaderboard_inputmodes = nil
 	end
 
