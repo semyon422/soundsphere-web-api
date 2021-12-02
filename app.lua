@@ -110,9 +110,16 @@ local function route_datatables(controller, name)
 	return json_respond_to("/dt" .. controller.path, function(self)
 		local context = get_context(self, controller)
 		if pep:check(self, controller.policies.GET) and controller.GET then
-			self.params.start = self.params.start or 1
-			self.params.length = self.params.length or 1
-			datatable.params(self)
+			local params = self.params
+			if tonumber(params.length) == -1 then
+				params.get_all = true
+			else
+				params.page_num = math.floor((params.start or 0) / (params.length or 1)) + 1
+				params.per_page = params.length
+			end
+			if datatable.params then
+				datatable.params(self)
+			end
 			local code, response = controller.GET(self)
 			return {json = datatable.response(response, self), status = code}
 		else

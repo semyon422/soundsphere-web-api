@@ -18,10 +18,10 @@ community_users_c.GET = function(request)
 	local where = {accepted = true}
 	where.community_id = params.community_id
 	if params.invitations then
-		where.invitations = true
+		where.invitation = true
 		where.accepted = false
 	elseif params.requests then
-		where.requests = true
+		where.invitation = false
 		where.accepted = false
 	end
 	local clause = Community_users.db.encode_clause(where)
@@ -38,12 +38,19 @@ community_users_c.GET = function(request)
 	)
 	local community_users = paginator:get_page(page_num)
 
-	preload(community_users, "user")
+	local relations = {"user"}
+	if params.invitations then
+		table.insert(relations, "sender")
+	end
+	preload(community_users, relations)
 
 	local users = {}
 	for _, community_user in ipairs(community_users) do
 		local user = Users:safe_copy(community_user.user)
 		user.role = Roles:to_name(community_user.role)
+		user.message = community_user.message
+		user.created_at = community_user.created_at
+		user.sender = params.invitations and Users:safe_copy(community_user.sender)
 		table.insert(users, user)
 	end
 

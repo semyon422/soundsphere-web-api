@@ -28,6 +28,9 @@ community_user_c.PUT = function(request)
 		if params.invitation then
 			new_community_user.invitation = true
 		end
+		new_community_user.sender_id = request.session.user_id
+		new_community_user.created_at = os.time()
+		new_community_user.message = params.message or ""
 		Community_users:set_role(new_community_user, community.is_public and "user" or "guest")
         Community_users:create(new_community_user)
 	else
