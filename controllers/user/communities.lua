@@ -31,8 +31,11 @@ user_communities_c.GET = function(request)
     local communities = {}
 	for _, community_user in ipairs(community_users) do
 		local community = community_user.community
-		community.role = Roles:to_name(community_user.role)
-        table.insert(communities, community)
+		local role = Roles:to_name(community_user.role)
+		if not params.is_admin or role == "admin" or role == "creator" then
+			community.role = role
+			table.insert(communities, community)
+		end
 	end
 
 	local count = Community_users:count()
