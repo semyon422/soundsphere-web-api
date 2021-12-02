@@ -21,7 +21,7 @@ scores_c.GET = function(request)
 			per_page = per_page
 		}
 	)
-	local scores = paginator:get_page(page_num)
+	local scores = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	local count = Scores:count()
 

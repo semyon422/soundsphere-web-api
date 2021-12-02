@@ -20,7 +20,7 @@ notecharts_c.GET = function(request)
 			per_page = per_page
 		}
 	)
-	local notecharts = paginator:get_page(page_num)
+	local notecharts = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	local count = Notecharts:count()
 

@@ -28,7 +28,7 @@ difftables_c.GET = function(request)
 			end
 		}
 	)
-	local difftables = paginator:get_page(page_num)
+	local difftables = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	for _, difftable in ipairs(difftables) do
 		difftable.inputmodes = Inputmodes:entries_to_list(difftable:get_difftable_inputmodes())

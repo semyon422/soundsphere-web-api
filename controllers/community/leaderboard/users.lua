@@ -27,7 +27,7 @@ community_leaderboard_users_c.GET = function(request)
 			fields = "cu.user_id, lu.total_performance"
 		}
 	)
-	local community_leaderboard_users = paginator:get_page(page_num)
+	local community_leaderboard_users = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	preload(community_leaderboard_users, "user")
 

@@ -33,7 +33,7 @@ leaderboards_c.GET = function(request)
 			end
 		}
 	)
-	local leaderboards = paginator:get_page(page_num)
+	local leaderboards = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	for _, leaderboard in ipairs(leaderboards) do
 		leaderboard.top_user = Users:safe_copy(leaderboard.top_user)

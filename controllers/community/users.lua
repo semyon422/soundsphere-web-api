@@ -36,7 +36,7 @@ community_users_c.GET = function(request)
 			page_num = page_num
 		}
 	)
-	local community_users = paginator:get_page(page_num)
+	local community_users = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	local relations = {"user"}
 	if params.invitations then

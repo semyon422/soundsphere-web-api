@@ -22,7 +22,7 @@ users_c.GET = function(request)
 			per_page = per_page
 		}
 	)
-	local users = paginator:get_page(page_num)
+	local users = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	local safe_users = {}
 	for _, user in ipairs(users) do

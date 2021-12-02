@@ -53,7 +53,7 @@ communities_c.GET = function(request)
 			end
 		}
 	)
-	local communities = paginator:get_page(page_num)
+	local communities = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	for _, community in ipairs(communities) do
 		community.inputmodes = Inputmodes:entries_to_list(community.community_inputmodes)
