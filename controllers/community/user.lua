@@ -1,3 +1,4 @@
+local Communities = require("models.communities")
 local Community_users = require("models.community_users")
 local Roles = require("enums.roles")
 
@@ -15,16 +16,19 @@ community_user_c.policies = {
 
 community_user_c.PUT = function(request)
 	local params = request.params
+
     local new_community_user = {
         community_id = params.community_id,
         user_id = params.user_id,
     }
 	local community_user = Community_users:find(new_community_user)
+	local community = Communities:find(params.community_id)
 
 	if not community_user then
 		if params.invitation then
 			new_community_user.invitation = true
 		end
+		Community_users:set_role(new_community_user, community.is_public and "user" or "guest")
         Community_users:create(new_community_user)
 	else
 		if community_user.invitation and not params.invitation or
