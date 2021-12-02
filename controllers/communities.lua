@@ -88,8 +88,11 @@ communities_c.POST = function(request)
 	Community_users:create({
 		community_id = community.id,
 		user_id = session.user_id,
+		sender_id = session.user_id,
 		role = Roles:for_db("creator"),
 		accepted = true,
+		created_at = os.time(),
+		message = "",
 	})
 
 	return 200, {community = community}

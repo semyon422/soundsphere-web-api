@@ -8,6 +8,7 @@ local Community_users = Model:extend(
 		relations = {
 			{"community", belongs_to = "communities", key = "community_id"},
 			{"user", belongs_to = "users", key = "user_id"},
+			{"sender", belongs_to = "users", key = "sender_id"},
 		}
 	}
 )

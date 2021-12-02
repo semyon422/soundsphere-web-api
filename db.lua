@@ -182,9 +182,12 @@ table_declarations.community_users = {
 	{"id", types.id},
 	{"community_id", types.fk_id},
 	{"user_id", types.fk_id},
+	{"sender_id", types.fk_id},
 	{"accepted", types.boolean},
 	{"role", types.enum},
 	{"invitation", types.boolean},
+	{"created_at", types.time},
+	{"message", types.varchar},
 	[[
 		UNIQUE KEY `community_users` (`community_id`,`user_id`),
 		KEY `invitation` (`invitation`),
