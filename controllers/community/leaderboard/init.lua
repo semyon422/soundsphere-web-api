@@ -1,4 +1,5 @@
 local Community_leaderboards = require("models.community_leaderboards")
+local Communities = require("models.communities")
 
 local community_leaderboard_c = {}
 
@@ -12,12 +13,29 @@ community_leaderboard_c.policies = {
 
 community_leaderboard_c.PUT = function(request)
 	local params = request.params
-    local community_leaderboard = {
+
+    local new_community_leaderboard = {
         community_id = params.community_id,
         leaderboard_id = params.leaderboard_id,
     }
-    if not Community_leaderboards:find(community_leaderboard) then
+	local community_leaderboard = Community_leaderboards:find(new_community_leaderboard)
+
+	local owner_community_leaderboard = Community_leaderboards:find({
+		leaderboard_id = params.leaderboard_id,
+		is_owner = true
+	})
+	local owner_community = owner_community_leaderboard:get_community()
+
+    if not community_leaderboard then
+		community_leaderboard.is_owner = false
+		community_leaderboard.sender_id = request.session.user_id
+		community_leaderboard.accepted = owner_community.is_public
+		community_leaderboard.created_at = os.time()
+		community_leaderboard.message = params.message or ""
         Community_leaderboards:create(community_leaderboard)
+	else
+		community_leaderboard.accepted = true
+		community_leaderboard:update("accepted")
     end
 
 	return 200, {}

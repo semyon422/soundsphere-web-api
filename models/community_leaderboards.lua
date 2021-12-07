@@ -7,6 +7,7 @@ local Community_leaderboards = Model:extend(
 		relations = {
 			{"community", belongs_to = "communities", key = "community_id"},
 			{"leaderboard", belongs_to = "leaderboards", key = "leaderboard_id"},
+			{"sender", belongs_to = "users", key = "sender_id"},
 		}
 	}
 )
@@ -14,6 +15,7 @@ local Community_leaderboards = Model:extend(
 local _load = Community_leaderboards.load
 function Community_leaderboards:load(row)
 	row.is_owner = toboolean(row.is_owner)
+	row.accepted = toboolean(row.accepted)
 	return _load(self, row)
 end
 

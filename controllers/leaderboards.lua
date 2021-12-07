@@ -52,7 +52,7 @@ end
 
 leaderboards_c.POST = function(request)
 	local params = request.params
-	leaderboard = Leaderboards:create({
+	local leaderboard = Leaderboards:create({
 		name = params.leaderboard.name or "Leaderboard",
 		description = params.leaderboard.description,
 		banner = params.leaderboard.banner,
@@ -62,6 +62,10 @@ leaderboards_c.POST = function(request)
 		community_id = params.community_id,
 		leaderboard_id = leaderboard.id,
 		is_owner = true,
+		sender_id = request.session.user_id,
+		accepted = true,
+		created_at = os.time(),
+		message = "",
 	})
 
 	leaderboard_c.update_inputmodes(leaderboard.id, params.leaderboard.inputmodes)

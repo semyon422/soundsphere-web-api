@@ -1,4 +1,5 @@
 local Community_leaderboards = require("models.community_leaderboards")
+local Users = require("models.users")
 local Inputmodes = require("enums.inputmodes")
 local preload = require("lapis.db.model").preload
 
@@ -11,18 +12,88 @@ community_leaderboards_c.policies = {
 	GET = require("policies.public"),
 }
 
+community_leaderboards_c.get_owned = function(request)
+	local params = request.params
+
+	local where = {
+		community_id = params.community_id,
+		is_owner = true,
+	}
+
+	local clause = Community_leaderboards.db.encode_clause(where)
+    local community_leaderboards = Community_leaderboards:select("where " .. clause .. " order by id asc")
+	preload(community_leaderboards, {leaderboard = "leaderboard_inputmodes", "sender"})
+
+	return community_leaderboards
+end
+
+community_leaderboards_c.get_incoming = function(request)
+	local params = request.params
+	local db = Community_leaderboards.db
+
+	local clause = db.encode_clause({
+		community_id = params.community_id,
+		is_owner = true,
+	})
+    local community_leaderboards = Community_leaderboards:select(
+		"where " .. clause .. " order by id asc",
+		{fields = "leaderboard_id"}
+	)
+
+	local leaderboard_ids = {}
+	for _, community_leaderboard in ipairs(community_leaderboards) do
+		table.insert(leaderboard_ids, community_leaderboard.leaderboard_id)
+	end
+
+	clause = db.encode_clause({
+		leaderboard_id = db.list(leaderboard_ids),
+		community_id = db.list({params.community_id}),
+		accepted = false,
+	}):gsub("`community_id` IN", "`community_id` NOT IN")
+	community_leaderboards = Community_leaderboards:select("where " .. clause .. " order by id asc")
+	preload(community_leaderboards, {"leaderboard", "community", "sender"})
+
+	return community_leaderboards
+end
+
+community_leaderboards_c.get_outgoing = function(request)
+	local params = request.params
+
+	local where = {
+		community_id = params.community_id,
+		is_owner = false,
+		accepted = false,
+	}
+
+	local clause = Community_leaderboards.db.encode_clause(where)
+    local community_leaderboards = Community_leaderboards:select("where " .. clause .. " order by id asc")
+	preload(community_leaderboards, {"leaderboard", "community", "sender"})
+
+	return community_leaderboards
+end
+
+
 community_leaderboards_c.GET = function(request)
 	local params = request.params
-    local community_leaderboards = Community_leaderboards:find_all({params.community_id}, "community_id")
-	preload(community_leaderboards, {leaderboard = "leaderboard_inputmodes"})
 
-	local leaderboards = {}
+	local community_leaderboards
+	if params.incoming then
+		community_leaderboards = community_leaderboards_c.get_incoming(request)
+	elseif params.outgoing then
+		community_leaderboards = community_leaderboards_c.get_outgoing(request)
+	else
+		community_leaderboards = community_leaderboards_c.get_owned(request)
+	end
+
 	for _, community_leaderboard in ipairs(community_leaderboards) do
 		local leaderboard = community_leaderboard.leaderboard
-		leaderboard.inputmodes = Inputmodes:entries_to_list(leaderboard.leaderboard_inputmodes)
-		leaderboard.leaderboard_inputmodes = nil
-		leaderboard.is_owner = community_leaderboard.is_owner
-		table.insert(leaderboards, leaderboard)
+		if leaderboard.leaderboard_inputmodes then
+			leaderboard.inputmodes = Inputmodes:entries_to_list(leaderboard.leaderboard_inputmodes)
+			leaderboard.leaderboard_inputmodes = nil
+		end
+		if community_leaderboard.sender then
+			community_leaderboard.sender = Users:safe_copy(community_leaderboard.sender)
+		end
 	end
 
 	local count = #community_leaderboards
@@ -30,7 +101,7 @@ community_leaderboards_c.GET = function(request)
 	return 200, {
 		total = count,
 		filtered = count,
-		leaderboards = leaderboards
+		community_leaderboards = community_leaderboards
 	}
 end
 

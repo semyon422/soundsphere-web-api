@@ -174,8 +174,14 @@ table_declarations.community_leaderboards = {
 	{"community_id", types.fk_id},
 	{"leaderboard_id", types.fk_id},
 	{"is_owner", types.boolean},
+	{"sender_id", types.fk_id},
+	{"accepted", types.boolean},
+	{"created_at", types.time},
+	{"message", types.varchar},
 	"UNIQUE KEY `community_leaderboards` (`community_id`,`leaderboard_id`)",
 	"KEY `is_owner` (`is_owner`)",
+	"KEY `sender_id` (`sender_id`)",
+	"KEY `accepted` (`accepted`)",
 }
 
 table_declarations.community_users = {
