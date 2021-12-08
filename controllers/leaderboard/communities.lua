@@ -20,7 +20,7 @@ leaderboard_communities_c.GET = function(request)
 		table.insert(communities, community_leaderboard.community)
 	end
 
-	local count = Community_leaderboards:count()
+	local count = #communities
 
 	return 200, {
 		total = count,

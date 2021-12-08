@@ -20,7 +20,7 @@ leaderboard_difftables_c.GET = function(request)
 		table.insert(difftables, leaderboard_difftable.difftable)
 	end
 
-	local count = Leaderboard_difftables:count()
+	local count = #difftables
 
 	return 200, {
 		total = count,
