@@ -12,12 +12,28 @@ community_leaderboards_c.policies = {
 	GET = require("policies.public"),
 }
 
+community_leaderboards_c.get_joined = function(request)
+	local params = request.params
+
+	local where = {
+		community_id = params.community_id,
+		accepted = true,
+	}
+
+	local clause = Community_leaderboards.db.encode_clause(where)
+    local community_leaderboards = Community_leaderboards:select("where " .. clause .. " order by id asc")
+	preload(community_leaderboards, {leaderboard = "leaderboard_inputmodes", "sender"})
+
+	return community_leaderboards
+end
+
 community_leaderboards_c.get_owned = function(request)
 	local params = request.params
 
 	local where = {
 		community_id = params.community_id,
 		is_owner = true,
+		accepted = true,
 	}
 
 	local clause = Community_leaderboards.db.encode_clause(where)
@@ -81,8 +97,10 @@ community_leaderboards_c.GET = function(request)
 		community_leaderboards = community_leaderboards_c.get_incoming(request)
 	elseif params.outgoing then
 		community_leaderboards = community_leaderboards_c.get_outgoing(request)
-	else
+	elseif params.owned then
 		community_leaderboards = community_leaderboards_c.get_owned(request)
+	else
+		community_leaderboards = community_leaderboards_c.get_joined(request)
 	end
 
 	for _, community_leaderboard in ipairs(community_leaderboards) do
@@ -96,12 +114,20 @@ community_leaderboards_c.GET = function(request)
 		end
 	end
 
+	local leaderboards = {}
+	for _, community_leaderboard in ipairs(community_leaderboards) do
+		local leaderboard = community_leaderboard.leaderboard
+		leaderboard.community_leaderboard = community_leaderboard
+		community_leaderboard.leaderboard = nil
+		table.insert(leaderboards, leaderboard)
+	end
+
 	local count = #community_leaderboards
 
 	return 200, {
 		total = count,
 		filtered = count,
-		community_leaderboards = community_leaderboards
+		leaderboards = leaderboards
 	}
 end
 
