@@ -1,5 +1,7 @@
 local Users = require("models.users")
 local bcrypt = require("bcrypt")
+local db_search = require("db_search")
+local db_where = require("db_where")
 
 local users_c = {}
 
@@ -16,25 +18,26 @@ users_c.GET = function(request)
 	local per_page = tonumber(params.per_page) or 10
 	local page_num = tonumber(params.page_num) or 1
 
+	local clause = params.search and db_search(Users.db, params.search, "name")
+
 	local paginator = Users:paginated(
-		"order by id asc",
+		db_where(clause), "order by id asc",
 		{
-			per_page = per_page
+			per_page = per_page,
+			prepare_results = function(users)
+				for i, user in ipairs(users) do
+					users[i] = Users:safe_copy(user)
+				end
+				return users
+			end
 		}
 	)
 	local users = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
-	local safe_users = {}
-	for _, user in ipairs(users) do
-		table.insert(safe_users, Users:safe_copy(user))
-	end
-
-	local count = Users:count()
-
 	return 200, {
-		total = count,
-		filtered = count,
-		users = safe_users
+		total = Users:count(),
+		filtered = Users:count(clause),
+		users = users
 	}
 end
 
