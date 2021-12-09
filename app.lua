@@ -117,6 +117,9 @@ local function route_datatables(controller, name)
 				params.page_num = math.floor((params.start or 0) / (params.length or 1)) + 1
 				params.per_page = params.length
 			end
+			if type(params.search) == "table" then
+				params.search = params.search.value
+			end
 			if datatable.params then
 				datatable.params(self)
 			end
