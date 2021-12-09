@@ -1,6 +1,8 @@
 local Difftables = require("models.difftables")
 local Community_difftables = require("models.community_difftables")
 local Inputmodes = require("enums.inputmodes")
+local db_search = require("util.db_search")
+local db_where = require("util.db_where")
 local preload = require("lapis.db.model").preload
 
 local difftables_c = {}
@@ -18,8 +20,9 @@ difftables_c.GET = function(request)
 	local per_page = tonumber(params.per_page) or 10
 	local page_num = tonumber(params.page_num) or 1
 
+	local clause = params.search and db_search(Difftables.db, params.search, "name")
 	local paginator = Difftables:paginated(
-		"order by id asc",
+		db_where(clause), "order by id asc",
 		{
 			per_page = per_page,
 			prepare_results = function(entries)
@@ -35,11 +38,9 @@ difftables_c.GET = function(request)
 		difftable.difftable_inputmodes = nil
 	end
 
-	local count = Difftables:count()
-
 	return 200, {
-		total = count,
-		filtered = count,
+		total = Difftables:count(),
+		filtered = Difftables:count(clause),
 		difftables = difftables
 	}
 end

@@ -2,6 +2,8 @@ local Leaderboards = require("models.leaderboards")
 local Users = require("models.users")
 local Community_leaderboards = require("models.community_leaderboards")
 local Inputmodes = require("enums.inputmodes")
+local db_search = require("util.db_search")
+local db_where = require("util.db_where")
 local preload = require("lapis.db.model").preload
 local leaderboard_c = require("controllers.leaderboard")
 
@@ -23,8 +25,9 @@ leaderboards_c.GET = function(request)
 	local per_page = tonumber(params.per_page) or 10
 	local page_num = tonumber(params.page_num) or 1
 
+	local clause = params.search and db_search(Leaderboards.db, params.search, "name")
 	local paginator = Leaderboards:paginated(
-		"order by id asc",
+		db_where(clause), "order by id asc",
 		{
 			per_page = per_page,
 			prepare_results = function(entries)
@@ -41,11 +44,9 @@ leaderboards_c.GET = function(request)
 		leaderboard.leaderboard_inputmodes = nil
 	end
 
-	local count = Leaderboards:count()
-
 	return 200, {
-		total = count,
-		filtered = count,
+		total = Leaderboards:count(),
+		filtered = Leaderboards:count(clause),
 		leaderboards = leaderboards
 	}
 end

@@ -19,7 +19,6 @@ users_c.GET = function(request)
 	local page_num = tonumber(params.page_num) or 1
 
 	local clause = params.search and db_search(Users.db, params.search, "name")
-
 	local paginator = Users:paginated(
 		db_where(clause), "order by id asc",
 		{

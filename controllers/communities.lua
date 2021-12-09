@@ -2,6 +2,9 @@ local Communities = require("models.communities")
 local Community_users = require("models.community_users")
 local Inputmodes = require("enums.inputmodes")
 local Roles = require("enums.roles")
+local db_search = require("util.db_search")
+local db_where = require("util.db_where")
+local db_and = require("util.db_and")
 local preload = require("lapis.db.model").preload
 
 local communities_c = {}
@@ -23,7 +26,10 @@ communities_c.GET = function(request)
 	local page_num = tonumber(params.page_num) or 1
 
 	local db = Communities.db
-	local joined_clause = ""
+
+	local search_clause = params.search and db_search(db, params.search, "name")
+
+	local joined_clause
 	local joined_community_ids = {}
 	local joined_community_ids_map = {}
 	if request.session.user_id then
@@ -37,14 +43,15 @@ communities_c.GET = function(request)
 			joined_community_ids_map[id] = true
 		end
 		if tonumber(params.hide_joined) == 1 then
-			joined_clause = "where " .. db.encode_clause({
+			joined_clause = db.encode_clause({
 				id = db.list(joined_community_ids)
 			}):gsub("IN", "NOT IN")
 		end
 	end
 
+	local clause = db_and(joined_clause, search_clause)
 	local paginator = Communities:paginated(
-		joined_clause .. " order by id asc",
+		db_where(clause), "order by id asc",
 		{
 			per_page = per_page,
 			prepare_results = function(entries)
@@ -61,11 +68,9 @@ communities_c.GET = function(request)
 		community.joined = joined_community_ids_map[community.id]
 	end
 
-	local count = Communities:count()
-
 	return 200, {
-		total = count,
-		filtered = count,
+		total = Communities:count(),
+		filtered = Communities:count(clause),
 		communities = communities,
 	}
 end
