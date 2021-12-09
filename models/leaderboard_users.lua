@@ -1,5 +1,5 @@
 local Model = require("lapis.db.model").Model
-local toboolean = require("toboolean")
+local toboolean = require("util.toboolean")
 
 local Leaderboard_users = Model:extend(
 	"leaderboard_users",

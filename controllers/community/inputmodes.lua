@@ -2,7 +2,7 @@ local Community_inputmodes = require("models.community_inputmodes")
 local Community_leaderboards = require("models.community_leaderboards")
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Inputmodes = require("enums.inputmodes")
-local array_update = require("array_update")
+local array_update = require("util.array_update")
 local preload = require("lapis.db.model").preload
 
 local community_inputmodes_c = {}

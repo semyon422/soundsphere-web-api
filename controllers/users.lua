@@ -1,7 +1,7 @@
 local Users = require("models.users")
 local bcrypt = require("bcrypt")
-local db_search = require("db_search")
-local db_where = require("db_where")
+local db_search = require("util.db_search")
+local db_where = require("util.db_where")
 
 local users_c = {}
 

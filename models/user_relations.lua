@@ -1,6 +1,6 @@
 local model = require("lapis.db.model")
 local Model, enum = model.Model, model.enum
-local toboolean = require("toboolean")
+local toboolean = require("util.toboolean")
 
 local User_relations = Model:extend(
 	"user_relations",

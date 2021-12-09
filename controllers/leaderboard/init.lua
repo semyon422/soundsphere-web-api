@@ -1,7 +1,7 @@
 local Leaderboards = require("models.leaderboards")
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Inputmodes = require("enums.inputmodes")
-local array_update = require("array_update")
+local array_update = require("util.array_update")
 
 local additions = {
 	difftables = require("controllers.leaderboard.difftables"),
