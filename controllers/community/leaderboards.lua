@@ -62,7 +62,7 @@ community_leaderboards_c.get_incoming = function(request)
 	end
 
 	clause = db.encode_clause({
-		leaderboard_id = db.list(leaderboard_ids),
+		leaderboard_id = #leaderboard_ids > 0 and db.list(leaderboard_ids),
 		community_id = db.list({params.community_id}),
 		accepted = false,
 	}):gsub("`community_id` IN", "`community_id` NOT IN")

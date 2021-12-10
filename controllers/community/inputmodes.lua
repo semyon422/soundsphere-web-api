@@ -35,7 +35,7 @@ community_inputmodes_c.GET = function(request)
 	)
 
 	local db = Community_inputmodes.db
-	if old_inputmodes[1] then
+	if #old_inputmodes > 0 then
 		db.delete("community_inputmodes", {inputmode = db.list(old_inputmodes)})
 	end
 	for _, inputmode in ipairs(new_inputmodes) do

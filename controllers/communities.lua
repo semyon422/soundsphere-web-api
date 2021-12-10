@@ -42,7 +42,7 @@ communities_c.GET = function(request)
 			table.insert(joined_community_ids, id)
 			joined_community_ids_map[id] = true
 		end
-		if tonumber(params.hide_joined) == 1 then
+		if tonumber(params.hide_joined) == 1 and #joined_community_ids > 0 then
 			joined_clause = db.encode_clause({
 				id = db.list(joined_community_ids)
 			}):gsub("IN", "NOT IN")

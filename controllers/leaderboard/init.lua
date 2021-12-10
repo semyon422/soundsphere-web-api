@@ -36,7 +36,7 @@ leaderboard_c.update_inputmodes = function(leaderboard_id, inputmodes)
 	)
 
 	local db = Leaderboard_inputmodes.db
-	if old_inputmodes[1] then
+	if #old_inputmodes > 0 then
 		db.delete("leaderboard_inputmodes", {inputmode = db.list(old_inputmodes)})
 	end
 	for _, inputmode in ipairs(new_inputmodes) do
