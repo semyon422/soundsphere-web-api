@@ -26,6 +26,7 @@ return {
 	"community.leaderboard",
 	"community.leaderboard.users",
 	"community.inputmodes",
+	"community.difftables",
 	"leaderboards",
 	"leaderboard",
 	"leaderboard.difftables",

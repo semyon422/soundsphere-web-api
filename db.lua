@@ -19,8 +19,8 @@ local tables = {
 	"communities",
 	"community_leaderboards",
 	"community_users",
-	"community_difftables",
-	"community_inputmodes",
+	"community_difftables",  -- cached from community_leaderboards.leaderboard_difftables
+	"community_inputmodes",  -- cached from community_leaderboards.leaderboard_inputmodes
 	"containers",
 	"modifiers",
 	"notecharts",
@@ -107,6 +107,7 @@ table_declarations.difftables = {
 	{"name", types.varchar},
 	{"link", types.varchar},
 	{"description", types.varchar},
+	{"owner_community_id", types.fk_id},
 	{"scores_count", types.size},
 	{"notecharts_count", types.size},
 }
@@ -205,9 +206,7 @@ table_declarations.community_difftables = {
 	{"id", types.id},
 	{"community_id", types.fk_id},
 	{"difftable_id", types.fk_id},
-	{"is_owner", types.boolean},
 	"UNIQUE KEY `community_difftables` (`community_id`,`difftable_id`)",
-	"KEY `is_owner` (`is_owner`)",
 }
 
 table_declarations.community_inputmodes = {

@@ -1,5 +1,4 @@
 local Difftables = require("models.difftables")
-local Community_difftables = require("models.community_difftables")
 local Inputmodes = require("enums.inputmodes")
 local db_search = require("util.db_search")
 local db_where = require("util.db_where")
@@ -52,12 +51,7 @@ difftables_c.POST = function(request)
 		name = difftable.name or "Difficulty table",
 		link = difftable.link,
 		description = difftable.description,
-	})
-
-	Community_difftables:create({
-		community_id = params.community_id,
-		difftable_id = difftable.id,
-		is_owner = true,
+		owner_community_id = params.community_id,
 	})
 
 	return 200, {difftable = difftable}
