@@ -70,6 +70,7 @@ leaderboards_c.POST = function(request)
 	})
 
 	leaderboard_c.update_inputmodes(leaderboard.id, params.leaderboard.inputmodes)
+	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.difftables)
 
 	return 200, {leaderboard = leaderboard}
 end

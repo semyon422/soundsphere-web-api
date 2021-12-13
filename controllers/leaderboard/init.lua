@@ -1,5 +1,6 @@
 local Leaderboards = require("models.leaderboards")
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
+local Leaderboard_difftables = require("models.leaderboard_difftables")
 local Inputmodes = require("enums.inputmodes")
 local array_update = require("util.array_update")
 
@@ -47,6 +48,32 @@ leaderboard_c.update_inputmodes = function(leaderboard_id, inputmodes)
 	end
 end
 
+leaderboard_c.update_difftables = function(leaderboard_id, difftables)
+	if not difftables then
+		return
+	end
+
+	local leaderboard_difftables = Leaderboard_difftables:find_all({leaderboard_id}, "leaderboard_id")
+
+	local new_difftable_ids, old_difftable_ids = array_update(
+		difftables,
+		leaderboard_difftables,
+		function(d) return d.id end,
+		function(ld) return ld.difftable_id end
+	)
+
+	local db = Leaderboard_difftables.db
+	if #old_difftable_ids > 0 then
+		db.delete("leaderboard_difftables", {difftable_id = db.list(old_difftable_ids)})
+	end
+	for _, difftable_id in ipairs(new_difftable_ids) do
+		db.insert("leaderboard_difftables", {
+			leaderboard_id = leaderboard_id,
+			difftable_id = difftable_id,
+		})
+	end
+end
+
 leaderboard_c.GET = function(request)
 	local params = request.params
 	local leaderboard = Leaderboards:find(params.leaderboard_id)
@@ -82,6 +109,7 @@ leaderboard_c.PATCH = function(request)
 	leaderboard:update("name", "description", "banner")
 
 	leaderboard_c.update_inputmodes(leaderboard.id, params.leaderboard.inputmodes)
+	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.difftables)
 
 	return 200, {leaderboard = leaderboard}
 end
