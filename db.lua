@@ -9,6 +9,7 @@ local tables = {
 	"leaderboard_users",
 	"leaderboard_scores",
 	"leaderboard_inputmodes",
+	"leaderboard_modifiers",
 	"leaderboards",
 	"difftables",
 	"difftable_notecharts",
@@ -22,7 +23,8 @@ local tables = {
 	"community_difftables",  -- cached from community_leaderboards.leaderboard_difftables
 	"community_inputmodes",  -- cached from community_leaderboards.leaderboard_inputmodes
 	"containers",
-	"modifiers",
+	"modifiersets",
+	"modifierset_modifiers",
 	"notecharts",
 	"scores",
 	"sessions",
@@ -89,6 +91,16 @@ table_declarations.leaderboard_inputmodes = {
 	{"leaderboard_id", types.fk_id},
 	{"inputmode", types.enum},
 	"UNIQUE KEY `leaderboard_inputmodes` (`leaderboard_id`,`inputmode`)"
+}
+
+table_declarations.leaderboard_modifiers = {
+	{"id", types.id},
+	{"leaderboard_id", types.fk_id},
+	{"modifier", types.enum},
+	{"required", types.boolean},
+	{"min", types.float},
+	{"max", types.float},
+	"KEY `leaderboard_id` (`leaderboard_id`)",
 }
 
 table_declarations.leaderboards = {
@@ -231,10 +243,19 @@ table_declarations.containers = {
 	]]
 }
 
-table_declarations.modifiers = {
+table_declarations.modifiersets = {
 	{"id", types.id},
-	{"name", "VARCHAR(100) NOT NULL"},
-	"UNIQUE KEY `name` (`name`)"
+	{"modifiers", "VARCHAR(255) NOT NULL"},
+	"UNIQUE KEY `modifiers` (`modifiers`)"
+}
+
+table_declarations.modifierset_modifiers = {
+	{"id", types.id},
+	{"modifierset_id", types.fk_id},
+	{"modifier", types.enum},
+	{"value", types.float},
+	"UNIQUE KEY `modifier_value` (`modifier`, `value`)",
+	"KEY `modifierset_id` (`modifierset_id`)"
 }
 
 table_declarations.notecharts = {
@@ -259,7 +280,7 @@ table_declarations.scores = {
 	{"id", types.id},
 	{"user_id", types.fk_id},
 	{"notechart_id", types.fk_id},
-	{"modifier_id", types.fk_id},
+	{"modifierset_id", types.fk_id},
 	{"inputmode", types.enum},
 	{"replay_hash", types.md5_hash},
 	{"is_valid", types.boolean},
@@ -275,7 +296,7 @@ table_declarations.scores = {
 		UNIQUE KEY `replay_hash` (`replay_hash`),
 		KEY `user_id` (`user_id`),
 		KEY `notechart_id` (`notechart_id`),
-		KEY `modifier_id` (`modifier_id`),
+		KEY `modifierset_id` (`modifierset_id`),
 		KEY `inputmode` (`inputmode`),
 		KEY `performance` (`performance`),
 		KEY `calculated` (`calculated`)

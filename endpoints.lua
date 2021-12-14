@@ -37,6 +37,7 @@ return {
 	"leaderboard.user",
 	"leaderboard.inputmodes",
 	"leaderboard.inputmode",
+	"leaderboard.modifiers",
 	"difftables",
 	"difftable",
 	"difftable.communities",
