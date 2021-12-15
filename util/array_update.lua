@@ -13,7 +13,7 @@ return function(new, old, new_f, old_f)
 
 	new = {}
 	old = {}
-	all = {}
+	local all = {}
 	for v in pairs(_new) do
 		if not _old[v] then
 			table.insert(new, v)
