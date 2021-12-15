@@ -24,7 +24,6 @@ local tables = {
 	"community_inputmodes",  -- cached from community_leaderboards.leaderboard_inputmodes
 	"containers",
 	"modifiersets",
-	"modifierset_modifiers",
 	"notecharts",
 	"scores",
 	"sessions",
@@ -97,9 +96,8 @@ table_declarations.leaderboard_modifiers = {
 	{"id", types.id},
 	{"leaderboard_id", types.fk_id},
 	{"modifier", types.enum},
-	{"required", types.boolean},
-	{"min", types.float},
-	{"max", types.float},
+	{"rule", types.enum},
+	{"value", types.varchar},
 	"KEY `leaderboard_id` (`leaderboard_id`)",
 }
 
@@ -245,17 +243,9 @@ table_declarations.containers = {
 
 table_declarations.modifiersets = {
 	{"id", types.id},
-	{"modifiers", "VARCHAR(255) NOT NULL"},
-	"UNIQUE KEY `modifiers` (`modifiers`)"
-}
-
-table_declarations.modifierset_modifiers = {
-	{"id", types.id},
-	{"modifierset_id", types.fk_id},
-	{"modifier", types.enum},
-	{"value", types.float},
-	"UNIQUE KEY `modifier_value` (`modifier`, `value`)",
-	"KEY `modifierset_id` (`modifierset_id`)"
+	{"encoded", "VARCHAR(255) NOT NULL"},
+	{"displayed", "VARCHAR(255) NOT NULL"},
+	"UNIQUE KEY `encoded` (`encoded`)"
 }
 
 table_declarations.notecharts = {

@@ -9,6 +9,7 @@ local additions = {
 	communities = require("controllers.leaderboard.communities"),
 	users = require("controllers.leaderboard.users"),
 	inputmodes = require("controllers.leaderboard.inputmodes"),
+	modifiers = require("controllers.leaderboard.modifiers"),
 }
 
 local leaderboard_c = {}
@@ -21,6 +22,10 @@ leaderboard_c.policies = {
 	PATCH = require("policies.public"),
 	DELETE = require("policies.public"),
 }
+
+leaderboard_c.update_modifiers = function(leaderboard_id, modifiers)
+	return additions.modifiers.update_modifiers(leaderboard_id, modifiers)
+end
 
 leaderboard_c.update_inputmodes = function(leaderboard_id, inputmodes)
 	if not inputmodes then
@@ -110,6 +115,7 @@ leaderboard_c.PATCH = function(request)
 
 	leaderboard_c.update_inputmodes(leaderboard.id, params.leaderboard.inputmodes)
 	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.difftables)
+	leaderboard_c.update_modifiers(leaderboard.id, params.leaderboard.modifiers)
 
 	return 200, {leaderboard = leaderboard}
 end
