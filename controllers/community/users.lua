@@ -84,7 +84,7 @@ community_users_c.get_users = function(request)
 			{
 				per_page = per_page,
 				page_num = page_num,
-				fields = "cu.user_id, cu.role, u.name"
+				fields = "cu.*"
 			}
 		)
 	end
