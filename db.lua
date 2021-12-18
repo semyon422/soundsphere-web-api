@@ -175,6 +175,7 @@ table_declarations.communities = {
 	{"short_description", types.varchar},
 	{"description", types.varchar},
 	{"banner", types.varchar},
+	{"default_leaderboard_id", types.fk_id},
 	{"users_count", types.size},
 	{"leaderboards_count", types.size},
 	{"inputmodes_count", types.size},

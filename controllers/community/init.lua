@@ -53,6 +53,7 @@ community_c.PATCH = function(request)
 	community.description = params.community.description
 	community.banner = params.community.banner
 	community.is_public = params.community.is_public
+	community.default_leaderboard_id = params.community.default_leaderboard_id
 
 	community:update(
 		"name",
@@ -61,7 +62,8 @@ community_c.PATCH = function(request)
 		"short_description",
 		"description",
 		"banner",
-		"is_public"
+		"is_public",
+		"default_leaderboard_id"
 	)
 
 	return 200, {community = community}
