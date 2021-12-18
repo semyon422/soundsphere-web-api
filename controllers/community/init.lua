@@ -1,4 +1,6 @@
 local Communities = require("models.communities")
+local Community_users = require("models.community_users")
+local Roles = require("enums.roles")
 
 local additions = {
 	inputmodes = require("controllers.community.inputmodes"),
@@ -16,6 +18,35 @@ community_c.policies = {
 	PATCH = require("policies.public"),
 	DELETE = require("policies.public"),
 }
+
+community_c.update_users = function(community_id, users)
+	if not users then
+		return
+	end
+
+	local community_user_ids = {}
+	local community_users_map = {}
+	for _, user in ipairs(users) do
+		local community_user = user.community_user
+		table.insert(community_user_ids, community_user.id)
+		community_users_map[community_user.id] = community_user
+		community_user.role = Roles:for_db(community_user.role)
+	end
+
+	if #community_user_ids == 0 then
+		return
+	end
+
+	local community_users = Community_users:find_all(community_user_ids)
+
+	for _, community_user in ipairs(community_users) do
+		local new_community_user = community_users_map[community_user.id]
+		if community_user.role ~= new_community_user.role then
+			community_user.role = new_community_user.role
+			community_user:update("role")
+		end
+	end
+end
 
 community_c.GET = function(request)
 	local params = request.params
@@ -65,6 +96,8 @@ community_c.PATCH = function(request)
 		"is_public",
 		"default_leaderboard_id"
 	)
+
+	community_c.update_users(community.id, params.community.users)
 
 	return 200, {community = community}
 end
