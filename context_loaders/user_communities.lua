@@ -1,7 +1,5 @@
 local Roles = require("enums.roles")
 
-local context_loader = {}
-
 local select = function(self, where)
 	local communities = {}
 	for _, community in ipairs(self) do
@@ -37,8 +35,8 @@ local function load_communities(user)
 	user.communities = communities
 end
 
-function context_loader:load_context(request)
-	local context = request.context
+return function(self)
+	local context = self.context
 	if context.user and not context.user.communities then
 		load_communities(context.user)
 	end
@@ -46,5 +44,3 @@ function context_loader:load_context(request)
 		load_communities(context.session_user)
 	end
 end
-
-return context_loader

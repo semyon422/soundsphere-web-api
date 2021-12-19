@@ -26,12 +26,7 @@ local function get_context(self, controller)
 		ip = self.req.headers["X-Real-IP"]
 	}
 
-	if controller.context then
-		for _, name in ipairs(controller.context) do
-			local context_loader = require("context_loaders." .. name)
-			context_loader:load_context(self)
-		end
-	end
+	controller:load_context(self)
 
 	return self.context
 end
@@ -77,13 +72,16 @@ local function route_api(controller)
 	json_respond_to("/api" .. controller.path, function(self)
 		tonumber_params(self, controller)
 		local context = get_context(self, controller)
-		local methods = get_permited_methods(self, controller)
+		local methods
+		if self.params.methods then
+			methods = get_permited_methods(self, controller)
+		end
+		local code, response = 404, {}
 		local method = self.req.method
-		local code, response
-		if includes(methods, method) and controller[method] then
+		if not controller[method] then
+			code, response = 400, {}
+		elseif controller:check_access(self, method) or methods and includes(methods, method) then
 			code, response = controller[method](self)
-		else
-			code, response = 500, {}
 		end
 		response.methods = methods
 		return {json = response, status = code}
