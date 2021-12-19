@@ -5,7 +5,7 @@ local Controller = require("Controller")
 
 local community_leaderboard_users_c = Controller:new()
 
-community_leaderboard_users_c.path = "/communities/:community_id/leaderboards/:leaderboard_id/users"
+community_leaderboard_users_c.path = "/communities/:community_id[%d]/leaderboards/:leaderboard_id[%d]/users"
 community_leaderboard_users_c.methods = {"GET"}
 community_leaderboard_users_c.context = {}
 community_leaderboard_users_c.policies = {
@@ -15,8 +15,8 @@ community_leaderboard_users_c.policies = {
 community_leaderboard_users_c.GET = function(request)
 	local params = request.params
 
-	local per_page = tonumber(params.per_page) or 10
-	local page_num = tonumber(params.page_num) or 1
+	local per_page = params.per_page or 10
+	local page_num = params.page_num or 1
 
 	local paginator = Community_users:paginated(
 		[[cu inner join leaderboard_users lu on cu.user_id = lu.user_id

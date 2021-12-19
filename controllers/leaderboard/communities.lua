@@ -4,7 +4,7 @@ local Controller = require("Controller")
 
 local leaderboard_communities_c = Controller:new()
 
-leaderboard_communities_c.path = "/leaderboards/:leaderboard_id/communities"
+leaderboard_communities_c.path = "/leaderboards/:leaderboard_id[%d]/communities"
 leaderboard_communities_c.methods = {"GET"}
 leaderboard_communities_c.context = {}
 leaderboard_communities_c.policies = {

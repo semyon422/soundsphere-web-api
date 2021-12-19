@@ -6,7 +6,7 @@ local Controller = require("Controller")
 
 local leaderboard_modifiers_c = Controller:new()
 
-leaderboard_modifiers_c.path = "/leaderboards/:leaderboard_id/modifiers"
+leaderboard_modifiers_c.path = "/leaderboards/:leaderboard_id[%d]/modifiers"
 leaderboard_modifiers_c.methods = {"GET", "PATCH"}
 leaderboard_modifiers_c.context = {}
 leaderboard_modifiers_c.policies = {

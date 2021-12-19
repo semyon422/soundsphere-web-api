@@ -4,7 +4,7 @@ local Controller = require("Controller")
 
 local leaderboard_inputmodes_c = Controller:new()
 
-leaderboard_inputmodes_c.path = "/leaderboards/:leaderboard_id/inputmodes"
+leaderboard_inputmodes_c.path = "/leaderboards/:leaderboard_id[%d]/inputmodes"
 leaderboard_inputmodes_c.methods = {"GET"}
 leaderboard_inputmodes_c.context = {}
 leaderboard_inputmodes_c.policies = {

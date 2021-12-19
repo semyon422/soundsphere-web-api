@@ -4,7 +4,7 @@ local Controller = require("Controller")
 
 local community_leaderboard_c = Controller:new()
 
-community_leaderboard_c.path = "/communities/:community_id/leaderboards/:leaderboard_id"
+community_leaderboard_c.path = "/communities/:community_id[%d]/leaderboards/:leaderboard_id[%d]"
 community_leaderboard_c.methods = {"PUT", "DELETE", "PATCH"}
 community_leaderboard_c.context = {"community", "leaderboard"}
 community_leaderboard_c.policies = {

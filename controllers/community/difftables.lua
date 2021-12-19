@@ -8,7 +8,7 @@ local Controller = require("Controller")
 
 local community_difftables_c = Controller:new()
 
-community_difftables_c.path = "/communities/:community_id/difftables"
+community_difftables_c.path = "/communities/:community_id[%d]/difftables"
 community_difftables_c.methods = {"GET"}
 community_difftables_c.context = {}
 community_difftables_c.policies = {

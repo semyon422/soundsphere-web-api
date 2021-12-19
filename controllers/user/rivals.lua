@@ -5,7 +5,7 @@ local Controller = require("Controller")
 
 local user_rivals_c = Controller:new()
 
-user_rivals_c.path = "/users/:user_id/rivals"
+user_rivals_c.path = "/users/:user_id[%d]/rivals"
 user_rivals_c.methods = {"GET"}
 user_rivals_c.context = {}
 user_rivals_c.policies = {

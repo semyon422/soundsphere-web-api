@@ -3,7 +3,7 @@ local Controller = require("Controller")
 
 local leaderboard_difftable_c = Controller:new()
 
-leaderboard_difftable_c.path = "/leaderboards/:leaderboard_id/difftables/:difftable_id"
+leaderboard_difftable_c.path = "/leaderboards/:leaderboard_id[%d]/difftables/:difftable_id[%d]"
 leaderboard_difftable_c.methods = {"PUT", "DELETE"}
 leaderboard_difftable_c.context = {"leaderboard", "difftable"}
 leaderboard_difftable_c.policies = {

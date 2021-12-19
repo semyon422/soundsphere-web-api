@@ -3,7 +3,7 @@ local Controller = require("Controller")
 
 local user_friend_c = Controller:new()
 
-user_friend_c.path = "/users/:user_id/friends/:friend_id"
+user_friend_c.path = "/users/:user_id[%d]/friends/:friend_id[%d]"
 user_friend_c.methods = {"PUT", "DELETE"}
 user_friend_c.context = {}
 user_friend_c.policies = {

@@ -3,7 +3,7 @@ local Controller = require("Controller")
 
 local score_c = Controller:new()
 
-score_c.path = "/scores/:score_id"
+score_c.path = "/scores/:score_id[%d]"
 score_c.methods = {"GET", "DELETE"}
 score_c.context = {}
 score_c.policies = {

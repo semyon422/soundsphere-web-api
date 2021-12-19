@@ -44,7 +44,7 @@ quick_c.GET = function(request)
 		return 200, {key = key}
 	end
 
-	if tonumber(quick_login.next_update_time) < time or not params.key then
+	if quick_login.next_update_time < time or not params.key then
 		local key = new_key()
 		quick_login.key = key
 		quick_login.next_update_time = time + 5 * 60

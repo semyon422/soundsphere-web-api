@@ -3,7 +3,7 @@ local Controller = require("Controller")
 
 local leaderboard_user_c = Controller:new()
 
-leaderboard_user_c.path = "/leaderboards/:leaderboard_id/users/:user_id"
+leaderboard_user_c.path = "/leaderboards/:leaderboard_id[%d]/users/:user_id[%d]"
 leaderboard_user_c.methods = {"PUT", "DELETE"}
 leaderboard_user_c.context = {}
 leaderboard_user_c.policies = {

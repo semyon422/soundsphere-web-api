@@ -3,7 +3,7 @@ local Controller = require("Controller")
 
 local user_session_c = Controller:new()
 
-user_session_c.path = "/users/:user_id/sessions/:session_id"
+user_session_c.path = "/users/:user_id[%d]/sessions/:session_id[%d]"
 user_session_c.methods = {"DELETE"}
 user_session_c.context = {}
 user_session_c.policies = {

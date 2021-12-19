@@ -3,7 +3,7 @@ local Controller = require("Controller")
 
 local user_c = Controller:new()
 
-user_c.path = "/users/:user_id"
+user_c.path = "/users/:user_id[%d]"
 user_c.methods = {"GET", "PATCH", "DELETE"}
 user_c.context = {"user", "user_roles"}
 user_c.policies = {

@@ -2,7 +2,7 @@ local Communities = require("models.communities")
 local Community_users = require("models.community_users")
 local Roles = require("enums.roles")
 local Controller = require("Controller")
-local community_user_c = require("controllers.community.user")
+local community_users_c = require("controllers.community.users")
 
 local additions = {
 	inputmodes = require("controllers.community.inputmodes"),
@@ -12,7 +12,7 @@ local additions = {
 
 local community_c = Controller:new()
 
-community_c.path = "/communities/:community_id"
+community_c.path = "/communities/:community_id[%d]"
 community_c.methods = {"GET", "PATCH", "DELETE"}
 community_c.context = {"community"}
 community_c.policies = {
@@ -22,35 +22,7 @@ community_c.policies = {
 }
 
 community_c.update_users = function(request, community_id, users)
-	if not users then
-		return
-	end
-
-	local community_user_ids = {}
-	local community_users_map = {}
-	for _, user in ipairs(users) do
-		local community_user = user.community_user
-		table.insert(community_user_ids, community_user.id)
-		community_users_map[community_user.id] = community_user
-		community_user.role = Roles:for_db(community_user.role)
-	end
-
-	if #community_user_ids == 0 then
-		return
-	end
-
-	local community_users = Community_users:find_all(community_user_ids)
-
-	for _, community_user in ipairs(community_users) do
-		local policies = community_user_c.policies[method]
-		if pep:check(request, policies) then
-			local new_community_user = community_users_map[community_user.id]
-			if community_user.role ~= new_community_user.role then
-				community_user.role = new_community_user.role
-				community_user:update("role")
-			end
-		end
-	end
+	return community_users_c.update_users(request, community_id, users)
 end
 
 community_c.GET = function(request)

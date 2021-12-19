@@ -6,7 +6,7 @@ local preload = require("lapis.db.model").preload
 
 local community_leaderboards_c = Controller:new()
 
-community_leaderboards_c.path = "/communities/:community_id/leaderboards"
+community_leaderboards_c.path = "/communities/:community_id[%d]/leaderboards"
 community_leaderboards_c.methods = {"GET"}
 community_leaderboards_c.context = {}
 community_leaderboards_c.policies = {

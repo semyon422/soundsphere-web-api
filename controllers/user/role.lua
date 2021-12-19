@@ -4,7 +4,7 @@ local Controller = require("Controller")
 
 local user_role_c = Controller:new()
 
-user_role_c.path = "/users/:user_id/roles/:role"
+user_role_c.path = "/users/:user_id[%d]/roles/:role"
 user_role_c.methods = {"PUT", "DELETE"}
 user_role_c.context = {}
 user_role_c.policies = {

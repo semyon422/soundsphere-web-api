@@ -6,10 +6,11 @@ local db_where = require("util.db_where")
 local db_and = require("util.db_and")
 local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
+local community_user_c = require("controllers.community.user")
 
 local community_users_c = Controller:new()
 
-community_users_c.path = "/communities/:community_id/users"
+community_users_c.path = "/communities/:community_id[%d]/users"
 community_users_c.methods = {"GET"}
 community_users_c.context = {}
 community_users_c.policies = {
@@ -63,8 +64,8 @@ community_users_c.get_users = function(request)
 	local db = Community_users.db
 	local clause = db.encode_clause(where)
 
-	local per_page = tonumber(params.per_page) or 10
-	local page_num = tonumber(params.page_num) or 1
+	local per_page = params.per_page or 10
+	local per_page = params.page_num or 1
 
 	local paginator
 	if not params.search then
@@ -92,6 +93,37 @@ community_users_c.get_users = function(request)
 	local community_users = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	return community_users
+end
+
+community_users_c.update_users = function(request, community_id, users)
+	if not users then
+		return
+	end
+
+	local community_user_ids = {}
+	local community_users_map = {}
+	for _, user in ipairs(users) do
+		local community_user = user.community_user
+		table.insert(community_user_ids, community_user.id)
+		community_users_map[community_user.id] = community_user
+		community_user.role = Roles:for_db(community_user.role)
+	end
+
+	if #community_user_ids == 0 then
+		return
+	end
+
+	local community_users = Community_users:find_all(community_user_ids)
+	for _, community_user in ipairs(community_users) do
+		request.context.community_user = community_user
+		if community_user_c:check_access(request) then
+			local new_community_user = community_users_map[community_user.id]
+			if community_user.role ~= new_community_user.role then
+				community_user.role = new_community_user.role
+				community_user:update("role")
+			end
+		end
+	end
 end
 
 community_users_c.GET = function(request)
@@ -134,6 +166,14 @@ community_users_c.GET = function(request)
 		filtered = Community_users:count(filtered_clause or total_clause),
 		users = users,
 	}
+end
+
+community_users_c.PATCH = function(request)
+	local params = request.params
+
+	community_users_c.update_users(request, params.community_id, params.users)
+
+	return 200, {}
 end
 
 return community_users_c

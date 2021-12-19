@@ -5,7 +5,7 @@ local Controller = require("Controller")
 
 local user_communities_c = Controller:new()
 
-user_communities_c.path = "/users/:user_id/communities"
+user_communities_c.path = "/users/:user_id[%d]/communities"
 user_communities_c.methods = {"GET"}
 user_communities_c.context = {}
 user_communities_c.policies = {

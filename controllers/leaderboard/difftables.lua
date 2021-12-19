@@ -4,7 +4,7 @@ local Controller = require("Controller")
 
 local leaderboard_difftables_c = Controller:new()
 
-leaderboard_difftables_c.path = "/leaderboards/:leaderboard_id/difftables"
+leaderboard_difftables_c.path = "/leaderboards/:leaderboard_id[%d]/difftables"
 leaderboard_difftables_c.methods = {"GET"}
 leaderboard_difftables_c.context = {}
 leaderboard_difftables_c.policies = {

@@ -5,7 +5,7 @@ local Controller = require("Controller")
 
 local difftable_c = Controller:new()
 
-difftable_c.path = "/difftables/:difftable_id"
+difftable_c.path = "/difftables/:difftable_id[%d]"
 difftable_c.methods = {"GET", "PATCH", "DELETE"}
 difftable_c.context = {}
 difftable_c.policies = {

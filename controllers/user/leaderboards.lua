@@ -4,7 +4,7 @@ local Controller = require("Controller")
 
 local user_leaderboards_c = Controller:new()
 
-user_leaderboards_c.path = "/users/:user_id/leaderboards"
+user_leaderboards_c.path = "/users/:user_id[%d]/leaderboards"
 user_leaderboards_c.methods = {"GET"}
 user_leaderboards_c.context = {}
 user_leaderboards_c.policies = {

@@ -7,7 +7,7 @@ local Controller = require("Controller")
 
 local notechart_scores_c = Controller:new()
 
-notechart_scores_c.path = "/notecharts/:notechart_id/scores"
+notechart_scores_c.path = "/notecharts/:notechart_id[%d]/scores"
 notechart_scores_c.methods = {"GET"}
 notechart_scores_c.context = {}
 notechart_scores_c.policies = {

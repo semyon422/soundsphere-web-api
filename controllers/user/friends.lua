@@ -5,7 +5,7 @@ local Controller = require("Controller")
 
 local user_friends_c = Controller:new()
 
-user_friends_c.path = "/users/:user_id/friends"
+user_friends_c.path = "/users/:user_id[%d]/friends"
 user_friends_c.methods = {"GET"}
 user_friends_c.context = {}
 user_friends_c.policies = {

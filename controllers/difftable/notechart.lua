@@ -4,7 +4,7 @@ local Controller = require("Controller")
 
 local difftable_notechart_c = Controller:new()
 
-difftable_notechart_c.path = "/difftables/:difftable_id/notecharts/:notechart_id"
+difftable_notechart_c.path = "/difftables/:difftable_id[%d]/notecharts/:notechart_id[%d]"
 difftable_notechart_c.methods = {"PUT", "DELETE", "PATCH"}
 difftable_notechart_c.context = {}
 difftable_notechart_c.policies = {

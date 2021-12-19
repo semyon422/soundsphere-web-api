@@ -3,7 +3,7 @@ local Controller = require("Controller")
 
 local user_rival_c = Controller:new()
 
-user_rival_c.path = "/users/:user_id/rivals/:rival_id"
+user_rival_c.path = "/users/:user_id[%d]/rivals/:rival_id[%d]"
 user_rival_c.methods = {"PUT", "DELETE"}
 user_rival_c.context = {}
 user_rival_c.policies = {

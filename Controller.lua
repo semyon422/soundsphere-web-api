@@ -7,7 +7,7 @@ Controller.new = function(self)
 end
 
 Controller.check_access = function(self, request, method)
-	method = method or request.method
+	method = method or request.req.method
 	if not self[method] then
 		return
 	end

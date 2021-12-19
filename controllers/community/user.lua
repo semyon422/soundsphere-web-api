@@ -5,7 +5,7 @@ local Controller = require("Controller")
 
 local community_user_c = Controller:new()
 
-community_user_c.path = "/communities/:community_id/users/:user_id"
+community_user_c.path = "/communities/:community_id[%d]/users/:user_id[%d]"
 community_user_c.methods = {"PUT", "DELETE", "GET", "PATCH"}
 community_user_c.context = {"community", "user", "user_roles"}
 community_user_c.policies = {

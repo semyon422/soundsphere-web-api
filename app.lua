@@ -64,8 +64,18 @@ local function includes(list, item)
 	end
 end
 
+local function tonumber_params(self, controller)
+	local params = self.params
+	for key in controller.path:gmatch(":([^/]+)%[%%d%]") do
+		params[key] = tonumber(params[key])
+	end
+	params.per_page = tonumber(params.per_page)
+	params.page_num = tonumber(params.page_num)
+end
+
 local function route_api(controller)
 	json_respond_to("/api" .. controller.path, function(self)
+		tonumber_params(self, controller)
 		local context = get_context(self, controller)
 		local methods = get_permited_methods(self, controller)
 		local method = self.req.method
@@ -79,6 +89,7 @@ local function route_api(controller)
 		return {json = response, status = code}
 	end)
 	json_respond_to("/ac" .. controller.path, function(self)
+		tonumber_params(self, controller)
 		local context = get_context(self, controller)
 		return {json = {methods = get_permited_methods(self, controller)}, status = 200}
 	end)
@@ -86,6 +97,7 @@ end
 
 local function route_api_debug(controller)
 	return json_respond_to("/api_debug" .. controller.path, function(self)
+		tonumber_params(self, controller)
 		local context = get_context(self, controller)
 		local method = self.req.method
 		if controller[method] then
@@ -103,6 +115,7 @@ local function route_datatables(controller, name)
 		return
 	end
 	return json_respond_to("/dt" .. controller.path, function(self)
+		tonumber_params(self, controller)
 		local context = get_context(self, controller)
 		if controller:check_access(self, "GET") then
 			local params = self.params

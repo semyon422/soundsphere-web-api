@@ -15,7 +15,7 @@ local additions = {
 
 local leaderboard_c = Controller:new()
 
-leaderboard_c.path = "/leaderboards/:leaderboard_id"
+leaderboard_c.path = "/leaderboards/:leaderboard_id[%d]"
 leaderboard_c.methods = {"GET", "PATCH", "DELETE"}
 leaderboard_c.context = {"leaderboard"}
 leaderboard_c.policies = {
