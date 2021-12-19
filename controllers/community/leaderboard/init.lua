@@ -1,7 +1,8 @@
 local Community_leaderboards = require("models.community_leaderboards")
 local Communities = require("models.communities")
+local Controller = require("Controller")
 
-local community_leaderboard_c = {}
+local community_leaderboard_c = Controller:new()
 
 community_leaderboard_c.path = "/communities/:community_id/leaderboards/:leaderboard_id"
 community_leaderboard_c.methods = {"PUT", "DELETE", "PATCH"}

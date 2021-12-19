@@ -1,8 +1,9 @@
 local Difftables = require("models.difftables")
 local Difftable_notecharts = require("models.difftable_notecharts")
 local Inputmodes = require("enums.inputmodes")
+local Controller = require("Controller")
 
-local difftable_c = {}
+local difftable_c = Controller:new()
 
 difftable_c.path = "/difftables/:difftable_id"
 difftable_c.methods = {"GET", "PATCH", "DELETE"}

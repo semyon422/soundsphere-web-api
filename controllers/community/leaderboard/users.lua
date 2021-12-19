@@ -1,8 +1,9 @@
 local Community_users = require("models.community_users")
 local Users = require("models.users")
 local preload = require("lapis.db.model").preload
+local Controller = require("Controller")
 
-local community_leaderboard_users_c = {}
+local community_leaderboard_users_c = Controller:new()
 
 community_leaderboard_users_c.path = "/communities/:community_id/leaderboards/:leaderboard_id/users"
 community_leaderboard_users_c.methods = {"GET"}

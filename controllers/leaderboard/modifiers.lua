@@ -2,8 +2,9 @@ local Leaderboard_modifiers = require("models.leaderboard_modifiers")
 local array_update = require("util.array_update")
 local Modifiers = require("enums.modifiers")
 local Rules = require("enums.rules")
+local Controller = require("Controller")
 
-local leaderboard_modifiers_c = {}
+local leaderboard_modifiers_c = Controller:new()
 
 leaderboard_modifiers_c.path = "/leaderboards/:leaderboard_id/modifiers"
 leaderboard_modifiers_c.methods = {"GET", "PATCH"}

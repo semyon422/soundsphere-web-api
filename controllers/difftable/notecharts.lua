@@ -1,7 +1,8 @@
 local Difftable_notecharts = require("models.difftable_notecharts")
 local preload = require("lapis.db.model").preload
+local Controller = require("Controller")
 
-local difftable_notecharts_c = {}
+local difftable_notecharts_c = Controller:new()
 
 difftable_notecharts_c.path = "/difftables/:difftable_id/notecharts"
 difftable_notecharts_c.methods = {"GET"}

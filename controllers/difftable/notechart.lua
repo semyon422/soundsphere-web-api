@@ -1,7 +1,8 @@
 local Difftable_notecharts = require("models.difftable_notecharts")
 local preload = require("lapis.db.model").preload
+local Controller = require("Controller")
 
-local difftable_notechart_c = {}
+local difftable_notechart_c = Controller:new()
 
 difftable_notechart_c.path = "/difftables/:difftable_id/notecharts/:notechart_id"
 difftable_notechart_c.methods = {"PUT", "DELETE", "PATCH"}

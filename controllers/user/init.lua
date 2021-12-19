@@ -1,6 +1,7 @@
 local Users = require("models.users")
+local Controller = require("Controller")
 
-local user_c = {}
+local user_c = Controller:new()
 
 user_c.path = "/users/:user_id"
 user_c.methods = {"GET", "PATCH", "DELETE"}

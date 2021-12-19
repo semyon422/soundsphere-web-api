@@ -2,10 +2,6 @@ local first_applicable = require("abac.combine.first_applicable")
 
 local PolicyEnforcementPoint = {}
 
-function PolicyEnforcementPoint:new()
-	return setmetatable({}, {__index = PolicyEnforcementPoint})
-end
-
 function PolicyEnforcementPoint:check(request, policies)
 	if not policies then
 		return false

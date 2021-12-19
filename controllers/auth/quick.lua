@@ -4,8 +4,9 @@ local users = require("models.users")
 local quick_logins = require("models.quick_logins")
 local login_c = require("controllers.auth.login")
 local secret = require("secret")
+local Controller = require("Controller")
 
-local quick_c = {}
+local quick_c = Controller:new()
 
 quick_c.path = "/auth/quick"
 quick_c.methods = {"GET", "POST"}

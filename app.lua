@@ -6,10 +6,6 @@ local app = lapis.Application()
 
 local secret = require("secret")
 
-local PolicyEnforcementPoint = require("abac.PolicyEnforcementPoint")
-
-local pep = PolicyEnforcementPoint:new()
-
 local token_auth = require("auth.token")
 local basic_auth = require("auth.basic")
 
@@ -53,8 +49,7 @@ end
 local function get_permited_methods(self, controller)
 	local methods = {}
 	for _, method in ipairs(controller.methods) do
-		local policies = controller.policies[method]
-		if pep:check(self, policies) then
+		if controller:check_access(self, method) then
 			table.insert(methods, method)
 		end
 	end
@@ -109,7 +104,7 @@ local function route_datatables(controller, name)
 	end
 	return json_respond_to("/dt" .. controller.path, function(self)
 		local context = get_context(self, controller)
-		if pep:check(self, controller.policies.GET) and controller.GET then
+		if controller:check_access(self, "GET") then
 			local params = self.params
 			if tonumber(params.length) == -1 then
 				params.get_all = true

@@ -1,7 +1,8 @@
 local Community_difftables = require("models.community_difftables")
+local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
 
-local difftable_communities_c = {}
+local difftable_communities_c = Controller:new()
 
 difftable_communities_c.path = "/difftables/:difftable_id/communities"
 difftable_communities_c.methods = {"GET"}

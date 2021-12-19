@@ -6,8 +6,9 @@ local db_search = require("util.db_search")
 local db_where = require("util.db_where")
 local preload = require("lapis.db.model").preload
 local leaderboard_c = require("controllers.leaderboard")
+local Controller = require("Controller")
 
-local leaderboards_c = {}
+local leaderboards_c = Controller:new()
 
 leaderboards_c.path = "/leaderboards"
 leaderboards_c.methods = {"GET", "POST"}

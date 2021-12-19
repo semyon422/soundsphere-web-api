@@ -1,6 +1,7 @@
 local Leaderboard_difftables = require("models.leaderboard_difftables")
+local Controller = require("Controller")
 
-local leaderboard_difftable_c = {}
+local leaderboard_difftable_c = Controller:new()
 
 leaderboard_difftable_c.path = "/leaderboards/:leaderboard_id/difftables/:difftable_id"
 leaderboard_difftable_c.methods = {"PUT", "DELETE"}

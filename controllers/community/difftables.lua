@@ -4,8 +4,9 @@ local Leaderboard_difftables = require("models.leaderboard_difftables")
 local Difftables = require("models.difftables")
 local array_update = require("util.array_update")
 local preload = require("lapis.db.model").preload
+local Controller = require("Controller")
 
-local community_difftables_c = {}
+local community_difftables_c = Controller:new()
 
 community_difftables_c.path = "/communities/:community_id/difftables"
 community_difftables_c.methods = {"GET"}

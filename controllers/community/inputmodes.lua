@@ -3,9 +3,10 @@ local Community_leaderboards = require("models.community_leaderboards")
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Inputmodes = require("enums.inputmodes")
 local array_update = require("util.array_update")
+local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
 
-local community_inputmodes_c = {}
+local community_inputmodes_c = Controller:new()
 
 community_inputmodes_c.path = "/communities/:community_id/inputmodes"
 community_inputmodes_c.methods = {"GET"}

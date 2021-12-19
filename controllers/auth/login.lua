@@ -4,8 +4,9 @@ local Sessions = require("models.sessions")
 local bcrypt = require("bcrypt")
 local jwt = require("luajwt")
 local secret = require("secret")
+local Controller = require("Controller")
 
-local login_c = {}
+local login_c = Controller:new()
 
 login_c.path = "/auth/login"
 login_c.methods = {"POST"}

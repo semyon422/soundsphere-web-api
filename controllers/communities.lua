@@ -6,8 +6,9 @@ local db_search = require("util.db_search")
 local db_where = require("util.db_where")
 local db_and = require("util.db_and")
 local preload = require("lapis.db.model").preload
+local Controller = require("Controller")
 
-local communities_c = {}
+local communities_c = Controller:new()
 
 communities_c.path = "/communities"
 communities_c.methods = {"GET", "POST"}

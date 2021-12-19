@@ -1,6 +1,7 @@
 local Sessions = require("models.sessions")
+local Controller = require("Controller")
 
-local user_sessions_c = {}
+local user_sessions_c = Controller:new()
 
 user_sessions_c.path = "/users/:user_id/sessions"
 user_sessions_c.methods = {"GET"}

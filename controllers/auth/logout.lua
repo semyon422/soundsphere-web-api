@@ -1,7 +1,6 @@
-local jwt = require("luajwt")
-local secret = require("secret")
+local Controller = require("Controller")
 
-local logout_c = {}
+local logout_c = Controller:new()
 
 logout_c.path = "/auth/logout"
 logout_c.methods = {"POST"}

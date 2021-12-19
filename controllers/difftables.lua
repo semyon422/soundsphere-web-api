@@ -3,8 +3,9 @@ local Inputmodes = require("enums.inputmodes")
 local db_search = require("util.db_search")
 local db_where = require("util.db_where")
 local preload = require("lapis.db.model").preload
+local Controller = require("Controller")
 
-local difftables_c = {}
+local difftables_c = Controller:new()
 
 difftables_c.path = "/difftables"
 difftables_c.methods = {"GET", "POST"}

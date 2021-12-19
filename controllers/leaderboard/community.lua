@@ -1,6 +1,7 @@
 local community_leaderboard_c = require("controllers.community.leaderboard")
+local Controller = require("Controller")
 
-local leaderboard_community_c = {}
+local leaderboard_community_c = Controller:new()
 
 community_leaderboard_c.path = "/communities/:community_id/leaderboards/:leaderboard_id"
 leaderboard_community_c.methods = community_leaderboard_c.methods

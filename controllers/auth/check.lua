@@ -1,7 +1,6 @@
-local jwt = require("luajwt")
-local secret = require("secret")
+local Controller = require("Controller")
 
-local check_c = {}
+local check_c = Controller:new()
 
 check_c.path = "/auth/check"
 check_c.methods = {"GET"}

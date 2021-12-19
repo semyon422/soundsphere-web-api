@@ -1,8 +1,9 @@
 local Communities = require("models.communities")
 local Community_users = require("models.community_users")
 local Roles = require("enums.roles")
+local Controller = require("Controller")
 
-local community_user_c = {}
+local community_user_c = Controller:new()
 
 community_user_c.path = "/communities/:community_id/users/:user_id"
 community_user_c.methods = {"PUT", "DELETE", "GET", "PATCH"}

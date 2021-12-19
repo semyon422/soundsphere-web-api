@@ -1,6 +1,7 @@
 local Scores = require("models.scores")
+local Controller = require("Controller")
 
-local user_scores_c = {}
+local user_scores_c = Controller:new()
 
 user_scores_c.path = "/users/:user_id/scores"
 user_scores_c.methods = {"GET"}

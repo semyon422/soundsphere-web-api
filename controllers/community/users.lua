@@ -4,9 +4,10 @@ local Roles = require("enums.roles")
 local db_search = require("util.db_search")
 local db_where = require("util.db_where")
 local db_and = require("util.db_and")
+local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
 
-local community_users_c = {}
+local community_users_c = Controller:new()
 
 community_users_c.path = "/communities/:community_id/users"
 community_users_c.methods = {"GET"}

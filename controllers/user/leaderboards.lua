@@ -1,7 +1,8 @@
 local Leaderboard_users = require("models.leaderboard_users")
 local preload = require("lapis.db.model").preload
+local Controller = require("Controller")
 
-local user_leaderboards_c = {}
+local user_leaderboards_c = Controller:new()
 
 user_leaderboards_c.path = "/users/:user_id/leaderboards"
 user_leaderboards_c.methods = {"GET"}

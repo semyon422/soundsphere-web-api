@@ -1,8 +1,9 @@
 local jwt = require("luajwt")
 local secret = require("secret")
 local login_c = require("controllers.auth.login")
+local Controller = require("Controller")
 
-local update_c = {}
+local update_c = Controller:new()
 
 update_c.path = "/auth/update"
 update_c.methods = {"POST"}

@@ -1,8 +1,9 @@
 local User_relations = require("models.user_relations")
 local Users = require("models.users")
 local preload = require("lapis.db.model").preload
+local Controller = require("Controller")
 
-local user_rivals_c = {}
+local user_rivals_c = Controller:new()
 
 user_rivals_c.path = "/users/:user_id/rivals"
 user_rivals_c.methods = {"GET"}

@@ -1,9 +1,10 @@
 local Community_leaderboards = require("models.community_leaderboards")
 local Users = require("models.users")
 local Inputmodes = require("enums.inputmodes")
+local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
 
-local community_leaderboards_c = {}
+local community_leaderboards_c = Controller:new()
 
 community_leaderboards_c.path = "/communities/:community_id/leaderboards"
 community_leaderboards_c.methods = {"GET"}

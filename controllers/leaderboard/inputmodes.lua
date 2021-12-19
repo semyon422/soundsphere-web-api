@@ -1,7 +1,8 @@
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Inputmodes = require("enums.inputmodes")
+local Controller = require("Controller")
 
-local leaderboard_inputmodes_c = {}
+local leaderboard_inputmodes_c = Controller:new()
 
 leaderboard_inputmodes_c.path = "/leaderboards/:leaderboard_id/inputmodes"
 leaderboard_inputmodes_c.methods = {"GET"}

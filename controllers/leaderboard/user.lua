@@ -1,6 +1,7 @@
 local Leaderboard_users = require("models.leaderboard_users")
+local Controller = require("Controller")
 
-local leaderboard_user_c = {}
+local leaderboard_user_c = Controller:new()
 
 leaderboard_user_c.path = "/leaderboards/:leaderboard_id/users/:user_id"
 leaderboard_user_c.methods = {"PUT", "DELETE"}

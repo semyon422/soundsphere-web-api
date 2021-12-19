@@ -3,8 +3,9 @@ local Users = require("models.users")
 local User_relations = require("models.user_relations")
 local Leaderboard_scores = require("models.leaderboard_scores")
 local preload = require("lapis.db.model").preload
+local Controller = require("Controller")
 
-local notechart_scores_c = {}
+local notechart_scores_c = Controller:new()
 
 notechart_scores_c.path = "/notecharts/:notechart_id/scores"
 notechart_scores_c.methods = {"GET"}

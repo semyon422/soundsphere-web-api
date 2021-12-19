@@ -3,6 +3,7 @@ local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Leaderboard_difftables = require("models.leaderboard_difftables")
 local Inputmodes = require("enums.inputmodes")
 local array_update = require("util.array_update")
+local Controller = require("Controller")
 
 local additions = {
 	difftables = require("controllers.leaderboard.difftables"),
@@ -12,7 +13,7 @@ local additions = {
 	modifiers = require("controllers.leaderboard.modifiers"),
 }
 
-local leaderboard_c = {}
+local leaderboard_c = Controller:new()
 
 leaderboard_c.path = "/leaderboards/:leaderboard_id"
 leaderboard_c.methods = {"GET", "PATCH", "DELETE"}

@@ -1,6 +1,7 @@
 local Notecharts = require("models.notecharts")
+local Controller = require("Controller")
 
-local notecharts_c = {}
+local notecharts_c = Controller:new()
 
 notecharts_c.path = "/notecharts"
 notecharts_c.methods = {"GET", "POST"}

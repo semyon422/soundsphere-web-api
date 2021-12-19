@@ -1,7 +1,8 @@
 local User_roles = require("models.user_roles")
 local Roles = require("enums.roles")
+local Controller = require("Controller")
 
-local user_role_c = {}
+local user_role_c = Controller:new()
 
 user_role_c.path = "/users/:user_id/roles/:role"
 user_role_c.methods = {"PUT", "DELETE"}

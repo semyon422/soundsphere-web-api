@@ -1,6 +1,7 @@
 local Sessions = require("models.sessions")
+local Controller = require("Controller")
 
-local user_session_c = {}
+local user_session_c = Controller:new()
 
 user_session_c.path = "/users/:user_id/sessions/:session_id"
 user_session_c.methods = {"DELETE"}

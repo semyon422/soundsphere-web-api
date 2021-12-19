@@ -1,7 +1,8 @@
 local Leaderboard_difftables = require("models.leaderboard_difftables")
 local preload = require("lapis.db.model").preload
+local Controller = require("Controller")
 
-local leaderboard_difftables_c = {}
+local leaderboard_difftables_c = Controller:new()
 
 leaderboard_difftables_c.path = "/leaderboards/:leaderboard_id/difftables"
 leaderboard_difftables_c.methods = {"GET"}

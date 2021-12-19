@@ -2,8 +2,9 @@ local Users = require("models.users")
 local bcrypt = require("bcrypt")
 local db_search = require("util.db_search")
 local db_where = require("util.db_where")
+local Controller = require("Controller")
 
-local users_c = {}
+local users_c = Controller:new()
 
 users_c.path = "/users"
 users_c.methods = {"GET", "POST"}
