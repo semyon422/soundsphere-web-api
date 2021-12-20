@@ -6,11 +6,8 @@ local user_roles_c = Controller:new()
 
 user_roles_c.path = "/users/:user_id[%d]/roles"
 user_roles_c.methods = {"GET"}
-user_roles_c.context = {}
-user_roles_c.policies = {
-	GET = require("policies.public"),
-}
 
+user_roles_c.policies.GET = {{"permit"}}
 user_roles_c.GET = function(request)
 	local params = request.params
     local user_roles = User_roles:find_all({params.user_id}, "user_id")

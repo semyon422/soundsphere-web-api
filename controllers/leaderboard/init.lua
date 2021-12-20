@@ -17,12 +17,6 @@ local leaderboard_c = Controller:new()
 
 leaderboard_c.path = "/leaderboards/:leaderboard_id[%d]"
 leaderboard_c.methods = {"GET", "PATCH", "DELETE"}
-leaderboard_c.context = {"leaderboard"}
-leaderboard_c.policies = {
-	GET = require("policies.public"),
-	PATCH = require("policies.public"),
-	DELETE = require("policies.public"),
-}
 
 leaderboard_c.update_modifiers = function(leaderboard_id, modifiers)
 	return additions.modifiers.update_modifiers(leaderboard_id, modifiers)
@@ -80,6 +74,8 @@ leaderboard_c.update_difftables = function(leaderboard_id, difftables)
 	end
 end
 
+leaderboard_c.context.GET = {"leaderboard"}
+leaderboard_c.policies.GET = {{"permit"}}
 leaderboard_c.GET = function(request)
 	local params = request.params
 	local leaderboard = Leaderboards:find(params.leaderboard_id)
@@ -105,6 +101,8 @@ leaderboard_c.GET = function(request)
 	return 200, {leaderboard = leaderboard}
 end
 
+leaderboard_c.context.PATCH = {"leaderboard"}
+leaderboard_c.policies.PATCH = {{"permit"}}
 leaderboard_c.PATCH = function(request)
 	local params = request.params
 	local leaderboard = Leaderboards:find(params.leaderboard_id)

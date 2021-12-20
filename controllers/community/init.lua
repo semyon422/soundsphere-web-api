@@ -14,17 +14,13 @@ local community_c = Controller:new()
 
 community_c.path = "/communities/:community_id[%d]"
 community_c.methods = {"GET", "PATCH", "DELETE"}
-community_c.context = {"community"}
-community_c.policies = {
-	GET = require("policies.public"),
-	PATCH = require("policies.public"),
-	DELETE = require("policies.public"),
-}
 
 community_c.update_users = function(request, community_id, users)
 	return community_users_c.update_users(request, community_id, users)
 end
 
+community_c.context.GET = {"community"}
+community_c.policies.GET = {{"permit"}}
 community_c.GET = function(request)
 	local params = request.params
 	local community = Communities:find(params.community_id)
@@ -50,6 +46,8 @@ community_c.GET = function(request)
 	return 200, {community = community}
 end
 
+community_c.context.PATCH = {"community"}
+community_c.policies.PATCH = {{"permit"}}
 community_c.PATCH = function(request)
 	local params = request.params
 	local community = Communities:find(params.community_id)
@@ -79,6 +77,8 @@ community_c.PATCH = function(request)
 	return 200, {community = community}
 end
 
+community_c.context.DELETE = {"community"}
+community_c.policies.DELETE = {{"permit"}}
 community_c.DELETE = function(request)
 	return 200, {}
 end

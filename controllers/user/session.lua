@@ -5,11 +5,8 @@ local user_session_c = Controller:new()
 
 user_session_c.path = "/users/:user_id[%d]/sessions/:session_id[%d]"
 user_session_c.methods = {"DELETE"}
-user_session_c.context = {}
-user_session_c.policies = {
-	DELETE = require("policies.public"),
-}
 
+user_session_c.policies.DELETE = {{"permit"}}
 user_session_c.DELETE = function(request)
 	local params = request.params
 	local session = Sessions:find(params.session_id)

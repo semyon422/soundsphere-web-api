@@ -1,8 +1,8 @@
 local first_applicable = require("abac.combine.first_applicable")
 local permit_all_or_deny = require("abac.combine.permit_all_or_deny")
 local autoload = require("lapis.util").autoload
-local rules = autoload("rules")
-local _policies = autoload("policies")
+local auto_rules = autoload("rules")
+local auto_policies = autoload("policies")
 local combines = autoload("abac.combine")
 
 local PolicyEnforcementPoint = {}
@@ -12,19 +12,19 @@ function PolicyEnforcementPoint:check(request, policies)
 		return false
 	end
 	if type(policies) == "string" then
-		policies = _policies[policies]
+		policies = auto_policies[policies]
 	end
 	local decision
 	for i = 1, #policies do
 		local policy = policies[i]
 		if type(policy) == "string" then
-			policy = _policies[policy]
+			policy = auto_policies[policy]
 		end
 		local policy_decision
-		for j = 1, #policy.rules do
-			local rule = policy.rules[j]
+		for j = 1, #policy do
+			local rule = policy[j]
 			if type(rule) == "string" then
-				rule = rules[rule]
+				rule = auto_rules[rule]
 			end
 			local rule_decision = rule:evaluate(request)
 			local combine = policy.combine or permit_all_or_deny

@@ -4,11 +4,9 @@ local logout_c = Controller:new()
 
 logout_c.path = "/auth/logout"
 logout_c.methods = {"POST"}
-logout_c.context = {"session"}
-logout_c.policies = {
-	POST = require("policies.public"),
-}
 
+logout_c.context.POST = {"session"}
+logout_c.policies.POST = {{"permit"}}
 logout_c.POST = function(request)
 	local session = request.context.session
 

@@ -6,12 +6,9 @@ local leaderboard_inputmode_c = Controller:new()
 
 leaderboard_inputmode_c.path = "/leaderboards/:leaderboard_id[%d]/inputmodes/:inputmode"
 leaderboard_inputmode_c.methods = {"PUT", "DELETE"}
-leaderboard_inputmode_c.context = {"leaderboard"}
-leaderboard_inputmode_c.policies = {
-	PUT = require("policies.public"),
-	DELETE = require("policies.public"),
-}
 
+leaderboard_inputmode_c.context.PUT = {"leaderboard"}
+leaderboard_inputmode_c.policies.PUT = {{"permit"}}
 leaderboard_inputmode_c.PUT = function(request)
 	local params = request.params
     local leaderboard_inputmode = {
@@ -25,6 +22,8 @@ leaderboard_inputmode_c.PUT = function(request)
 	return 200, {}
 end
 
+leaderboard_inputmode_c.context.DELETE = {"leaderboard"}
+leaderboard_inputmode_c.policies.DELETE = {{"permit"}}
 leaderboard_inputmode_c.DELETE = function(request)
 	local params = request.params
     local leaderboard_inputmode = Leaderboard_inputmodes:find({

@@ -10,10 +10,6 @@ local login_c = Controller:new()
 
 login_c.path = "/auth/login"
 login_c.methods = {"POST"}
-login_c.context = {}
-login_c.policies = {
-	POST = require("policies.public"),
-}
 
 local failed = "Login failed. Invalid email or password"
 local function login(email, password)
@@ -50,6 +46,7 @@ login_c.new_token = function(user, ip)
 	return token, payload
 end
 
+login_c.policies.POST = {{"permit"}}
 login_c.POST = function(request)
 	local params = request.params
 

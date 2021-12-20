@@ -6,13 +6,9 @@ local community_leaderboard_c = Controller:new()
 
 community_leaderboard_c.path = "/communities/:community_id[%d]/leaderboards/:leaderboard_id[%d]"
 community_leaderboard_c.methods = {"PUT", "DELETE", "PATCH"}
-community_leaderboard_c.context = {"community", "leaderboard"}
-community_leaderboard_c.policies = {
-	PUT = require("policies.public"),
-	DELETE = require("policies.public"),
-	PATCH = require("policies.public"),
-}
 
+community_leaderboard_c.context.PUT = {"community", "leaderboard"}
+community_leaderboard_c.policies.PUT = {{"permit"}}
 community_leaderboard_c.PUT = function(request)
 	local params = request.params
 
@@ -43,6 +39,8 @@ community_leaderboard_c.PUT = function(request)
 	return 200, {}
 end
 
+community_leaderboard_c.context.DELETE = {"community", "leaderboard"}
+community_leaderboard_c.policies.DELETE = {{"permit"}}
 community_leaderboard_c.DELETE = function(request)
 	local params = request.params
     local community_leaderboard = Community_leaderboards:find({
@@ -56,6 +54,8 @@ community_leaderboard_c.DELETE = function(request)
 	return 200, {}
 end
 
+community_leaderboard_c.context.PATCH = {"community", "leaderboard"}
+community_leaderboard_c.policies.PATCH = {{"permit"}}
 community_leaderboard_c.PATCH = function(request)
 	local params = request.params
 

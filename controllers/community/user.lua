@@ -8,57 +8,44 @@ local community_user_c = Controller:new()
 community_user_c.path = "/communities/:community_id[%d]/users/:user_id[%d]"
 community_user_c.validation = {}
 community_user_c.methods = {"PUT", "DELETE", "GET", "PATCH"}
-community_user_c.context = {"community_user"}
-community_user_c.policies = {{"community_user"}}
--- 	PUT = {{
--- 		rules = {"authenticated"}
--- 	}},
--- 	DELETE = {{
--- 		rules = {"authenticated", "community_user"}
--- 	}},
--- 	GET = {{"community_user"}},
--- 	PATCH = {{
--- 		rules = {"authenticated", "community_user"}
--- 	}},
--- }
 
-community_user_c.PUT = {
-	context = {"community_user", "session"},
-	policies = {{"authenticated"}},
-	validation = {
-		{"invitation", exists = true, type = "boolean"},
-		{"message", exists = true, optional = true},
-	},
-	handler = function(request)
-		local params = request.params
-		local community_user = request.context.community_user
-
-		if not community_user then
-			community_user = {
-				community_id = params.community_id,
-				user_id = params.user_id,
-				invitation = params.invitation ~= nil,
-				sender_id = request.session.user_id,
-				created_at = os.time(),
-				message = params.message or "",
-			}
-			local community = Communities:find(params.community_id)
-			Community_users:set_role(community_user, community.is_public and "user" or "guest")
-			Community_users:create(community_user)
-		else
-			if community_user.invitation and not params.invitation or
-				not community_user.invitation and params.invitation
-			then
-				community_user.accepted = true
-				Community_users:set_role(community_user, "user")
-				community_user:update("accepted", "role")
-			end
-		end
-
-		return 200, {}
-	end
+community_user_c.context.PUT = {"community_user", "session"}
+community_user_c.policies.PUT = {{"community_user"}}
+community_user_c.validation.PUT = {
+	{"invitation", exists = true, type = "boolean"},
+	{"message", exists = true, optional = true},
 }
+community_user_c.PUT = function(request)
+	local params = request.params
+	local community_user = request.context.community_user
 
+	if not community_user then
+		community_user = {
+			community_id = params.community_id,
+			user_id = params.user_id,
+			invitation = params.invitation ~= nil,
+			sender_id = request.session.user_id,
+			created_at = os.time(),
+			message = params.message or "",
+		}
+		local community = Communities:find(params.community_id)
+		Community_users:set_role(community_user, community.is_public and "user" or "guest")
+		Community_users:create(community_user)
+	else
+		if community_user.invitation and not params.invitation or
+			not community_user.invitation and params.invitation
+		then
+			community_user.accepted = true
+			Community_users:set_role(community_user, "user")
+			community_user:update("accepted", "role")
+		end
+	end
+
+	return 200, {}
+end
+
+community_user_c.context.DELETE = {"community_user", "session"}
+community_user_c.policies.DELETE = {{"authenticated", "community_user"}}
 community_user_c.DELETE = function(request)
 	local community_user = request.context.community_user
     if community_user then
@@ -68,6 +55,8 @@ community_user_c.DELETE = function(request)
 	return 200, {}
 end
 
+community_user_c.context.GET = {"community_user", "session"}
+community_user_c.policies.GET = {{"community_user"}}
 community_user_c.GET = function(request)
 	local community_user = request.context.community_user
 	if community_user then
@@ -77,6 +66,8 @@ community_user_c.GET = function(request)
 	return 200, {community_user = community_user}
 end
 
+community_user_c.context.PATCH = {"community_user", "session"}
+community_user_c.policies.PATCH = {{"authenticated", "community_user"}}
 community_user_c.PATCH = function(request)
 	local params = request.params
 	local community_user = request.context.community_user

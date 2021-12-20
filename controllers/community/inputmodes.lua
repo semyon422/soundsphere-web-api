@@ -10,11 +10,8 @@ local community_inputmodes_c = Controller:new()
 
 community_inputmodes_c.path = "/communities/:community_id[%d]/inputmodes"
 community_inputmodes_c.methods = {"GET"}
-community_inputmodes_c.context = {}
-community_inputmodes_c.policies = {
-	GET = require("policies.public"),
-}
 
+community_inputmodes_c.policies.DELETE = {{"permit"}}
 community_inputmodes_c.GET = function(request)
 	local params = request.params
 

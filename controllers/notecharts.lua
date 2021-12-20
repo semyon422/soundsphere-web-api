@@ -5,11 +5,8 @@ local notecharts_c = Controller:new()
 
 notecharts_c.path = "/notecharts"
 notecharts_c.methods = {"GET", "POST"}
-notecharts_c.context = {}
-notecharts_c.policies = {
-	GET = require("policies.public"),
-}
 
+notecharts_c.policies.GET = {{"permit"}}
 notecharts_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10

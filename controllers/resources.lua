@@ -6,11 +6,8 @@ local resources_c = Controller:new()
 
 resources_c.path = ""
 resources_c.methods = {"GET"}
-resources_c.context = {}
-resources_c.policies = {
-	GET = require("policies.public"),
-}
 
+resources_c.policies.GET = {{"permit"}}
 resources_c.GET = function(request)
 	local params = request.params
 

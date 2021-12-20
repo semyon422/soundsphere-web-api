@@ -6,11 +6,9 @@ local difftable_notecharts_c = Controller:new()
 
 difftable_notecharts_c.path = "/difftables/:difftable_id[%d]/notecharts"
 difftable_notecharts_c.methods = {"GET"}
-difftable_notecharts_c.context = {"difftable"}
-difftable_notecharts_c.policies = {
-	GET = require("policies.public"),
-}
 
+difftable_notecharts_c.context.GET = {"difftable"}
+difftable_notecharts_c.policies.GET = {{"permit"}}
 difftable_notecharts_c.GET = function(request)
 	local params = request.params
 

@@ -6,11 +6,9 @@ local difftable_communities_c = Controller:new()
 
 difftable_communities_c.path = "/difftables/:difftable_id[%d]/communities"
 difftable_communities_c.methods = {"GET"}
-difftable_communities_c.context = {"difftable"}
-difftable_communities_c.policies = {
-	GET = require("policies.public"),
-}
 
+difftable_communities_c.context.GET = {"difftable"}
+difftable_communities_c.policies.GET = {{"permit"}}
 difftable_communities_c.GET = function(request)
 	local params = request.params
 	local community_difftables = Community_difftables:find_all({params.difftable_id}, "difftable_id")

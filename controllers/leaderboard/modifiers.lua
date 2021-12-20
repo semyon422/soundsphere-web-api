@@ -8,11 +8,6 @@ local leaderboard_modifiers_c = Controller:new()
 
 leaderboard_modifiers_c.path = "/leaderboards/:leaderboard_id[%d]/modifiers"
 leaderboard_modifiers_c.methods = {"GET", "PATCH"}
-leaderboard_modifiers_c.context = {}
-leaderboard_modifiers_c.policies = {
-	GET = require("policies.public"),
-	PATCH = require("policies.public"),
-}
 
 leaderboard_modifiers_c.update_modifiers = function(leaderboard_id, modifiers)
 	if not modifiers then
@@ -74,6 +69,7 @@ leaderboard_modifiers_c.update_modifiers = function(leaderboard_id, modifiers)
 	end
 end
 
+leaderboard_modifiers_c.policies.GET = {{"permit"}}
 leaderboard_modifiers_c.GET = function(request)
 	local params = request.params
 	local leaderboard_modifiers = Leaderboard_modifiers:find_all({params.leaderboard_id}, "leaderboard_id")
@@ -95,6 +91,7 @@ leaderboard_modifiers_c.GET = function(request)
 	}
 end
 
+leaderboard_modifiers_c.policies.PATCH = {{"permit"}}
 leaderboard_modifiers_c.PATCH = function(request)
 	local params = request.params
 

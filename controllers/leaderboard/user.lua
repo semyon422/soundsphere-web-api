@@ -5,12 +5,8 @@ local leaderboard_user_c = Controller:new()
 
 leaderboard_user_c.path = "/leaderboards/:leaderboard_id[%d]/users/:user_id[%d]"
 leaderboard_user_c.methods = {"PUT", "DELETE"}
-leaderboard_user_c.context = {}
-leaderboard_user_c.policies = {
-	PUT = require("policies.public"),
-	DELETE = require("policies.public"),
-}
 
+leaderboard_user_c.policies.PUT = {{"permit"}}
 leaderboard_user_c.PUT = function(request)
 	local params = request.params
     local leaderboard_user = {
@@ -24,6 +20,7 @@ leaderboard_user_c.PUT = function(request)
 	return 200, {}
 end
 
+leaderboard_user_c.policies.DELETE = {{"permit"}}
 leaderboard_user_c.DELETE = function(request)
 	local params = request.params
     local leaderboard_user = Leaderboard_users:find({

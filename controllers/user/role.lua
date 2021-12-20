@@ -6,12 +6,8 @@ local user_role_c = Controller:new()
 
 user_role_c.path = "/users/:user_id[%d]/roles/:role"
 user_role_c.methods = {"PUT", "DELETE"}
-user_role_c.context = {}
-user_role_c.policies = {
-	PUT = require("policies.public"),
-	DELETE = require("policies.public"),
-}
 
+user_role_c.policies.PUT = {{"permit"}}
 user_role_c.PUT = function(request)
 	local params = request.params
     local user_role = {
@@ -25,6 +21,7 @@ user_role_c.PUT = function(request)
 	return 200, {}
 end
 
+user_role_c.policies.DELETE = {{"permit"}}
 user_role_c.DELETE = function(request)
 	local params = request.params
     local user_role = User_roles:find({

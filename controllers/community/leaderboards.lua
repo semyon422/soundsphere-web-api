@@ -8,10 +8,6 @@ local community_leaderboards_c = Controller:new()
 
 community_leaderboards_c.path = "/communities/:community_id[%d]/leaderboards"
 community_leaderboards_c.methods = {"GET"}
-community_leaderboards_c.context = {}
-community_leaderboards_c.policies = {
-	GET = require("policies.public"),
-}
 
 community_leaderboards_c.get_joined = function(request)
 	local params = request.params
@@ -89,7 +85,7 @@ community_leaderboards_c.get_outgoing = function(request)
 	return community_leaderboards
 end
 
-
+community_leaderboards_c.policies.GET = {{"permit"}}
 community_leaderboards_c.GET = function(request)
 	local params = request.params
 

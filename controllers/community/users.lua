@@ -12,10 +12,6 @@ local community_users_c = Controller:new()
 
 community_users_c.path = "/communities/:community_id[%d]/users"
 community_users_c.methods = {"GET"}
-community_users_c.context = {}
-community_users_c.policies = {
-	GET = require("policies.public"),
-}
 
 community_users_c.get_invitations = function(request, invitation)
 	local params = request.params
@@ -126,6 +122,7 @@ community_users_c.update_users = function(request, community_id, users)
 	end
 end
 
+community_users_c.policies.GET = {{"permit"}}
 community_users_c.GET = function(request)
 	local params = request.params
 

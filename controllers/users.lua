@@ -8,12 +8,8 @@ local users_c = Controller:new()
 
 users_c.path = "/users"
 users_c.methods = {"GET", "POST"}
-users_c.context = {}
-users_c.policies = {
-	GET = require("policies.public"),
-	POST = require("policies.public"),
-}
 
+users_c.policies.GET = {{"permit"}}
 users_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10
@@ -71,6 +67,7 @@ local function register(name, email, password)
 	return user
 end
 
+users_c.policies.POST = {{"permit"}}
 users_c.POST = function(request)
 	local params = request.params
 	local user = params.user

@@ -7,11 +7,8 @@ local community_leaderboard_users_c = Controller:new()
 
 community_leaderboard_users_c.path = "/communities/:community_id[%d]/leaderboards/:leaderboard_id[%d]/users"
 community_leaderboard_users_c.methods = {"GET"}
-community_leaderboard_users_c.context = {}
-community_leaderboard_users_c.policies = {
-	GET = require("policies.public"),
-}
 
+community_leaderboard_users_c.policies.GET = {{"permit"}}
 community_leaderboard_users_c.GET = function(request)
 	local params = request.params
 

@@ -9,10 +9,6 @@ local notechart_scores_c = Controller:new()
 
 notechart_scores_c.path = "/notecharts/:notechart_id[%d]/scores"
 notechart_scores_c.methods = {"GET"}
-notechart_scores_c.context = {}
-notechart_scores_c.policies = {
-	GET = require("policies.public"),
-}
 
 local function get_relations_scores(params, relationtype, mutual)
 	local user_id = tonumber(params[relationtype .. "s"])
@@ -46,6 +42,7 @@ local function get_relations_scores(params, relationtype, mutual)
 	return scores
 end
 
+notechart_scores_c.policies.GET = {{"permit"}}
 notechart_scores_c.GET = function(request)
 	local params = request.params
 	local scores

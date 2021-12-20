@@ -6,11 +6,8 @@ local leaderboard_difftables_c = Controller:new()
 
 leaderboard_difftables_c.path = "/leaderboards/:leaderboard_id[%d]/difftables"
 leaderboard_difftables_c.methods = {"GET"}
-leaderboard_difftables_c.context = {}
-leaderboard_difftables_c.policies = {
-	GET = require("policies.public"),
-}
 
+leaderboard_difftables_c.policies.GET = {{"permit"}}
 leaderboard_difftables_c.GET = function(request)
 	local params = request.params
     local leaderboard_difftables = Leaderboard_difftables:find_all({params.leaderboard_id}, "leaderboard_id")

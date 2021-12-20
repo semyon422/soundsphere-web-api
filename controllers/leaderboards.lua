@@ -12,15 +12,8 @@ local leaderboards_c = Controller:new()
 
 leaderboards_c.path = "/leaderboards"
 leaderboards_c.methods = {"GET", "POST"}
-leaderboards_c.context = {"session"}
-leaderboards_c.policies = {
-	GET = require("policies.public"),
-	POST = {{
-		rules = {require("rules.authenticated")},
-		combine = require("abac.combine.permit_all_or_deny"),
-	}},
-}
 
+leaderboards_c.policies.GET = {{"permit"}}
 leaderboards_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10
@@ -52,6 +45,8 @@ leaderboards_c.GET = function(request)
 	}
 end
 
+leaderboards_c.context.POST = {"session"}
+leaderboards_c.policies.POST = {{"authenticated"}}
 leaderboards_c.POST = function(request)
 	local params = request.params
 	local leaderboard = Leaderboards:create({

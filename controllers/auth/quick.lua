@@ -10,14 +10,6 @@ local quick_c = Controller:new()
 
 quick_c.path = "/auth/quick"
 quick_c.methods = {"GET", "POST"}
-quick_c.context = {"session"}
-quick_c.policies = {
-	GET = require("policies.public"),
-	POST = {{
-		rules = {require("rules.authenticated")},
-		combine = require("abac.combine.permit_all_or_deny"),
-	}},
-}
 
 local new_key = function()
 	return md5.sumhexa(hmac.new(secret.token_key, "sha256"):final(ngx.time() + ngx.worker.pid()))
@@ -27,6 +19,8 @@ local messages = {}
 messages.not_allowed = "Quick login is not allowed"
 messages.success = "Success"
 
+quick_c.context.GET = {"session"}
+quick_c.policies.GET = {{"permit"}}
 quick_c.GET = function(request)
 	local params = request.params
 	local ip = request.context.ip
@@ -72,6 +66,8 @@ quick_c.GET = function(request)
 	return 200, {message = messages.not_allowed}
 end
 
+quick_c.context.POST = {"session"}
+quick_c.policies.POST = {{"authenticated"}}
 quick_c.POST = function(request)
 	local key = request.params.key
 

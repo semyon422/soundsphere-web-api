@@ -5,12 +5,8 @@ local scores_c = Controller:new()
 
 scores_c.path = "/scores"
 scores_c.methods = {"GET", "POST"}
-scores_c.context = {}
-scores_c.policies = {
-	GET = require("policies.public"),
-	POST = require("policies.public"),
-}
 
+scores_c.policies.GET = {{"permit"}}
 scores_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10
@@ -33,6 +29,7 @@ scores_c.GET = function(request)
 	}
 end
 
+scores_c.policies.POST = {{"permit"}}
 scores_c.POST = function(request)
 	return 200, {}
 end

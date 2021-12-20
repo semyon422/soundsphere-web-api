@@ -6,13 +6,8 @@ local difftable_notechart_c = Controller:new()
 
 difftable_notechart_c.path = "/difftables/:difftable_id[%d]/notecharts/:notechart_id[%d]"
 difftable_notechart_c.methods = {"PUT", "DELETE", "PATCH"}
-difftable_notechart_c.context = {}
-difftable_notechart_c.policies = {
-	PUT = require("policies.public"),
-	DELETE = require("policies.public"),
-	PATCH = require("policies.public"),
-}
 
+difftable_notechart_c.policies.PUT = {{"permit"}}
 difftable_notechart_c.PUT = function(request)
 	local params = request.params
 
@@ -29,6 +24,7 @@ difftable_notechart_c.PUT = function(request)
 	return 200, {difftable_notechart = difftable_notechart}
 end
 
+difftable_notechart_c.policies.DELETE = {{"permit"}}
 difftable_notechart_c.DELETE = function(request)
 	local params = request.params
 
@@ -43,6 +39,7 @@ difftable_notechart_c.DELETE = function(request)
 	return 200, {}
 end
 
+difftable_notechart_c.policies.PATCH = {{"permit"}}
 difftable_notechart_c.PATCH = function(request)
 	local params = request.params
 

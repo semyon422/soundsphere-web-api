@@ -9,12 +9,8 @@ local difftables_c = Controller:new()
 
 difftables_c.path = "/difftables"
 difftables_c.methods = {"GET", "POST"}
-difftables_c.context = {}
-difftables_c.policies = {
-	GET = require("policies.public"),
-	POST = require("policies.public"),
-}
 
+difftables_c.policies.GET = {{"permit"}}
 difftables_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10
@@ -45,6 +41,7 @@ difftables_c.GET = function(request)
 	}
 end
 
+difftables_c.policies.POST = {{"permit"}}
 difftables_c.POST = function(request)
 	local params = request.params
 	local difftable = params.difftable

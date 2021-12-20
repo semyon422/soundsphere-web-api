@@ -12,15 +12,8 @@ local communities_c = Controller:new()
 
 communities_c.path = "/communities"
 communities_c.methods = {"GET", "POST"}
-communities_c.context = {"session"}
-communities_c.policies = {
-	GET = require("policies.public"),
-	POST = {{
-		rules = {require("rules.authenticated")},
-		combine = require("abac.combine.permit_all_or_deny"),
-	}},
-}
 
+communities_c.policies.GET = {{"permit"}}
 communities_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10
@@ -76,6 +69,8 @@ communities_c.GET = function(request)
 	}
 end
 
+communities_c.context.POST = {"session"}
+communities_c.policies.POST = {{"authenticated"}}
 communities_c.POST = function(request)
 	local params = request.params
 	local session = request.session

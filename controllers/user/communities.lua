@@ -7,11 +7,8 @@ local user_communities_c = Controller:new()
 
 user_communities_c.path = "/users/:user_id[%d]/communities"
 user_communities_c.methods = {"GET"}
-user_communities_c.context = {}
-user_communities_c.policies = {
-	GET = require("policies.public"),
-}
 
+user_communities_c.policies.GET = {{"permit"}}
 user_communities_c.GET = function(request)
 	local params = request.params
 	local where = {accepted = true}

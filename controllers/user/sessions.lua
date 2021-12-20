@@ -5,11 +5,8 @@ local user_sessions_c = Controller:new()
 
 user_sessions_c.path = "/users/:user_id[%d]/sessions"
 user_sessions_c.methods = {"GET"}
-user_sessions_c.context = {}
-user_sessions_c.policies = {
-	GET = require("policies.public"),
-}
 
+user_sessions_c.policies.GET = {{"permit"}}
 user_sessions_c.GET = function(request)
 	local params = request.params
 	local sessions = Sessions:find_all({params.user_id}, "user_id")

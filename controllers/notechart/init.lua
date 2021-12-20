@@ -5,11 +5,8 @@ local notechart_c = Controller:new()
 
 notechart_c.path = "/notecharts/:notechart_id[%d]"
 notechart_c.methods = {"GET"}
-notechart_c.context = {}
-notechart_c.policies = {
-	GET = require("policies.public"),
-}
 
+notechart_c.policies.GET = {{"permit"}}
 notechart_c.GET = function(request)
 	local params = request.params
 	local notechart = Notecharts:find(params.notechart_id)
