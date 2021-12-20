@@ -1,0 +1,51 @@
+<aside class="menu">
+	<p class="menu-label">
+		api
+	</p>
+	<% if controller.parent then %>
+		<div class="field">
+			<a href="<%= url_for("html." .. controller.parent.name, params) %>"><%= controller.parent.name %></a>
+		</div>
+	<% end %>
+	<% if controller.name ~= "resources" then %>
+		<p class="menu-label">
+			<%= controller.name %>
+		</p>
+	<% end %>
+	<% for _, child in ipairs(controller.children) do %>
+		<% local missing_params = child:get_missing_params(params) %>
+		<% if #missing_params == 0 then %>
+			<div class="field">
+				<a href="<%= url_for("html." .. child.name, params) %>"><%= child.name %></a>
+			</div>
+		<% else %>
+			<div class="field has-addons" x-data="{
+				<% for _, param in ipairs(child:get_params()) do %>
+					<%- ("%s: '',"):format(param) %>
+				<% end %>
+			}">
+				<div class="control">
+					<a class="button is-static">
+						<%= child.name %>
+					</a>
+				</div>
+				<% for _, param in ipairs(missing_params) do %>
+					<div class="control">
+						<input class="input" type="text" placeholder="<%= param %>" x-model="<%= param %>">
+					</div>
+				<% end %>
+				<div class="control">
+					<%
+						local sub_params = {}
+						for _, param in ipairs(child:get_params()) do
+							sub_params[param] = params[param] or ("${%s}"):format(param)
+						end
+					%>
+					<a class="button is-info" :href="`<%= url_for("html." .. child.name, sub_params) %>`">
+						get
+					</a>
+				</div>
+			</div>
+		<% end %>
+	<% end %>
+</aside>

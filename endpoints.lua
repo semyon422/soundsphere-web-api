@@ -1,4 +1,5 @@
 return {
+	"resources",
 	"auth.check",
 	"auth.login",
 	"auth.logout",
@@ -8,7 +9,6 @@ return {
 	"user",
 	"user.roles",
 	"user.role",
-	"user.statistics",
 	"user.communities",
 	"user.leaderboards",
 	"user.rivals",

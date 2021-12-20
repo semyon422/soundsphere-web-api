@@ -4,6 +4,8 @@ local respond_to = require("lapis.application").respond_to
 local json_params = require("lapis.application").json_params
 local app = lapis.Application()
 
+app:enable("etlua")
+
 local secret = require("secret")
 
 local token_auth = require("auth.token")
@@ -41,6 +43,16 @@ local function json_respond_to(path, respond)
 	})))
 end
 
+local function json_respond_to_name(name, path, respond)
+	return app:match(name, path, json_params(respond_to({
+		GET = respond,
+		POST = respond,
+		PUT = respond,
+		PATCH = respond,
+		DELETE = respond,
+	})))
+end
+
 local function get_permited_methods(self, controller)
 	local methods = {}
 	for _, method in ipairs(controller.methods) do
@@ -68,8 +80,10 @@ local function tonumber_params(self, controller)
 	params.page_num = tonumber(params.page_num)
 end
 
-local function route_api(controller)
-	json_respond_to("/api" .. controller.path, function(self)
+local function route_api(controller, html)
+	local prefix = not html and "/api" or "/api/html"
+	local name_prefix = not html and "" or "html."
+	json_respond_to_name(name_prefix .. controller.name, prefix .. controller.path, function(self)
 		tonumber_params(self, controller)
 		local context = get_context(self, controller)
 		local methods
@@ -84,7 +98,12 @@ local function route_api(controller)
 			code, response = controller[method](self)
 		end
 		response.methods = methods
-		return {json = response, status = code}
+		if not html then
+			return {json = response, status = code}
+		end
+		copy_table(response, self)
+		self.controller = controller
+		return {render = "index", status = code}
 	end)
 	json_respond_to("/ac" .. controller.path, function(self)
 		tonumber_params(self, controller)
@@ -139,14 +158,40 @@ end
 
 -- permit, deny, not_applicable, indeterminate
 
+local autoload = require("lapis.util").autoload
+local controllers = autoload("controllers")
+
+local endpoints = require("endpoints")
+
+for _, name in ipairs(endpoints) do
+	local controller = controllers[name]
+	controller.level = select(2, controller.path:gsub("/", ""))
+	controller.name = name
+end
+for _, name in ipairs(endpoints) do
+	local controller = controllers[name]
+	controller.children = {}
+	for _, child_name in ipairs(endpoints) do
+		local child_controller = controllers[child_name]
+		if
+			child_controller.level == controller.level + 1 and
+			child_controller.path:find(controller.path, 1, true)
+		then
+			child_controller.parent = controller
+			table.insert(controller.children, child_controller)
+		end
+	end
+end
+
 local names, paths = {}, {}
-for _, name in ipairs(require("endpoints")) do
+for _, name in ipairs(endpoints) do
 	names[name] = names[name] and error(name) or name
-	local controller = require("controllers." .. name)
+	local controller = controllers[name]
 	local path = controller.path
 	if path then
 		names[path] = names[path] and error(names[path] .. " " .. name .. " " .. path) or name
 		route_api(controller)
+		route_api(controller, true)
 		route_api_debug(controller)
 		route_datatables(controller, name)
 	end

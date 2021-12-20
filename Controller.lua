@@ -32,4 +32,26 @@ Controller.load_context = function(self, request, method)
 	end
 end
 
+Controller.get_params = function(self)
+	local params = {}
+	for key in self.path:gmatch(":([^/^%[]+)") do
+		table.insert(params, key)
+	end
+	return params
+end
+
+Controller.get_missing_params = function(self, params)
+	local path_params = {}
+	for key in self.path:gmatch(":([^/^%[]+)") do
+		path_params[key] = true
+	end
+	local missing_params = {}
+	for key in pairs(path_params) do
+		if not params[key] then
+			table.insert(missing_params, key)
+		end
+	end
+	return missing_params
+end
+
 return Controller
