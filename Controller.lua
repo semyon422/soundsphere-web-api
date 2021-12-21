@@ -53,7 +53,6 @@ fill_params = function(validations, object)
 	for _, param in ipairs(validations) do
 		local value = get_default_value(param.type)
 		object[param[1]] = value
-		print(param[1], value)
 		if param.type == "table" then
 			fill_params(param.validations, value)
 		end

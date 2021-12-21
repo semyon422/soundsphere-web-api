@@ -48,12 +48,8 @@ end
 
 login_c.policies.POST = {{"permit"}}
 login_c.validations.POST = {
-	{"email", exists = true},
-	{"password", exists = true},
-	{"password2", exists = true, type = "number"},
-	{"password3", type = "boolean"},
-	{"password4", type = "boolean", body = true},
-	{"user", exists = true, type = "table", body = true, validations = {{"email2", exists = true}}},
+	{"email", exists = true, type = "string"},
+	{"password", exists = true, type = "string"},
 }
 login_c.POST = function(request)
 	local params = request.params

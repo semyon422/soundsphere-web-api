@@ -19,11 +19,18 @@ function requestBlock() {return {
 		},
 	},
 	async doRequest() {
-		let response_json = await _fetch_json(
-			this.url + this.requestQuery.replaceAll('\n', ''),
-			this.requestBody,
-			this.method
-		)
+		let response_json
+		if (this.method != "GET") {
+			response_json = await _fetch_json(
+				this.url + this.requestQuery.replaceAll('\n', ''),
+				this.requestBody,
+				this.method
+			)
+		} else {
+			response_json = await _get(
+				this.url + this.requestQuery.replaceAll('\n', '')
+			)
+		}
         if (!response_json) return
 		this.response = response_json
 		this.update()
@@ -89,7 +96,7 @@ function requestBlock() {return {
 			<textarea class="textarea" x-model="requestBody" id="request-body" style="font-family: monospace"></textarea>
 		</div>
 	</div>
-	<div class="field">
+	<div class="field" x-show="method != 'GET' && isCodeMode">
 		<div class="control">
 			<a class="button" @click="requestBody = document.getElementById('response-body').innerHTML">
 				from response

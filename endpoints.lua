@@ -1,5 +1,6 @@
 return {
 	"resources",
+	"test",
 	"auth",
 	"auth.check",
 	"auth.login",

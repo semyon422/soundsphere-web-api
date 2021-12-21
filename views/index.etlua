@@ -29,13 +29,13 @@
 		<section class="section">
 			<div class="container">
 				<div class="columns">
-					<div class="column">
+					<div class="column is-one-third">
 						<% render("views.aside_menu") %>
 					</div>
-					<div class="column">
+					<div class="column is-one-third">
 						<% render("views.request") %>
 					</div>
-					<div class="column">
+					<div class="column is-one-third">
 						<% render("views.response") %>
 					</div>
 				</div>
