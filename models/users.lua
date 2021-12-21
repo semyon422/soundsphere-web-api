@@ -10,6 +10,13 @@ local Users = Model:extend(
 	}
 )
 
+local _load = Users.load
+function Users:load(row)
+	row.latest_activity = tonumber(row.latest_activity)
+	row.creation_time = tonumber(row.creation_time)
+	return _load(self, row)
+end
+
 local not_safe_fields = {
 	email = true,
 	password = true,

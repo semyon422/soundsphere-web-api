@@ -9,4 +9,10 @@ local Notecharts = Model:extend(
 	}
 )
 
+local _load = Notecharts.load
+function Notecharts:load(row)
+	row.creation_time = tonumber(row.creation_time)
+	return _load(self, row)
+end
+
 return Notecharts

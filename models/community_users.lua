@@ -17,6 +17,7 @@ local _load = Community_users.load
 function Community_users:load(row)
 	row.accepted = toboolean(row.accepted)
 	row.invitation = toboolean(row.invitation)
+	row.created_at = tonumber(row.created_at)
 	return _load(self, row)
 end
 
