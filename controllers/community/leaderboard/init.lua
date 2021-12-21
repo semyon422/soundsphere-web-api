@@ -9,6 +9,9 @@ community_leaderboard_c.methods = {"PUT", "DELETE", "PATCH"}
 
 community_leaderboard_c.context.PUT = {"community", "leaderboard"}
 community_leaderboard_c.policies.PUT = {{"permit"}}
+community_leaderboard_c.validations.PUT = {
+	{"message", exists = true, type = "string"},
+}
 community_leaderboard_c.PUT = function(request)
 	local params = request.params
 

@@ -9,6 +9,10 @@ community_leaderboard_users_c.path = "/communities/:community_id[%d]/leaderboard
 community_leaderboard_users_c.methods = {"GET"}
 
 community_leaderboard_users_c.policies.GET = {{"permit"}}
+community_leaderboard_users_c.validations.GET = {
+	{"per_page", type = "number", is_integer = true, default = 10, range = {0, 100}, optional = true},
+	{"page_num", type = "number", is_integer = true, default = 1, range = {1}, optional = true},
+}
 community_leaderboard_users_c.GET = function(request)
 	local params = request.params
 

@@ -14,12 +14,21 @@ local basic_auth = require("auth.basic")
 app:enable("etlua")
 app.layout = require("views.layout")
 
-validate.validate_functions.body = function(input)
-	return true, ""
-end
+validate.validate_functions.body = function(input) return true, "" end
+validate.validate_functions.validations = function(input, validations) return true, "" end
+validate.validate_functions.default = function(input, validations) return true, "" end
 
-validate.validate_functions.validations = function(input, validations)
-	return true, ""
+validate.validate_functions.range = function(v, ...)
+	local range = {...}
+	local message = "%s must be in [" .. table.concat(range, ", ") .. "]"
+	if v < range[1] or v > (range[2] or math.huge) then
+		return false, message
+	end
+	if not range[3] then
+		return true
+	end
+	local i = (v - range[1]) / range[3]
+	return tostring(i) == tostring(math.floor(i)), message
 end
 
 local function copy_table(src, dst)

@@ -35,10 +35,17 @@ Controller.load_context = function(self, request, method)
 	end
 end
 
-local get_default_value = function(type_string)
+local get_default_value = function(validation)
+	if validation.default then
+		return validation.default
+	end
+	local type_string = validation.type
 	if type_string == "string" then
 		return ""
 	elseif type_string == "number" then
+		if validation.range then
+			return validation.range[1]
+		end
 		return 0
 	elseif type_string == "boolean" then
 		return false
@@ -50,11 +57,11 @@ end
 
 local fill_params
 fill_params = function(validations, object)
-	for _, param in ipairs(validations) do
-		local value = get_default_value(param.type)
-		object[param[1]] = value
-		if param.type == "table" then
-			fill_params(param.validations, value)
+	for _, validation in ipairs(validations) do
+		local value = get_default_value(validation)
+		object[validation[1]] = value
+		if validation.type == "table" then
+			fill_params(validation.validations, value)
 		end
 	end
 end
@@ -65,12 +72,12 @@ Controller.get_body_params = function(self, method)
 		return {}
 	end
 	local params = {}
-	for _, param in ipairs(validations) do
-		if param.body then
-			local value = get_default_value(param.type)
-			params[param[1]] = value
-			if param.type == "table" then
-				fill_params(param.validations, value)
+	for _, validation in ipairs(validations) do
+		if validation.body then
+			local value = get_default_value(validation)
+			params[validation[1]] = value
+			if validation.type == "table" then
+				fill_params(validation.validations, value)
 			end
 		end
 	end
@@ -83,9 +90,9 @@ Controller.get_query_params = function(self, method)
 		return {}
 	end
 	local params = {}
-	for _, param in ipairs(validations) do
-		if not param.body then
-			params[param[1]] = get_default_value(param.type)
+	for _, validation in ipairs(validations) do
+		if not validation.body then
+			params[validation[1]] = get_default_value(validation)
 		end
 	end
 	return params
