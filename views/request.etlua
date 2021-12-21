@@ -10,11 +10,13 @@ function requestBlock() {return {
 		query: {
 			<% for _, method in ipairs(controller.methods) do %>
 				<%= method %>: <%- require("lapis.util").to_json(controller:get_query_params(method)) %>,
+				<%= method %>_have: <%= next(controller:get_query_params(method)) ~= nil %>,
 			<% end %>
 		},
 		body: {
 			<% for _, method in ipairs(controller.methods) do %>
 				<%= method %>: <%- require("lapis.util").to_json(controller:get_body_params(method)) %>,
+				<%= method %>_have: <%= next(controller:get_body_params(method)) ~= nil %>,
 			<% end %>
 		},
 	},
@@ -67,14 +69,14 @@ function requestBlock() {return {
 		</div>
 	</div>
 
-	<div class="tabs">
+	<div class="tabs" x-show="params.query[method + '_have'] > 0 || params.body[method + '_have'] > 0">
 		<ul>
 			<li :class="!isCodeMode ? 'is-active' : ''" @click="isCodeMode = false"><a>form</a></li>
 			<li :class="isCodeMode ? 'is-active' : ''" @click="isCodeMode = true"><a>code</a></li>
 		</ul>
 	</div>
 
-	<label class="label">Query params</label>
+	<label class="label" x-show="params.query[method + '_have'] > 0">Query params</label>
 	<% for _, method in ipairs(controller.methods) do %>
 		<div class="field" x-show="method == '<%= method %>' && !isCodeMode">
 			<% render("views.form", {validations = controller:get_query_validations(method), model = "params.query." .. method}) %>
@@ -85,7 +87,7 @@ function requestBlock() {return {
 			<textarea class="textarea" x-model="requestQuery" style="font-family: monospace"></textarea>
 		</div>
 	</div>
-	<label class="label" x-show="method != 'GET'">Body params</label>
+	<label class="label" x-show="method != 'GET' && params.body[method + '_have'] > 0">Body params</label>
 	<% for _, method in ipairs(controller.methods) do %>
 		<div class="field" x-show="method == '<%= method %>' && method != 'GET' && !isCodeMode">
 			<% render("views.form", {validations = controller:get_body_validations(method), model = "params.body." .. method}) %>
