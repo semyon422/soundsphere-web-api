@@ -1,24 +1,99 @@
-<div x-data="{
+<script>
+function requestBlock() {return {
 	url: '<%= url_for(controller.name, params) %>',
-	params: {},
-}">
-	<div class="field">
-		<label class="label">URL</label>
-		<input class="input" type="text" :value="url">
+	method: '<%= controller.methods[1] %>',
+	response: <%- require("lapis.util").to_json(response) %>,
+	requestBody: '',
+	requestQuery: '',
+	isCodeMode: false,
+	params: {
+		query: {
+			<% for _, method in ipairs(controller.methods) do %>
+				<%= method %>: <%- require("lapis.util").to_json(controller:get_query_params(method)) %>,
+			<% end %>
+		},
+		body: {
+			<% for _, method in ipairs(controller.methods) do %>
+				<%= method %>: <%- require("lapis.util").to_json(controller:get_body_params(method)) %>,
+			<% end %>
+		},
+	},
+	async doRequest() {
+		let response_json = await _fetch_json(
+			this.url + this.requestQuery.replaceAll('\n', ''),
+			this.requestBody,
+			this.method
+		)
+        if (!response_json) return
+		this.response = response_json
+		this.update()
+	},
+	update() {
+		document.getElementById('response-body').innerHTML = JSON.stringify(this.response, null, 2)
+		if (this.isCodeMode) return
+		this.requestBody = JSON.stringify(this.params.body[this.method], null, 2)
+		this.requestQuery = encode_get_params(this.params.query[this.method]).replaceAll('&', '&\n')
+	},
+}}
+</script>
+<div x-data="requestBlock" x-cloak x-effect="update" x-init="update">
+	<div class="field has-addons">
+		<div class="control field-body">
+			<input class="input" type="text" :value="url">
+		</div>
+		<div class="control">
+			<a class="button is-info" @click="doRequest">
+				send
+			</a>
+		</div>
 	</div>
 
-	<template x-for="param in selectedResource.params.path">
-		<div class="field">
-			<label class="label" x-text="param.key"></label>
-			<input class="input" type="text" @input="updateParams">
+	<div class="field">
+		<div class="control">
+			<% for _, method in ipairs(controller.methods) do %>
+				<% local disabled = controller.permited_methods[method] and "" or "disabled" %>
+				<label class="radio" <%= disabled %>>
+					<input type="radio" name="method" value="<%= method %>" x-model="method" <%= disabled %>>
+					<%= method %>
+				</label>
+			<% end %>
 		</div>
-	</template>
+	</div>
 
-	<div class="field is-grouped">
-		<% for _, method in ipairs(controller.methods) do %>
-			<div class="control">
-				<button class="button is-link"><%= method %></button>
-			</div>
-		<% end %>
+	<div class="tabs">
+		<ul>
+			<li :class="!isCodeMode ? 'is-active' : ''" @click="isCodeMode = false"><a>form</a></li>
+			<li :class="isCodeMode ? 'is-active' : ''" @click="isCodeMode = true"><a>code</a></li>
+		</ul>
+	</div>
+
+	<label class="label">Query params</label>
+	<% for _, method in ipairs(controller.methods) do %>
+		<div class="field" x-show="method == '<%= method %>' && !isCodeMode">
+			<% render("views.form", {validations = controller:get_query_validations(method), model = "params.query." .. method}) %>
+		</div>
+	<% end %>
+	<div class="field" x-show="isCodeMode">
+		<div class="control">
+			<textarea class="textarea" x-model="requestQuery" style="font-family: monospace"></textarea>
+		</div>
+	</div>
+	<label class="label" x-show="method != 'GET'">Body params</label>
+	<% for _, method in ipairs(controller.methods) do %>
+		<div class="field" x-show="method == '<%= method %>' && method != 'GET' && !isCodeMode">
+			<% render("views.form", {validations = controller:get_body_validations(method), model = "params.body." .. method}) %>
+		</div>
+	<% end %>
+	<div class="field" x-show="method != 'GET' && isCodeMode">
+		<div class="control">
+			<textarea class="textarea" x-model="requestBody" id="request-body" style="font-family: monospace"></textarea>
+		</div>
+	</div>
+	<div class="field">
+		<div class="control">
+			<a class="button" @click="requestBody = document.getElementById('response-body').innerHTML">
+				from response
+			</a>
+		</div>
 	</div>
 </div>

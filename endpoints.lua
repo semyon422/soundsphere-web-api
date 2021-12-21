@@ -1,5 +1,6 @@
 return {
 	"resources",
+	"auth",
 	"auth.check",
 	"auth.login",
 	"auth.logout",

@@ -47,6 +47,14 @@ login_c.new_token = function(user, ip)
 end
 
 login_c.policies.POST = {{"permit"}}
+login_c.validations.POST = {
+	{"email", exists = true},
+	{"password", exists = true},
+	{"password2", exists = true, type = "number"},
+	{"password3", type = "boolean"},
+	{"password4", type = "boolean", body = true},
+	{"user", exists = true, type = "table", body = true, validations = {{"email2", exists = true}}},
+}
 login_c.POST = function(request)
 	local params = request.params
 

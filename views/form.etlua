@@ -1,0 +1,25 @@
+<% for _, validation in ipairs(validations) do %>
+	<div class="field">
+		<% if not validation.type or validation.type == "string" then %>
+			<div class="control">
+				<input class="input" type="text" placeholder="<%= validation[1] %>" x-model="<%= model .. "." .. validation[1] %>">
+			</div>
+		<% elseif validation.type == "number" then %>
+			<div class="control">
+				<input class="input" type="number" placeholder="<%= validation[1] %>" x-model="<%= model .. "." .. validation[1] %>">
+			</div>
+		<% elseif validation.type == "boolean" then %>
+			<div class="control">
+				<label class="checkbox">
+					<input type="checkbox" x-model="<%= model .. "." .. validation[1] %>">
+					<%= validation[1] %>
+				</label>
+			</div>
+		<% elseif validation.type == "table" then %>
+			<label class="label"><%= validation[1] %></label>
+			<div class="control">
+				<% render("views.form", {validations = validation.validations, model = model .. "." .. validation[1]}) %>
+			</div>
+		<% end %>
+	</div>
+<% end %>

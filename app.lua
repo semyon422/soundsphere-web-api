@@ -2,14 +2,25 @@ local lapis = require("lapis")
 local util = require("lapis.util")
 local respond_to = require("lapis.application").respond_to
 local json_params = require("lapis.application").json_params
+local validate = require("lapis.validate")
+local app_helpers = require("lapis.application")
 local app = lapis.Application()
-
-app:enable("etlua")
 
 local secret = require("secret")
 
 local token_auth = require("auth.token")
 local basic_auth = require("auth.basic")
+
+app:enable("etlua")
+app.layout = require("views.layout")
+
+validate.validate_functions.body = function(input)
+	return true, ""
+end
+
+validate.validate_functions.validations = function(input, validations)
+	return true, ""
+end
 
 local function copy_table(src, dst)
 	if not src then
@@ -18,6 +29,51 @@ local function copy_table(src, dst)
 	for k, v in pairs(src) do
 		dst[k] = v
 	end
+end
+
+local function append_table(src, dst)
+	if not src then
+		return
+	end
+	for _, v in pairs(src) do
+		dst[#dst + 1] = v
+	end
+end
+
+local function fix_types(object, validations)
+	for _, validation in ipairs(validations) do
+		local key = validation[1]
+		local value = object[key]
+		local vtype = validation.type
+		if vtype == "string" then
+			object[key] = tostring(value)
+		elseif vtype == "number" then
+			object[key] = tonumber(value)
+		elseif vtype == "boolean" then
+			if value == 1 or value == "1" or value == true or value == "true" then
+				object[key] = true
+			elseif value == 0 or value == "0" or value == false or value == "false" then
+				object[key] = false
+			end
+		end
+	end	
+end
+local function recursive_validate(object, validations)
+	local validate = validate.validate
+	local errors = {}
+	fix_types(object, validations)
+	append_table(validate(object, validations), errors)
+	for _, validation in ipairs(validations) do
+		if validation.validations then
+			local sub_object = object[validation[1]]
+			if type(sub_object) ~= "table" then
+				sub_object = {}
+			end
+			fix_types(sub_object, validation.validations)
+			append_table(validate(sub_object, validation.validations), errors)
+		end
+	end
+	return errors
 end
 
 local function get_context(self, controller)
@@ -84,25 +140,34 @@ local function route_api(controller, html)
 	local prefix = not html and "/api" or "/api/html"
 	local name_prefix = not html and "" or "html."
 	json_respond_to_name(name_prefix .. controller.name, prefix .. controller.path, function(self)
+		local method = self.req.method
 		tonumber_params(self, controller)
+		local errors = {}
+		local validations = controller.validations[method]
+		if validations then
+			errors = recursive_validate(self.params, validations)
+		end
 		local context = get_context(self, controller)
 		local methods
 		if self.params.methods then
 			methods = get_permited_methods(self, controller)
 		end
 		local code, response = 404, {}
-		local method = self.req.method
-		if not controller[method] then
-			code, response = 400, {}
+		if not controller[method] or #errors > 0 then
+			code, response = 200, {errors = errors}
 		elseif controller:check_access(self, method) or methods and includes(methods, method) then
 			code, response = controller[method](self)
 		end
 		response.methods = methods
+		if self.params.params then
+			response.params = self.params
+		end
 		if not html then
 			return {json = response, status = code}
 		end
-		copy_table(response, self)
+		self.response = response
 		self.controller = controller
+		self.methods = get_permited_methods(self, controller)
 		return {render = "index", status = code}
 	end)
 	json_respond_to("/ac" .. controller.path, function(self)

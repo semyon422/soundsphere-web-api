@@ -14,6 +14,16 @@
 				display: none !important;
 			}
 		</style>
+		<style>
+			pre {
+				overflow-x: auto;
+				white-space: pre-wrap;
+				white-space: -moz-pre-wrap;
+				white-space: -pre-wrap;
+				white-space: -o-pre-wrap;
+				word-wrap: break-word;
+			}
+		</style>
 	</head>
 	<body>
 		<section class="section">
@@ -26,14 +36,7 @@
 						<% render("views.request") %>
 					</div>
 					<div class="column">
-						<p class="subtitle">
-							<!-- <pre id="demo"></pre> -->
-							<textarea class="textarea" id="demo" style="font-family: monospace"></textarea>
-							<script>
-								let user = {};
-								document.getElementById("demo").innerHTML = JSON.stringify(user, null, 2)
-							</script>
-						</p>
+						<% render("views.response") %>
 					</div>
 				</div>
 			</div>

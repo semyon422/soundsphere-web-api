@@ -6,14 +6,13 @@ local Controller = require("Controller")
 local community_user_c = Controller:new()
 
 community_user_c.path = "/communities/:community_id[%d]/users/:user_id[%d]"
-community_user_c.validation = {}
 community_user_c.methods = {"PUT", "DELETE", "GET", "PATCH"}
 
 community_user_c.context.PUT = {"community_user", "session"}
 community_user_c.policies.PUT = {{"community_user"}}
-community_user_c.validation.PUT = {
+community_user_c.validations.PUT = {
 	{"invitation", exists = true, type = "boolean"},
-	{"message", exists = true, optional = true},
+	{"message", exists = true, type = "string", optional = true},
 }
 community_user_c.PUT = function(request)
 	local params = request.params
