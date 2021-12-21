@@ -47,7 +47,7 @@ function requestBlock() {return {
 </script>
 <div x-data="requestBlock" x-cloak x-effect="update" x-init="update">
 	<div class="field has-addons">
-		<div class="control field-body">
+		<div class="control is-expanded">
 			<input class="input" type="text" :value="url">
 		</div>
 		<div class="control">
@@ -76,7 +76,9 @@ function requestBlock() {return {
 		</ul>
 	</div>
 
-	<label class="label" x-show="params.query[method + '_have'] > 0">Query params</label>
+	<div class="field">
+		<label class="subtitle" x-show="params.query[method + '_have'] > 0">Query params</label>
+	</div>
 	<% for _, method in ipairs(controller.methods) do %>
 		<div class="field" x-show="method == '<%= method %>' && !isCodeMode">
 			<% render("views.form", {validations = controller:get_query_validations(method), model = "params.query." .. method}) %>
@@ -87,7 +89,9 @@ function requestBlock() {return {
 			<textarea class="textarea" x-model="requestQuery" style="font-family: monospace"></textarea>
 		</div>
 	</div>
-	<label class="label" x-show="method != 'GET' && params.body[method + '_have'] > 0">Body params</label>
+	<div class="field">
+		<label class="subtitle" x-show="method != 'GET' && params.body[method + '_have'] > 0">Body params</label>
+	</div>
 	<% for _, method in ipairs(controller.methods) do %>
 		<div class="field" x-show="method == '<%= method %>' && method != 'GET' && !isCodeMode">
 			<% render("views.form", {validations = controller:get_body_validations(method), model = "params.body." .. method}) %>
