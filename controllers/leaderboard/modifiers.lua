@@ -70,9 +70,19 @@ leaderboard_modifiers_c.update_modifiers = function(leaderboard_id, modifiers)
 end
 
 leaderboard_modifiers_c.policies.GET = {{"permit"}}
+leaderboard_modifiers_c.validations.GET = {
+	require("validations.no_data"),
+}
 leaderboard_modifiers_c.GET = function(request)
 	local params = request.params
 	local leaderboard_modifiers = Leaderboard_modifiers:find_all({params.leaderboard_id}, "leaderboard_id")
+
+	if params.no_data then
+		return 200, {
+			total = #leaderboard_modifiers,
+			filtered = #leaderboard_modifiers,
+		}
+	end
 	
 	local modifiers = {}
 	for _, leaderboard_modifier in ipairs(leaderboard_modifiers) do

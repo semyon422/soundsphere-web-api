@@ -8,9 +8,20 @@ leaderboard_inputmodes_c.path = "/leaderboards/:leaderboard_id[%d]/inputmodes"
 leaderboard_inputmodes_c.methods = {"GET"}
 
 leaderboard_inputmodes_c.policies.GET = {{"permit"}}
+leaderboard_inputmodes_c.validations.GET = {
+	require("validations.no_data"),
+}
 leaderboard_inputmodes_c.GET = function(request)
 	local params = request.params
 	local leaderboard_inputmodes = Leaderboard_inputmodes:find_all({params.leaderboard_id}, "leaderboard_id")
+
+	if params.no_data then
+		return 200, {
+			total = #leaderboard_inputmodes,
+			filtered = #leaderboard_inputmodes,
+		}
+	end
+
 	local inputmodes = Inputmodes:entries_to_list(leaderboard_inputmodes)
 
 	return 200, {

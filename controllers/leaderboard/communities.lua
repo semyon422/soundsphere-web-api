@@ -8,9 +8,20 @@ leaderboard_communities_c.path = "/leaderboards/:leaderboard_id[%d]/communities"
 leaderboard_communities_c.methods = {"GET"}
 
 leaderboard_communities_c.policies.GET = {{"permit"}}
+leaderboard_communities_c.validations.GET = {
+	require("validations.no_data"),
+}
 leaderboard_communities_c.GET = function(request)
 	local params = request.params
     local leaderboard_communities = Community_leaderboards:find_all({params.leaderboard_id}, "leaderboard_id")
+
+	if params.no_data then
+		return 200, {
+			total = #leaderboard_communities,
+			filtered = #leaderboard_communities,
+		}
+	end
+
 	preload(leaderboard_communities, "leaderboard", "community")
 
 	local communities = {}
@@ -18,11 +29,9 @@ leaderboard_communities_c.GET = function(request)
 		table.insert(communities, community_leaderboard.community)
 	end
 
-	local count = #communities
-
 	return 200, {
-		total = count,
-		filtered = count,
+		total = #communities,
+		filtered = #communities,
 		communities = communities
 	}
 end

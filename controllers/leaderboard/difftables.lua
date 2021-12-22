@@ -8,9 +8,20 @@ leaderboard_difftables_c.path = "/leaderboards/:leaderboard_id[%d]/difftables"
 leaderboard_difftables_c.methods = {"GET"}
 
 leaderboard_difftables_c.policies.GET = {{"permit"}}
+leaderboard_difftables_c.validations.GET = {
+	require("validations.no_data"),
+}
 leaderboard_difftables_c.GET = function(request)
 	local params = request.params
     local leaderboard_difftables = Leaderboard_difftables:find_all({params.leaderboard_id}, "leaderboard_id")
+
+	if params.no_data then
+		return 200, {
+			total = #leaderboard_difftables,
+			filtered = #leaderboard_difftables,
+		}
+	end
+
 	preload(leaderboard_difftables, "difftable")
 
 	local difftables = {}
@@ -18,11 +29,9 @@ leaderboard_difftables_c.GET = function(request)
 		table.insert(difftables, leaderboard_difftable.difftable)
 	end
 
-	local count = #difftables
-
 	return 200, {
-		total = count,
-		filtered = count,
+		total = #difftables,
+		filtered = #difftables,
 		difftables = difftables
 	}
 end
