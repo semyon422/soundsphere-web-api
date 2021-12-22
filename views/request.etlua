@@ -38,7 +38,11 @@ function requestBlock() {return {
 		this.update()
 	},
 	update() {
-		document.getElementById('response-body').innerHTML = JSONstringifyOrder(this.response, 2)
+		if (!this.response.err) {
+			document.getElementById('response-body').innerHTML = JSONstringifyOrder(this.response, 2)
+		} else {
+			document.getElementById('response-body').innerHTML = this.response.err
+		}
 		if (this.isCodeMode) return
 		this.requestBody = JSONstringifyOrder(this.params.body[this.method], 2)
 		this.requestQuery = encode_get_params(this.params.query[this.method]).replaceAll('&', '&\n')
@@ -48,7 +52,7 @@ function requestBlock() {return {
 <div x-data="requestBlock" x-cloak x-effect="update" x-init="update">
 	<div class="field has-addons">
 		<div class="control is-expanded">
-			<input class="input" type="text" :value="url">
+			<input class="input" type="text" x-model="url">
 		</div>
 		<div class="control">
 			<a class="button is-info" @click="doRequest">

@@ -39,21 +39,6 @@ function delete_cookie(name) {
 
 const encode_get_params = p => "?" + Object.entries(p).map(kv => kv.map(encodeURIComponent).join("=")).join("&");
 
-async function handle_500(response) {
-	if (response.status != 500) return
-	let response_json = await response.json()
-	if (response_json.trace) {
-		console.log(response_json.err)
-		console.log(response_json.trace)
-		return true
-	}
-}
-
-async function handle_not_ok(response) {
-	alert(response.status + ' ' + response.statusText)
-	return handle_500(response)
-}
-
 function toArray(a) {
 	return Array.isArray(a) ? a : []
 }
@@ -69,7 +54,6 @@ async function _get(url, obj) {
 		method: 'GET',
 		credentials: 'same-origin'
 	})
-	if (!response.ok && await handle_not_ok(response)) return false
 	let response_json = await response.json()
 	return response_json
 }
@@ -89,7 +73,6 @@ async function _fetch_json(url, body, method) {
 			credentials: 'same-origin'
 		})
 	}
-	if (!response.ok && await handle_not_ok(response)) return false
 	let response_json = await response.json()
 	return response_json
 }
@@ -109,7 +92,6 @@ async function _fetch(url, obj, method) {
 			credentials: 'same-origin'
 		})
 	}
-	if (!response.ok && await handle_not_ok(response)) return false
 	let response_json = await response.json()
 	return response_json
 }
