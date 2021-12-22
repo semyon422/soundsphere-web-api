@@ -28,7 +28,7 @@
 					<%= validation[1] %>
 				</label>
 			</div>
-		<% elseif validation.type == "table" then %>
+		<% elseif validation.type == "table" and validation.validations then %>
 			<label class="label is-medium"><%= (name_prefix or "") .. validation[1] %></label>
 			<div class="control">
 				<% render("views.form", {

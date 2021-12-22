@@ -57,6 +57,9 @@ end
 
 local fill_params
 fill_params = function(validations, object)
+	if not validations then
+		return
+	end
 	for _, validation in ipairs(validations) do
 		local value = get_default_value(validation)
 		object[validation[1]] = value
