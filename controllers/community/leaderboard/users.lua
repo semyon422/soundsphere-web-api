@@ -10,8 +10,9 @@ community_leaderboard_users_c.methods = {"GET"}
 
 community_leaderboard_users_c.policies.GET = {{"permit"}}
 community_leaderboard_users_c.validations.GET = {
-	{"per_page", type = "number", is_integer = true, default = 10, range = {0, 100}, optional = true},
-	{"page_num", type = "number", is_integer = true, default = 1, range = {1}, optional = true},
+	require("validations.per_page"),
+	require("validations.page_num"),
+	require("validations.get_all"),
 }
 community_leaderboard_users_c.GET = function(request)
 	local params = request.params

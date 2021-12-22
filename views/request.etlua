@@ -38,9 +38,9 @@ function requestBlock() {return {
 		this.update()
 	},
 	update() {
-		document.getElementById('response-body').innerHTML = JSON.stringify(this.response, null, 2)
+		document.getElementById('response-body').innerHTML = JSONstringifyOrder(this.response, 2)
 		if (this.isCodeMode) return
-		this.requestBody = JSON.stringify(this.params.body[this.method], null, 2)
+		this.requestBody = JSONstringifyOrder(this.params.body[this.method], 2)
 		this.requestQuery = encode_get_params(this.params.query[this.method]).replaceAll('&', '&\n')
 	},
 }}

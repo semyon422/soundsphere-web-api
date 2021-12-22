@@ -8,4 +8,12 @@ local Roles = enum({
 	moderator = 4,
 })
 
+Roles.list = {
+	"guest",
+	"user",
+	"creator",
+	"admin",
+	"moderator",
+}
+
 return Roles

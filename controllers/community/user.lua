@@ -11,7 +11,7 @@ community_user_c.methods = {"PUT", "DELETE", "GET", "PATCH"}
 community_user_c.context.PUT = {"community_user", "session"}
 community_user_c.policies.PUT = {{"community_user"}}
 community_user_c.validations.PUT = {
-	{"invitation", exists = true, type = "boolean"},
+	{"invitation", type = "boolean", optional = true},
 	{"message", exists = true, type = "string", optional = true},
 }
 community_user_c.PUT = function(request)
@@ -22,7 +22,7 @@ community_user_c.PUT = function(request)
 		community_user = {
 			community_id = params.community_id,
 			user_id = params.user_id,
-			invitation = params.invitation ~= nil,
+			invitation = params.invitation,
 			sender_id = request.session.user_id,
 			created_at = os.time(),
 			message = params.message or "",
@@ -67,6 +67,9 @@ end
 
 community_user_c.context.PATCH = {"community_user", "session"}
 community_user_c.policies.PATCH = {{"authenticated", "community_user"}}
+community_user_c.validations.PATCH = {
+	{"role", exists = true, type = "string", one_of = Roles.list},
+}
 community_user_c.PATCH = function(request)
 	local params = request.params
 	local community_user = request.context.community_user

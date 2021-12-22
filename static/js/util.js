@@ -129,3 +129,18 @@ async function _put(url, obj) {
 async function _delete(url, obj) {
 	return await _fetch(url, obj, "DELETE")
 }
+
+// https://stackoverflow.com/a/53593328
+function JSONstringifyOrder(obj, space) {
+	var allKeys = []
+	var seen = {}
+	JSON.stringify(obj, (key, value) => {
+		if (!(key in seen)) {
+			allKeys.push(key)
+			seen[key] = null
+		}
+		return value
+	});
+	allKeys.sort()
+	return JSON.stringify(obj, allKeys, space)
+}

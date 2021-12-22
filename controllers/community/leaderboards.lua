@@ -86,6 +86,12 @@ community_leaderboards_c.get_outgoing = function(request)
 end
 
 community_leaderboards_c.policies.GET = {{"permit"}}
+community_leaderboards_c.validations.GET = {
+	require("validations.no_data"),
+	{"incoming", type = "boolean", optional = true},
+	{"outgoing", type = "boolean", optional = true},
+	{"owned", type = "boolean", optional = true},
+}
 community_leaderboards_c.GET = function(request)
 	local params = request.params
 
@@ -98,6 +104,13 @@ community_leaderboards_c.GET = function(request)
 		community_leaderboards = community_leaderboards_c.get_owned(request)
 	else
 		community_leaderboards = community_leaderboards_c.get_joined(request)
+	end
+
+	if params.no_data then
+		return 200, {
+			total = #community_leaderboards,
+			filtered = #community_leaderboards,
+		}
 	end
 
 	for _, community_leaderboard in ipairs(community_leaderboards) do
@@ -119,11 +132,9 @@ community_leaderboards_c.GET = function(request)
 		table.insert(leaderboards, leaderboard)
 	end
 
-	local count = #community_leaderboards
-
 	return 200, {
-		total = count,
-		filtered = count,
+		total = #community_leaderboards,
+		filtered = #community_leaderboards,
 		leaderboards = leaderboards
 	}
 end

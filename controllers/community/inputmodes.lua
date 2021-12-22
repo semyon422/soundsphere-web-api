@@ -11,7 +11,10 @@ local community_inputmodes_c = Controller:new()
 community_inputmodes_c.path = "/communities/:community_id[%d]/inputmodes"
 community_inputmodes_c.methods = {"GET"}
 
-community_inputmodes_c.policies.DELETE = {{"permit"}}
+community_inputmodes_c.policies.GET = {{"permit"}}
+community_inputmodes_c.validations.GET = {
+	require("validations.no_data"),
+}
 community_inputmodes_c.GET = function(request)
 	local params = request.params
 
@@ -41,6 +44,13 @@ community_inputmodes_c.GET = function(request)
 			community_id = params.community_id,
 			inputmode = inputmode,
 		})
+	end
+
+	if params.no_data then
+		return 200, {
+			total = #all_inputmodes,
+			filtered = #all_inputmodes,
+		}
 	end
 
 	local inputmodes = {}

@@ -123,6 +123,12 @@ community_users_c.update_users = function(request, community_id, users)
 end
 
 community_users_c.policies.GET = {{"permit"}}
+community_users_c.validations.GET = {
+	require("validations.no_data"),
+	{"invitations", type = "boolean", optional = true},
+	{"requests", type = "boolean", optional = true},
+	{"staff", type = "boolean", optional = true},
+}
 community_users_c.GET = function(request)
 	local params = request.params
 
@@ -136,6 +142,20 @@ community_users_c.GET = function(request)
 	else
 		community_users = community_users_c.get_users(request)
 	end
+
+	local db = Community_users.db
+	local total_clause = db.encode_clause({
+		community_id = params.community_id,
+		accepted = true,
+	})
+
+	if params.no_data then
+		return 200, {
+			total = Community_users:count(total_clause),
+			filtered = Community_users:count(filtered_clause or total_clause),
+		}
+	end
+
 	preload(community_users, "user")
 
 	local users = {}
@@ -151,12 +171,6 @@ community_users_c.GET = function(request)
 		end
 		table.insert(users, user)
 	end
-
-	local db = Community_users.db
-	local total_clause = db.encode_clause({
-		community_id = params.community_id,
-		accepted = true,
-	})
 
 	return 200, {
 		total = Community_users:count(total_clause),

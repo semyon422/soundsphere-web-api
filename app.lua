@@ -63,6 +63,8 @@ local function fix_types(object, validations)
 				object[key] = true
 			elseif value == 0 or value == "0" or value == false or value == "false" then
 				object[key] = false
+			else
+				object[key] = nil
 			end
 		end
 	end	

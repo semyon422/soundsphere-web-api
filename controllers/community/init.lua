@@ -21,16 +21,21 @@ end
 
 community_c.context.GET = {"community"}
 community_c.policies.GET = {{"permit"}}
+community_c.validations.GET = {
+	{"inputmodes", type = "boolean", optional = true},
+	{"leaderboards", type = "boolean", optional = true},
+	{"users", type = "boolean", optional = true},
+}
 community_c.GET = function(request)
 	local params = request.params
 	local community = Communities:find(params.community_id)
 
 	local fields = {}
 	for param, controller in pairs(additions) do
-		local value = tonumber(params[param])
-		if value then
+		local value = params[param]
+		if value ~= nil then
 			local param_count = param .. "_count"
-			params.per_page = value == 0 and value
+			params.no_data = value == false
 			local _, response = controller.GET(request)
 			community[param] = response[param]
 			if community[param_count] and community[param_count] ~= response.total then

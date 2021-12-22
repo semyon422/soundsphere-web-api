@@ -1,6 +1,17 @@
 <% for _, validation in ipairs(validations) do %>
 	<div class="field">
-		<% if not validation.type or validation.type == "string" then %>
+		<% if validation.one_of then %>
+			<label class="label"><%= validation[1] %></label>
+			<div class="control">
+				<div class="select">
+					<select x-model="<%= model .. "." .. validation[1] %>">
+						<% for _, value in ipairs(validation.one_of) do %>
+							<option><%= value %></option>
+						<% end %>
+					</select>
+				</div>
+			</div>
+		<% elseif not validation.type or validation.type == "string" then %>
 			<label class="label"><%= validation[1] %></label>
 			<div class="control">
 				<input class="input" type="text" placeholder="<%= validation[1] %>" x-model="<%= model .. "." .. validation[1] %>">
