@@ -67,6 +67,17 @@ leaderboard_modifiers_c.update_modifiers = function(leaderboard_id, modifiers)
 	if #old_ids > 0 then
 		db.delete("leaderboard_modifiers", {id = db.list(old_ids)})
 	end
+
+	local export_modifiers = {}
+	for _, modifier in ipairs(modifiers) do
+		table.insert(export_modifiers, {
+			id = modifier.id,
+			name = Modifiers:to_name(modifier.modifier),
+			rule = Rules:to_name(modifier.rule),
+			value = modifier.value,
+		})
+	end
+	return export_modifiers
 end
 
 leaderboard_modifiers_c.policies.GET = {{"permit"}}
@@ -102,12 +113,19 @@ leaderboard_modifiers_c.GET = function(request)
 end
 
 leaderboard_modifiers_c.policies.PATCH = {{"permit"}}
+leaderboard_modifiers_c.validations.PATCH = {
+	{"modifiers", exists = true, body = true, optional = true, type = "table"},
+}
 leaderboard_modifiers_c.PATCH = function(request)
 	local params = request.params
 
-	leaderboard_modifiers_c.update_modifiers(params.leaderboard_id, params.modifiers)
+	local modifiers = leaderboard_modifiers_c.update_modifiers(params.leaderboard_id, params.modifiers)
 
-	return 200, {}
+	return 200, {
+		total = #modifiers,
+		filtered = #modifiers,
+		modifiers = modifiers,
+	}
 end
 
 return leaderboard_modifiers_c
