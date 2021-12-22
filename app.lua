@@ -55,7 +55,7 @@ local function fix_types(object, validations)
 		local value = object[key]
 		local vtype = validation.type
 		if vtype == "string" then
-			object[key] = tostring(value)
+			object[key] = value ~= nil and tostring(value) or ""
 		elseif vtype == "number" then
 			object[key] = tonumber(value)
 		elseif vtype == "boolean" then
@@ -87,7 +87,7 @@ local function recursive_validate(object, validations)
 	return errors
 end
 
-local function get_context(self, controller)
+local function get_context(self, controller, all_methods)
 	copy_table(basic_auth(self.req.headers.Authorization), self.params)
 	copy_table(token_auth(self.req.headers.Authorization), self.session)
 
@@ -95,7 +95,13 @@ local function get_context(self, controller)
 		ip = self.req.headers["X-Real-IP"]
 	}
 
-	controller:load_context(self)
+	if all_methods then
+		for _, method in ipairs(controller.methods) do
+			controller:load_context(self, method)
+		end
+	else
+		controller:load_context(self)
+	end
 
 	return self.context
 end
@@ -158,7 +164,7 @@ local function route_api(controller, html)
 		if validations then
 			errors = recursive_validate(self.params, validations)
 		end
-		local context = get_context(self, controller)
+		local context = get_context(self, controller, self.params.methods or html)
 		local methods
 		if self.params.methods then
 			methods = get_permited_methods(self, controller)
@@ -183,7 +189,7 @@ local function route_api(controller, html)
 	end)
 	json_respond_to("/ac" .. controller.path, function(self)
 		tonumber_params(self, controller)
-		local context = get_context(self, controller)
+		local context = get_context(self, controller, true)
 		return {json = {methods = get_permited_methods(self, controller)}, status = 200}
 	end)
 end
