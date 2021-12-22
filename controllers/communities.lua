@@ -18,7 +18,7 @@ communities_c.validations.GET = {
 	require("validations.per_page"),
 	require("validations.page_num"),
 	require("validations.get_all"),
-	{"search", exists = true, type = "string", optional = true},
+	require("validations.search"),
 	{"hide_joined", type = "boolean", optional = true},
 }
 communities_c.GET = function(request)

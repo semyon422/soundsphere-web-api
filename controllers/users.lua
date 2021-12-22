@@ -14,7 +14,7 @@ users_c.validations.GET = {
 	require("validations.per_page"),
 	require("validations.page_num"),
 	require("validations.get_all"),
-	{"search", exists = true, type = "string", optional = true},
+	require("validations.search"),
 }
 users_c.GET = function(request)
 	local params = request.params
