@@ -14,6 +14,12 @@ leaderboards_c.path = "/leaderboards"
 leaderboards_c.methods = {"GET", "POST"}
 
 leaderboards_c.policies.GET = {{"permit"}}
+leaderboards_c.validations.GET = {
+	require("validations.per_page"),
+	require("validations.page_num"),
+	require("validations.get_all"),
+	{"search", exists = true, type = "string", optional = true},
+}
 leaderboards_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10
@@ -47,6 +53,13 @@ end
 
 leaderboards_c.context.POST = {"session"}
 leaderboards_c.policies.POST = {{"authenticated"}}
+leaderboards_c.validations.POST = {
+	{"leaderboard", exists = true, type = "table", body = true, validations = {
+		{"name", exists = true, type = "string"},
+		{"description", exists = true, type = "string"},
+		{"banner", exists = true, type = "string"},
+	}}
+}
 leaderboards_c.POST = function(request)
 	local params = request.params
 	local leaderboard = Leaderboards:create({

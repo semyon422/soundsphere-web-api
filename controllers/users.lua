@@ -10,6 +10,12 @@ users_c.path = "/users"
 users_c.methods = {"GET", "POST"}
 
 users_c.policies.GET = {{"permit"}}
+users_c.validations.GET = {
+	require("validations.per_page"),
+	require("validations.page_num"),
+	require("validations.get_all"),
+	{"search", exists = true, type = "string", optional = true},
+}
 users_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10
@@ -68,6 +74,13 @@ local function register(name, email, password)
 end
 
 users_c.policies.POST = {{"permit"}}
+users_c.validations.POST = {
+	{"user", exists = true, type = "table", body = true, validations = {
+		{"name", exists = true, type = "string"},
+		{"email", exists = true, type = "string"},
+		{"password", exists = true, type = "string"},
+	}}
+}
 users_c.POST = function(request)
 	local params = request.params
 	local user = params.user

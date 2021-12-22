@@ -9,6 +9,11 @@ user_communities_c.path = "/users/:user_id[%d]/communities"
 user_communities_c.methods = {"GET"}
 
 user_communities_c.policies.GET = {{"permit"}}
+user_communities_c.validations.GET = {
+	{"invitations", type = "boolean", optional = true},
+	{"requests", type = "boolean", optional = true},
+	{"is_admin", type = "boolean", optional = true},
+}
 user_communities_c.GET = function(request)
 	local params = request.params
 	local where = {accepted = true}

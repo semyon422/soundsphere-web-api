@@ -14,7 +14,13 @@ user_c.GET = function(request)
 	return 200, {user = user and Users:safe_copy(user)}
 end
 
-user_c.policies.GET = {{"permit"}}
+user_c.policies.PATCH = {{"permit"}}
+user_c.validations.PATCH = {
+	{"user", type = "table", body = true, validations = {
+		{"name", type = "string"},
+		{"description", type = "string"},
+	}},
+}
 user_c.PATCH = function(request)
 	local params = request.params
 	local user = Users:find(params.user_id)

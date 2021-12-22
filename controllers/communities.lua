@@ -14,6 +14,13 @@ communities_c.path = "/communities"
 communities_c.methods = {"GET", "POST"}
 
 communities_c.policies.GET = {{"permit"}}
+communities_c.validations.GET = {
+	require("validations.per_page"),
+	require("validations.page_num"),
+	require("validations.get_all"),
+	{"search", exists = true, type = "string", optional = true},
+	{"hide_joined", type = "boolean", optional = true},
+}
 communities_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10
@@ -36,7 +43,7 @@ communities_c.GET = function(request)
 			table.insert(joined_community_ids, id)
 			joined_community_ids_map[id] = true
 		end
-		if tonumber(params.hide_joined) == 1 and #joined_community_ids > 0 then
+		if params.hide_joined == 1 and #joined_community_ids > 0 then
 			joined_clause = db.encode_clause({
 				id = db.list(joined_community_ids)
 			}):gsub("IN", "NOT IN")
@@ -71,6 +78,17 @@ end
 
 communities_c.context.POST = {"session"}
 communities_c.policies.POST = {{"authenticated"}}
+communities_c.validations.POST = {
+	{"community", exists = true, type = "table", body = true, validations = {
+		{"name", exists = true, type = "string"},
+		{"alias", exists = true, type = "string"},
+		{"link", exists = true, type = "string"},
+		{"short_description", exists = true, type = "string"},
+		{"description", exists = true, type = "string"},
+		{"banner", exists = true, type = "string"},
+		{"is_public", type = "boolean"},
+	}}
+}
 communities_c.POST = function(request)
 	local params = request.params
 	local session = request.session

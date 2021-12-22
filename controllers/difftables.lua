@@ -11,6 +11,12 @@ difftables_c.path = "/difftables"
 difftables_c.methods = {"GET", "POST"}
 
 difftables_c.policies.GET = {{"permit"}}
+difftables_c.validations.GET = {
+	require("validations.per_page"),
+	require("validations.page_num"),
+	require("validations.get_all"),
+	{"search", exists = true, type = "string", optional = true},
+}
 difftables_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10
@@ -42,6 +48,14 @@ difftables_c.GET = function(request)
 end
 
 difftables_c.policies.POST = {{"permit"}}
+difftables_c.validations.POST = {
+	{"difftable", exists = true, type = "table", body = true, validations = {
+		{"name", exists = true, type = "string"},
+		{"link", exists = true, type = "string"},
+		{"description", exists = true, type = "string"},
+		{"owner_community_id", exists = true, type = "number"},
+	}}
+}
 difftables_c.POST = function(request)
 	local params = request.params
 	local difftable = params.difftable

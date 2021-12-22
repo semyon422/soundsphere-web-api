@@ -8,6 +8,9 @@ difftable_notechart_c.path = "/difftables/:difftable_id[%d]/notecharts/:notechar
 difftable_notechart_c.methods = {"PUT", "DELETE", "PATCH"}
 
 difftable_notechart_c.policies.PUT = {{"permit"}}
+difftable_notechart_c.validations.PUT = {
+	{"difficulty", type = "number", optional = true},
+}
 difftable_notechart_c.PUT = function(request)
 	local params = request.params
 
@@ -40,6 +43,9 @@ difftable_notechart_c.DELETE = function(request)
 end
 
 difftable_notechart_c.policies.PATCH = {{"permit"}}
+difftable_notechart_c.validations.PATCH = {
+	{"difficulty", type = "number", optional = true},
+}
 difftable_notechart_c.PATCH = function(request)
 	local params = request.params
 

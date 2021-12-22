@@ -76,16 +76,23 @@ end
 
 leaderboard_c.context.GET = {"leaderboard"}
 leaderboard_c.policies.GET = {{"permit"}}
+leaderboard_c.validations.GET = {
+	{"difftables", type = "boolean", optional = true},
+	{"communities", type = "boolean", optional = true},
+	{"users", type = "boolean", optional = true},
+	{"inputmodes", type = "boolean", optional = true},
+	{"modifiers", type = "boolean", optional = true},
+}
 leaderboard_c.GET = function(request)
 	local params = request.params
 	local leaderboard = Leaderboards:find(params.leaderboard_id)
 
 	local fields = {}
 	for param, controller in pairs(additions) do
-		local value = tonumber(params[param])
-		if value then
+		local value = params[param]
+		if value ~= nil then
 			local param_count = param .. "_count"
-			params.per_page = value == 0 and value
+			params.no_data = value == false
 			local _, response = controller.GET(request)
 			leaderboard[param] = response[param]
 			if leaderboard[param_count] and leaderboard[param_count] ~= response.total then
@@ -103,6 +110,13 @@ end
 
 leaderboard_c.context.PATCH = {"leaderboard"}
 leaderboard_c.policies.PATCH = {{"permit"}}
+leaderboard_c.validations.PATCH = {
+	{"leaderboard", type = "table", body = true, validations = {
+		{"name", type = "string"},
+		{"description", type = "string"},
+		{"banner", type = "string"},
+	}},
+}
 leaderboard_c.PATCH = function(request)
 	local params = request.params
 	local leaderboard = Leaderboards:find(params.leaderboard_id)

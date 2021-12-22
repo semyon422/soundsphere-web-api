@@ -43,6 +43,10 @@ local function get_relations_scores(params, relationtype, mutual)
 end
 
 notechart_scores_c.policies.GET = {{"permit"}}
+notechart_scores_c.validations.GET = {
+	{"rivals", type = "boolean", optional = true},
+	{"friends", type = "boolean", optional = true},
+}
 notechart_scores_c.GET = function(request)
 	local params = request.params
 	local scores
