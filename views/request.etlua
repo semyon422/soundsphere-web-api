@@ -88,9 +88,9 @@ function requestBlock() {return {
 			<% render("views.form", {validations = controller:get_query_validations(method), model = "params.query." .. method}) %>
 		</div>
 	<% end %>
-	<div class="field" x-show="isCodeMode">
+	<div class="field" x-show="isCodeMode && params.query[method + '_have'] > 0">
 		<div class="control">
-			<textarea class="textarea" x-model="requestQuery" style="font-family: monospace"></textarea>
+			<textarea class="textarea" x-model="requestQuery" style="font-family: 'Noto Sans Mono'"></textarea>
 		</div>
 	</div>
 	<div class="field">
@@ -103,10 +103,10 @@ function requestBlock() {return {
 	<% end %>
 	<div class="field" x-show="method != 'GET' && isCodeMode">
 		<div class="control">
-			<textarea class="textarea" x-model="requestBody" id="request-body" style="font-family: monospace"></textarea>
+			<textarea class="textarea" x-model="requestBody" id="request-body" style="font-family: 'Noto Sans Mono'"></textarea>
 		</div>
 	</div>
-	<div class="field" x-show="method != 'GET' && isCodeMode">
+	<div class="field" x-show="method != 'GET' && isCodeMode && params.body[method + '_have'] > 0">
 		<div class="control">
 			<a class="button" @click="requestBody = document.getElementById('response-body').innerHTML">
 				from response
