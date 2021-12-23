@@ -9,6 +9,7 @@
 
 		<script src="/api/static/js/util.js"></script>
 
+		<link href="https://fonts.googleapis.com/css?family=Source Code Pro" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Noto Sans Mono" rel="stylesheet">
 		<style>
 			[x-cloak] {
@@ -23,7 +24,9 @@
 				white-space: -pre-wrap;
 				white-space: -o-pre-wrap;
 				word-wrap: break-word;
-				font-family: 'Noto Sans Mono';
+			}
+			.code {
+				font-family: 'Source Code Pro';
 			}
 		</style>
 	</head>

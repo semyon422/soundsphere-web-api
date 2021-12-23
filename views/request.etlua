@@ -37,7 +37,7 @@ function requestBlock() {return {
 		this.response = response_json
 		this.update()
 	},
-	update() {
+	updateEffect() {
 		if (!this.response.err) {
 			document.getElementById('response-body').innerHTML = JSONstringifyOrder(this.response, 2)
 		} else {
@@ -46,10 +46,19 @@ function requestBlock() {return {
 		if (this.isCodeMode) return
 		this.requestBody = JSONstringifyOrder(this.params.body[this.method], 2)
 		this.requestQuery = encode_get_params(this.params.query[this.method]).replaceAll('&', '&\n')
+		this.updateTextarea()
 	},
+	updateTextarea() {
+		this.$nextTick(() => {
+			var reqBody = document.getElementById('request-body')
+			reqBody.style.height = reqBody.scrollHeight + 3 + "px"
+			var reqQuery = document.getElementById('request-query')
+			reqQuery.style.height = reqQuery.scrollHeight + 3 + "px"
+		})
+	}
 }}
 </script>
-<div x-data="requestBlock" x-cloak x-effect="update" x-init="update">
+<div x-data="requestBlock" x-cloak x-effect="updateEffect" x-init="updateEffect">
 	<div class="field has-addons">
 		<div class="control is-expanded">
 			<input class="input" type="text" x-model="url">
@@ -74,7 +83,7 @@ function requestBlock() {return {
 	</div>
 
 	<div class="tabs" x-show="params.query[method + '_have'] > 0 || params.body[method + '_have'] > 0">
-		<ul>
+		<ul @click="updateTextarea">
 			<li :class="!isCodeMode ? 'is-active' : ''" @click="isCodeMode = false"><a>form</a></li>
 			<li :class="isCodeMode ? 'is-active' : ''" @click="isCodeMode = true"><a>code</a></li>
 		</ul>
@@ -90,7 +99,7 @@ function requestBlock() {return {
 	<% end %>
 	<div class="field" x-show="isCodeMode && params.query[method + '_have'] > 0">
 		<div class="control">
-			<textarea class="textarea" x-model="requestQuery" style="font-family: 'Noto Sans Mono'"></textarea>
+			<textarea id="request-query" class="textarea code" x-model="requestQuery" @input="updateTextarea"></textarea>
 		</div>
 	</div>
 	<div class="field">
@@ -103,12 +112,12 @@ function requestBlock() {return {
 	<% end %>
 	<div class="field" x-show="method != 'GET' && isCodeMode">
 		<div class="control">
-			<textarea class="textarea" x-model="requestBody" id="request-body" style="font-family: 'Noto Sans Mono'"></textarea>
+			<textarea class="textarea code" x-model="requestBody" id="request-body" @input="updateTextarea"></textarea>
 		</div>
 	</div>
 	<div class="field" x-show="method != 'GET' && isCodeMode && params.body[method + '_have'] > 0">
 		<div class="control">
-			<a class="button" @click="requestBody = document.getElementById('response-body').innerHTML">
+			<a class="button" @click="requestBody = document.getElementById('response-body').innerHTML; updateTextarea();">
 				from response
 			</a>
 		</div>
