@@ -6,7 +6,10 @@ local Users = Model:extend(
 		relations = {
 			{"roles", has_many = "user_roles", key = "user_id"},
 			{"community_users", has_many = "community_users", key = "user_id"},
-		}
+		},
+		url_params = function(self, req, ...)
+			return "user", {user_id = self.id}, ...
+		end,
 	}
 )
 
@@ -30,7 +33,7 @@ Users.safe_copy = function(self, user)
 			safe_user[k] = v
 		end
 	end
-	return safe_user
+	return setmetatable(safe_user, getmetatable(user))
 end
 
 return Users

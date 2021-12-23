@@ -144,6 +144,31 @@ local function includes(list, item)
 	end
 end
 
+local function get_data_name(response)
+	local names = {}
+	for key, value in pairs(response) do
+		if type(value) == "table" then
+			table.insert(names, key)
+		end
+	end
+	table.sort(names)
+	return names[1]
+end
+
+local function get_data_type(response, data_name)
+	local data = response[data_name]
+	if not data then
+		return
+	end
+	if data[1] then
+		if type(data[1]) == "table" then
+			return "array_of_objects"
+		end
+		return "array"
+	end
+	return "object"
+end
+
 local function tonumber_params(self, controller)
 	local params = self.params
 	for key in controller.path:gmatch(":([^/]+)%[%%d%]") do
@@ -182,6 +207,9 @@ local function route_api(controller, html)
 		if not html then
 			return {json = response, status = code}
 		end
+		self.data_name = get_data_name(response)
+		self.data_type = get_data_type(response, self.data_name)
+		self.data = response[self.data_name]
 		self.response = response
 		self.controller = controller
 		self.methods = get_permited_methods(self, controller)

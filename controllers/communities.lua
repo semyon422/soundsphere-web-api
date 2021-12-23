@@ -19,6 +19,7 @@ communities_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.get_all"),
 	require("validations.search"),
+	{"inputmodes", type = "boolean", optional = true},
 	{"hide_joined", type = "boolean", optional = true},
 }
 communities_c.GET = function(request)
@@ -56,7 +57,9 @@ communities_c.GET = function(request)
 		{
 			per_page = per_page,
 			prepare_results = function(entries)
-				preload(entries, "community_inputmodes")
+				if params.inputmodes then
+					preload(entries, "community_inputmodes")
+				end
 				return entries
 			end
 		}
@@ -64,8 +67,10 @@ communities_c.GET = function(request)
 	local communities = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	for _, community in ipairs(communities) do
-		community.inputmodes = Inputmodes:entries_to_list(community.community_inputmodes)
-		community.community_inputmodes = nil
+		if params.inputmodes then
+			community.inputmodes = Inputmodes:entries_to_list(community.community_inputmodes)
+			community.community_inputmodes = nil
+		end
 		community.joined = joined_community_ids_map[community.id]
 	end
 

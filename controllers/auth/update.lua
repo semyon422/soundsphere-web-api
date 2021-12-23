@@ -1,6 +1,7 @@
 local jwt = require("luajwt")
 local secret = require("secret")
 local login_c = require("controllers.auth.login")
+local Sessions = require("models.sessions")
 local Controller = require("Controller")
 
 local update_c = Controller:new()
@@ -30,7 +31,9 @@ update_c.POST = function(request)
 	session.updated_at = os.time()
 	session:update("updated_at")
 
-	local payload = login_c.copy_session(session)
+	local payload = Sessions:safe_copy(session)
+	session.active = nil
+	login_c.copy_session(payload, request.session)
 	local token, err = jwt.encode(payload, secret.token_key, "HS256")
 
 	return 200, {

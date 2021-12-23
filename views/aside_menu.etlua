@@ -49,3 +49,4 @@
 		<% end %>
 	<% end %>
 </aside>
+<% render("views.response_table") %>

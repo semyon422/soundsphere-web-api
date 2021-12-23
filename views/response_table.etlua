@@ -1,0 +1,30 @@
+<% if data_type == "array_of_objects" then %>
+	<div class="table-container">
+		<table class="table is-hoverable is-fullwidth">
+			<thead>
+				<tr>
+					<th>id</th>
+					<th>name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% for _, object in ipairs(data) do %>
+					<% if object.url_params then %>
+						<tr>
+							<td><%= object.id %></td>
+							<td>
+								<a href="<%= url_for(object):gsub("/api", "/api/html") %>">
+									<% if object.name then %>
+										<%= object.name %>
+									<% elseif object.created_at then %>
+										<%= os.date("%c", object.created_at) %>
+									<% end %>
+								</a>
+							</td>
+						</tr>
+					<% end %>
+				<% end %>
+			</tbody>
+		</table>
+	</div>
+<% end %>
