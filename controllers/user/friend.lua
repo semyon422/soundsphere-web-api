@@ -6,7 +6,8 @@ local user_friend_c = Controller:new()
 user_friend_c.path = "/users/:user_id[%d]/friends/:friend_id[%d]"
 user_friend_c.methods = {"PUT", "DELETE"}
 
-user_friend_c.policies.GET = {{"permit"}}
+user_friend_c.context.PUT = {"session"}
+user_friend_c.policies.PUT = {{"authenticated"}}
 user_friend_c.PUT = function(request)
 	local params = request.params
 	User_relations:relate("friend", params.user_id, params.friend_id)
@@ -14,7 +15,8 @@ user_friend_c.PUT = function(request)
 	return 200, {}
 end
 
-user_friend_c.policies.DELETE = {{"permit"}}
+user_friend_c.context.DELETE = {"session"}
+user_friend_c.policies.DELETE = {{"authenticated"}}
 user_friend_c.DELETE = function(request)
 	local params = request.params
 	User_relations:unrelate("friend", params.user_id, params.friend_id)

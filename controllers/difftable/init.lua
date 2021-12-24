@@ -16,7 +16,7 @@ difftable_c.path = "/difftables/:difftable_id[%d]"
 difftable_c.methods = {"GET", "PATCH", "DELETE"}
 
 difftable_c.context.GET = {"difftable"}
-difftable_c.policies.GET = {{"permit"}}
+difftable_c.policies.GET = {{"context_loaded"}}
 difftable_c.validations.GET = {
 	{"communities", type = "boolean", optional = true},
 	{"leaderboards", type = "boolean", optional = true},

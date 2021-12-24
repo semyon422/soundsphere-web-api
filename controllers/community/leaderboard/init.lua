@@ -7,70 +7,57 @@ local community_leaderboard_c = Controller:new()
 community_leaderboard_c.path = "/communities/:community_id[%d]/leaderboards/:leaderboard_id[%d]"
 community_leaderboard_c.methods = {"PUT", "DELETE", "PATCH"}
 
-community_leaderboard_c.context.PUT = {"community", "leaderboard"}
-community_leaderboard_c.policies.PUT = {{"permit"}}
+community_leaderboard_c.context.PUT = {"community_leaderboard", "session"}
+community_leaderboard_c.policies.PUT = {{"authenticated"}}
 community_leaderboard_c.validations.PUT = {
 	{"message", exists = true, type = "string"},
 }
 community_leaderboard_c.PUT = function(request)
 	local params = request.params
 
-    local new_community_leaderboard = {
-        community_id = params.community_id,
-        leaderboard_id = params.leaderboard_id,
-    }
-	local community_leaderboard = Community_leaderboards:find(new_community_leaderboard)
+	local community_leaderboard = request.context.community_leaderboard
+	if community_leaderboard then
+		community_leaderboard.accepted = true
+		community_leaderboard:update("accepted")
+		return 200, {}
+	end
 
 	local owner_community_leaderboard = Community_leaderboards:find({
 		leaderboard_id = params.leaderboard_id,
 		is_owner = true
 	})
 	local owner_community = owner_community_leaderboard:get_community()
+	community_leaderboard = Community_leaderboards:create({
+		community_id = params.community_id,
+		leaderboard_id = params.leaderboard_id,
+		is_owner = false,
+		sender_id = request.session.user_id,
+		accepted = owner_community.is_public,
+		created_at = os.time(),
+		message = params.message or "",
+	})
 
-    if not community_leaderboard then
-		new_community_leaderboard.is_owner = false
-		new_community_leaderboard.sender_id = request.session.user_id
-		new_community_leaderboard.accepted = owner_community.is_public
-		new_community_leaderboard.created_at = os.time()
-		new_community_leaderboard.message = params.message or ""
-        Community_leaderboards:create(new_community_leaderboard)
-	else
-		community_leaderboard.accepted = true
-		community_leaderboard:update("accepted")
-    end
-
-	return 200, {}
+	return 200, {community_leaderboard = community_leaderboard}
 end
 
-community_leaderboard_c.context.DELETE = {"community", "leaderboard"}
-community_leaderboard_c.policies.DELETE = {{"permit"}}
+community_leaderboard_c.context.DELETE = {"community_leaderboard"}
+community_leaderboard_c.policies.DELETE = {{"context_loaded"}}
 community_leaderboard_c.DELETE = function(request)
-	local params = request.params
-    local community_leaderboard = Community_leaderboards:find({
-        community_id = params.community_id,
-        leaderboard_id = params.leaderboard_id,
-    })
-    if community_leaderboard then
-        community_leaderboard:delete()
-    end
+	local community_leaderboard = request.context.community_leaderboard
+    community_leaderboard:delete()
 
-	return 200, {}
+	return 200, {community_leaderboard = community_leaderboard}
 end
 
-community_leaderboard_c.context.PATCH = {"community", "leaderboard"}
-community_leaderboard_c.policies.PATCH = {{"permit"}}
+community_leaderboard_c.context.PATCH = {"community_leaderboard"}
+community_leaderboard_c.policies.PATCH = {{"context_loaded"}}
 community_leaderboard_c.PATCH = function(request)
-	local params = request.params
-
-	local community_leaderboard = Community_leaderboards:find({
-        community_id = params.community_id,
-        leaderboard_id = params.leaderboard_id,
-    })
+	local community_leaderboard = request.context.community_leaderboard
 
 	community_leaderboard.accepted = true
 	community_leaderboard:update("accepted")
 
-	return 200, {}
+	return 200, {community_leaderboard = community_leaderboard}
 end
 
 return community_leaderboard_c

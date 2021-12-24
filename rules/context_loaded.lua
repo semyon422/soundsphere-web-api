@@ -3,7 +3,7 @@ local Rule = require("abac.Rule")
 local rule = Rule:new()
 
 function rule:condition(request)
-	return request.context.community_user
+	return request.context.loaded[request.req.method]
 end
 
 rule.effect = "permit"

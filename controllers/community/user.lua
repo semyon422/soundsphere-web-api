@@ -9,7 +9,7 @@ community_user_c.path = "/communities/:community_id[%d]/users/:user_id[%d]"
 community_user_c.methods = {"PUT", "DELETE", "GET", "PATCH"}
 
 community_user_c.context.PUT = {"community_user", "session"}
-community_user_c.policies.PUT = {{"community_user"}}
+community_user_c.policies.PUT = {{"authenticated"}}
 community_user_c.validations.PUT = {
 	{"invitation", type = "boolean", optional = true},
 	{"message", exists = true, type = "string", optional = true},
@@ -44,39 +44,33 @@ community_user_c.PUT = function(request)
 end
 
 community_user_c.context.DELETE = {"community_user", "session"}
-community_user_c.policies.DELETE = {{"authenticated", "community_user"}}
+community_user_c.policies.DELETE = {{"authenticated", "context_loaded"}}
 community_user_c.DELETE = function(request)
 	local community_user = request.context.community_user
-    if community_user then
-        community_user:delete()
-    end
+    community_user:delete()
 
-	return 200, {}
+	return 200, {community_user = community_user}
 end
 
-community_user_c.context.GET = {"community_user", "session"}
-community_user_c.policies.GET = {{"community_user"}}
+community_user_c.context.GET = {"community_user"}
+community_user_c.policies.GET = {{"context_loaded"}}
 community_user_c.GET = function(request)
 	local community_user = request.context.community_user
-	if community_user then
-		community_user.role = Roles:to_name(community_user.role)
-	end
+	community_user.role = Roles:to_name(community_user.role)
 
 	return 200, {community_user = community_user}
 end
 
 community_user_c.context.PATCH = {"community_user", "session"}
-community_user_c.policies.PATCH = {{"authenticated", "community_user"}}
+community_user_c.policies.PATCH = {{"authenticated", "context_loaded"}}
 community_user_c.validations.PATCH = {
 	{"role", exists = true, type = "string", one_of = Roles.list},
 }
 community_user_c.PATCH = function(request)
 	local params = request.params
 	local community_user = request.context.community_user
-    if community_user then
-		Community_users:set_role(community_user, params.role, true)
-		community_user.role = Roles:to_name(community_user.role)
-    end
+	Community_users:set_role(community_user, params.role, true)
+	community_user.role = Roles:to_name(community_user.role)
 
 	return 200, {community_user = community_user}
 end

@@ -92,7 +92,8 @@ local function get_context(self, controller, all_methods)
 	copy_table(token_auth(self.req.headers.Authorization), self.session)
 
 	self.context = {
-		ip = self.req.headers["X-Real-IP"]
+		ip = self.req.headers["X-Real-IP"],
+		loaded = {},
 	}
 
 	if all_methods then
@@ -129,9 +130,12 @@ end
 local function get_permited_methods(self, controller)
 	local methods = {}
 	for _, method in ipairs(controller.methods) do
+		local req_method = self.req.method
+		self.req.method = method
 		if controller:check_access(self, method) then
 			table.insert(methods, method)
 		end
+		self.req.method = req_method
 	end
 	return methods
 end
@@ -194,9 +198,9 @@ local function route_api(controller, html)
 		if self.params.methods then
 			methods = get_permited_methods(self, controller)
 		end
-		local code, response = 404, {}
+		local code, response = 403, {message = "Forbidden"}
 		if not controller[method] or #errors > 0 then
-			code, response = 200, {errors = errors}
+			response = {errors = errors}
 		elseif controller:check_access(self, method) or methods and includes(methods, method) then
 			code, response = controller[method](self)
 		end

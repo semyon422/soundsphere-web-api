@@ -20,4 +20,5 @@ return function(self)
 	if context.session_user and not context.session_user.roles then
 		load_roles(context.session_user)
 	end
+	return true
 end

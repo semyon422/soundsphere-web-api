@@ -112,7 +112,8 @@ leaderboard_modifiers_c.GET = function(request)
 	}
 end
 
-leaderboard_modifiers_c.policies.PATCH = {{"permit"}}
+leaderboard_modifiers_c.context.PATCH = {"session"}
+leaderboard_modifiers_c.policies.PATCH = {{"authenticated"}}
 leaderboard_modifiers_c.validations.PATCH = {
 	{"modifiers", exists = true, body = true, optional = true, type = "table"},
 }

@@ -20,7 +20,7 @@ community_c.update_users = function(request, community_id, users)
 end
 
 community_c.context.GET = {"community"}
-community_c.policies.GET = {{"permit"}}
+community_c.policies.GET = {{"context_loaded"}}
 community_c.validations.GET = {
 	{"inputmodes", type = "boolean", optional = true},
 	{"leaderboards", type = "boolean", optional = true},
@@ -51,11 +51,11 @@ community_c.GET = function(request)
 	return 200, {community = community}
 end
 
-community_c.context.PATCH = {"community"}
-community_c.policies.PATCH = {{"permit"}}
+community_c.context.PATCH = {"community", "session"}
+community_c.policies.PATCH = {{"authenticated", "context_loaded"}}
 community_c.PATCH = function(request)
 	local params = request.params
-	local community = Communities:find(params.community_id)
+	local community = request.context.community
 
 	community.name = params.community.name
 	community.alias = params.community.alias

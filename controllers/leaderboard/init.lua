@@ -75,7 +75,7 @@ leaderboard_c.update_difftables = function(leaderboard_id, difftables)
 end
 
 leaderboard_c.context.GET = {"leaderboard"}
-leaderboard_c.policies.GET = {{"permit"}}
+leaderboard_c.policies.GET = {{"context_loaded"}}
 leaderboard_c.validations.GET = {
 	{"difftables", type = "boolean", optional = true},
 	{"communities", type = "boolean", optional = true},
@@ -85,7 +85,7 @@ leaderboard_c.validations.GET = {
 }
 leaderboard_c.GET = function(request)
 	local params = request.params
-	local leaderboard = Leaderboards:find(params.leaderboard_id)
+	local leaderboard = request.context.leaderboard
 
 	local fields = {}
 	for param, controller in pairs(additions) do
@@ -108,8 +108,8 @@ leaderboard_c.GET = function(request)
 	return 200, {leaderboard = leaderboard}
 end
 
-leaderboard_c.context.PATCH = {"leaderboard"}
-leaderboard_c.policies.PATCH = {{"permit"}}
+leaderboard_c.context.PATCH = {"leaderboard", "session"}
+leaderboard_c.policies.PATCH = {{"authenticated", "context_loaded"}}
 leaderboard_c.validations.PATCH = {
 	{"leaderboard", type = "table", body = true, validations = {
 		{"name", type = "string"},
@@ -119,7 +119,7 @@ leaderboard_c.validations.PATCH = {
 }
 leaderboard_c.PATCH = function(request)
 	local params = request.params
-	local leaderboard = Leaderboards:find(params.leaderboard_id)
+	local leaderboard = request.context.leaderboard
 
 	leaderboard.name = params.leaderboard.name
 	leaderboard.description = params.leaderboard.description

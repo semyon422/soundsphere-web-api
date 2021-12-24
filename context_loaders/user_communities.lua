@@ -43,4 +43,5 @@ return function(self)
 	if context.session_user and not context.session_user.communities then
 		load_communities(context.session_user)
 	end
+	return true
 end

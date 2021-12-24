@@ -7,38 +7,35 @@ local user_role_c = Controller:new()
 user_role_c.path = "/users/:user_id[%d]/roles/:role"
 user_role_c.methods = {"PUT", "DELETE"}
 
-user_role_c.policies.PUT = {{"permit"}}
+user_role_c.context.PUT = {"user_role", "session"}
+user_role_c.policies.PUT = {{"authenticated"}}
 user_role_c.validations.PUT = {
 	{"role", type = "string", one_of = Roles.list},
 }
 user_role_c.PUT = function(request)
 	local params = request.params
-    local user_role = {
-        user_id = params.user_id,
-        role = Roles:for_db(params.role),
-    }
-    if not User_roles:find(user_role) then
-        User_roles:create(user_role)
+
+    local user_role = request.context.user_role
+    if not user_role then
+        user_role = User_roles:create({
+			user_id = params.user_id,
+			role = Roles:for_db(params.role),
+		})
     end
 
-	return 200, {}
+	return 200, {user_role = user_role}
 end
 
-user_role_c.policies.DELETE = {{"permit"}}
+user_role_c.context.DELETE = {"user_role", "session"}
+user_role_c.policies.DELETE = {{"authenticated", "context_loaded"}}
 user_role_c.validations.DELETE = {
 	{"role", type = "string", one_of = Roles.list},
 }
 user_role_c.DELETE = function(request)
-	local params = request.params
-    local user_role = User_roles:find({
-        user_id = params.user_id,
-        role = Roles:for_db(params.role),
-    })
-    if user_role then
-        user_role:delete()
-    end
+    local user_role = request.context.user_role
+    user_role:delete()
 
-	return 200, {}
+	return 200, {user_role = user_role}
 end
 
 return user_role_c

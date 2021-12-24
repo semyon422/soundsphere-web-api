@@ -28,11 +28,15 @@ end
 Controller.load_context = function(self, request, method)
 	method = method or request.req.method
 	if not self[method] or not self.context[method] then
-		return
+		return true
 	end
+	local loaded = true
 	for _, name in ipairs(self.context[method]) do
-		context_loaders[name](request)
+		local result = context_loaders[name](request)
+		loaded = loaded and result
 	end
+	request.context.loaded[method] = not not loaded
+	return loaded
 end
 
 local get_default_value = function(validation)

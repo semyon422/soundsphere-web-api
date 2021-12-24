@@ -61,7 +61,7 @@ function requestBlock() {return {
 <div x-data="requestBlock" x-cloak x-effect="updateEffect" x-init="updateEffect">
 	<div class="field has-addons">
 		<div class="control is-expanded">
-			<input class="input" type="text" x-model="url">
+			<input class="input" type="text" x-model="url" disabled>
 		</div>
 		<div class="control">
 			<a class="button is-info" @click="doRequest">
