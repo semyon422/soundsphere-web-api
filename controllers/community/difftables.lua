@@ -53,7 +53,7 @@ community_difftables_c.GET = function(request)
 	for _, community_leaderboard in ipairs(community_leaderboards) do
 		for _, leaderboard_difftable in ipairs(community_leaderboard.leaderboard.leaderboard_difftables) do
 			local difftable = leaderboard_difftable.difftable
-			if difftable_ids[difftable.id] then
+			if not difftable_ids[difftable.id] then
 				table.insert(difftables, difftable)
 			end
 		end
