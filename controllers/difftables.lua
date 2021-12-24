@@ -16,11 +16,17 @@ difftables_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.get_all"),
 	require("validations.search"),
+	{"inputmodes", type = "boolean", optional = true},
 }
 difftables_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10
 	local per_page = params.page_num or 1
+
+	local relations = {}
+	if params.inputmodes then
+		table.insert(relations, "difftable_inputmodes")
+	end
 
 	local clause = params.search and db_search(Difftables.db, params.search, "name")
 	local paginator = Difftables:paginated(
@@ -28,7 +34,7 @@ difftables_c.GET = function(request)
 		{
 			per_page = per_page,
 			prepare_results = function(entries)
-				preload(entries, "difftable_inputmodes")
+				preload(entries, relations)
 				return entries
 			end
 		}
@@ -36,8 +42,10 @@ difftables_c.GET = function(request)
 	local difftables = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	for _, difftable in ipairs(difftables) do
-		difftable.inputmodes = Inputmodes:entries_to_list(difftable:get_difftable_inputmodes())
-		difftable.difftable_inputmodes = nil
+		if params.inputmodes then
+			difftable.inputmodes = Inputmodes:entries_to_list(difftable.difftable_inputmodes)
+			difftable.difftable_inputmodes = nil
+		end
 	end
 
 	return 200, {

@@ -3,29 +3,47 @@ local Difftable_notecharts = require("models.difftable_notecharts")
 local Inputmodes = require("enums.inputmodes")
 local Controller = require("Controller")
 
+local additions = {
+	communities = require("controllers.difftable.communities"),
+	leaderboards = require("controllers.difftable.leaderboards"),
+	notecharts = require("controllers.difftable.notecharts"),
+	inputmodes = require("controllers.difftable.inputmodes"),
+}
+
 local difftable_c = Controller:new()
 
 difftable_c.path = "/difftables/:difftable_id[%d]"
 difftable_c.methods = {"GET", "PATCH", "DELETE"}
 
+difftable_c.context.GET = {"difftable"}
 difftable_c.policies.GET = {{"permit"}}
+difftable_c.validations.GET = {
+	{"communities", type = "boolean", optional = true},
+	{"leaderboards", type = "boolean", optional = true},
+	{"notecharts", type = "boolean", optional = true},
+	{"inputmodes", type = "boolean", optional = true},
+}
 difftable_c.GET = function(request)
 	local params = request.params
-	local difftable = Difftables:find(params.difftable_id)
+	local difftable = request.context.difftable
 
-	if not difftable then
-		return 200, {}
+	local fields = {}
+	for param, controller in pairs(additions) do
+		local value = params[param]
+		if value ~= nil then
+			local param_count = param .. "_count"
+			params.no_data = value == false
+			local _, response = controller.GET(request)
+			difftable[param] = response[param]
+			if difftable[param_count] and difftable[param_count] ~= response.total then
+				difftable[param_count] = response.total
+				table.insert(fields, param_count)
+			end
+		end
 	end
-
-	local clause = Difftables.db.encode_clause({difftable_id = difftable.id})
-	local notecharts_count = Difftable_notecharts:count(clause)
-	if difftable.notecharts_count ~= notecharts_count then
-		difftable.notecharts_count = notecharts_count
-		difftable:update("notecharts_count")
+	if #fields > 0 then
+		difftable:update(unpack(fields))
 	end
-
-	difftable.inputmodes = Inputmodes:entries_to_list(difftable:get_difftable_inputmodes())
-	difftable.difftable_inputmodes = nil
 
 	return 200, {difftable = difftable}
 end

@@ -27,6 +27,11 @@ communities_c.GET = function(request)
 	local per_page = params.per_page or 10
 	local per_page = params.page_num or 1
 
+	local relations = {}
+	if params.inputmodes then
+		table.insert(relations, "difftable_inputmodes")
+	end
+
 	local db = Communities.db
 
 	local search_clause = params.search and db_search(db, params.search, "name")
@@ -57,9 +62,7 @@ communities_c.GET = function(request)
 		{
 			per_page = per_page,
 			prepare_results = function(entries)
-				if params.inputmodes then
-					preload(entries, "community_inputmodes")
-				end
+				preload(entries, relations)
 				return entries
 			end
 		}

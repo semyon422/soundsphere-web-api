@@ -44,6 +44,7 @@ return {
 	"difftable",
 	"difftable.communities",
 	"difftable.leaderboards",
+	"difftable.inputmodes",
 	"difftable.notecharts",
 	"difftable.notechart",
 	"notecharts",

@@ -28,7 +28,7 @@ community_c.validations.GET = {
 }
 community_c.GET = function(request)
 	local params = request.params
-	local community = Communities:find(params.community_id)
+	local community = request.context.community
 
 	local fields = {}
 	for param, controller in pairs(additions) do

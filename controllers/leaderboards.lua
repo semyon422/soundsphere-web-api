@@ -19,11 +19,20 @@ leaderboards_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.get_all"),
 	require("validations.search"),
+	{"inputmodes", type = "boolean", optional = true},
+	{"top_user", type = "boolean", optional = true},
 }
 leaderboards_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10
 	local per_page = params.page_num or 1
+
+	local relations = {}
+	if params.inputmodes then
+		table.insert(relations, "leaderboard_inputmodes")
+	elseif params.top_user then
+		table.insert(relations, "top_user")
+	end
 
 	local clause = params.search and db_search(Leaderboards.db, params.search, "name")
 	local paginator = Leaderboards:paginated(
@@ -31,7 +40,7 @@ leaderboards_c.GET = function(request)
 		{
 			per_page = per_page,
 			prepare_results = function(entries)
-				preload(entries, {"leaderboard_inputmodes", "top_user"})
+				preload(entries, relations)
 				return entries
 			end
 		}
@@ -39,9 +48,13 @@ leaderboards_c.GET = function(request)
 	local leaderboards = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	for _, leaderboard in ipairs(leaderboards) do
-		leaderboard.top_user = Users:safe_copy(leaderboard.top_user)
-		leaderboard.inputmodes = Inputmodes:entries_to_list(leaderboard.leaderboard_inputmodes)
-		leaderboard.leaderboard_inputmodes = nil
+		if params.top_user then
+			leaderboard.top_user = Users:safe_copy(leaderboard.top_user)
+		end
+		if params.inputmodes then
+			leaderboard.inputmodes = Inputmodes:entries_to_list(leaderboard.leaderboard_inputmodes)
+			leaderboard.leaderboard_inputmodes = nil
+		end
 	end
 
 	return 200, {

@@ -12,6 +12,14 @@ difftable_communities_c.policies.GET = {{"permit"}}
 difftable_communities_c.GET = function(request)
 	local params = request.params
 	local community_difftables = Community_difftables:find_all({params.difftable_id}, "difftable_id")
+
+	if params.no_data then
+		return 200, {
+			total = #community_difftables,
+			filtered = #community_difftables,
+		}
+	end
+
 	preload(community_difftables, "community")
 
 	local communities = {}
@@ -19,11 +27,9 @@ difftable_communities_c.GET = function(request)
 		table.insert(communities, community_difftable.community)
 	end
 
-	local count = Community_difftables:count()
-
 	return 200, {
-		total = count,
-		filtered = count,
+		total = #communities,
+		filtered = #communities,
 		communities = communities
 	}
 end
