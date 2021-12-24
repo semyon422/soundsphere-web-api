@@ -6,7 +6,7 @@ return function(self)
 	local user_id = self.params.user_id
 	local role = self.params.role
 	if user_id and role then
-		self.context.user_role = Users:find({
+		self.context.user_role = User_roles:find({
 			user_id = user_id,
 			role = Roles:for_db(role),
 		})
