@@ -4,6 +4,7 @@ return {
 	"auth",
 	"auth.check",
 	"auth.login",
+	"auth.register",
 	"auth.logout",
 	"auth.quick",
 	"auth.update",

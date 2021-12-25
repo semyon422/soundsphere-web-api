@@ -3,6 +3,7 @@ local bcrypt = require("bcrypt")
 local db_search = require("util.db_search")
 local db_where = require("util.db_where")
 local Controller = require("Controller")
+local register_c = require("controllers.auth.register")
 
 local users_c = Controller:new()
 
@@ -43,55 +44,9 @@ users_c.GET = function(request)
 	}
 end
 
-local function register(name, email, password)
-	if not name then
-		return false, "Invalid name"
-	elseif not email then
-		return false, "Invalid email"
-	elseif not password then
-		return false, "Invalid password"
-	end
-
-	email = email:lower()
-
-	local user = Users:find({email = email})
-
-	if user then
-		return false, "This email is already registered"
-	end
-
-	user = Users:create({
-		name = name,
-		tag = ("%4d"):format(math.random(1, 9999)),
-		email = email,
-		password = bcrypt.digest(password, 5),
-		latest_activity = 0,
-		creation_time = 0,
-		description = "",
-	})
-
-	return user
-end
-
-users_c.policies.POST = {{"permit"}}
-users_c.validations.POST = {
-	{"user", exists = true, type = "table", body = true, validations = {
-		{"name", exists = true, type = "string"},
-		{"email", exists = true, type = "string"},
-		{"password", exists = true, type = "string"},
-	}}
-}
-users_c.POST = function(request)
-	local params = request.params
-	local user = params.user
-	local err
-	user, err = register(user.name, user.email, user.password)
-
-	if user then
-		return 200, {user = Users:safe_copy(user)}
-	end
-
-	return 200, {message = err}
-end
+users_c.context.POST = {"session"}
+users_c.policies.POST = {{"authenticated"}}
+users_c.validations.POST = register_c.validations.POST
+users_c.POST = register_c.POST
 
 return users_c
