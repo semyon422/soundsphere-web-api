@@ -3,6 +3,8 @@ function requestBlock() {return {
 	url: '<%= url_for(controller.name, params) %>',
 	method: '<%= controller.methods[1] %>',
 	response: <%- require("lapis.util").to_json(response) %>,
+	responseStatus: '<%= code %>',
+	responseStatusText: '',
 	requestBody: '',
 	requestQuery: '',
 	isCodeMode: false,
@@ -21,21 +23,24 @@ function requestBlock() {return {
 		},
 	},
 	async doRequest() {
-		let response_json
+		let response
 		if (this.method != "GET") {
-			response_json = await _fetch_json(
+			response = await _fetch_json(
 				this.url + this.requestQuery.replaceAll('\n', ''),
 				this.requestBody,
 				this.method
 			)
 		} else {
-			response_json = await _get(
+			response = await _get(
 				this.url + this.requestQuery.replaceAll('\n', '')
 			)
 		}
+		let response_json = await response.json()
         if (!response_json) return
 		this.response = response_json
-		this.update()
+		this.responseStatus = response.status
+		this.responseStatusText = response.statusText
+		this.updateEffect()
 	},
 	updateEffect() {
 		if (!this.response.err) {
@@ -43,6 +48,7 @@ function requestBlock() {return {
 		} else {
 			document.getElementById('response-body').innerHTML = this.response.err
 		}
+		document.getElementById('response-status').value = this.responseStatus + ' ' + this.responseStatusText
 		if (this.isCodeMode) return
 		this.requestBody = JSONstringifyOrder(this.params.body[this.method], 2)
 		this.requestQuery = encode_get_params(this.params.query[this.method]).replaceAll('&', '&\n')
@@ -110,7 +116,7 @@ function requestBlock() {return {
 			<% render("views.form", {validations = controller:get_body_validations(method), model = "params.body." .. method}) %>
 		</div>
 	<% end %>
-	<div class="field" x-show="method != 'GET' && isCodeMode">
+	<div class="field" x-show="method != 'GET' && isCodeMode && params.body[method + '_have'] > 0">
 		<div class="control">
 			<textarea class="textarea code" x-model="requestBody" id="request-body" @input="updateTextarea"></textarea>
 		</div>

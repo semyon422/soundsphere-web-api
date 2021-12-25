@@ -1,3 +1,8 @@
+<div class="field has-addons">
+	<div class="control is-expanded">
+		<input id="response-status" class="input is-static" type="text" readonly value="">
+	</div>
+</div>
 <div class="field">
 	<div class="control">
 		<pre id="response-body" class="code"></pre>

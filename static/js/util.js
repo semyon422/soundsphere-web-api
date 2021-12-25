@@ -54,8 +54,7 @@ async function _get(url, obj) {
 		method: 'GET',
 		credentials: 'same-origin'
 	})
-	let response_json = await response.json()
-	return response_json
+	return response
 }
 
 async function _fetch_json(url, body, method) {
@@ -73,8 +72,7 @@ async function _fetch_json(url, body, method) {
 			credentials: 'same-origin'
 		})
 	}
-	let response_json = await response.json()
-	return response_json
+	return response
 }
 
 async function _fetch(url, obj, method) {
@@ -92,8 +90,7 @@ async function _fetch(url, obj, method) {
 			credentials: 'same-origin'
 		})
 	}
-	let response_json = await response.json()
-	return response_json
+	return response
 }
 
 async function _post(url, obj) {

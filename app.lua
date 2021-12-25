@@ -198,9 +198,11 @@ local function route_api(controller, html)
 		if self.params.methods then
 			methods = get_permited_methods(self, controller)
 		end
-		local code, response = 403, {message = "Forbidden"}
-		if not controller[method] or #errors > 0 then
-			response = {errors = errors}
+		local code, response = 403, {}
+		if not controller[method] then
+			code, response = 405, {}
+		elseif #errors > 0 then
+			code, response = 400, {errors = errors}
 		elseif controller:check_access(self, method) or methods and includes(methods, method) then
 			code, response = controller[method](self)
 			response.total = tonumber(response.total)
@@ -216,6 +218,7 @@ local function route_api(controller, html)
 		self.data_name = get_data_name(response)
 		self.data_type = get_data_type(response, self.data_name)
 		self.data = response[self.data_name]
+		self.code = code
 		self.response = response
 		self.controller = controller
 		self.methods = get_permited_methods(self, controller)
