@@ -203,6 +203,8 @@ local function route_api(controller, html)
 			response = {errors = errors}
 		elseif controller:check_access(self, method) or methods and includes(methods, method) then
 			code, response = controller[method](self)
+			response.total = tonumber(response.total)
+			response.filtered = tonumber(response.filtered)
 		end
 		response.methods = methods
 		if self.params.params then
