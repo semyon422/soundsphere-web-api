@@ -53,4 +53,6 @@ return {
 	"notechart.scores",
 	"scores",
 	"score",
+	"files",
+	"file",
 }

@@ -1,8 +1,9 @@
 local Scores = require("models.scores")
-local Containers = require("models.containers")
+local Files = require("models.files")
 local Notecharts = require("models.notecharts")
 local Controller = require("Controller")
 local Formats = require("enums.formats")
+local Storages = require("enums.storages")
 local Inputmodes = require("enums.inputmodes")
 
 local scores_c = Controller:new()
@@ -53,27 +54,29 @@ scores_c.POST = function(request)
 
 	local created_at = os.time()
 
-	local container = Containers:find({
+	local file = Files:find({
 		hash = params.notechart_hash
 	})
-	if not container then
-		container = Containers:create({
+	if not file then
+		file = Files:create({
 			hash = params.notechart_hash,
+			name = params.notechart_filename,
 			format = Formats:get_format_for_db(params.notechart_filename),
+			storage = Storages:for_db("notecharts"),
 			uploaded = false,
 			size = params.notechart_filesize,
-			imported = false,
+			loaded = false,
 			created_at = created_at,
 		})
 	end
 
 	local notechart = Notecharts:find({
-		container_id = container.id,
+		file_id = file.id,
 		index = params.notechart_index,
 	})
 	if not notechart then
 		notechart = Notecharts:create({
-			container_id = container.id,
+			file_id = file.id,
 			index = params.notechart_index,
 			created_at = created_at,
 			scores_count = 0,

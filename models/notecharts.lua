@@ -4,7 +4,7 @@ local Notecharts = Model:extend(
 	"notecharts",
 	{
 		relations = {
-			{"container", belongs_to = "containers", key = "container_id"},
+			{"file", belongs_to = "files", key = "file_id"},
 		},
 		url_params = function(self, req, ...)
 			return "notechart", {notechart_id = self.id}, ...

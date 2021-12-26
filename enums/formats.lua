@@ -1,6 +1,7 @@
 local enum = require("lapis.db.model").enum
 
 local Formats = enum({
+	undefined = 0,
 	osu = 1,
 	quaver = 2,
 	bms = 3,
@@ -26,7 +27,7 @@ Formats.extensions = {
 }
 
 Formats.get_format = function(self, filename)
-	return Formats.extensions[filename:match("^.+%.(.-)$")]
+	return Formats.extensions[filename:match("^.+%.(.-)$")] or "undefined"
 end
 
 Formats.get_format_for_db = function(self, filename)

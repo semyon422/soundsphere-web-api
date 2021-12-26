@@ -22,7 +22,7 @@ local tables = {
 	"community_users",
 	"community_difftables",  -- cached from community_leaderboards.leaderboard_difftables
 	"community_inputmodes",  -- cached from community_leaderboards.leaderboard_inputmodes
-	"containers",
+	"files",
 	"modifiersets",
 	"notecharts",
 	"scores",
@@ -227,19 +227,20 @@ table_declarations.community_inputmodes = {
 	"UNIQUE KEY `community_inputmodes` (`community_id`,`inputmode`)"
 }
 
-table_declarations.containers = {
+table_declarations.files = {
 	{"id", types.id},
 	{"hash", types.md5_hash},
+	{"name", types.varchar},
 	{"format", types.enum},
+	{"storage", types.enum},
 	{"uploaded", types.boolean},
 	{"size", types.size},
-	{"imported", types.boolean},
+	{"loaded", types.boolean},
 	{"created_at", types.time},
-	[[
-		UNIQUE KEY `hash` (`hash`),
-		KEY `format` (`format`),
-		KEY `imported` (`imported`)
-	]]
+	"UNIQUE KEY `hash` (`hash`)",
+	"KEY `format` (`format`)",
+	"KEY `storage` (`storage`)",
+	"KEY `loaded` (`loaded`)",
 }
 
 table_declarations.modifiersets = {
@@ -251,7 +252,7 @@ table_declarations.modifiersets = {
 
 table_declarations.notecharts = {
 	{"id", types.id},
-	{"container_id", types.fk_id},
+	{"file_id", types.fk_id},
 	{"index", types.enum},
 	{"created_at", types.time},
 	{"scores_count", types.size},
@@ -262,7 +263,7 @@ table_declarations.notecharts = {
 	{"difficulty_name", types.text},
 	{"difficulty_creator", types.text},
 	[[
-		UNIQUE KEY `hashindex` (`container_id`,`index`),
+		UNIQUE KEY `hashindex` (`file_id`,`index`),
 		KEY `inputmode` (`inputmode`)
 	]]
 }

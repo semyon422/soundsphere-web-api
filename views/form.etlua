@@ -11,6 +11,23 @@
 					</select>
 				</div>
 			</div>
+		<% elseif validation.is_file then %>
+			<div class="file has-name" x-data="{files: null}">
+				<label class="file-label">
+					<input class="file-input" type="file"
+						x-on:change="files = $event.target.files; <%= model .. "." .. validation[1] %> = files[0]"
+					>
+					<span class="file-cta">
+						<span class="file-label">
+							Choose a file…
+						</span>
+					</span>
+					<span class="file-name"
+						x-show="files !== null"
+						x-text="files[0].name"
+					></span>
+				</label>
+			</div>
 		<% elseif not validation.type or validation.type == "string" then %>
 			<label class="label"><%= validation[1] %></label>
 			<div class="control">
