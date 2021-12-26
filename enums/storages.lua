@@ -6,4 +6,10 @@ local Storages = enum({
 	replays = 2,
 })
 
+Storages.list = {
+	"undefined",
+	"notecharts",
+	"replays",
+}
+
 return Storages

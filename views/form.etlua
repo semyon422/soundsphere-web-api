@@ -12,6 +12,7 @@
 				</div>
 			</div>
 		<% elseif validation.is_file then %>
+			<label class="label"><%= validation[1] %></label>
 			<div class="file has-name" x-data="{files: null}">
 				<label class="file-label">
 					<input class="file-input" type="file"

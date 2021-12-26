@@ -80,7 +80,7 @@ Controller.get_body_params = function(self, method)
 	end
 	local params = {}
 	for _, validation in ipairs(validations) do
-		if validation.body then
+		if validation.body and not validation.is_file then
 			local value = get_default_value(validation)
 			params[validation[1]] = value
 			if validation.type == "table" then

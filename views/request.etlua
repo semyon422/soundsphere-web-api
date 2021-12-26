@@ -28,7 +28,7 @@ function requestBlock() {return {
 		if (this.method != "GET") {
 			const formData = new FormData()
 			for (const name in this.bodyFiles) {
-				formData.append(name, this.bodyFiles[name])
+				formData.append(name, this.bodyFiles[name], this.bodyFiles[name].name)
 			}
 			formData.append('json_params', this.requestBody)
 			response = await fetch(this.url + this.requestQuery.replaceAll('\n', ''), {
