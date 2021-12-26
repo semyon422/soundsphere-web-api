@@ -15,7 +15,7 @@
 			<div class="file has-name" x-data="{files: null}">
 				<label class="file-label">
 					<input class="file-input" type="file"
-						x-on:change="files = $event.target.files; <%= model .. "." .. validation[1] %> = files[0]"
+						x-on:change="files = $event.target.files; bodyFiles['<%= validation[1] %>'] = files[0];"
 					>
 					<span class="file-cta">
 						<span class="file-label">
@@ -24,7 +24,7 @@
 					</span>
 					<span class="file-name"
 						x-show="files !== null"
-						x-text="files[0].name"
+						x-text="files !== null ? files[0].name : ''"
 					></span>
 				</label>
 			</div>

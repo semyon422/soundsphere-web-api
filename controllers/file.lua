@@ -19,10 +19,13 @@ end
 
 file_c.policies.PUT = {{"permit"}}
 file_c.validations.PUT = {
-	{"file", exists = true, is_file = true},
+	{"file", is_file = true, body = true},
 }
 file_c.PUT = function(request)
-	return 200, {file = file}
+	return 200, {file = {
+		name = request.params.file.name,
+		size = #request.params.file.content,
+	}}
 end
 
 return file_c

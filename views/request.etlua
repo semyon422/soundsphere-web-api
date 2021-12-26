@@ -7,6 +7,7 @@ function requestBlock() {return {
 	responseStatusText: '',
 	requestBody: '',
 	requestQuery: '',
+	bodyFiles: {},
 	isCodeMode: false,
 	params: {
 		query: {
@@ -25,15 +26,20 @@ function requestBlock() {return {
 	async doRequest() {
 		let response
 		if (this.method != "GET") {
-			response = await _fetch_json(
-				this.url + this.requestQuery.replaceAll('\n', ''),
-				this.requestBody,
-				this.method
-			)
+			const formData = new FormData()
+			for (const name in this.bodyFiles) {
+				formData.append(name, this.bodyFiles[name])
+			}
+			formData.append('json_params', this.requestBody)
+			response = await fetch(this.url + this.requestQuery.replaceAll('\n', ''), {
+				method: this.method,
+				body: formData,
+				credentials: 'same-origin'
+			})
 		} else {
-			response = await _get(
-				this.url + this.requestQuery.replaceAll('\n', '')
-			)
+			response = await fetch(this.url + this.requestQuery.replaceAll('\n', ''), {
+				credentials: 'same-origin'
+			})
 		}
 		let response_json = await response.json()
         if (!response_json) return

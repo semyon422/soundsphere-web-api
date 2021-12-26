@@ -14,6 +14,33 @@ Cookie: {{cookie}}
 {}
 
 ###
+PUT http://localhost/api/files/1?params
+Content-Type: multipart/form-data; boundary=HereGoes
+
+--HereGoes
+Content-Disposition: form-data; name="json_params"
+Content-Type: application/json
+
+{"foo": "bar"}
+--HereGoes
+Content-Disposition: form-data; name="file"
+Content-Type: image/jpeg
+
+< start
+--HereGoes--
+
+###
+PUT http://localhost/api/files/1?params
+Content-Type: multipart/form-data; boundary=HereGoes
+
+--HereGoes
+Content-Disposition: form-data; name="json_params"
+Content-Type: application/json
+
+{"foo": "bar"}
+--HereGoes--
+
+###
 POST http://localhost/api/create_db
 
 ###
