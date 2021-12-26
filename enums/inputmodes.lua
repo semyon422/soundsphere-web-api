@@ -1,6 +1,7 @@
 local enum = require("lapis.db.model").enum
 
 local Inputmodes = enum({
+	["undefined"] = 0,
 	["1key"] = 1,
 	["2key"] = 2,
 	["3key"] = 3,
