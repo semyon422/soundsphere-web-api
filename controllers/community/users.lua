@@ -61,7 +61,7 @@ community_users_c.get_users = function(request)
 	local clause = db.encode_clause(where)
 
 	local per_page = params.per_page or 10
-	local per_page = params.page_num or 1
+	local page_num = params.page_num or 1
 
 	local paginator
 	if not params.search then

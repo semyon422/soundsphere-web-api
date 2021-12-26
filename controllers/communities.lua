@@ -25,7 +25,7 @@ communities_c.validations.GET = {
 communities_c.GET = function(request)
 	local params = request.params
 	local per_page = params.per_page or 10
-	local per_page = params.page_num or 1
+	local page_num = params.page_num or 1
 
 	local relations = {}
 	if params.inputmodes then
