@@ -20,7 +20,7 @@ function Scores:load(row)
 	row.is_valid = toboolean(row.is_valid)
 	row.calculated = toboolean(row.calculated)
 	row.replay_uploaded = toboolean(row.replay_uploaded)
-	row.creation_time = tonumber(row.creation_time)
+	row.created_at = tonumber(row.created_at)
 	return _load(self, row)
 end
 

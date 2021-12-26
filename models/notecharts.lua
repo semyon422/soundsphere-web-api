@@ -14,7 +14,7 @@ local Notecharts = Model:extend(
 
 local _load = Notecharts.load
 function Notecharts:load(row)
-	row.creation_time = tonumber(row.creation_time)
+	row.created_at = tonumber(row.created_at)
 	return _load(self, row)
 end
 

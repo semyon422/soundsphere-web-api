@@ -346,7 +346,7 @@ app:match("/api/create_db", function(self)
 		email = admin.email,
 		password = bcrypt.digest(admin.password, 5),
 		latest_activity = 0,
-		creation_time = 0,
+		created_at = 0,
 		description = "",
 	})
 

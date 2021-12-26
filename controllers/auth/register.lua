@@ -32,7 +32,7 @@ register_c.register = function(name, email, password)
 		email = email,
 		password = bcrypt.digest(password, 5),
 		latest_activity = 0,
-		creation_time = 0,
+		created_at = 0,
 		description = "",
 	})
 

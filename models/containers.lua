@@ -14,7 +14,7 @@ local _load = Containers.load
 function Containers:load(row)
 	row.uploaded = toboolean(row.uploaded)
 	row.imported = toboolean(row.imported)
-	row.creation_time = tonumber(row.creation_time)
+	row.created_at = tonumber(row.created_at)
 	return _load(self, row)
 end
 

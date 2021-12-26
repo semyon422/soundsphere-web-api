@@ -16,7 +16,7 @@ local Users = Model:extend(
 local _load = Users.load
 function Users:load(row)
 	row.latest_activity = tonumber(row.latest_activity)
-	row.creation_time = tonumber(row.creation_time)
+	row.created_at = tonumber(row.created_at)
 	return _load(self, row)
 end
 

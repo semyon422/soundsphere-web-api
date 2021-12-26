@@ -152,7 +152,7 @@ table_declarations.users = {
 	{"email", "VARCHAR(100) NOT NULL"},
 	{"password", types.varchar},
 	{"latest_activity", types.time},
-	{"creation_time", types.time},
+	{"created_at", types.time},
 	{"description", types.varchar},
 	"UNIQUE KEY `email` (`email`)"
 }
@@ -234,7 +234,7 @@ table_declarations.containers = {
 	{"uploaded", types.boolean},
 	{"size", types.size},
 	{"imported", types.boolean},
-	{"creation_time", types.time},
+	{"created_at", types.time},
 	[[
 		UNIQUE KEY `hash` (`hash`),
 		KEY `format` (`format`),
@@ -253,7 +253,7 @@ table_declarations.notecharts = {
 	{"id", types.id},
 	{"container_id", types.fk_id},
 	{"index", types.enum},
-	{"creation_time", types.time},
+	{"created_at", types.time},
 	{"scores_count", types.size},
 	{"inputmode", types.enum},
 	{"difficulty", types.float},
@@ -278,7 +278,7 @@ table_declarations.scores = {
 	{"calculated", types.boolean},
 	{"replay_uploaded", types.boolean},
 	{"replay_size", types.size},
-	{"creation_time", types.time},
+	{"created_at", types.time},
 	{"score", types.float},
 	{"accuracy", types.float},
 	{"max_combo", types.size},
