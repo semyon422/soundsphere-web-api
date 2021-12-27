@@ -80,7 +80,14 @@ db_test.create = function()
 
 	leaderboard_c.update_inputmodes(leaderboard.id, {"10key"})
 	leaderboard_c.update_difftables(leaderboard.id, {difftable})
-	leaderboard_c.update_modifiers(leaderboard.id, {{name = "Automap", value = "4 to 10", rule = "required"}})
+	leaderboard_c.update_requirements(leaderboard.id, {
+		{
+			name = "modifier",
+			rule = "required",
+			key = "Automap",
+			value = "4 to 10",
+		}
+	})
 end
 
 return db_test

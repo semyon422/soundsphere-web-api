@@ -43,6 +43,9 @@ local get_default_value = function(validation)
 	if validation.default then
 		return validation.default
 	end
+	if validation.one_of then
+		return validation.one_of[1]
+	end
 	local type_string = validation.type
 	if type_string == "string" then
 		return ""

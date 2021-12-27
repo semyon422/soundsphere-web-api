@@ -10,7 +10,7 @@ local additions = {
 	communities = require("controllers.leaderboard.communities"),
 	users = require("controllers.leaderboard.users"),
 	inputmodes = require("controllers.leaderboard.inputmodes"),
-	modifiers = require("controllers.leaderboard.modifiers"),
+	requirements = require("controllers.leaderboard.requirements"),
 }
 
 local leaderboard_c = Controller:new()
@@ -18,8 +18,8 @@ local leaderboard_c = Controller:new()
 leaderboard_c.path = "/leaderboards/:leaderboard_id[%d]"
 leaderboard_c.methods = {"GET", "PATCH", "DELETE"}
 
-leaderboard_c.update_modifiers = function(leaderboard_id, modifiers)
-	return additions.modifiers.update_modifiers(leaderboard_id, modifiers)
+leaderboard_c.update_requirements = function(leaderboard_id, requirements)
+	return additions.requirements.update_requirements(leaderboard_id, requirements)
 end
 
 leaderboard_c.update_inputmodes = function(leaderboard_id, inputmodes)
@@ -81,7 +81,7 @@ leaderboard_c.validations.GET = {
 	{"communities", type = "boolean", optional = true},
 	{"users", type = "boolean", optional = true},
 	{"inputmodes", type = "boolean", optional = true},
-	{"modifiers", type = "boolean", optional = true},
+	{"requirements", type = "boolean", optional = true},
 }
 leaderboard_c.GET = function(request)
 	local params = request.params
@@ -128,7 +128,7 @@ leaderboard_c.PATCH = function(request)
 
 	leaderboard_c.update_inputmodes(leaderboard.id, params.leaderboard.inputmodes)
 	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.difftables)
-	leaderboard_c.update_modifiers(leaderboard.id, params.leaderboard.modifiers)
+	leaderboard_c.update_requirements(leaderboard.id, params.leaderboard.requirements)
 
 	return 200, {leaderboard = leaderboard}
 end

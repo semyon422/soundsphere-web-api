@@ -5,4 +5,9 @@ local Rules = enum({
 	required = 1,
 })
 
+Rules.list = {
+	"allowed",
+	"required",
+}
+
 return Rules

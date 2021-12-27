@@ -9,7 +9,7 @@ local tables = {
 	"leaderboard_users",
 	"leaderboard_scores",
 	"leaderboard_inputmodes",
-	"leaderboard_modifiers",
+	"leaderboard_requirements",
 	"leaderboards",
 	"difftables",
 	"difftable_notecharts",
@@ -92,11 +92,12 @@ table_declarations.leaderboard_inputmodes = {
 	"UNIQUE KEY `leaderboard_inputmodes` (`leaderboard_id`,`inputmode`)"
 }
 
-table_declarations.leaderboard_modifiers = {
+table_declarations.leaderboard_requirements = {
 	{"id", types.id},
 	{"leaderboard_id", types.fk_id},
-	{"modifier", types.enum},
+	{"requirement", types.enum},
 	{"rule", types.enum},
+	{"key", types.enum},
 	{"value", types.varchar},
 	"KEY `leaderboard_id` (`leaderboard_id`)",
 }
