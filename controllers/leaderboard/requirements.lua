@@ -74,17 +74,13 @@ leaderboard_requirements_c.update_requirements = function(leaderboard_id, requir
 		db.delete("leaderboard_requirements", {id = db.list(old_ids)})
 	end
 
-	local export_requirements = {}
 	for _, requirement in ipairs(requirements) do
-		table.insert(export_requirements, {
-			id = requirement.id,
-			name = Requirements:to_name(requirement.requirement),
-			rule = Rules:to_name(requirement.rule),
-			key = Requirements:get_key_enum(requirement.requirement):to_name(requirement.key),
-			value = requirement.value,
-		})
+		requirement.name = Requirements:to_name(requirement.requirement)
+		requirement.rule = Rules:to_name(requirement.rule)
+		requirement.key = Requirements:get_key_enum(requirement.requirement):to_name(requirement.key)
+		requirement.requirement = nil
 	end
-	return export_requirements
+	return requirements
 end
 
 leaderboard_requirements_c.policies.GET = {{"permit"}}
