@@ -7,7 +7,7 @@ local Scores = Model:extend(
 		relations = {
 			{"user", belongs_to = "users", key = "user_id"},
 			{"notechart", belongs_to = "notecharts", key = "notechart_id"},
-			{"modifier", belongs_to = "modifiers", key = "modifier_id"},
+			{"modifierset", belongs_to = "modifiersets", key = "modifierset_id"},
 		},
 		url_params = function(self, req, ...)
 			return "score", {score_id = self.id}, ...
