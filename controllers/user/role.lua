@@ -6,12 +6,12 @@ local user_role_c = Controller:new()
 
 user_role_c.path = "/users/:user_id[%d]/roles/:role"
 user_role_c.methods = {"PUT", "DELETE"}
+user_role_c.validations.path = {
+	{"role", type = "string", one_of = Roles.list, param_type = "path"},
+}
 
 user_role_c.context.PUT = {"user_role", "request_session"}
 user_role_c.policies.PUT = {{"authenticated"}}
-user_role_c.validations.PUT = {
-	{"role", type = "string", one_of = Roles.list},
-}
 user_role_c.PUT = function(request)
 	local params = request.params
 
@@ -28,9 +28,6 @@ end
 
 user_role_c.context.DELETE = {"user_role", "request_session"}
 user_role_c.policies.DELETE = {{"authenticated", "context_loaded"}}
-user_role_c.validations.DELETE = {
-	{"role", type = "string", one_of = Roles.list},
-}
 user_role_c.DELETE = function(request)
     local user_role = request.context.user_role
     user_role:delete()

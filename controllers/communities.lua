@@ -87,7 +87,7 @@ end
 communities_c.context.POST = {"request_session"}
 communities_c.policies.POST = {{"authenticated"}}
 communities_c.validations.POST = {
-	{"community", exists = true, type = "table", body = true, validations = {
+	{"community", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},
 		{"alias", exists = true, type = "string"},
 		{"link", exists = true, type = "string"},

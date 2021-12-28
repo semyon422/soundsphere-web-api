@@ -14,7 +14,7 @@ local basic_auth = require("auth.basic")
 app:enable("etlua")
 app.layout = require("views.layout")
 
-validate.validate_functions.body = function(input) return true, "" end
+validate.validate_functions.param_type = function(input) return true, "" end
 validate.validate_functions.no_value = function(input, validations) return true, "" end
 validate.validate_functions.validations = function(input, validations) return true, "" end
 validate.validate_functions.default = function(input, validations) return true, "" end

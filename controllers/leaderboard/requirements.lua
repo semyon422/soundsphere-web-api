@@ -102,7 +102,7 @@ end
 leaderboard_requirements_c.context.PATCH = {"request_session"}
 leaderboard_requirements_c.policies.PATCH = {{"authenticated"}}
 leaderboard_requirements_c.validations.PATCH = {
-	{"requirements", exists = true, body = true, optional = true, type = "table"},
+	{"requirements", exists = true, param_type = "body", optional = true, type = "table"},
 }
 leaderboard_requirements_c.PATCH = function(request)
 	local params = request.params
@@ -119,7 +119,7 @@ end
 leaderboard_requirements_c.context.POST = {"request_session"}
 leaderboard_requirements_c.policies.POST = {{"authenticated"}}
 leaderboard_requirements_c.validations.POST = {
-	{"requirement", exists = true, type = "table", body = true, validations = {
+	{"requirement", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string", one_of = Requirements.list},
 		{"rule", exists = true, type = "string", one_of = Rules.list},
 		{"key", exists = true, type = "string"},

@@ -47,12 +47,12 @@ end
 scores_c.context.POST = {"request_session"}
 scores_c.policies.POST = {{"authenticated"}}
 scores_c.validations.POST = {
-	{"replay_hash", exists = true, type = "string", body = true},
-	{"replay_size", exists = true, type = "number", body = true},
-	{"notechart_hash", exists = true, type = "string", body = true},
-	{"notechart_index", exists = true, type = "number", body = true},
-	{"notechart_filename", exists = true, type = "string", body = true},
-	{"notechart_filesize", exists = true, type = "number", body = true},
+	{"replay_hash", exists = true, type = "string", param_type = "body"},
+	{"replay_size", exists = true, type = "number", param_type = "body"},
+	{"notechart_hash", exists = true, type = "string", param_type = "body"},
+	{"notechart_index", exists = true, type = "number", param_type = "body"},
+	{"notechart_filename", exists = true, type = "string", param_type = "body"},
+	{"notechart_filesize", exists = true, type = "number", param_type = "body"},
 }
 scores_c.POST = function(request)
 	local params = request.params

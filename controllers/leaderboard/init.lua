@@ -116,7 +116,7 @@ end
 leaderboard_c.context.PATCH = {"leaderboard", "request_session"}
 leaderboard_c.policies.PATCH = {{"authenticated", "context_loaded"}}
 leaderboard_c.validations.PATCH = {
-	{"leaderboard", type = "table", body = true, validations = {
+	{"leaderboard", type = "table", param_type = "body", validations = {
 		{"name", type = "string"},
 		{"description", type = "string"},
 		{"banner", type = "string"},

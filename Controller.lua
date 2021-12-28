@@ -76,70 +76,70 @@ fill_params = function(validations, object)
 	end
 end
 
-Controller.get_body_params = function(self, method)
+Controller.get_params_list = function(self, params_type, method)
+	local params = {}
+	if params_type == "path" then
+		for key in self.path:gmatch(":([^/^%[]+)") do
+			table.insert(params, key)
+		end
+		return params
+	end
 	local validations = self.validations[method]
 	if not validations then
-		return {}
+		return params
 	end
-	local params = {}
-	for _, validation in ipairs(validations) do
-		if validation.body and not validation.is_file then
-			local value = get_default_value(validation)
-			params[validation[1]] = value
-			if validation.type == "table" then
-				fill_params(validation.validations, value)
+	if params_type == "body" then
+		for _, validation in ipairs(validations) do
+			if validation.param_type == "body" and not validation.is_file then
+				table.insert(params, validation[1])
+			end
+		end
+	elseif params_type == "query" then
+		for _, validation in ipairs(validations) do
+			if validation.param_type == "query" or not validation.param_type then
+				table.insert(params, validation[1])
 			end
 		end
 	end
 	return params
 end
 
-Controller.get_query_params = function(self, method)
-	local validations = self.validations[method]
-	if not validations then
-		return {}
-	end
+Controller.get_params_struct = function(self, params_type, method)
 	local params = {}
-	for _, validation in ipairs(validations) do
-		if not validation.body then
-			params[validation[1]] = get_default_value(validation)
+	if params_type == "path" then
+		local validations = self.validations.path
+		local path_validations = {}
+		for _, validation in ipairs(validations or {}) do
+			if validation.param_type == "path" then
+				local value = get_default_value(validation)
+				path_validations[validation[1]] = value
+			end
 		end
+		for key in self.path:gmatch(":([^/^%[]+)") do
+			params[key] = path_validations[key] or ""
+		end
+		return params
 	end
-	return params
-end
-
-Controller.get_body_validations = function(self, method)
 	local validations = self.validations[method]
 	if not validations then
-		return {}
+		return params
 	end
-	local body_validations = {}
-	for _, param in ipairs(validations) do
-		if param.body then
-			table.insert(body_validations, param)
+	if params_type == "body" then
+		for _, validation in ipairs(validations) do
+			if validation.param_type == "body" and not validation.is_file then
+				local value = get_default_value(validation)
+				params[validation[1]] = value
+				if validation.type == "table" then
+					fill_params(validation.validations, value)
+				end
+			end
 		end
-	end
-	return body_validations
-end
-
-Controller.get_query_validations = function(self, method)
-	local validations = self.validations[method]
-	if not validations then
-		return {}
-	end
-	local query_validations = {}
-	for _, param in ipairs(validations) do
-		if not param.body then
-			table.insert(query_validations, param)
+	elseif params_type == "query" then
+		for _, validation in ipairs(validations) do
+			if validation.param_type == "query" or not validation.param_type then
+				params[validation[1]] = get_default_value(validation)
+			end
 		end
-	end
-	return query_validations
-end
-
-Controller.get_params = function(self)
-	local params = {}
-	for key in self.path:gmatch(":([^/^%[]+)") do
-		table.insert(params, key)
 	end
 	return params
 end
@@ -156,6 +156,27 @@ Controller.get_missing_params = function(self, params)
 		end
 	end
 	return missing_params
+end
+
+Controller.get_validations = function(self, params_type, method, map)
+	if params_type == "path" then
+		method = "path"
+	end
+	local validations = self.validations[method]
+	if not validations then
+		return {}
+	end
+	local found_validations = {}
+	for _, validations in ipairs(validations) do
+		if validations.param_type == params_type or not validations.param_type and params_type == "query" then
+			if not map then
+				table.insert(found_validations, validations)
+			else
+				found_validations[validations[1]] = validations
+			end
+		end
+	end
+	return found_validations
 end
 
 return Controller

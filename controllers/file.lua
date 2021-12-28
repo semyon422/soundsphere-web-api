@@ -24,7 +24,7 @@ end
 file_c.context.PUT = {"file"}
 file_c.policies.PUT = {{"context_loaded"}}
 file_c.validations.PUT = {
-	{"file", is_file = true, body = true},
+	{"file", is_file = true, param_type = "body"},
 }
 file_c.PUT = function(request)
 	local params = request.params

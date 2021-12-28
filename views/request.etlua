@@ -10,16 +10,19 @@ function requestBlock() {return {
 	bodyFiles: {},
 	isCodeMode: false,
 	params: {
+		<% local to_json = require("lapis.util").to_json %>
 		query: {
 			<% for _, method in ipairs(controller.methods) do %>
-				<%= method %>: <%- require("lapis.util").to_json(controller:get_query_params(method)) %>,
-				<%= method %>_have: <%= next(controller:get_query_params(method)) ~= nil %>,
+				<% local query_struct = controller:get_params_struct("query", method) %>
+				<%= method %>: <%- to_json(query_struct) %>,
+				<%= method %>_have: <%= next(query_struct) ~= nil %>,
 			<% end %>
 		},
 		body: {
 			<% for _, method in ipairs(controller.methods) do %>
-				<%= method %>: <%- require("lapis.util").to_json(controller:get_body_params(method)) %>,
-				<%= method %>_have: <%= next(controller:get_body_params(method)) ~= nil %>,
+				<% local body_struct = controller:get_params_struct("body", method) %>
+				<%= method %>: <%- to_json(body_struct) %>,
+				<%= method %>_have: <%= next(body_struct) ~= nil %>,
 			<% end %>
 		},
 	},
@@ -106,7 +109,7 @@ function requestBlock() {return {
 	</div>
 	<% for _, method in ipairs(controller.methods) do %>
 		<div class="field" x-show="method == '<%= method %>' && !isCodeMode">
-			<% render("views.form", {validations = controller:get_query_validations(method), model = "params.query." .. method}) %>
+			<% render("views.form", {validations = controller:get_validations("query", method), model = "params.query." .. method}) %>
 		</div>
 	<% end %>
 	<div class="field" x-show="isCodeMode && params.query[method + '_have'] > 0">
@@ -119,7 +122,7 @@ function requestBlock() {return {
 	</div>
 	<% for _, method in ipairs(controller.methods) do %>
 		<div class="field" x-show="method == '<%= method %>' && method != 'GET' && !isCodeMode">
-			<% render("views.form", {validations = controller:get_body_validations(method), model = "params.body." .. method}) %>
+			<% render("views.form", {validations = controller:get_validations("body", method), model = "params.body." .. method}) %>
 		</div>
 	<% end %>
 	<div class="field" x-show="method != 'GET' && isCodeMode && params.body[method + '_have'] > 0">

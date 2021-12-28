@@ -25,8 +25,8 @@ test_c.validations.POST = {
 	{"query_boolean", type = "boolean"},
 	{"body_exists", exists = true},
 	{"body_number", exists = true, type = "number"},
-	{"body_boolean", type = "boolean", body = true},
-	{"body_table", exists = true, type = "table", body = true, validations = {
+	{"body_boolean", type = "boolean", param_type = "body"},
+	{"body_table", exists = true, type = "table", param_type = "body", validations = {
 		{"body_table_exists", exists = true},
 		{"body_table_table", exists = true, type = "table", validations = {
 			{"body_table_table_exists", exists = true},

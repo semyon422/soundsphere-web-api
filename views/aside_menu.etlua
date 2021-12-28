@@ -29,6 +29,8 @@
 	<% end %>
 	<ul class="menu-list">
 	<% for _, child in ipairs(controller.children) do %>
+		<% local path_validations = child:get_validations("path", nil, true) %>
+		<% local path_params = child:get_params_struct("path") %>
 		<% local missing_params = child:get_missing_params(params) %>
 		<% if #missing_params == 0 then %>
 			<li>
@@ -36,8 +38,8 @@
 			</li>
 		<% else %>
 			<div class="field has-addons" x-data="{
-				<% for _, param in ipairs(child:get_params()) do %>
-					<%- ("%s: '',"):format(param) %>
+				<% for _, param in ipairs(child:get_params_list("path")) do %>
+					<%- ("%s: '%s',"):format(param, path_params[param]) %>
 				<% end %>
 			}">
 				<div class="control">
@@ -46,14 +48,31 @@
 					</a>
 				</div>
 				<% for _, param in ipairs(missing_params) do %>
-					<div class="control is-expanded">
-						<input class="input" type="text" placeholder="<%= param %>" x-model="<%= param %>">
-					</div>
+					<% local validation = path_validations[param] %>
+					<% if not validation or validation.type == "string" and not validation.one_of then %>
+						<div class="control">
+							<input class="input" type="text" placeholder="<%= param %>" x-model="<%= param %>">
+						</div>
+					<% elseif validation.one_of then %>
+						<div class="control">
+							<div class="select">
+								<select x-model="<%= param %>">
+									<% for _, value in ipairs(validation.one_of) do %>
+										<option><%= value %></option>
+									<% end %>
+								</select>
+							</div>
+						</div>
+					<% elseif validation.type == "number" then %>
+						<div class="control">
+							<input class="input" type="number" placeholder="<%= param %>" x-model="<%= param %>">
+						</div>
+					<% end %>
 				<% end %>
 				<div class="control">
 					<%
 						local sub_params = {}
-						for _, param in ipairs(child:get_params()) do
+						for _, param in ipairs(child:get_params_list("path")) do
 							sub_params[param] = params[param] or ("${%s}"):format(param)
 						end
 					%>

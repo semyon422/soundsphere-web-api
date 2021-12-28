@@ -24,8 +24,35 @@ local Inputmodes = enum({
 	["24key"] = 24,
 	["48key"] = 48,
 	["88key"] = 88,
-	["4bt2fx2laserleft2laserright"] = 255,
+	["4bt2fx2ll2lr"] = 255,
 })
+
+Inputmodes.list = {
+	"undefined",
+	"1key",
+	"2key",
+	"3key",
+	"4key",
+	"5key",
+	"6key",
+	"7key",
+	"8key",
+	"9key",
+	"10key",
+	"12key",
+	"14key",
+	"16key",
+	"18key",
+	"20key",
+	"5key1scratch",
+	"7key1scratch",
+	"10key2scratch",
+	"14key2scratch",
+	"24key",
+	"48key",
+	"88key",
+	"4bt2fx2ll2lr",
+}
 
 Inputmodes.entries_to_list = function(self, entries)
 	local inputmodes = {}

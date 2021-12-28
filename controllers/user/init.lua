@@ -15,7 +15,7 @@ end
 user_c.context.PATCH = {"user", "request_session"}
 user_c.policies.PATCH = {{"context_loaded", "authenticated"}}
 user_c.validations.PATCH = {
-	{"user", type = "table", body = true, validations = {
+	{"user", type = "table", param_type = "body", validations = {
 		{"name", type = "string"},
 		{"description", type = "string"},
 	}},

@@ -6,6 +6,9 @@ local leaderboard_inputmode_c = Controller:new()
 
 leaderboard_inputmode_c.path = "/leaderboards/:leaderboard_id[%d]/inputmodes/:inputmode"
 leaderboard_inputmode_c.methods = {"PUT", "DELETE"}
+leaderboard_inputmode_c.validations.path = {
+	{"inputmode", type = "string", one_of = Inputmodes.list, param_type = "path"},
+}
 
 leaderboard_inputmode_c.context.PUT = {"leaderboard_inputmode", "request_session"}
 leaderboard_inputmode_c.policies.PUT = {{"authenticated"}}
@@ -14,7 +17,7 @@ leaderboard_inputmode_c.PUT = function(request)
 
     local leaderboard_inputmode = request.context.leaderboard_inputmode
     if not leaderboard_inputmode then
-        leaderboard_inputmode = leaderboard_inputmodeLeaderboard_inputmodes:create({
+        leaderboard_inputmode = Leaderboard_inputmodes:create({
 			leaderboard_id = params.leaderboard_id,
 			inputmode = Inputmodes:for_db(params.inputmode),
 		})

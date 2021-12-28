@@ -45,7 +45,7 @@ files_c.context.POST = {"request_session"}
 files_c.policies.POST = {{"authenticated"}}
 files_c.validations.POST = {
 	{"storage", exists = true, type = "string", one_of = Storages.list, default = Storages.list[1]},
-	{"file", is_file = true, body = true},
+	{"file", is_file = true, param_type = "body"},
 }
 files_c.POST = function(request)
 	local params = request.params

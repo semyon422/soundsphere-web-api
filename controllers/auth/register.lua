@@ -42,7 +42,7 @@ end
 
 register_c.policies.POST = {{"permit"}}
 register_c.validations.POST = {
-	{"user", exists = true, type = "table", body = true, validations = {
+	{"user", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},
 		{"email", exists = true, type = "string"},
 		{"password", exists = true, type = "string"},

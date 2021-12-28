@@ -57,7 +57,7 @@ end
 
 difftables_c.policies.POST = {{"permit"}}
 difftables_c.validations.POST = {
-	{"difftable", exists = true, type = "table", body = true, validations = {
+	{"difftable", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},
 		{"link", exists = true, type = "string"},
 		{"description", exists = true, type = "string"},

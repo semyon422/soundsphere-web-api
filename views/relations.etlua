@@ -6,7 +6,7 @@
 			<% table.insert(belongs_to_relations, relation) %>
 		<% end %>
 	<% end %>
-	<% if #belongs_to_relations > 0 then%>
+	<% if #belongs_to_relations > 0 then %>
 		<p class="menu-label">
 			belongs_to relations
 		</p>

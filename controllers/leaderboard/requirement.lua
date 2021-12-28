@@ -21,7 +21,7 @@ end
 leaderboard_requirement_c.context.PATCH = {"leaderboard_requirement", "request_session"}
 leaderboard_requirement_c.policies.PATCH = {{"authenticated", "context_loaded"}}
 leaderboard_requirement_c.validations.PATCH = {
-	{"requirement", exists = true, type = "table", body = true, validations = {
+	{"requirement", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string", one_of = Requirements.list},
 		{"rule", exists = true, type = "string", one_of = Rules.list},
 		{"key", exists = true, type = "string"},
