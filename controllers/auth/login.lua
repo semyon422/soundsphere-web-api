@@ -41,7 +41,7 @@ login_c.new_token = function(user, ip)
 		updated_at = time,
 	})
 
-	local payload = Sessions:safe_copy(session)
+	local payload = session:to_name()
 	payload.active = nil
 	payload.ip = nil
 	local token, err = jwt.encode(payload, secret.token_key, "HS256")

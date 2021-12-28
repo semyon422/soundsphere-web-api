@@ -36,7 +36,7 @@ local function get_relations_scores(params, relationtype, mutual)
 	local scores = {}
 	for _, leaderboard_score in ipairs(leaderboard_scores) do
 		local score = leaderboard_score.score
-		score.user = Users:safe_copy(leaderboard_score.user)
+		score.user = leaderboard_score.user:to_name()
 		table.insert(scores, score)
 	end
 	return scores

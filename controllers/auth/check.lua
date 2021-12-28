@@ -1,6 +1,5 @@
 local Sessions = require("models.sessions")
 local Controller = require("Controller")
-local Ip = require("util.ip")
 
 local check_c = Controller:new()
 
@@ -13,11 +12,9 @@ check_c.validations.GET = {
 	{"show_ip", type = "boolean", optional = true}
 }
 check_c.GET = function(request)
-	local session = Sessions:safe_copy(request.context.request_session)
+	local session = request.context.request_session:to_name()
 	if not request.params.show_ip then
 		session.ip = nil
-	else
-		session.ip = Ip:to_name(session.ip)
 	end
 	return 200, {
 		session = session,

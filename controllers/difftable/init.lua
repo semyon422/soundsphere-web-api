@@ -2,6 +2,8 @@ local Difftables = require("models.difftables")
 local Difftable_notecharts = require("models.difftable_notecharts")
 local Inputmodes = require("enums.inputmodes")
 local Controller = require("Controller")
+local add_belongs_to_validations = require("util.add_belongs_to_validations")
+local get_relatives = require("util.get_relatives")
 
 local additions = {
 	communities = require("controllers.difftable.communities"),
@@ -23,6 +25,7 @@ difftable_c.validations.GET = {
 	{"notecharts", type = "boolean", optional = true},
 	{"inputmodes", type = "boolean", optional = true},
 }
+add_belongs_to_validations(Difftables.relations, difftable_c.validations.GET)
 difftable_c.GET = function(request)
 	local params = request.params
 	local difftable = request.context.difftable
@@ -44,6 +47,8 @@ difftable_c.GET = function(request)
 	if #fields > 0 then
 		difftable:update(unpack(fields))
 	end
+
+	get_relatives(difftable, request.params, true)
 
 	return 200, {difftable = difftable}
 end

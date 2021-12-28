@@ -14,12 +14,8 @@ leaderboard_requirement_c.GET = function(request)
 	local params = request.params
 
     local requirement = request.context.leaderboard_requirement
-	requirement.name = Requirements:to_name(requirement.requirement)
-	requirement.rule = Rules:to_name(requirement.rule)
-	requirement.key = Requirements:get_key_enum(requirement.requirement):to_name(requirement.key)
-	requirement.requirement = nil
 
-	return 200, {requirement = requirement}
+	return 200, {requirement = requirement:to_name()}
 end
 
 leaderboard_requirement_c.context.PATCH = {"leaderboard_requirement", "request_session"}
@@ -38,18 +34,15 @@ leaderboard_requirement_c.PATCH = function(request)
     local requirement = request.context.leaderboard_requirement
 	local params_requirement = params.requirement
 
-	requirement.requirement = Requirements:for_db(params_requirement.name)
-	requirement.rule = Rules:for_db(params_requirement.rule)
-	requirement.key = Requirements:get_key_enum(params_requirement.name):for_db(params_requirement.key)
+	requirement.name = params_requirement.name
+	requirement.rule = params_requirement.rule
+	requirement.key = params_requirement.key
 	requirement.value = params_requirement.value
+
+	requirement:for_db()
     requirement:update("requirement", "rule", "key", "value")
 
-	requirement.name = Requirements:to_name(requirement.requirement)
-	requirement.rule = Rules:to_name(requirement.rule)
-	requirement.key = Requirements:get_key_enum(requirement.requirement):to_name(requirement.key)
-	requirement.requirement = nil
-
-	return 200, {requirement = requirement}
+	return 200, {requirement = requirement:to_name()}
 end
 
 leaderboard_requirement_c.context.DELETE = {"leaderboard_requirement", "request_session"}
@@ -58,7 +51,7 @@ leaderboard_requirement_c.DELETE = function(request)
     local requirement = request.context.leaderboard_requirement
     requirement:delete()
 
-	return 200, {requirement = requirement}
+	return 200, {requirement = requirement:to_name()}
 end
 
 return leaderboard_requirement_c

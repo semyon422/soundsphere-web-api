@@ -49,7 +49,7 @@ leaderboards_c.GET = function(request)
 
 	for _, leaderboard in ipairs(leaderboards) do
 		if params.top_user then
-			leaderboard.top_user = Users:safe_copy(leaderboard.top_user)
+			leaderboard.top_user = leaderboard.top_user:to_name()
 		end
 		if params.inputmodes then
 			leaderboard.inputmodes = Inputmodes:entries_to_list(leaderboard.leaderboard_inputmodes)

@@ -1,5 +1,8 @@
 local Model = require("lapis.db.model").Model
 local toboolean = require("util.toboolean")
+local Formats = require("enums.formats")
+local Storages = require("enums.storages")
+local Filehash = require("util.filehash")
 
 local Files = Model:extend(
 	"files",
@@ -13,11 +16,30 @@ local Files = Model:extend(
 	}
 )
 
+local function to_name(self)
+	self.hash = Filehash:to_name(self.hash)
+	self.format = Formats:to_name(self.format)
+	self.storage = Storages:to_name(self.storage)
+	return self
+end
+
+local function for_db(self)
+	self.hash = Filehash:for_db(self.hash)
+	self.format = Formats:for_db(self.format)
+	self.storage = Storages:for_db(self.storage)
+	return self
+end
+
+function Files.to_name(self, row) return to_name(row) end
+function Files.for_db(self, row) return for_db(row) end
+
 local _load = Files.load
 function Files:load(row)
 	row.uploaded = toboolean(row.uploaded)
 	row.loaded = toboolean(row.loaded)
 	row.created_at = tonumber(row.created_at)
+	row.to_name = to_name
+	row.for_db = for_db
 	return _load(self, row)
 end
 

@@ -25,7 +25,7 @@ update_c.POST = function(request)
 	session.updated_at = os.time()
 	session:update("updated_at")
 
-	local payload = Sessions:safe_copy(session)
+	local payload = session:to_name()
 	payload.active = nil
 	payload.ip = nil
 

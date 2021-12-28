@@ -36,7 +36,7 @@ community_leaderboard_users_c.GET = function(request)
 
 	local users = {}
 	for i, community_leaderboard_user in ipairs(community_leaderboard_users) do
-		local user = Users:safe_copy(community_leaderboard_user.user)
+		local user = community_leaderboard_user.user:to_name()
 		user.total_performance = community_leaderboard_user.total_performance
 		user.rank = (page_num - 1) * per_page + i
 		table.insert(users, user)

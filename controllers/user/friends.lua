@@ -19,7 +19,7 @@ user_friends_c.GET = function(request)
 	)
 	preload(user_relations, "relative_user")
 	for _, user_relation in ipairs(user_relations) do
-		local friend = Users:safe_copy(user_relation.relative_user)
+		local friend = user_relation.relative_user:to_name()
 		friend.mutual = user_relation.mutual
 		table.insert(friends, friend)
 	end

@@ -29,9 +29,7 @@ files_c.GET = function(request)
 	local files = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	for _, file in ipairs(files) do
-		file.hash = Filehash:to_name(file.hash)
-		file.format = Formats:to_name(file.format)
-		file.storage = Storages:to_name(file.storage)
+		file:to_name()
 	end
 
 	local count = Files:count()
@@ -72,11 +70,8 @@ files_c.POST = function(request)
 		loaded = false,
 		created_at = os.time(),
 	})
-	file.hash = Filehash:to_name(file.hash)
-	file.format = Formats:to_name(file.format)
-	file.storage = Storages:to_name(file.storage)
 
-	return 200, {file = file}
+	return 200, {file = file:to_name()}
 end
 
 return files_c

@@ -4,6 +4,8 @@ local Leaderboard_difftables = require("models.leaderboard_difftables")
 local Inputmodes = require("enums.inputmodes")
 local array_update = require("util.array_update")
 local Controller = require("Controller")
+local add_belongs_to_validations = require("util.add_belongs_to_validations")
+local get_relatives = require("util.get_relatives")
 
 local additions = {
 	difftables = require("controllers.leaderboard.difftables"),
@@ -83,6 +85,7 @@ leaderboard_c.validations.GET = {
 	{"inputmodes", type = "boolean", optional = true},
 	{"requirements", type = "boolean", optional = true},
 }
+add_belongs_to_validations(Leaderboards.relations, leaderboard_c.validations.GET)
 leaderboard_c.GET = function(request)
 	local params = request.params
 	local leaderboard = request.context.leaderboard
@@ -104,6 +107,8 @@ leaderboard_c.GET = function(request)
 	if #fields > 0 then
 		leaderboard:update(unpack(fields))
 	end
+
+	get_relatives(leaderboard, request.params, true)
 
 	return 200, {leaderboard = leaderboard}
 end

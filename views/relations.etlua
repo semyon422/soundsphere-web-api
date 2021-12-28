@@ -12,13 +12,12 @@
 		</p>
 		<ul class="menu-list">
 			<% for _, relation in ipairs(belongs_to_relations) do %>
-				<% local RelationModel = require("models." .. relation.belongs_to) %>
-				<% local url_params = RelationModel.url_params %>
-				<% if url_params then %>
-					<% local id = data[relation.key] %>
-					<% local object = RelationModel:find(id) %>
+				<% local has_object = data[relation[1]] %>
+				<% local object = has_object or data["get_" .. relation[1]](data) %>
+				<% if not has_object then data[relation[1]] = nil end %>
+				<% if object and object.url_params then %>
 					<li>
-						<a href="<%= url_for(url_params({id = id})):gsub("/api", "/api/html") %>">
+						<a href="<%= url_for(object):gsub("/api", "/api/html") %>">
 							<%= relation[1] %>
 							<b>
 							<% if object.name then %>

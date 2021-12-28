@@ -160,14 +160,14 @@ community_users_c.GET = function(request)
 
 	local users = {}
 	for _, community_user in ipairs(community_users) do
-		local user = Users:safe_copy(community_user.user)
+		local user = community_user.user:to_name()
 		user.community_user = community_user
 		community_user.user = nil
 		community_user.role = Roles:to_name(community_user.role)
 		community_user.message = community_user.message
 		community_user.created_at = community_user.created_at
 		if community_user.sender then
-			community_user.sender = Users:safe_copy(community_user.sender)
+			community_user.sender = community_user.sender:to_name()
 		end
 		table.insert(users, user)
 	end

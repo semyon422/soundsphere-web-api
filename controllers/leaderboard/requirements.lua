@@ -17,18 +17,11 @@ leaderboard_requirements_c.update_requirements = function(leaderboard_id, requir
 	local ids = {}
 	local requirements_by_id = {}
 	for i, requirement in ipairs(requirements) do
+		requirement.leaderboard_id = leaderboard_id
+		Leaderboard_requirements:for_db(requirement)
 		if not requirement.id then
-			requirements[i] = Leaderboard_requirements:create({
-				leaderboard_id = leaderboard_id,
-				requirement = Requirements:for_db(requirement.name),
-				rule = Rules:for_db(requirement.rule),
-				key = Requirements:get_key_enum(requirement.name):for_db(requirement.key),
-				value = requirement.value,
-			})
+			requirements[i] = Leaderboard_requirements:create(requirement)
 		else
-			requirement.requirement = Requirements:for_db(requirement.name)
-			requirement.rule = Rules:for_db(requirement.rule)
-			requirement.key = Requirements:get_key_enum(requirement.name):for_db(requirement.key)
 			table.insert(ids, requirement.id)
 			requirements_by_id[requirement.id] = requirement
 		end
@@ -75,10 +68,7 @@ leaderboard_requirements_c.update_requirements = function(leaderboard_id, requir
 	end
 
 	for _, requirement in ipairs(requirements) do
-		requirement.name = Requirements:to_name(requirement.requirement)
-		requirement.rule = Rules:to_name(requirement.rule)
-		requirement.key = Requirements:get_key_enum(requirement.requirement):to_name(requirement.key)
-		requirement.requirement = nil
+		Leaderboard_requirements:to_name(requirement)
 	end
 	return requirements
 end
@@ -99,10 +89,7 @@ leaderboard_requirements_c.GET = function(request)
 	end
 	
 	for _, requirement in ipairs(leaderboard_requirements) do
-		requirement.name = Requirements:to_name(requirement.requirement)
-		requirement.rule = Rules:to_name(requirement.rule)
-		requirement.key = Requirements:get_key_enum(requirement.requirement):to_name(requirement.key)
-		requirement.requirement = nil
+		Leaderboard_requirements:to_name(requirement)
 	end
 
 	return 200, {
@@ -144,20 +131,11 @@ leaderboard_requirements_c.POST = function(request)
 
 	local params_requirement = params.requirement
 
-	local requirement = Leaderboard_requirements:create({
-		leaderboard_id = params.leaderboard_id,
-		requirement = Requirements:for_db(params_requirement.name),
-		rule = Rules:for_db(params_requirement.rule),
-		key = Requirements:get_key_enum(params_requirement.name):for_db(params_requirement.key),
-		value = params_requirement.value,
-	})
+	requirement.leaderboard_id = params.leaderboard_id
+	Leaderboard_requirements:for_db(requirement)
+	local requirement = Leaderboard_requirements:create(requirement)
 
-	requirement.name = Requirements:to_name(requirement.requirement)
-	requirement.rule = Rules:to_name(requirement.rule)
-	requirement.key = Requirements:get_key_enum(requirement.requirement):to_name(requirement.key)
-	requirement.requirement = nil
-
-	return 200, {requirement = requirement}
+	return 200, {requirement = requirement:to_name()}
 end
 
 return leaderboard_requirements_c

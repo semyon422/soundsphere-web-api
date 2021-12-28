@@ -120,7 +120,7 @@ community_leaderboards_c.GET = function(request)
 			leaderboard.leaderboard_inputmodes = nil
 		end
 		if community_leaderboard.sender then
-			community_leaderboard.sender = Users:safe_copy(community_leaderboard.sender)
+			community_leaderboard.sender = community_leaderboard.sender:to_name()
 		end
 	end
 

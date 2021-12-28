@@ -19,7 +19,7 @@ user_rivals_c.GET = function(request)
 	)
 	preload(user_relations, "relative_user")
 	for _, user_relation in ipairs(user_relations) do
-		local rival = Users:safe_copy(user_relation.relative_user)
+		local rival = user_relation.relative_user:to_name()
 		rival.mutual = user_relation.mutual
 		table.insert(rivals, rival)
 	end

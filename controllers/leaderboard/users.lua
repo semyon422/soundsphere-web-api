@@ -27,7 +27,7 @@ leaderboard_users_c.GET = function(request)
 
 	local users = {}
 	for _, leaderboard_user in ipairs(leaderboard_users) do
-		table.insert(users, Users:safe_copy(leaderboard_user.user))
+		table.insert(users, leaderboard_user.user:to_name())
 	end
 
 	return 200, {

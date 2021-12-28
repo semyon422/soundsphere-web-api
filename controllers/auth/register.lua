@@ -26,13 +26,14 @@ register_c.register = function(name, email, password)
 		return false, "This email is already registered"
 	end
 
+	local time = os.time()
 	user = Users:create({
 		name = name,
 		tag = ("%4d"):format(math.random(1, 9999)),
 		email = email,
 		password = bcrypt.digest(password, 5),
-		latest_activity = 0,
-		created_at = 0,
+		latest_activity = time,
+		created_at = time,
 		description = "",
 	})
 
@@ -53,11 +54,11 @@ register_c.POST = function(request)
 	local err
 	user, err = register_c.register(user.name, user.email, user.password)
 
-	if user then
-		return 200, {user = Users:safe_copy(user)}
+	if not user then
+		return 200, {message = err}
 	end
 
-	return 200, {message = err}
+	return 200, {user = user:to_name()}
 end
 
 return register_c

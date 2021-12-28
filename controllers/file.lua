@@ -12,13 +12,7 @@ file_c.methods = {"GET", "PUT", "DELETE"}
 file_c.context.GET = {"file"}
 file_c.policies.GET = {{"context_loaded"}}
 file_c.GET = function(request)
-	local file = request.context.file
-
-	file.hash = Filehash:to_name(file.hash)
-	file.format = Formats:to_name(file.format)
-	file.storage = Storages:to_name(file.storage)
-
-	return 200, {file = file}
+	return 200, {file = request.context.file:to_name()}
 end
 
 file_c.context.DELETE = {"file"}
@@ -48,11 +42,7 @@ file_c.PUT = function(request)
 	file.size = #params.file.content
 	file:update("hash", "name", "format", "uploaded", "size")
 
-	file.hash = Filehash:to_name(file.hash)
-	file.format = Formats:to_name(file.format)
-	file.storage = Storages:to_name(file.storage)
-
-	return 200, {file = file}
+	return 200, {file = file:to_name()}
 end
 
 return file_c

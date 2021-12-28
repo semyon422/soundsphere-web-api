@@ -29,7 +29,7 @@ users_c.GET = function(request)
 			per_page = per_page,
 			prepare_results = function(users)
 				for i, user in ipairs(users) do
-					users[i] = Users:safe_copy(user)
+					users[i] = user:to_name()
 				end
 				return users
 			end
