@@ -32,9 +32,11 @@ update_c.POST = function(request)
 	session:update("updated_at")
 
 	local payload = Sessions:safe_copy(session)
-	session.active = nil
-	login_c.copy_session(payload, request.session)
+	payload.active = nil
+	payload.ip = nil
+
 	local token, err = jwt.encode(payload, secret.token_key, "HS256")
+	login_c.copy_session(payload, request.session)
 
 	return 200, {
 		token = token,
