@@ -3,21 +3,22 @@
 		api
 	</p>
 	<% if controller.parent then %>
-		<div class="field">
-			<a href="<%= url_for("html." .. controller.parent.name, params) %>"><%= controller.parent.name %></a>
-		</div>
+		<ul class="menu-list">
+			<li><a href="<%= url_for("html." .. controller.parent.name, params) %>"><%= controller.parent.name %></a></li>
+		</ul>
 	<% end %>
 	<% if controller.name ~= "resources" then %>
 		<p class="menu-label">
 			<%= controller.name %>
 		</p>
 	<% end %>
+	<ul class="menu-list">
 	<% for _, child in ipairs(controller.children) do %>
 		<% local missing_params = child:get_missing_params(params) %>
 		<% if #missing_params == 0 then %>
-			<div class="field">
+			<li>
 				<a href="<%= url_for("html." .. child.name, params) %>"><%= child.name %></a>
-			</div>
+			</li>
 		<% else %>
 			<div class="field has-addons" x-data="{
 				<% for _, param in ipairs(child:get_params()) do %>
@@ -48,5 +49,7 @@
 			</div>
 		<% end %>
 	<% end %>
+	</ul>
+	<% render("views.relations") %>
 </aside>
 <% render("views.response_table") %>

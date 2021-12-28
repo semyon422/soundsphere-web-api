@@ -8,6 +8,7 @@ local Scores = Model:extend(
 			{"user", belongs_to = "users", key = "user_id"},
 			{"notechart", belongs_to = "notecharts", key = "notechart_id"},
 			{"modifierset", belongs_to = "modifiersets", key = "modifierset_id"},
+			{"file", belongs_to = "files", key = "file_id"},
 		},
 		url_params = function(self, req, ...)
 			return "score", {score_id = self.id}, ...

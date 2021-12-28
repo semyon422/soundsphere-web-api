@@ -170,8 +170,9 @@ local function get_data_type(response, data_name)
 			return "array_of_objects"
 		end
 		return "array"
+	elseif next(data) then
+		return "object"
 	end
-	return "object"
 end
 
 local function tonumber_params(self, controller)

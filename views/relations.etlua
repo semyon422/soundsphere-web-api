@@ -1,0 +1,36 @@
+<% if data_type == "object" and data.__class.relations then %>
+	<% local relations = data.__class.relations %>
+	<% local belongs_to_relations = {} %>
+	<% for _, relation in ipairs(relations) do %>
+		<% if relation.belongs_to then %>
+			<% table.insert(belongs_to_relations, relation) %>
+		<% end %>
+	<% end %>
+	<% if #belongs_to_relations > 0 then%>
+		<p class="menu-label">
+			belongs_to relations
+		</p>
+		<ul class="menu-list">
+			<% for _, relation in ipairs(belongs_to_relations) do %>
+				<% local RelationModel = require("models." .. relation.belongs_to) %>
+				<% local url_params = RelationModel.url_params %>
+				<% if url_params then %>
+					<% local id = data[relation.key] %>
+					<% local object = RelationModel:find(id) %>
+					<li>
+						<a href="<%= url_for(url_params({id = id})):gsub("/api", "/api/html") %>">
+							<%= relation[1] %>
+							<b>
+							<% if object.name then %>
+								<%= object.name %>
+							<% elseif object.created_at then %>
+								<%= os.date("%c", object.created_at) %>
+							<% end %>
+							</b>
+						</a>
+					</li>
+				<% end %>
+			<% end %>
+		</ul>
+	<% end %>
+<% end %>
