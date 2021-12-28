@@ -45,7 +45,8 @@ local types = {
 	varchar = _types.varchar,
 	enum = _types.enum,
 	text = _types.text,
-	varchar_ip = "VARCHAR(15) NOT NULL",
+	-- ip = "VARCHAR(15) NOT NULL",
+	ip = _types.integer({null = false, unsigned = true, default = 0}),
 }
 
 local options = {
@@ -298,7 +299,7 @@ table_declarations.sessions = {
 	{"id", types.id},
 	{"user_id", types.fk_id},
 	{"active", types.boolean},
-	{"ip", types.varchar_ip},
+	{"ip", types.ip},
 	{"created_at", types.time},
 	{"updated_at", types.time},
 	[[
@@ -310,7 +311,7 @@ table_declarations.sessions = {
 
 table_declarations.quick_logins = {
 	{"id", types.id},
-	{"ip", types.varchar_ip},
+	{"ip", types.ip},
 	{"key", types.md5_hash},
 	{"next_update_time", types.time},
 	{"user_id", types.fk_id},

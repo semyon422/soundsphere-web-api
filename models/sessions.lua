@@ -22,7 +22,7 @@ function Sessions:load(row)
 end
 
 local not_safe_fields = {
-	ip = true,
+	-- ip = true,
 }
 
 Sessions.safe_copy = function(self, session)

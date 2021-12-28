@@ -5,6 +5,7 @@ local bcrypt = require("bcrypt")
 local jwt = require("luajwt")
 local secret = require("secret")
 local Controller = require("Controller")
+local Ip = require("util.ip")
 
 local login_c = Controller:new()
 
@@ -35,13 +36,14 @@ login_c.new_token = function(user, ip)
 	local session = Sessions:create({
 		user_id = user.id,
 		active = true,
-		ip = ip,
+		ip = Ip:for_db(ip),
 		created_at = time,
 		updated_at = time,
 	})
 
 	local payload = Sessions:safe_copy(session)
 	payload.active = nil
+	payload.ip = nil
 	local token, err = jwt.encode(payload, secret.token_key, "HS256")
 
 	return token, payload

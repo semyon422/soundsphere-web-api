@@ -5,6 +5,7 @@ local quick_logins = require("models.quick_logins")
 local login_c = require("controllers.auth.login")
 local secret = require("secret")
 local Controller = require("Controller")
+local Ip = require("util.ip")
 
 local quick_c = Controller:new()
 
@@ -28,12 +29,12 @@ quick_c.GET = function(request)
 	local params = request.params
 	local ip = request.context.ip
 	local time = os.time()
-	local quick_login = quick_logins:find({ip = ip})
+	local quick_login = quick_logins:find({ip = Ip:for_db(ip)})
 
 	if not quick_login then
 		local key = new_key()
 		quick_logins:create({
-			ip = ip,
+			ip = Ip:for_db(ip),
 			key = key,
 			next_update_time = time + 5 * 60,
 		})
@@ -82,7 +83,7 @@ quick_c.POST = function(request)
 	end
 
 	local quick_login = quick_logins:find({
-		ip = request.context.ip,
+		ip = Ip:for_db(request.context.ip),
 		key = key
 	})
 
