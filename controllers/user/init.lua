@@ -12,7 +12,7 @@ user_c.GET = function(request)
 	return 200, {user = Users:safe_copy(request.context.user)}
 end
 
-user_c.context.PATCH = {"user", "session"}
+user_c.context.PATCH = {"user", "request_session"}
 user_c.policies.PATCH = {{"context_loaded", "authenticated"}}
 user_c.validations.PATCH = {
 	{"user", type = "table", body = true, validations = {

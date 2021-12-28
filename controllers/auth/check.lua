@@ -7,13 +7,13 @@ local check_c = Controller:new()
 check_c.path = "/auth/check"
 check_c.methods = {"GET", "POST"}
 
-check_c.context.GET = {"session"}
+check_c.context.GET = {"request_session"}
 check_c.policies.GET = {{"permit"}}
 check_c.validations.GET = {
 	{"show_ip", type = "boolean", optional = true}
 }
 check_c.GET = function(request)
-	local session = Sessions:safe_copy(request.context.session)
+	local session = Sessions:safe_copy(request.context.request_session)
 	if not request.params.show_ip then
 		session.ip = nil
 	else
@@ -25,7 +25,7 @@ check_c.GET = function(request)
 	}
 end
 
-check_c.context.POST = {"session"}
+check_c.context.POST = {"request_session"}
 check_c.policies.POST = {{"authenticated"}}
 check_c.POST = check_c.GET
 

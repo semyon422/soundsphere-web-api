@@ -51,7 +51,7 @@ community_c.GET = function(request)
 	return 200, {community = community}
 end
 
-community_c.context.PATCH = {"community", "session"}
+community_c.context.PATCH = {"community", "request_session"}
 community_c.policies.PATCH = {{"authenticated", "context_loaded"}}
 community_c.PATCH = function(request)
 	local params = request.params

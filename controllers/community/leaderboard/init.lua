@@ -7,7 +7,7 @@ local community_leaderboard_c = Controller:new()
 community_leaderboard_c.path = "/communities/:community_id[%d]/leaderboards/:leaderboard_id[%d]"
 community_leaderboard_c.methods = {"PUT", "DELETE", "PATCH"}
 
-community_leaderboard_c.context.PUT = {"community_leaderboard", "session"}
+community_leaderboard_c.context.PUT = {"community_leaderboard", "request_session"}
 community_leaderboard_c.policies.PUT = {{"authenticated"}}
 community_leaderboard_c.validations.PUT = {
 	{"message", exists = true, type = "string"},

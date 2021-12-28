@@ -9,16 +9,10 @@ local update_c = Controller:new()
 update_c.path = "/auth/update"
 update_c.methods = {"POST"}
 
-update_c.context.POST = {"session"}
+update_c.context.POST = {"request_session"}
 update_c.policies.POST = {{"authenticated"}}
 update_c.POST = function(request)
-	local session = request.context.session
-
-	if not session or not session.active then
-		return 200, {
-			message = "not session or not session.active"
-		}
-	end
+	local session = request.context.request_session
 
 	if session.updated_at - request.session.updated_at ~= 0 then
 		session.active = false

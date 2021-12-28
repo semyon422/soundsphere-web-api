@@ -44,7 +44,7 @@ users_c.GET = function(request)
 	}
 end
 
-users_c.context.POST = {"session"}
+users_c.context.POST = {"request_session"}
 users_c.policies.POST = {{"authenticated"}}
 users_c.validations.POST = register_c.validations.POST
 users_c.POST = register_c.POST

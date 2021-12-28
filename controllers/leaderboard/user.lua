@@ -6,7 +6,7 @@ local leaderboard_user_c = Controller:new()
 leaderboard_user_c.path = "/leaderboards/:leaderboard_id[%d]/users/:user_id[%d]"
 leaderboard_user_c.methods = {"PUT", "DELETE"}
 
-leaderboard_user_c.context.PUT = {"leaderboard_user", "session"}
+leaderboard_user_c.context.PUT = {"leaderboard_user", "request_session"}
 leaderboard_user_c.policies.PUT = {{"authenticated"}}
 leaderboard_user_c.PUT = function(request)
 	local params = request.params
@@ -21,7 +21,7 @@ leaderboard_user_c.PUT = function(request)
 	return 200, {leaderboard_user = leaderboard_user}
 end
 
-leaderboard_user_c.context.DELETE = {"leaderboard_user", "session"}
+leaderboard_user_c.context.DELETE = {"leaderboard_user", "request_session"}
 leaderboard_user_c.policies.DELETE = {{"authenticated", "context_loaded"}}
 leaderboard_user_c.DELETE = function(request)
     local leaderboard_user = request.context.leaderboard_user

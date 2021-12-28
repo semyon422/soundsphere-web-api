@@ -20,7 +20,6 @@ local messages = {}
 messages.not_allowed = "Quick login is not allowed"
 messages.success = "Success"
 
-quick_c.context.GET = {"session"}
 quick_c.policies.GET = {{"permit"}}
 quick_c.validations.GET = {
 	{"key", exists = true, type = "string"},
@@ -70,7 +69,7 @@ quick_c.GET = function(request)
 	return 200, {message = messages.not_allowed}
 end
 
-quick_c.context.POST = {"session"}
+quick_c.context.POST = {"request_session"}
 quick_c.policies.POST = {{"authenticated"}}
 quick_c.validations.POST = {
 	{"key", exists = true, type = "string"},
@@ -91,7 +90,7 @@ quick_c.POST = function(request)
 		return 200, {message = messages.not_allowed}
 	end
 
-	quick_login.user_id = request.context.session.user_id
+	quick_login.user_id = request.session.user_id
 	quick_login.complete = true
 	quick_login:update("user_id", "complete")
 

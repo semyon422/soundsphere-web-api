@@ -6,7 +6,7 @@ local migrations_c = Controller:new()
 migrations_c.path = "/db/migrations"
 migrations_c.methods = {"GET", "POST"}
 
-migrations_c.context.GET = {"session"}
+migrations_c.context.GET = {"request_session"}
 migrations_c.policies.GET = {{"authenticated"}}
 migrations_c.GET = function(request)
 	local names = {}
@@ -20,7 +20,7 @@ migrations_c.GET = function(request)
 	}
 end
 
-migrations_c.context.POST = {"session"}
+migrations_c.context.POST = {"request_session"}
 migrations_c.policies.POST = {{"authenticated"}}
 migrations_c.POST = function(request)
 	migrations.run_migrations(require("migrations"))

@@ -7,7 +7,7 @@ local leaderboard_inputmode_c = Controller:new()
 leaderboard_inputmode_c.path = "/leaderboards/:leaderboard_id[%d]/inputmodes/:inputmode"
 leaderboard_inputmode_c.methods = {"PUT", "DELETE"}
 
-leaderboard_inputmode_c.context.PUT = {"leaderboard_inputmode", "session"}
+leaderboard_inputmode_c.context.PUT = {"leaderboard_inputmode", "request_session"}
 leaderboard_inputmode_c.policies.PUT = {{"authenticated"}}
 leaderboard_inputmode_c.PUT = function(request)
 	local params = request.params
@@ -23,7 +23,7 @@ leaderboard_inputmode_c.PUT = function(request)
 	return 200, {leaderboard_inputmode = leaderboard_inputmode}
 end
 
-leaderboard_inputmode_c.context.DELETE = {"leaderboard_inputmode", "session"}
+leaderboard_inputmode_c.context.DELETE = {"leaderboard_inputmode", "request_session"}
 leaderboard_inputmode_c.policies.DELETE = {{"authenticated"}}
 leaderboard_inputmode_c.DELETE = function(request)
     local leaderboard_inputmode = request.context.leaderboard_inputmode

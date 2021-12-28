@@ -2,10 +2,9 @@ local Sessions = require("models.sessions")
 
 return function(self)
 	if self.context.session then return true end
-	local session_id = self.session.id
+	local session_id = self.params.session_id
 	if session_id then
-		print(session_id)
-		self.context.session = Sessions:find(self.session.id)
+		self.context.session = Sessions:find(session_id)
 	end
 	return self.context.session
 end

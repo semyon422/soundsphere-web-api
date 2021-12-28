@@ -64,7 +64,7 @@ leaderboards_c.GET = function(request)
 	}
 end
 
-leaderboards_c.context.POST = {"session"}
+leaderboards_c.context.POST = {"request_session"}
 leaderboards_c.policies.POST = {{"authenticated"}}
 leaderboards_c.validations.POST = {
 	{"leaderboard", exists = true, type = "table", body = true, validations = {

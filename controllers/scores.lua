@@ -40,7 +40,7 @@ scores_c.GET = function(request)
 	}
 end
 
-scores_c.context.POST = {"session"}
+scores_c.context.POST = {"request_session"}
 scores_c.policies.POST = {{"authenticated"}}
 scores_c.validations.POST = {
 	{"replay_hash", exists = true, type = "string", body = true},

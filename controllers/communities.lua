@@ -84,7 +84,7 @@ communities_c.GET = function(request)
 	}
 end
 
-communities_c.context.POST = {"session"}
+communities_c.context.POST = {"request_session"}
 communities_c.policies.POST = {{"authenticated"}}
 communities_c.validations.POST = {
 	{"community", exists = true, type = "table", body = true, validations = {

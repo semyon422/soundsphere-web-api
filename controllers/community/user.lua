@@ -8,7 +8,7 @@ local community_user_c = Controller:new()
 community_user_c.path = "/communities/:community_id[%d]/users/:user_id[%d]"
 community_user_c.methods = {"PUT", "DELETE", "GET", "PATCH"}
 
-community_user_c.context.PUT = {"community_user", "session"}
+community_user_c.context.PUT = {"community_user", "request_session"}
 community_user_c.policies.PUT = {{"authenticated"}}
 community_user_c.validations.PUT = {
 	{"invitation", type = "boolean", optional = true},
@@ -43,7 +43,7 @@ community_user_c.PUT = function(request)
 	return 200, {}
 end
 
-community_user_c.context.DELETE = {"community_user", "session"}
+community_user_c.context.DELETE = {"community_user", "request_session"}
 community_user_c.policies.DELETE = {{"authenticated", "context_loaded"}}
 community_user_c.DELETE = function(request)
 	local community_user = request.context.community_user
@@ -61,7 +61,7 @@ community_user_c.GET = function(request)
 	return 200, {community_user = community_user}
 end
 
-community_user_c.context.PATCH = {"community_user", "session"}
+community_user_c.context.PATCH = {"community_user", "request_session"}
 community_user_c.policies.PATCH = {{"authenticated", "context_loaded"}}
 community_user_c.validations.PATCH = {
 	{"role", exists = true, type = "string", one_of = Roles.list},

@@ -112,7 +112,7 @@ leaderboard_requirements_c.GET = function(request)
 	}
 end
 
-leaderboard_requirements_c.context.PATCH = {"session"}
+leaderboard_requirements_c.context.PATCH = {"request_session"}
 leaderboard_requirements_c.policies.PATCH = {{"authenticated"}}
 leaderboard_requirements_c.validations.PATCH = {
 	{"requirements", exists = true, body = true, optional = true, type = "table"},
@@ -129,7 +129,7 @@ leaderboard_requirements_c.PATCH = function(request)
 	}
 end
 
-leaderboard_requirements_c.context.POST = {"session"}
+leaderboard_requirements_c.context.POST = {"request_session"}
 leaderboard_requirements_c.policies.POST = {{"authenticated"}}
 leaderboard_requirements_c.validations.POST = {
 	{"requirement", exists = true, type = "table", body = true, validations = {
