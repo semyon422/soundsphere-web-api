@@ -29,7 +29,10 @@ leaderboard_requirements_c.update_requirements = function(leaderboard_id, requir
 
 	local db = Leaderboard_requirements.db
 	local leaderboard_requirements = #ids > 0 and Leaderboard_requirements:select(
-		"where " .. db.encode_clause({id = db.list(ids)})
+		"where " .. db.encode_clause({
+			id = db.list(ids),
+			leaderboard_id = leaderboard_id,
+		})
 	) or {}
 	for _, requirement in ipairs(leaderboard_requirements) do
 		local requirement_by_id = requirements_by_id[requirement.id]
@@ -132,6 +135,7 @@ leaderboard_requirements_c.POST = function(request)
 	local params_requirement = params.requirement
 
 	requirement.leaderboard_id = params.leaderboard_id
+	requirement.id = nil
 	Leaderboard_requirements:for_db(requirement)
 	local requirement = Leaderboard_requirements:create(requirement)
 
