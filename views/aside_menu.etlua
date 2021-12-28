@@ -50,12 +50,12 @@
 				<% for _, param in ipairs(missing_params) do %>
 					<% local validation = path_validations[param] %>
 					<% if not validation or validation.type == "string" and not validation.one_of then %>
-						<div class="control">
+						<div class="control is-expanded">
 							<input class="input" type="text" placeholder="<%= param %>" x-model="<%= param %>">
 						</div>
 					<% elseif validation.one_of then %>
-						<div class="control">
-							<div class="select">
+						<div class="control is-expanded">
+							<div class="select is-fullwidth">
 								<select x-model="<%= param %>">
 									<% for _, value in ipairs(validation.one_of) do %>
 										<option><%= value %></option>
@@ -64,7 +64,7 @@
 							</div>
 						</div>
 					<% elseif validation.type == "number" then %>
-						<div class="control">
+						<div class="control is-expanded">
 							<input class="input" type="number" placeholder="<%= param %>" x-model="<%= param %>">
 						</div>
 					<% end %>
