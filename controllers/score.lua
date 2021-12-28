@@ -15,10 +15,9 @@ score_c.validations.GET = add_belongs_to_validations(Scores.relations)
 score_c.GET = function(request)
 	local score = request.context.score
 
-	score.inputmode = Inputmodes:to_name(score.inputmode)
 	get_relatives(score, request.params, true)
 
-	return 200, {score = score}
+	return 200, {score = score:to_name()}
 end
 
 score_c.policies.DELETE = {{"permit"}}

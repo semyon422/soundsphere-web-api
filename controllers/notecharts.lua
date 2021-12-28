@@ -25,6 +25,10 @@ notecharts_c.GET = function(request)
 	)
 	local notecharts = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
+	for _, notechart in ipairs(notecharts) do
+		notechart:to_name()
+	end
+
 	local count = Notecharts:count()
 
 	return 200, {

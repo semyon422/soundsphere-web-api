@@ -1,4 +1,5 @@
 local Model = require("lapis.db.model").Model
+local Inputmodes = require("enums.inputmodes")
 
 local Notecharts = Model:extend(
 	"notecharts",
@@ -12,9 +13,24 @@ local Notecharts = Model:extend(
 	}
 )
 
+local function to_name(self)
+	self.inputmode = Inputmodes:to_name(self.inputmode)
+	return self
+end
+
+local function for_db(self)
+	self.inputmode = Inputmodes:for_db(self.inputmode)
+	return self
+end
+
+function Notecharts.to_name(self, row) return to_name(row) end
+function Notecharts.for_db(self, row) return for_db(row) end
+
 local _load = Notecharts.load
 function Notecharts:load(row)
 	row.created_at = tonumber(row.created_at)
+	row.to_name = to_name
+	row.for_db = for_db
 	return _load(self, row)
 end
 

@@ -32,7 +32,7 @@ scores_c.GET = function(request)
 	local scores = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	for _, score in ipairs(scores) do
-		score.inputmode = Inputmodes:to_name(score.inputmode)
+		score:to_name()
 	end
 
 	local count = Scores:count()
@@ -126,7 +126,7 @@ scores_c.POST = function(request)
 		performance = 0,
 	})
 
-	return 200, {}
+	return 200, {score = score:to_name()}
 end
 
 return scores_c
