@@ -4,12 +4,27 @@
 	</p>
 	<% if controller.parent then %>
 		<ul class="menu-list">
-			<li><a href="<%= url_for("html." .. controller.parent.name, params) %>"><%= controller.parent.name %></a></li>
+			<li>
+				<a href="<%= url_for("html." .. controller.parent.name, params) %>">
+					<%= controller.parent.name %>
+				</a>
+			</li>
 		</ul>
 	<% end %>
 	<% if controller.name ~= "resources" then %>
 		<p class="menu-label">
 			<%= controller.name %>
+			<% if data_type == "object" then %>
+				<a href="<%= url_for(data):gsub("/api", "/api/html") %>">
+					<b>
+					<% if data.name then %>
+						<%= data.name %>
+					<% elseif data.created_at then %>
+						<%= os.date("%c", data.created_at) %>
+					<% end %>
+					</b>
+				</a>
+			<% end %>
 		</p>
 	<% end %>
 	<ul class="menu-list">
