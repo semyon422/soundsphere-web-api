@@ -25,7 +25,7 @@ difftable_notecharts_c.GET = function(request)
 
 	local notecharts = {}
 	for _, difftable_notechart in ipairs(difftable_notecharts) do
-		table.insert(notecharts, difftable_notechart.notechart)
+		table.insert(notecharts, difftable_notechart.notechart:to_name())
 	end
 
 	return 200, {
