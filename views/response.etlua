@@ -1,10 +1,24 @@
-<div class="field has-addons">
-	<div class="control is-expanded">
-		<input id="response-status" class="input is-static" type="text" readonly value="">
+<div x-data="{isHeadersMode: false}" x-cloak>
+	<div class="field has-addons">
+		<div class="control is-expanded">
+			<input id="response-status" class="input is-static" type="text" readonly value="">
+		</div>
+		<div class="tabs">
+			<ul @click="updateTextarea">
+				<li :class="!isHeadersMode ? 'is-active' : ''" @click="isHeadersMode = false"><a>body</a></li>
+				<li :class="isHeadersMode ? 'is-active' : ''" @click="isHeadersMode = true"><a>headers</a></li>
+			</ul>
+		</div>
 	</div>
-</div>
-<div class="field">
-	<div class="control">
-		<pre id="response-body" class="code"></pre>
+
+	<div class="field" x-show="!isHeadersMode">
+		<div class="control">
+			<pre id="response-body" class="code"></pre>
+		</div>
+	</div>
+	<div class="field" x-show="isHeadersMode">
+		<div class="control">
+			<pre id="response-headers" class="code"></pre>
+		</div>
 	</div>
 </div>

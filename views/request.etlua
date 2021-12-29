@@ -49,6 +49,12 @@ function requestBlock() {return {
 		this.response = response_json
 		this.responseStatus = response.status
 		this.responseStatusText = response.statusText
+
+		var responseHeaders = document.getElementById('response-headers')
+		responseHeaders.innerHTML = ''
+		for (var pair of response.headers.entries()) {
+			responseHeaders.innerHTML += pair[0] + ': ' + pair[1] + '\n'
+		}
 		this.updateEffect()
 	},
 	updateEffect() {
