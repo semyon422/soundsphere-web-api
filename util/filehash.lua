@@ -1,13 +1,13 @@
-local md5 = require("md5")
+local digest = require("openssl.digest")
 
 local Filehash = {}
 
 function Filehash.sum_for_db(self, s)
-	return md5.sum(s)
+	return digest.new("md5"):final(s)
 end
 
 function Filehash.sum_to_name(self, s)
-	return md5.sumhexa(s)
+	return self:to_name(self:sum_for_db(s))
 end
 
 function Filehash.for_db(self, hex)

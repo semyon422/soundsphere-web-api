@@ -1,5 +1,5 @@
-local md5 = require("md5")
 local hmac = require("openssl.hmac")
+local digest = require("openssl.digest")
 local users = require("models.users")
 local quick_logins = require("models.quick_logins")
 local login_c = require("controllers.auth.login")
@@ -12,8 +12,14 @@ local quick_c = Controller:new()
 quick_c.path = "/auth/quick"
 quick_c.methods = {"GET", "POST"}
 
+local function hex(str)
+	return (str:gsub(".", function(c)
+		return string.format("%02x", string.byte(c))
+	end))
+end
+
 local new_key = function()
-	return md5.sumhexa(hmac.new(secret.token_key, "sha256"):final(ngx.time() + ngx.worker.pid()))
+	return hex(digest.new("md5"):final(hmac.new(secret.token_key, "sha256"):final(ngx.time() + ngx.worker.pid())))
 end
 
 local messages = {}
