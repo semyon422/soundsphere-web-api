@@ -15,7 +15,7 @@ leaderboard_requirement_c.GET = function(request)
 
     local requirement = request.context.leaderboard_requirement
 
-	return 200, {requirement = requirement:to_name()}
+	return {json = {requirement = requirement:to_name()}}
 end
 
 leaderboard_requirement_c.context.PATCH = {"leaderboard_requirement", "request_session"}
@@ -42,7 +42,7 @@ leaderboard_requirement_c.PATCH = function(request)
 	requirement:for_db()
     requirement:update("requirement", "rule", "key", "value")
 
-	return 200, {requirement = requirement:to_name()}
+	return {json = {requirement = requirement:to_name()}}
 end
 
 leaderboard_requirement_c.context.DELETE = {"leaderboard_requirement", "request_session"}
@@ -51,7 +51,7 @@ leaderboard_requirement_c.DELETE = function(request)
     local requirement = request.context.leaderboard_requirement
     requirement:delete()
 
-	return 200, {requirement = requirement:to_name()}
+	return {status = 204}
 end
 
 return leaderboard_requirement_c

@@ -50,17 +50,17 @@ difftable_c.GET = function(request)
 
 	get_relatives(difftable, request.params, true)
 
-	return 200, {difftable = difftable}
+	return {json = {difftable = difftable}}
 end
 
 difftable_c.policies.PATCH = {{"permit"}}
 difftable_c.PATCH = function(request)
-	return 200, {}
+	return {}
 end
 
 difftable_c.policies.DELETE = {{"permit"}}
 difftable_c.DELETE = function(request)
-	return 200, {}
+	return {status = 204}
 end
 
 return difftable_c

@@ -32,13 +32,13 @@ files_c.GET = function(request)
 		file:to_name()
 	end
 
-	local count = Files:count()
+	local count = tonumber(Files:count())
 
-	return 200, {
+	return {json = {
 		total = count,
 		filtered = count,
-		files = files
-	}
+		files = files,
+	}}
 end
 
 files_c.context.POST = {"request_session"}
@@ -56,8 +56,10 @@ files_c.POST = function(request)
 		hash = hash
 	})
 	if file then
-		file.hash = Filehash:to_name(file.hash)
-		return 200, {file = file}
+		return {
+			status = 200,
+			redirect_to = request:url_for(file),
+		}
 	end
 
 	file = Files:create({
@@ -71,7 +73,7 @@ files_c.POST = function(request)
 		created_at = os.time(),
 	})
 
-	return 200, {file = file:to_name()}
+	return {status = 201, redirect_to = request:url_for(file)}
 end
 
 return files_c

@@ -42,9 +42,7 @@ community_leaderboard_users_c.GET = function(request)
 		table.insert(users, user)
 	end
 
-	return 200, {
-		users = users
-	}
+	return {json = {users = users}}
 end
 
 return community_leaderboard_users_c

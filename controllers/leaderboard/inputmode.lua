@@ -23,7 +23,7 @@ leaderboard_inputmode_c.PUT = function(request)
 		})
     end
 
-	return 200, {leaderboard_inputmode = leaderboard_inputmode}
+	return {json = {leaderboard_inputmode = leaderboard_inputmode}}
 end
 
 leaderboard_inputmode_c.context.DELETE = {"leaderboard_inputmode", "request_session"}
@@ -32,7 +32,7 @@ leaderboard_inputmode_c.DELETE = function(request)
     local leaderboard_inputmode = request.context.leaderboard_inputmode
     leaderboard_inputmode:delete()
 
-	return 200, {leaderboard_inputmode = leaderboard_inputmode}
+	return {status = 204}
 end
 
 return leaderboard_inputmode_c

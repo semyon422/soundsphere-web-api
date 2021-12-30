@@ -14,10 +14,10 @@ difftable_leaderboards_c.GET = function(request)
 	local leaderboard_difftables = Leaderboard_difftables:find_all({params.difftable_id}, "difftable_id")
 
 	if params.no_data then
-		return 200, {
+		return {json = {
 			total = #leaderboard_difftables,
 			filtered = #leaderboard_difftables,
-		}
+		}}
 	end
 
 	preload(leaderboard_difftables, "leaderboard")
@@ -27,11 +27,11 @@ difftable_leaderboards_c.GET = function(request)
 		table.insert(leaderboards, leaderboard_difftable.leaderboard)
 	end
 
-	return 200, {
+	return {json = {
 		total = #leaderboards,
 		filtered = #leaderboards,
 		leaderboards = leaderboards
-	}
+	}}
 end
 
 return difftable_leaderboards_c

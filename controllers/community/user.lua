@@ -40,7 +40,7 @@ community_user_c.PUT = function(request)
 		end
 	end
 
-	return 200, {}
+	return {}
 end
 
 community_user_c.context.DELETE = {"community_user", "request_session"}
@@ -49,7 +49,7 @@ community_user_c.DELETE = function(request)
 	local community_user = request.context.community_user
     community_user:delete()
 
-	return 200, {community_user = community_user}
+	return {status = 204}
 end
 
 community_user_c.context.GET = {"community_user"}
@@ -58,7 +58,7 @@ community_user_c.GET = function(request)
 	local community_user = request.context.community_user
 	community_user.role = Roles:to_name(community_user.role)
 
-	return 200, {community_user = community_user}
+	return {json = {community_user = community_user}}
 end
 
 community_user_c.context.PATCH = {"community_user", "request_session"}
@@ -72,7 +72,7 @@ community_user_c.PATCH = function(request)
 	Community_users:set_role(community_user, params.role, true)
 	community_user.role = Roles:to_name(community_user.role)
 
-	return 200, {community_user = community_user}
+	return {json = {community_user = community_user}}
 end
 
 return community_user_c

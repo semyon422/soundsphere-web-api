@@ -19,7 +19,7 @@ community_leaderboard_c.PUT = function(request)
 	if community_leaderboard then
 		community_leaderboard.accepted = true
 		community_leaderboard:update("accepted")
-		return 200, {}
+		return {}
 	end
 
 	local owner_community_leaderboard = Community_leaderboards:find({
@@ -37,7 +37,7 @@ community_leaderboard_c.PUT = function(request)
 		message = params.message or "",
 	})
 
-	return 200, {community_leaderboard = community_leaderboard}
+	return {json = {community_leaderboard = community_leaderboard}}
 end
 
 community_leaderboard_c.context.DELETE = {"community_leaderboard"}
@@ -46,7 +46,7 @@ community_leaderboard_c.DELETE = function(request)
 	local community_leaderboard = request.context.community_leaderboard
     community_leaderboard:delete()
 
-	return 200, {community_leaderboard = community_leaderboard}
+	return {status = 204}
 end
 
 community_leaderboard_c.context.PATCH = {"community_leaderboard"}
@@ -57,7 +57,7 @@ community_leaderboard_c.PATCH = function(request)
 	community_leaderboard.accepted = true
 	community_leaderboard:update("accepted")
 
-	return 200, {community_leaderboard = community_leaderboard}
+	return {json = {community_leaderboard = community_leaderboard}}
 end
 
 return community_leaderboard_c

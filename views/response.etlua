@@ -3,12 +3,8 @@
 		<div class="control is-expanded">
 			<input id="response-status" class="input is-static" type="text" readonly value="">
 		</div>
-		<div class="tabs">
-			<ul @click="updateTextarea">
-				<li :class="!isHeadersMode ? 'is-active' : ''" @click="isHeadersMode = false"><a>body</a></li>
-				<li :class="isHeadersMode ? 'is-active' : ''" @click="isHeadersMode = true"><a>headers</a></li>
-			</ul>
-		</div>
+		<button class="button is-light" x-show="isHeadersMode" :class="!isHeadersMode ? 'is-active' : ''" @click="isHeadersMode = false">headers</button>
+		<button class="button is-light" x-show="!isHeadersMode" :class="isHeadersMode ? 'is-active' : ''" @click="isHeadersMode = true">body</button>
 	</div>
 
 	<div class="field" x-show="!isHeadersMode">
@@ -20,5 +16,8 @@
 		<div class="control">
 			<pre id="response-headers" class="code"></pre>
 		</div>
+	</div>
+	<div class="field">
+		<a id="response-location"></a>
 	</div>
 </div>

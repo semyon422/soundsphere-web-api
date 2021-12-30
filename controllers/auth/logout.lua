@@ -17,7 +17,7 @@ logout_c.POST = function(request)
 		request.session[key] = nil
 	end
 
-	return 200, {}
+	return {}
 end
 
 return logout_c

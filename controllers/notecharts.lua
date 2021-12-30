@@ -31,11 +31,11 @@ notecharts_c.GET = function(request)
 
 	local count = Notecharts:count()
 
-	return 200, {
+	return {json = {
 		total = count,
 		filtered = count,
-		notecharts = notecharts
-	}
+		notecharts = notecharts,
+	}}
 end
 
 return notecharts_c

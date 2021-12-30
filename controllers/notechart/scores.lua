@@ -61,11 +61,11 @@ notechart_scores_c.GET = function(request)
 
 	local count = #scores
 
-	return 200, {
+	return {json = {
 		total = count,
 		filtered = count,
 		scores = scores
-	}
+	}}
 end
 
 return notechart_scores_c

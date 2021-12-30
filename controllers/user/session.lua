@@ -16,7 +16,7 @@ user_session_c.DELETE = function(request)
 	session.active = false
 	session:update("active")
 
-	return 200, {}
+	return {status = 204}
 end
 
 return user_session_c

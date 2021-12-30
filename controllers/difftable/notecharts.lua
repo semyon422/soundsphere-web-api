@@ -15,10 +15,10 @@ difftable_notecharts_c.GET = function(request)
 	local difftable_notecharts = Difftable_notecharts:find_all({params.difftable_id}, "difftable_id")
 
 	if params.no_data then
-		return 200, {
+		return {json = {
 			total = #difftable_notecharts,
 			filtered = #difftable_notecharts,
-		}
+		}}
 	end
 
 	preload(difftable_notecharts, "notechart")
@@ -28,11 +28,11 @@ difftable_notecharts_c.GET = function(request)
 		table.insert(notecharts, difftable_notechart.notechart:to_name())
 	end
 
-	return 200, {
+	return {json = {
 		total = #notecharts,
 		filtered = #notecharts,
 		notecharts = notecharts,
-	}
+	}}
 end
 
 return difftable_notecharts_c

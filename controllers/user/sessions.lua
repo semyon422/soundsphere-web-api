@@ -35,7 +35,7 @@ user_sessions_c.GET = function(request)
 		table.insert(safe_sessions, safe_session)
 	end
 
-	return 200, {sessions = safe_sessions}
+	return {json = {sessions = safe_sessions}}
 end
 
 return user_sessions_c

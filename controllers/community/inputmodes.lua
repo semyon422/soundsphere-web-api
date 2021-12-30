@@ -47,10 +47,10 @@ community_inputmodes_c.GET = function(request)
 	end
 
 	if params.no_data then
-		return 200, {
+		return {json = {
 			total = #all_inputmodes,
 			filtered = #all_inputmodes,
-		}
+		}}
 	end
 
 	local inputmodes = {}
@@ -58,11 +58,11 @@ community_inputmodes_c.GET = function(request)
 		table.insert(inputmodes, Inputmodes:to_name(inputmode))
 	end
 
-	return 200, {
+	return {json = {
 		total = #inputmodes,
 		filtered = #inputmodes,
-		inputmodes = inputmodes
-	}
+		inputmodes = inputmodes,
+	}}
 end
 
 return community_inputmodes_c

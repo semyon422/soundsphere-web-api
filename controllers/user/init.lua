@@ -9,7 +9,7 @@ user_c.methods = {"GET", "PATCH", "DELETE"}
 user_c.context.GET = {"user"}
 user_c.policies.GET = {{"context_loaded"}}
 user_c.GET = function(request)
-	return 200, {user = request.context.user:to_name()}
+	return {json = {user = request.context.user:to_name()}}
 end
 
 user_c.context.PATCH = {"user", "request_session"}
@@ -29,12 +29,12 @@ user_c.PATCH = function(request)
 
 	user:update("name", "description")
 
-	return 200, {user = user:to_name()}
+	return {json = {user = user:to_name()}}
 end
 
 user_c.policies.DELETE = {{"permit"}}
 user_c.DELETE = function(request)
-	return 200, {}
+	return {status = 204}
 end
 
 return user_c

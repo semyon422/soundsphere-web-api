@@ -43,11 +43,11 @@ user_communities_c.GET = function(request)
 
 	local count = Community_users:count()
 
-	return 200, {
+	return {json = {
 		total = count,
 		filtered = count,
 		communities = communities
-	}
+	}}
 end
 
 return user_communities_c

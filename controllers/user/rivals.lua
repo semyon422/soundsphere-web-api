@@ -26,11 +26,11 @@ user_rivals_c.GET = function(request)
 
 	local count = User_relations:count()
 
-	return 200, {
+	return {json = {
 		total = count,
 		filtered = count,
 		rivals = rivals
-	}
+	}}
 end
 
 return user_rivals_c

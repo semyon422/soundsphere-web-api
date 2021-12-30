@@ -150,6 +150,9 @@ local function includes(list, item)
 end
 
 local function get_data_name(response)
+	if not response then
+		return
+	end
 	local names = {}
 	for key, value in pairs(response) do
 		if type(value) == "table" then
@@ -161,6 +164,9 @@ local function get_data_name(response)
 end
 
 local function get_data_type(response, data_name)
+	if not response then
+		return
+	end
 	local data = response[data_name]
 	if not data then
 		return
@@ -190,7 +196,7 @@ local function route_api(controller, html)
 	json_respond_to_name(name_prefix .. controller.name, prefix .. controller.path, function(self)
 		local method = self.req.method
 		tonumber_params(self, controller)
-		local errors = {}
+		local errors
 		local validations = controller.validations[method]
 		if validations then
 			errors = recursive_validate(self.params, validations)
@@ -200,50 +206,36 @@ local function route_api(controller, html)
 		if self.params.methods then
 			methods = get_permited_methods(self, controller)
 		end
-		local code, response = 403, {}
+		local response = {status = 403}
 		if not controller[method] then
-			code, response = 405, {}
-		elseif #errors > 0 then
-			code, response = 400, {errors = errors}
-		elseif controller:check_access(self, method) or methods and includes(methods, method) then
-			code, response = controller[method](self)
-			response.total = tonumber(response.total)
-			response.filtered = tonumber(response.filtered)
+			response.status = 405
+		elseif errors and #errors > 0 then
+			response.status = 400
+			response.errors = errors
+		elseif methods and includes(methods, method) or controller:check_access(self, method) then
+			response = controller[method](self)
+			response.status = response.status or 200
 		end
 		response.methods = methods
 		if self.params.params then
 			response.params = self.params
 		end
 		if not html then
-			return {json = response, status = code}
+			return response
 		end
-		self.data_name = get_data_name(response)
-		self.data_type = get_data_type(response, self.data_name)
-		self.data = response[self.data_name]
-		self.code = code
+		local json_response = response.json
+		self.data_name = get_data_name(json_response)
+		self.data_type = get_data_type(json_response, self.data_name)
+		self.data = json_response and json_response[self.data_name] or {}
 		self.response = response
 		self.controller = controller
-		self.methods = get_permited_methods(self, controller)
-		return {render = "index", status = code}
+		self.methods = methods or get_permited_methods(self, controller)
+		return {render = "index", status = response.status}
 	end)
 	json_respond_to("/ac" .. controller.path, function(self)
 		tonumber_params(self, controller)
 		local context = get_context(self, controller, true)
 		return {json = {methods = get_permited_methods(self, controller)}, status = 200}
-	end)
-end
-
-local function route_api_debug(controller)
-	return json_respond_to("/api_debug" .. controller.path, function(self)
-		tonumber_params(self, controller)
-		local context = get_context(self, controller)
-		local method = self.req.method
-		if controller[method] then
-			local code, response = controller[method](self)
-			return {json = response, status = code}
-		else
-			return {json = {}, status = 200}
-		end
 	end)
 end
 
@@ -313,17 +305,16 @@ for _, name in ipairs(endpoints) do
 		names[path] = names[path] and error(names[path] .. " " .. name .. " " .. path) or name
 		route_api(controller)
 		route_api(controller, true)
-		route_api_debug(controller)
 		route_datatables(controller, name)
 	end
 end
 
 function app:handle_error(err, trace)
 	if secret.custom_error_page then
-		return {json = {
+		return {status = 500, json = {
 			err = err,
 			trace = trace,
-		}, status = 500}
+		}}
 	else
 		return lapis.Application.handle_error(self, err, trace)
 	end

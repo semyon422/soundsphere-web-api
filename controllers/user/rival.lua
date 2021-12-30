@@ -12,7 +12,7 @@ user_rival_c.PUT = function(request)
 	local params = request.params
 	User_relations:relate("rival", params.user_id, params.rival_id)
 
-	return 200, {}
+	return {}
 end
 
 user_rival_c.context.DELETE = {"request_session"}
@@ -21,7 +21,7 @@ user_rival_c.DELETE = function(request)
 	local params = request.params
 	User_relations:unrelate("rival", params.user_id, params.rival_id)
 
-	return 200, {}
+	return {status = 204}
 end
 
 return user_rival_c

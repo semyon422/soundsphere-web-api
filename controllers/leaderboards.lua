@@ -57,11 +57,11 @@ leaderboards_c.GET = function(request)
 		end
 	end
 
-	return 200, {
-		total = Leaderboards:count(),
-		filtered = Leaderboards:count(clause),
-		leaderboards = leaderboards
-	}
+	return {json = {
+		total = tonumber(Leaderboards:count()),
+		filtered = tonumber(Leaderboards:count(clause)),
+		leaderboards = leaderboards,
+	}}
 end
 
 leaderboards_c.context.POST = {"request_session"}
@@ -95,7 +95,7 @@ leaderboards_c.POST = function(request)
 	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.difftables)
 	leaderboard_c.update_requirements(leaderboard.id, params.leaderboard.requirements)
 
-	return 200, {leaderboard = leaderboard}
+	return {status = 201, redirect_to = request:url_for(leaderboard)}
 end
 
 return leaderboards_c

@@ -17,12 +17,12 @@ score_c.GET = function(request)
 
 	get_relatives(score, request.params, true)
 
-	return 200, {score = score:to_name()}
+	return {json = {score = score:to_name()}}
 end
 
 score_c.policies.DELETE = {{"permit"}}
 score_c.DELETE = function(request)
-	return 200, {}
+	return {status = 204}
 end
 
 return score_c

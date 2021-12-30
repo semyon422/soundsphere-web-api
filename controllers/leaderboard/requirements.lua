@@ -85,21 +85,21 @@ leaderboard_requirements_c.GET = function(request)
 	local leaderboard_requirements = Leaderboard_requirements:find_all({params.leaderboard_id}, "leaderboard_id")
 
 	if params.no_data then
-		return 200, {
+		return {json = {
 			total = #leaderboard_requirements,
 			filtered = #leaderboard_requirements,
-		}
+		}}
 	end
 	
 	for _, requirement in ipairs(leaderboard_requirements) do
 		Leaderboard_requirements:to_name(requirement)
 	end
 
-	return 200, {
+	return {json = {
 		total = #leaderboard_requirements,
 		filtered = #leaderboard_requirements,
 		requirements = leaderboard_requirements
-	}
+	}}
 end
 
 leaderboard_requirements_c.context.PATCH = {"request_session"}
@@ -112,11 +112,11 @@ leaderboard_requirements_c.PATCH = function(request)
 
 	local requirements = leaderboard_requirements_c.update_requirements(params.leaderboard_id, params.requirements)
 
-	return 200, {
+	return {json = {
 		total = #requirements,
 		filtered = #requirements,
 		requirements = requirements,
-	}
+	}}
 end
 
 leaderboard_requirements_c.context.POST = {"request_session"}
@@ -139,7 +139,7 @@ leaderboard_requirements_c.POST = function(request)
 	Leaderboard_requirements:for_db(requirement)
 	local requirement = Leaderboard_requirements:create(requirement)
 
-	return 200, {requirement = requirement:to_name()}
+	return {status = 201, redirect_to = request:url_for(requirement)}
 end
 
 return leaderboard_requirements_c

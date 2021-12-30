@@ -35,12 +35,14 @@ scores_c.GET = function(request)
 		score:to_name()
 	end
 
-	local count = Scores:count()
+	local count = tonumber(Scores:count())
 
-	return 200, {
-		total = count,
-		filtered = count,
-		scores = scores
+	return {
+		json = {
+			total = count,
+			filtered = count,
+			scores = scores,
+		}
 	}
 end
 
@@ -98,7 +100,8 @@ scores_c.POST = function(request)
 		hash = Filehash:for_db(params.replay_hash)
 	})
 	if replay_file then
-		return 200, {}
+		local score = Scores:find({file_id = replay_file.id})
+		return {status = 201, redirect_to = request:url_for(score)}
 	end
 
 	replay_file = Files:create({
@@ -126,7 +129,7 @@ scores_c.POST = function(request)
 		performance = 0,
 	})
 
-	return 200, {score = score:to_name()}
+	return {status = 201, redirect_to = request:url_for(score)}
 end
 
 return scores_c

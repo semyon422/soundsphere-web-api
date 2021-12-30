@@ -11,7 +11,7 @@ user_scores_c.GET = function(request)
 	local params = request.params
 	local scores = Scores:find_all({params.user_id}, "user_id")
 
-	return 200, {scores = scores}
+	return {json = {scores = scores}}
 end
 
 return user_scores_c

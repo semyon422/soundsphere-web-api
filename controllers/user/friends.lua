@@ -26,11 +26,11 @@ user_friends_c.GET = function(request)
 
 	local count = User_relations:count()
 
-	return 200, {
+	return {json = {
 		total = count,
 		filtered = count,
 		friends = friends
-	}
+	}}
 end
 
 return user_friends_c

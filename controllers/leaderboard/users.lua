@@ -17,10 +17,10 @@ leaderboard_users_c.GET = function(request)
     local leaderboard_users = Leaderboard_users:find_all({params.leaderboard_id}, "leaderboard_id")
 
 	if params.no_data then
-		return 200, {
+		return {json = {
 			total = #leaderboard_users,
 			filtered = #leaderboard_users,
-		}
+		}}
 	end
 
 	preload(leaderboard_users, "user")
@@ -30,11 +30,11 @@ leaderboard_users_c.GET = function(request)
 		table.insert(users, leaderboard_user.user:to_name())
 	end
 
-	return 200, {
+	return {json = {
 		total = #users,
 		filtered = #users,
 		users = users
-	}
+	}}
 end
 
 return leaderboard_users_c

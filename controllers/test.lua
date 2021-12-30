@@ -14,7 +14,7 @@ test_c.validations.GET = {
 	{"query_boolean", type = "boolean"},
 }
 test_c.GET = function(request)
-	return 200, {message = "success"}
+	return {json = {message = "success"}}
 end
 
 test_c.policies.POST = {{"permit"}}
@@ -34,7 +34,7 @@ test_c.validations.POST = {
 	}},
 }
 test_c.POST = function(request)
-	return 200, {message = "success"}
+	return {json = {message = "success"}}
 end
 
 return test_c

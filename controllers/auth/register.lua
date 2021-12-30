@@ -55,10 +55,10 @@ register_c.POST = function(request)
 	user, err = register_c.register(user.name, user.email, user.password)
 
 	if not user then
-		return 200, {message = err}
+		return {json = {message = err}}
 	end
 
-	return 200, {user = user:to_name()}
+	return {status = 201, redirect_to = request:url_for(user)}
 end
 
 return register_c

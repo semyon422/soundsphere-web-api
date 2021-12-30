@@ -16,10 +16,10 @@ leaderboard_communities_c.GET = function(request)
     local leaderboard_communities = Community_leaderboards:find_all({params.leaderboard_id}, "leaderboard_id")
 
 	if params.no_data then
-		return 200, {
+		return {json = {
 			total = #leaderboard_communities,
 			filtered = #leaderboard_communities,
-		}
+		}}
 	end
 
 	preload(leaderboard_communities, "leaderboard", "community")
@@ -29,11 +29,11 @@ leaderboard_communities_c.GET = function(request)
 		table.insert(communities, community_leaderboard.community)
 	end
 
-	return 200, {
+	return {json = {
 		total = #communities,
 		filtered = #communities,
 		communities = communities
-	}
+	}}
 end
 
 return leaderboard_communities_c

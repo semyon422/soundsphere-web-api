@@ -19,7 +19,7 @@ difftable_notechart_c.PUT = function(request)
 	if difftable_notechart then
 		difftable_notechart.difficulty = params.difficulty
 		difftable_notechart:update("difficulty")
-		return 200, {difftable_notechart = difftable_notechart}
+		return {json = {difftable_notechart = difftable_notechart}}
 	end
 
 	difftable_notechart = Difftable_notecharts:create({
@@ -28,7 +28,7 @@ difftable_notechart_c.PUT = function(request)
 		difficulty = params.difficulty or 0,
 	})
 
-	return 200, {difftable_notechart = difftable_notechart}
+	return {json = {difftable_notechart = difftable_notechart}}
 end
 
 difftable_notechart_c.context.DELETE = {"difftable_notechart", "request_session"}
@@ -37,7 +37,7 @@ difftable_notechart_c.DELETE = function(request)
     local difftable_notechart = Dequest.context.difftable_notechart
     difftable_notechart:delete()
 
-	return 200, {difftable_notechart = difftable_notechart}
+	return {status = 204}
 end
 
 return difftable_notechart_c

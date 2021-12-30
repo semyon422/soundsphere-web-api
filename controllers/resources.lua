@@ -39,10 +39,10 @@ resources_c.GET = function(request)
 		end
 	end
 
-	return 200, {
+	return {json = {
 		resources = resources,
-		children = children
-	}
+		children = children,
+	}}
 end
 
 return resources_c

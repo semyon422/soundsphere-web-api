@@ -16,19 +16,19 @@ difftable_inputmodes_c.GET = function(request)
 	local difftable_inputmodes = Difftable_inputmodes:find_all({params.difftable_id}, "difftable_id")
 
 	if params.no_data then
-		return 200, {
+		return {json = {
 			total = #difftable_inputmodes,
 			filtered = #difftable_inputmodes,
-		}
+		}}
 	end
 
 	local inputmodes = Inputmodes:entries_to_list(difftable_inputmodes)
 
-	return 200, {
+	return {json = {
 		total = #inputmodes,
 		filtered = #inputmodes,
-		inputmodes = inputmodes
-	}
+		inputmodes = inputmodes,
+	}}
 end
 
 return difftable_inputmodes_c

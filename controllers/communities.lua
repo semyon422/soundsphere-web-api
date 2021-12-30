@@ -77,11 +77,11 @@ communities_c.GET = function(request)
 		community.joined = joined_community_ids_map[community.id]
 	end
 
-	return 200, {
-		total = Communities:count(),
-		filtered = Communities:count(clause),
+	return {json = {
+		total = tonumber(Communities:count()),
+		filtered = tonumber(Communities:count(clause)),
 		communities = communities,
-	}
+	}}
 end
 
 communities_c.context.POST = {"request_session"}
@@ -122,7 +122,7 @@ communities_c.POST = function(request)
 		message = "",
 	})
 
-	return 200, {community = community}
+	return {status = 201, redirect_to = request:url_for(community)}
 end
 
 return communities_c

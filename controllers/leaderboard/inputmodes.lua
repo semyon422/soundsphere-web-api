@@ -16,19 +16,19 @@ leaderboard_inputmodes_c.GET = function(request)
 	local leaderboard_inputmodes = Leaderboard_inputmodes:find_all({params.leaderboard_id}, "leaderboard_id")
 
 	if params.no_data then
-		return 200, {
+		return {json = {
 			total = #leaderboard_inputmodes,
 			filtered = #leaderboard_inputmodes,
-		}
+		}}
 	end
 
 	local inputmodes = Inputmodes:entries_to_list(leaderboard_inputmodes)
 
-	return 200, {
+	return {json = {
 		total = #inputmodes,
 		filtered = #inputmodes,
 		inputmodes = inputmodes
-	}
+	}}
 end
 
 return leaderboard_inputmodes_c

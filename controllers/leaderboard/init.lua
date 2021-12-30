@@ -110,7 +110,7 @@ leaderboard_c.GET = function(request)
 
 	get_relatives(leaderboard, request.params, true)
 
-	return 200, {leaderboard = leaderboard}
+	return {json = {leaderboard = leaderboard}}
 end
 
 leaderboard_c.context.PATCH = {"leaderboard", "request_session"}
@@ -135,7 +135,7 @@ leaderboard_c.PATCH = function(request)
 	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.difftables)
 	leaderboard_c.update_requirements(leaderboard.id, params.leaderboard.requirements)
 
-	return 200, {leaderboard = leaderboard}
+	return {json = {leaderboard = leaderboard}}
 end
 
 return leaderboard_c

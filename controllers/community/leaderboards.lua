@@ -107,10 +107,10 @@ community_leaderboards_c.GET = function(request)
 	end
 
 	if params.no_data then
-		return 200, {
+		return {json = {
 			total = #community_leaderboards,
 			filtered = #community_leaderboards,
-		}
+		}}
 	end
 
 	for _, community_leaderboard in ipairs(community_leaderboards) do
@@ -132,11 +132,11 @@ community_leaderboards_c.GET = function(request)
 		table.insert(leaderboards, leaderboard)
 	end
 
-	return 200, {
+	return {json = {
 		total = #community_leaderboards,
 		filtered = #community_leaderboards,
-		leaderboards = leaderboards
-	}
+		leaderboards = leaderboards,
+	}}
 end
 
 return community_leaderboards_c

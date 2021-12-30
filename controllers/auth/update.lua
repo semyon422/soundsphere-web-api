@@ -17,9 +17,7 @@ update_c.POST = function(request)
 	if session.updated_at - request.session.updated_at ~= 0 then
 		session.active = false
 		session:update("active")
-		return 200, {
-			message = "session.updated_at ~= request.session.updated_at"
-		}
+		return {json = {message = "session.updated_at ~= request.session.updated_at"}}
 	end
 
 	session.updated_at = os.time()
@@ -32,10 +30,10 @@ update_c.POST = function(request)
 	local token, err = jwt.encode(payload, secret.token_key, "HS256")
 	login_c.copy_session(payload, request.session)
 
-	return 200, {
+	return {json = {
 		token = token,
 		session = payload,
-	}
+	}}
 end
 
 return update_c

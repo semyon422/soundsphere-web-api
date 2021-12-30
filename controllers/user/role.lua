@@ -23,7 +23,7 @@ user_role_c.PUT = function(request)
 		})
     end
 
-	return 200, {user_role = user_role}
+	return {json = {user_role = user_role}}
 end
 
 user_role_c.context.DELETE = {"user_role", "request_session"}
@@ -32,7 +32,7 @@ user_role_c.DELETE = function(request)
     local user_role = request.context.user_role
     user_role:delete()
 
-	return 200, {user_role = user_role}
+	return {status = 204}
 end
 
 return user_role_c

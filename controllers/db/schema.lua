@@ -8,7 +8,7 @@ schema_c.methods = {"GET", "POST"}
 schema_c.context.GET = {"request_session"}
 schema_c.policies.GET = {{"authenticated"}}
 schema_c.GET = function(request)
-	return 200, {}
+	return {}
 end
 
 schema_c.context.POST = {"request_session"}
@@ -22,13 +22,13 @@ schema_c.POST = function(request)
 	if params.db_test then
 		local db_test = require("db_test")
 		db_test.create()
-		return 200, {}
+		return {}
 	end
 
 	db.drop()
 	db.create()
 
-	return 200, {}
+	return {}
 end
 
 return schema_c

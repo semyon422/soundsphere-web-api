@@ -7,7 +7,7 @@ db_c.methods = {"GET"}
 
 db_c.policies.GET = {{"permit"}}
 db_c.GET = function(request)
-	return 200, {}
+	return {}
 end
 
 return db_c

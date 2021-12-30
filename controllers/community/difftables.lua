@@ -59,11 +59,11 @@ community_difftables_c.GET = function(request)
 		end
 	end
 	
-	return 200, {
+	return {json = {
 		total = #difftables,
 		filtered = #difftables,
-		difftables = difftables
-	}
+		difftables = difftables,
+	}}
 end
 
 return community_difftables_c

@@ -37,11 +37,11 @@ users_c.GET = function(request)
 	)
 	local users = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
-	return 200, {
+	return {json = {
 		total = Users:count(),
 		filtered = Users:count(clause),
-		users = users
-	}
+		users = users,
+	}}
 end
 
 users_c.context.POST = {"request_session"}

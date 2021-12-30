@@ -16,10 +16,10 @@ check_c.GET = function(request)
 	if not request.params.show_ip then
 		session.ip = nil
 	end
-	return 200, {
+	return {json = {
 		session = session,
 		request_session_id = request.session.id,
-	}
+	}}
 end
 
 check_c.context.POST = {"request_session"}

@@ -18,7 +18,7 @@ leaderboard_user_c.PUT = function(request)
 		})
     end
 
-	return 200, {leaderboard_user = leaderboard_user}
+	return {json = {leaderboard_user = leaderboard_user}}
 end
 
 leaderboard_user_c.context.DELETE = {"leaderboard_user", "request_session"}
@@ -27,7 +27,7 @@ leaderboard_user_c.DELETE = function(request)
     local leaderboard_user = request.context.leaderboard_user
     leaderboard_user:delete()
 
-	return 200, {leaderboard_user = leaderboard_user}
+	return {status = 204}
 end
 
 return leaderboard_user_c

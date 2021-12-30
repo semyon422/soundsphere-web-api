@@ -60,16 +60,18 @@ login_c.POST = function(request)
 	local user, err = login(params.email, params.password)
 
 	if not user then
-		return 200, {message = err}
+		return {json = {message = err}}
 	end
 
 	local token, payload = login_c.new_token(user, request.context.ip)
 
 	login_c.copy_session(payload, request.session)
 
-	return 200, {
-		token = token,
-		session = payload,
+	return {
+		json = {
+			token = token,
+			session = payload,
+		}
 	}
 end
 

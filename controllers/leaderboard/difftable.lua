@@ -19,7 +19,7 @@ leaderboard_difftable_c.PUT = function(request)
 		})
 	end
 
-	return 200, {leaderboard_difftable = leaderboard_difftable}
+	return {json = {leaderboard_difftable = leaderboard_difftable}}
 end
 
 leaderboard_difftable_c.context.DELETE = {"leaderboard_difftable", "request_session"}
@@ -29,7 +29,7 @@ leaderboard_difftable_c.DELETE = function(request)
     local leaderboard_difftable = request.context.leaderboard_difftable
     leaderboard_difftable:delete()
 
-	return 200, {}
+	return {status = 204}
 end
 
 return leaderboard_difftable_c

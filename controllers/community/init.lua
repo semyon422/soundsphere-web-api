@@ -48,7 +48,7 @@ community_c.GET = function(request)
 		community:update(unpack(fields))
 	end
 
-	return 200, {community = community}
+	return {json = {community = community}}
 end
 
 community_c.context.PATCH = {"community", "request_session"}
@@ -79,13 +79,13 @@ community_c.PATCH = function(request)
 
 	community_c.update_users(request, community.id, params.community.users)
 
-	return 200, {community = community}
+	return {json = {community = community}}
 end
 
 community_c.context.DELETE = {"community"}
 community_c.policies.DELETE = {{"permit"}}
 community_c.DELETE = function(request)
-	return 200, {}
+	return {status = 204}
 end
 
 return community_c

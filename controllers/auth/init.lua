@@ -7,7 +7,7 @@ auth_c.methods = {"GET"}
 
 auth_c.policies.GET = {{"permit"}}
 auth_c.GET = function(request)
-	return 200, {}
+	return {}
 end
 
 return auth_c

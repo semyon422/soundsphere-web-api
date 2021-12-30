@@ -1,14 +1,16 @@
+<% local to_json = require("lapis.util").to_json %>
 <script>
 function requestBlock() {return {
 	url: '<%= url_for(controller.name, params) %>',
 	method: '<%= controller.methods[1] %>',
-	response: <%- require("lapis.util").to_json(response) %>,
-	responseStatus: '<%= code %>',
+	responseJson: <%- response.json and to_json(response.json) or "null" %>,
+	responseStatus: '<%= response.status %>',
 	responseStatusText: '',
 	requestBody: '',
 	requestQuery: '',
 	bodyFiles: {},
 	isCodeMode: false,
+	doingRequest: false,
 	params: {
 		<% local to_json = require("lapis.util").to_json %>
 		query: {
@@ -27,6 +29,7 @@ function requestBlock() {return {
 		},
 	},
 	async doRequest() {
+		this.doingRequest = true
 		let response
 		if (this.method != "GET") {
 			const formData = new FormData()
@@ -44,26 +47,51 @@ function requestBlock() {return {
 				credentials: 'same-origin'
 			})
 		}
-		let response_json = await response.json()
-        if (!response_json) return
-		this.response = response_json
 		this.responseStatus = response.status
 		this.responseStatusText = response.statusText
 
 		var responseHeaders = document.getElementById('response-headers')
 		responseHeaders.innerHTML = ''
+		var location = null
 		for (var pair of response.headers.entries()) {
 			responseHeaders.innerHTML += pair[0] + ': ' + pair[1] + '\n'
+			if (pair[0] == "location") {
+				location = pair[1]
+			}
+		}
+		var responseLocation = document.getElementById('response-location')
+		if (location != null) {
+			var url = new URL(location)
+			responseLocation.href = location.replaceAll('/api', '/api/html')
+			responseLocation.innerHTML = url.pathname
+		} else {
+			responseLocation.href = '/api/html'
+			responseLocation.innerHTML = ''
+		}
+
+		let responseJson = await response.json().catch((error) => {
+			console.log(error)
+		})
+        if (responseJson) {
+			this.responseJson = responseJson
+		} else {
+			this.responseJson = null
 		}
 		this.updateEffect()
+		this.doingRequest = false
 	},
 	updateEffect() {
-		if (!this.response.err) {
-			document.getElementById('response-body').innerHTML = JSONstringifyOrder(this.response, 2)
-		} else {
-			document.getElementById('response-body').innerHTML = this.response.err
-		}
 		document.getElementById('response-status').value = this.responseStatus + ' ' + this.responseStatusText
+		var responseBody = document.getElementById('response-body')
+		if (this.responseJson != null) {
+			if (!this.responseJson.err) {
+				responseBody.innerHTML = JSONstringifyOrder(this.responseJson, 2)
+			} else {
+				responseBody.innerHTML = this.responseJson.err
+			}
+		} else {
+			responseBody.innerHTML = ''
+		}
 		if (this.isCodeMode) return
 		this.requestBody = JSONstringifyOrder(this.params.body[this.method], 2)
 		this.requestQuery = encode_get_params(this.params.query[this.method]).replaceAll('&', '&\n')
@@ -85,7 +113,7 @@ function requestBlock() {return {
 			<input class="input" type="text" x-model="url" disabled>
 		</div>
 		<div class="control">
-			<a class="button is-info" @click="doRequest">
+			<a class="button is-info" :class="doingRequest ? 'is-loading' : ''" @click="doRequest">
 				send
 			</a>
 		</div>

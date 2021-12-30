@@ -20,11 +20,11 @@ user_leaderboards_c.GET = function(request)
 
 	local count = Leaderboard_users:count()
 
-	return 200, {
+	return {json = {
 		total = count,
 		filtered = count,
 		leaderboards = leaderboards
-	}
+	}}
 end
 
 return user_leaderboards_c

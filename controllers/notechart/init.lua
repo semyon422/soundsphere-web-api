@@ -16,7 +16,7 @@ notechart_c.GET = function(request)
 
 	get_relatives(notechart, request.params, true)
 
-	return 200, {notechart = notechart:to_name()}
+	return {json = {notechart = notechart:to_name()}}
 end
 
 return notechart_c

@@ -16,7 +16,7 @@ user_roles_c.GET = function(request)
 		table.insert(roles, Roles:to_name(user_role.role))
 	end
 
-	return 200, {roles = roles}
+	return {json = {roles = roles}}
 end
 
 return user_roles_c

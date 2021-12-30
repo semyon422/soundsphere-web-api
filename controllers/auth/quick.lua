@@ -38,7 +38,7 @@ quick_c.GET = function(request)
 			next_update_time = time + 5 * 60,
 		})
 
-		return 200, {key = key}
+		return {json = {key = key}}
 	end
 
 	if quick_login.next_update_time < time or not params.key then
@@ -48,11 +48,11 @@ quick_c.GET = function(request)
 		quick_login.complete = false
 		quick_login:update("key", "next_update_time", "complete")
 
-		return 200, {key = key}
+		return {json = {key = key}}
 	end
 
 	if quick_login.key ~= params.key or not quick_login.complete then
-		return 200, {message = messages.not_allowed}
+		return {json = {message = messages.not_allowed}}
 	end
 
 	local user = users:find(quick_login.user_id)
@@ -60,13 +60,15 @@ quick_c.GET = function(request)
 		quick_login:delete()
 		local token, payload = login_c.new_token(user, ip)
 
-		return 200, {
-			token = token,
-			session = payload,
+		return {
+			json = {
+				token = token,
+				session = payload,
+			}
 		}
 	end
 
-	return 200, {message = messages.not_allowed}
+	return {json = {message = messages.not_allowed}}
 end
 
 quick_c.context.POST = {"request_session"}
@@ -78,7 +80,7 @@ quick_c.POST = function(request)
 	local key = request.params.key
 
 	if not key then
-		return 200, {message = messages.not_allowed}
+		return {json = {message = messages.not_allowed}}
 	end
 
 	local quick_login = quick_logins:find({
@@ -87,14 +89,14 @@ quick_c.POST = function(request)
 	})
 
 	if not quick_login or quick_login.complete then
-		return 200, {message = messages.not_allowed}
+		return {json = {message = messages.not_allowed}}
 	end
 
 	quick_login.user_id = request.session.user_id
 	quick_login.complete = true
 	quick_login:update("user_id", "complete")
 
-	return 200, {message = messages.success}
+	return {json = {message = messages.success}}
 end
 
 return quick_c

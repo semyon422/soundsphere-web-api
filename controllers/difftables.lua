@@ -48,11 +48,11 @@ difftables_c.GET = function(request)
 		end
 	end
 
-	return 200, {
+	return {json = {
 		total = Difftables:count(),
 		filtered = Difftables:count(clause),
-		difftables = difftables
-	}
+		difftables = difftables,
+	}}
 end
 
 difftables_c.policies.POST = {{"permit"}}
@@ -74,7 +74,7 @@ difftables_c.POST = function(request)
 		owner_community_id = params.community_id,
 	})
 
-	return 200, {difftable = difftable}
+	return {status = 201, redirect_to = request:url_for(difftable)}
 end
 
 return difftables_c

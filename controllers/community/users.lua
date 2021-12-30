@@ -150,10 +150,10 @@ community_users_c.GET = function(request)
 	})
 
 	if params.no_data then
-		return 200, {
+		return {json = {
 			total = Community_users:count(total_clause),
 			filtered = Community_users:count(filtered_clause or total_clause),
-		}
+		}}
 	end
 
 	preload(community_users, "user")
@@ -172,11 +172,11 @@ community_users_c.GET = function(request)
 		table.insert(users, user)
 	end
 
-	return 200, {
+	return {json = {
 		total = Community_users:count(total_clause),
 		filtered = Community_users:count(filtered_clause or total_clause),
 		users = users,
-	}
+	}}
 end
 
 community_users_c.PATCH = function(request)
@@ -184,7 +184,7 @@ community_users_c.PATCH = function(request)
 
 	community_users_c.update_users(request, params.community_id, params.users)
 
-	return 200, {}
+	return {}
 end
 
 return community_users_c
