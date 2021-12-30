@@ -68,7 +68,10 @@ local function fix_types(object, validations)
 				object[key] = nil
 			end
 		end
-	end	
+		if validation.exists and object[key] == "" then
+			object[key] = nil
+		end
+	end
 end
 local function recursive_validate(object, validations)
 	local validate = validate.validate
