@@ -1,6 +1,7 @@
 {
 	"Lua.diagnostics.globals": [
-		"p"
+		"p",
+		"ngx"
 	],
 	"editor.stickyTabStops": true,
 	"editor.formatOnSave": true,
