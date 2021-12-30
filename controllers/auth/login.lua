@@ -41,9 +41,7 @@ login_c.new_token = function(user, ip)
 		updated_at = time,
 	})
 
-	local payload = session:to_name()
-	payload.active = nil
-	payload.ip = nil
+	local payload = login_c.copy_session(session:to_name())
 	local token, err = jwt.encode(payload, secret.token_key, "HS256")
 
 	return token, payload
@@ -51,8 +49,8 @@ end
 
 login_c.policies.POST = {{"permit"}}
 login_c.validations.POST = {
-	{"email", exists = true, type = "string"},
-	{"password", exists = true, type = "string"},
+	{"email", exists = true, type = "string", param_type = "body"},
+	{"password", exists = true, type = "string", param_type = "body"},
 }
 login_c.POST = function(self)
 	local params = self.params
@@ -67,12 +65,10 @@ login_c.POST = function(self)
 
 	login_c.copy_session(payload, self.session)
 
-	return {
-		json = {
-			token = token,
-			session = payload,
-		}
-	}
+	return {json = {
+		token = token,
+		session = payload,
+	}}
 end
 
 return login_c

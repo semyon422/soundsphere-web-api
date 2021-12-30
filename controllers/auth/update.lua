@@ -23,10 +23,7 @@ update_c.POST = function(self)
 	session.updated_at = os.time()
 	session:update("updated_at")
 
-	local payload = session:to_name()
-	payload.active = nil
-	payload.ip = nil
-
+	local payload = login_c.copy_session(session:to_name())
 	local token, err = jwt.encode(payload, secret.token_key, "HS256")
 	login_c.copy_session(payload, self.session)
 

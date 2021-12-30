@@ -211,7 +211,7 @@ local function route_api(controller, html)
 			response.status = 405
 		elseif errors and #errors > 0 then
 			response.status = 400
-			response.errors = errors
+			response.json = {errors = errors}
 		elseif methods and includes(methods, method) or controller:check_access(self, method) then
 			response = controller[method](self)
 			response.status = response.status or 200
