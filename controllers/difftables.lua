@@ -49,8 +49,8 @@ difftables_c.GET = function(self)
 	end
 
 	return {json = {
-		total = Difftables:count(),
-		filtered = Difftables:count(clause),
+		total = tonumber(Difftables:count()),
+		filtered = tonumber(Difftables:count(clause)),
 		difftables = difftables,
 	}}
 end

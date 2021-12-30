@@ -32,7 +32,7 @@ leaderboard_difftables_c.GET = function(self)
 	return {json = {
 		total = #difftables,
 		filtered = #difftables,
-		difftables = difftables
+		difftables = difftables,
 	}}
 end
 

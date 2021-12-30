@@ -38,8 +38,8 @@ users_c.GET = function(self)
 	local users = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
 	return {json = {
-		total = Users:count(),
-		filtered = Users:count(clause),
+		total = tonumber(Users:count()),
+		filtered = tonumber(Users:count(clause)),
 		users = users,
 	}}
 end

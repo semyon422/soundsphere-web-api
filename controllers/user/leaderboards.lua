@@ -18,12 +18,12 @@ user_leaderboards_c.GET = function(self)
         table.insert(leaderboards, leaderboard_user.leaderboard)
 	end
 
-	local count = Leaderboard_users:count()
+	local count = tonumber(Leaderboard_users:count())
 
 	return {json = {
 		total = count,
 		filtered = count,
-		leaderboards = leaderboards
+		leaderboards = leaderboards,
 	}}
 end
 

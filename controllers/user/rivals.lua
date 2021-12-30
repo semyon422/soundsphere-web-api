@@ -24,12 +24,12 @@ user_rivals_c.GET = function(self)
 		table.insert(rivals, rival)
 	end
 
-	local count = User_relations:count()
+	local count = tonumber(User_relations:count())
 
 	return {json = {
 		total = count,
 		filtered = count,
-		rivals = rivals
+		rivals = rivals,
 	}}
 end
 

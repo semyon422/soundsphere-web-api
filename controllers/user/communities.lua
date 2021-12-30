@@ -41,7 +41,7 @@ user_communities_c.GET = function(self)
 		end
 	end
 
-	local count = Community_users:count()
+	local count = tonumber(Community_users:count())
 
 	return {json = {
 		total = count,

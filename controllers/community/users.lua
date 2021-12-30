@@ -151,8 +151,8 @@ community_users_c.GET = function(self)
 
 	if params.no_data then
 		return {json = {
-			total = Community_users:count(total_clause),
-			filtered = Community_users:count(filtered_clause or total_clause),
+			total = tonumber(Community_users:count(total_clause)),
+			filtered = tonumber(Community_users:count(filtered_clause or total_clause)),
 		}}
 	end
 
@@ -173,8 +173,8 @@ community_users_c.GET = function(self)
 	end
 
 	return {json = {
-		total = Community_users:count(total_clause),
-		filtered = Community_users:count(filtered_clause or total_clause),
+		total = tonumber(Community_users:count(total_clause)),
+		filtered = tonumber(Community_users:count(filtered_clause or total_clause)),
 		users = users,
 	}}
 end

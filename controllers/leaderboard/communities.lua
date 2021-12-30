@@ -32,7 +32,7 @@ leaderboard_communities_c.GET = function(self)
 	return {json = {
 		total = #communities,
 		filtered = #communities,
-		communities = communities
+		communities = communities,
 	}}
 end
 

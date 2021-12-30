@@ -29,7 +29,7 @@ notecharts_c.GET = function(self)
 		notechart:to_name()
 	end
 
-	local count = Notecharts:count()
+	local count = tonumber(Notecharts:count())
 
 	return {json = {
 		total = count,

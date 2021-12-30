@@ -27,7 +27,7 @@ leaderboard_inputmodes_c.GET = function(self)
 	return {json = {
 		total = #inputmodes,
 		filtered = #inputmodes,
-		inputmodes = inputmodes
+		inputmodes = inputmodes,
 	}}
 end
 

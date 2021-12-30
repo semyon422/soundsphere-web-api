@@ -59,12 +59,10 @@ notechart_scores_c.GET = function(self)
 		scores = Scores:find_all({notechart_id}, "notechart_id")
 	end
 
-	local count = #scores
-
 	return {json = {
-		total = count,
-		filtered = count,
-		scores = scores
+		total = #scores,
+		filtered = #scores,
+		scores = scores,
 	}}
 end
 

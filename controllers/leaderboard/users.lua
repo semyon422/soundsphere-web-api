@@ -33,7 +33,7 @@ leaderboard_users_c.GET = function(self)
 	return {json = {
 		total = #users,
 		filtered = #users,
-		users = users
+		users = users,
 	}}
 end
 

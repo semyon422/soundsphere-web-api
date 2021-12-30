@@ -24,7 +24,7 @@ user_friends_c.GET = function(self)
 		table.insert(friends, friend)
 	end
 
-	local count = User_relations:count()
+	local count = tonumber(User_relations:count())
 
 	return {json = {
 		total = count,
