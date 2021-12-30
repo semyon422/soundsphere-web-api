@@ -22,8 +22,8 @@ communities_c.validations.GET = {
 	{"inputmodes", type = "boolean", optional = true},
 	{"hide_joined", type = "boolean", optional = true},
 }
-communities_c.GET = function(request)
-	local params = request.params
+communities_c.GET = function(self)
+	local params = self.params
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
 
@@ -39,8 +39,8 @@ communities_c.GET = function(request)
 	local joined_clause
 	local joined_community_ids = {}
 	local joined_community_ids_map = {}
-	if request.session.user_id then
-		local community_users = Community_users:find_all({request.session.user_id}, {
+	if self.session.user_id then
+		local community_users = Community_users:find_all({self.session.user_id}, {
 			key = "user_id",
 			fields = "community_id"
 		})
@@ -97,9 +97,9 @@ communities_c.validations.POST = {
 		{"is_public", type = "boolean"},
 	}}
 }
-communities_c.POST = function(request)
-	local params = request.params
-	local session = request.session
+communities_c.POST = function(self)
+	local params = self.params
+	local session = self.session
 
 	local community = params.community
 	community = Communities:create({
@@ -122,7 +122,7 @@ communities_c.POST = function(request)
 		message = "",
 	})
 
-	return {status = 201, redirect_to = request:url_for(community)}
+	return {status = 201, redirect_to = self:url_for(community)}
 end
 
 return communities_c

@@ -8,8 +8,8 @@ user_rival_c.methods = {"PUT", "DELETE"}
 
 user_rival_c.context.PUT = {"request_session"}
 user_rival_c.policies.PUT = {{"authenticated"}}
-user_rival_c.PUT = function(request)
-	local params = request.params
+user_rival_c.PUT = function(self)
+	local params = self.params
 	User_relations:relate("rival", params.user_id, params.rival_id)
 
 	return {}
@@ -17,8 +17,8 @@ end
 
 user_rival_c.context.DELETE = {"request_session"}
 user_rival_c.policies.DELETE = {{"authenticated"}}
-user_rival_c.DELETE = function(request)
-	local params = request.params
+user_rival_c.DELETE = function(self)
+	local params = self.params
 	User_relations:unrelate("rival", params.user_id, params.rival_id)
 
 	return {status = 204}

@@ -24,9 +24,9 @@ quick_c.policies.GET = {{"permit"}}
 quick_c.validations.GET = {
 	{"key", exists = true, type = "string"},
 }
-quick_c.GET = function(request)
-	local params = request.params
-	local ip = request.context.ip
+quick_c.GET = function(self)
+	local params = self.params
+	local ip = self.context.ip
 	local time = os.time()
 	local quick_login = quick_logins:find({ip = Ip:for_db(ip)})
 
@@ -76,15 +76,15 @@ quick_c.policies.POST = {{"authenticated"}}
 quick_c.validations.POST = {
 	{"key", exists = true, type = "string"},
 }
-quick_c.POST = function(request)
-	local key = request.params.key
+quick_c.POST = function(self)
+	local key = self.params.key
 
 	if not key then
 		return {json = {message = messages.not_allowed}}
 	end
 
 	local quick_login = quick_logins:find({
-		ip = Ip:for_db(request.context.ip),
+		ip = Ip:for_db(self.context.ip),
 		key = key
 	})
 
@@ -92,7 +92,7 @@ quick_c.POST = function(request)
 		return {json = {message = messages.not_allowed}}
 	end
 
-	quick_login.user_id = request.session.user_id
+	quick_login.user_id = self.session.user_id
 	quick_login.complete = true
 	quick_login:update("user_id", "complete")
 

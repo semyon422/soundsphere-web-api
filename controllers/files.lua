@@ -15,8 +15,8 @@ files_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.get_all"),
 }
-files_c.GET = function(request)
-	local params = request.params
+files_c.GET = function(self)
+	local params = self.params
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
 
@@ -47,8 +47,8 @@ files_c.validations.POST = {
 	{"storage", exists = true, type = "string", one_of = Storages.list, default = Storages.list[1]},
 	{"file", is_file = true, param_type = "body"},
 }
-files_c.POST = function(request)
-	local params = request.params
+files_c.POST = function(self)
+	local params = self.params
 
 	local hash = Filehash:sum_for_db(params.file.content)
 
@@ -58,7 +58,7 @@ files_c.POST = function(request)
 	if file then
 		return {
 			status = 200,
-			redirect_to = request:url_for(file),
+			redirect_to = self:url_for(file),
 		}
 	end
 
@@ -73,7 +73,7 @@ files_c.POST = function(request)
 		created_at = os.time(),
 	})
 
-	return {status = 201, redirect_to = request:url_for(file)}
+	return {status = 201, redirect_to = self:url_for(file)}
 end
 
 return files_c

@@ -14,8 +14,8 @@ user_communities_c.validations.GET = {
 	{"requests", type = "boolean", optional = true},
 	{"is_admin", type = "boolean", optional = true},
 }
-user_communities_c.GET = function(request)
-	local params = request.params
+user_communities_c.GET = function(self)
+	local params = self.params
 	local where = {accepted = true}
 	if params.invitations then
 		where.invitation = true

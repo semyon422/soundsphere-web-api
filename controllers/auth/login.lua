@@ -54,8 +54,8 @@ login_c.validations.POST = {
 	{"email", exists = true, type = "string"},
 	{"password", exists = true, type = "string"},
 }
-login_c.POST = function(request)
-	local params = request.params
+login_c.POST = function(self)
+	local params = self.params
 
 	local user, err = login(params.email, params.password)
 
@@ -63,9 +63,9 @@ login_c.POST = function(request)
 		return {json = {message = err}}
 	end
 
-	local token, payload = login_c.new_token(user, request.context.ip)
+	local token, payload = login_c.new_token(user, self.context.ip)
 
-	login_c.copy_session(payload, request.session)
+	login_c.copy_session(payload, self.session)
 
 	return {
 		json = {

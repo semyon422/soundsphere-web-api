@@ -80,8 +80,8 @@ leaderboard_requirements_c.policies.GET = {{"permit"}}
 leaderboard_requirements_c.validations.GET = {
 	require("validations.no_data"),
 }
-leaderboard_requirements_c.GET = function(request)
-	local params = request.params
+leaderboard_requirements_c.GET = function(self)
+	local params = self.params
 	local leaderboard_requirements = Leaderboard_requirements:find_all({params.leaderboard_id}, "leaderboard_id")
 
 	if params.no_data then
@@ -107,8 +107,8 @@ leaderboard_requirements_c.policies.PATCH = {{"authenticated"}}
 leaderboard_requirements_c.validations.PATCH = {
 	{"requirements", exists = true, param_type = "body", optional = true, type = "table"},
 }
-leaderboard_requirements_c.PATCH = function(request)
-	local params = request.params
+leaderboard_requirements_c.PATCH = function(self)
+	local params = self.params
 
 	local requirements = leaderboard_requirements_c.update_requirements(params.leaderboard_id, params.requirements)
 
@@ -129,17 +129,17 @@ leaderboard_requirements_c.validations.POST = {
 		{"value", exists = true, type = "string"},
 	}}
 }
-leaderboard_requirements_c.POST = function(request)
-	local params = request.params
+leaderboard_requirements_c.POST = function(self)
+	local params = self.params
 
-	local params_requirement = params.requirement
+	local requirement = params.requirement
 
 	requirement.leaderboard_id = params.leaderboard_id
 	requirement.id = nil
 	Leaderboard_requirements:for_db(requirement)
 	local requirement = Leaderboard_requirements:create(requirement)
 
-	return {status = 201, redirect_to = request:url_for(requirement)}
+	return {status = 201, redirect_to = self:url_for(requirement)}
 end
 
 return leaderboard_requirements_c

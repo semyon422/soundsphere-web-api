@@ -8,8 +8,8 @@ user_c.methods = {"GET", "PATCH", "DELETE"}
 
 user_c.context.GET = {"user"}
 user_c.policies.GET = {{"context_loaded"}}
-user_c.GET = function(request)
-	return {json = {user = request.context.user:to_name()}}
+user_c.GET = function(self)
+	return {json = {user = self.context.user:to_name()}}
 end
 
 user_c.context.PATCH = {"user", "request_session"}
@@ -20,9 +20,9 @@ user_c.validations.PATCH = {
 		{"description", type = "string"},
 	}},
 }
-user_c.PATCH = function(request)
-	local params = request.params
-	local user = request.context.user
+user_c.PATCH = function(self)
+	local params = self.params
+	local user = self.context.user
 
 	user.name = params.user.name
 	user.description = params.user.description
@@ -33,7 +33,7 @@ user_c.PATCH = function(request)
 end
 
 user_c.policies.DELETE = {{"permit"}}
-user_c.DELETE = function(request)
+user_c.DELETE = function(self)
 	return {status = 204}
 end
 

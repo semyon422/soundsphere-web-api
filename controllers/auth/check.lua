@@ -11,14 +11,14 @@ check_c.policies.GET = {{"permit"}}
 check_c.validations.GET = {
 	{"show_ip", type = "boolean", optional = true}
 }
-check_c.GET = function(request)
-	local session = request.context.request_session:to_name()
-	if not request.params.show_ip then
+check_c.GET = function(self)
+	local session = self.context.request_session:to_name()
+	if not self.params.show_ip then
 		session.ip = nil
 	end
 	return {json = {
 		session = session,
-		request_session_id = request.session.id,
+		request_session_id = self.session.id,
 	}}
 end
 

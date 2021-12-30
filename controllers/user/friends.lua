@@ -9,8 +9,8 @@ user_friends_c.path = "/users/:user_id[%d]/friends"
 user_friends_c.methods = {"GET"}
 
 user_friends_c.policies.GET = {{"permit"}}
-user_friends_c.GET = function(request)
-	local params = request.params
+user_friends_c.GET = function(self)
+	local params = self.params
 	local friends = {}
 	local user_relations = User_relations:find_all(
 		{params.user_id},

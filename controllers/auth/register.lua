@@ -48,8 +48,8 @@ register_c.validations.POST = {
 		{"password", exists = true, type = "string"},
 	}}
 }
-register_c.POST = function(request)
-	local params = request.params
+register_c.POST = function(self)
+	local params = self.params
 	local user = params.user
 	local err
 	user, err = register_c.register(user.name, user.email, user.password)
@@ -58,7 +58,7 @@ register_c.POST = function(request)
 		return {json = {message = err}}
 	end
 
-	return {status = 201, redirect_to = request:url_for(user)}
+	return {status = 201, redirect_to = self:url_for(user)}
 end
 
 return register_c

@@ -18,8 +18,8 @@ scores_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.get_all"),
 }
-scores_c.GET = function(request)
-	local params = request.params
+scores_c.GET = function(self)
+	local params = self.params
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
 
@@ -56,8 +56,8 @@ scores_c.validations.POST = {
 	{"notechart_filename", exists = true, type = "string", param_type = "body"},
 	{"notechart_filesize", exists = true, type = "number", param_type = "body"},
 }
-scores_c.POST = function(request)
-	local params = request.params
+scores_c.POST = function(self)
+	local params = self.params
 
 	local created_at = os.time()
 
@@ -101,7 +101,7 @@ scores_c.POST = function(request)
 	})
 	if replay_file then
 		local score = Scores:find({file_id = replay_file.id})
-		return {status = 201, redirect_to = request:url_for(score)}
+		return {status = 201, redirect_to = self:url_for(score)}
 	end
 
 	replay_file = Files:create({
@@ -115,7 +115,7 @@ scores_c.POST = function(request)
 		created_at = created_at,
 	})
 	local score = Scores:create({
-		user_id = request.session.user_id,
+		user_id = self.session.user_id,
 		notechart_id = notechart.id,
 		modifierset_id = 0,
 		file_id = replay_file.id,
@@ -129,7 +129,7 @@ scores_c.POST = function(request)
 		performance = 0,
 	})
 
-	return {status = 201, redirect_to = request:url_for(score)}
+	return {status = 201, redirect_to = self:url_for(score)}
 end
 
 return scores_c

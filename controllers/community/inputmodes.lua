@@ -15,8 +15,8 @@ community_inputmodes_c.policies.GET = {{"permit"}}
 community_inputmodes_c.validations.GET = {
 	require("validations.no_data"),
 }
-community_inputmodes_c.GET = function(request)
-	local params = request.params
+community_inputmodes_c.GET = function(self)
+	local params = self.params
 
 	local community_leaderboards = Community_leaderboards:find_all({params.community_id}, "community_id")
 	preload(community_leaderboards, {leaderboard = "leaderboard_inputmodes"})

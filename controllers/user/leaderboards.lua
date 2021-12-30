@@ -8,8 +8,8 @@ user_leaderboards_c.path = "/users/:user_id[%d]/leaderboards"
 user_leaderboards_c.methods = {"GET"}
 
 user_leaderboards_c.policies.GET = {{"permit"}}
-user_leaderboards_c.GET = function(request)
-	local params = request.params
+user_leaderboards_c.GET = function(self)
+	local params = self.params
     local leaderboard_users = Leaderboard_users:find_all({params.user_id}, "user_id")
 	preload(leaderboard_users, "leaderboard")
 

@@ -8,8 +8,8 @@ resources_c.path = ""
 resources_c.methods = {"GET"}
 
 resources_c.policies.GET = {{"permit"}}
-resources_c.GET = function(request)
-	local params = request.params
+resources_c.GET = function(self)
+	local params = self.params
 
 	local resources = {}
 	for _, name in ipairs(require("endpoints")) do

@@ -14,8 +14,8 @@ community_leaderboard_users_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.get_all"),
 }
-community_leaderboard_users_c.GET = function(request)
-	local params = request.params
+community_leaderboard_users_c.GET = function(self)
+	local params = self.params
 
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1

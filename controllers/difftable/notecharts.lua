@@ -9,8 +9,8 @@ difftable_notecharts_c.methods = {"GET"}
 
 difftable_notecharts_c.context.GET = {"difftable"}
 difftable_notecharts_c.policies.GET = {{"permit"}}
-difftable_notecharts_c.GET = function(request)
-	local params = request.params
+difftable_notecharts_c.GET = function(self)
+	local params = self.params
 
 	local difftable_notecharts = Difftable_notecharts:find_all({params.difftable_id}, "difftable_id")
 

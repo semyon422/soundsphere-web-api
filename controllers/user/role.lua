@@ -12,10 +12,10 @@ user_role_c.validations.path = {
 
 user_role_c.context.PUT = {"user_role", "request_session"}
 user_role_c.policies.PUT = {{"authenticated"}}
-user_role_c.PUT = function(request)
-	local params = request.params
+user_role_c.PUT = function(self)
+	local params = self.params
 
-    local user_role = request.context.user_role
+    local user_role = self.context.user_role
     if not user_role then
         user_role = User_roles:create({
 			user_id = params.user_id,
@@ -28,8 +28,8 @@ end
 
 user_role_c.context.DELETE = {"user_role", "request_session"}
 user_role_c.policies.DELETE = {{"authenticated", "context_loaded"}}
-user_role_c.DELETE = function(request)
-    local user_role = request.context.user_role
+user_role_c.DELETE = function(self)
+    local user_role = self.context.user_role
     user_role:delete()
 
 	return {status = 204}

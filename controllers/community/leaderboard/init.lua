@@ -12,10 +12,10 @@ community_leaderboard_c.policies.PUT = {{"authenticated"}}
 community_leaderboard_c.validations.PUT = {
 	{"message", exists = true, type = "string"},
 }
-community_leaderboard_c.PUT = function(request)
-	local params = request.params
+community_leaderboard_c.PUT = function(self)
+	local params = self.params
 
-	local community_leaderboard = request.context.community_leaderboard
+	local community_leaderboard = self.context.community_leaderboard
 	if community_leaderboard then
 		community_leaderboard.accepted = true
 		community_leaderboard:update("accepted")
@@ -31,7 +31,7 @@ community_leaderboard_c.PUT = function(request)
 		community_id = params.community_id,
 		leaderboard_id = params.leaderboard_id,
 		is_owner = false,
-		sender_id = request.session.user_id,
+		sender_id = self.session.user_id,
 		accepted = owner_community.is_public,
 		created_at = os.time(),
 		message = params.message or "",
@@ -42,8 +42,8 @@ end
 
 community_leaderboard_c.context.DELETE = {"community_leaderboard"}
 community_leaderboard_c.policies.DELETE = {{"context_loaded"}}
-community_leaderboard_c.DELETE = function(request)
-	local community_leaderboard = request.context.community_leaderboard
+community_leaderboard_c.DELETE = function(self)
+	local community_leaderboard = self.context.community_leaderboard
     community_leaderboard:delete()
 
 	return {status = 204}
@@ -51,8 +51,8 @@ end
 
 community_leaderboard_c.context.PATCH = {"community_leaderboard"}
 community_leaderboard_c.policies.PATCH = {{"context_loaded"}}
-community_leaderboard_c.PATCH = function(request)
-	local community_leaderboard = request.context.community_leaderboard
+community_leaderboard_c.PATCH = function(self)
+	local community_leaderboard = self.context.community_leaderboard
 
 	community_leaderboard.accepted = true
 	community_leaderboard:update("accepted")

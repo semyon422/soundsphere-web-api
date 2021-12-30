@@ -11,10 +11,10 @@ update_c.methods = {"POST"}
 
 update_c.context.POST = {"request_session"}
 update_c.policies.POST = {{"authenticated"}}
-update_c.POST = function(request)
-	local session = request.context.request_session
+update_c.POST = function(self)
+	local session = self.context.request_session
 
-	if session.updated_at - request.session.updated_at ~= 0 then
+	if session.updated_at - self.session.updated_at ~= 0 then
 		session.active = false
 		session:update("active")
 		return {json = {message = "session.updated_at ~= request.session.updated_at"}}
@@ -28,7 +28,7 @@ update_c.POST = function(request)
 	payload.ip = nil
 
 	local token, err = jwt.encode(payload, secret.token_key, "HS256")
-	login_c.copy_session(payload, request.session)
+	login_c.copy_session(payload, self.session)
 
 	return {json = {
 		token = token,

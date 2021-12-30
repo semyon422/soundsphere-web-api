@@ -11,10 +11,10 @@ notechart_c.methods = {"GET"}
 notechart_c.context.GET = {"notechart"}
 notechart_c.policies.GET = {{"context_loaded"}}
 notechart_c.validations.GET = add_belongs_to_validations(Notecharts.relations)
-notechart_c.GET = function(request)
-	local notechart = request.context.notechart
+notechart_c.GET = function(self)
+	local notechart = self.context.notechart
 
-	get_relatives(notechart, request.params, true)
+	get_relatives(notechart, self.params, true)
 
 	return {json = {notechart = notechart:to_name()}}
 end

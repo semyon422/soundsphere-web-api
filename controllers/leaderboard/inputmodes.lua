@@ -11,8 +11,8 @@ leaderboard_inputmodes_c.policies.GET = {{"permit"}}
 leaderboard_inputmodes_c.validations.GET = {
 	require("validations.no_data"),
 }
-leaderboard_inputmodes_c.GET = function(request)
-	local params = request.params
+leaderboard_inputmodes_c.GET = function(self)
+	local params = self.params
 	local leaderboard_inputmodes = Leaderboard_inputmodes:find_all({params.leaderboard_id}, "leaderboard_id")
 
 	if params.no_data then

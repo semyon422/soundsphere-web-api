@@ -9,8 +9,8 @@ user_rivals_c.path = "/users/:user_id[%d]/rivals"
 user_rivals_c.methods = {"GET"}
 
 user_rivals_c.policies.GET = {{"permit"}}
-user_rivals_c.GET = function(request)
-	local params = request.params
+user_rivals_c.GET = function(self)
+	local params = self.params
 	local rivals = {}
 	local user_relations = User_relations:find_all(
 		{params.user_id},

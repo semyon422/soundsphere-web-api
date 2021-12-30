@@ -12,8 +12,8 @@ leaderboard_users_c.policies.GET = {{"permit"}}
 leaderboard_users_c.validations.GET = {
 	require("validations.no_data"),
 }
-leaderboard_users_c.GET = function(request)
-	local params = request.params
+leaderboard_users_c.GET = function(self)
+	local params = self.params
     local leaderboard_users = Leaderboard_users:find_all({params.leaderboard_id}, "leaderboard_id")
 
 	if params.no_data then

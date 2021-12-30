@@ -13,7 +13,7 @@ test_c.validations.GET = {
 	{"query_number", exists = true, type = "number"},
 	{"query_boolean", type = "boolean"},
 }
-test_c.GET = function(request)
+test_c.GET = function(self)
 	return {json = {message = "success"}}
 end
 
@@ -33,7 +33,7 @@ test_c.validations.POST = {
 		}}
 	}},
 }
-test_c.POST = function(request)
+test_c.POST = function(self)
 	return {json = {message = "success"}}
 end
 

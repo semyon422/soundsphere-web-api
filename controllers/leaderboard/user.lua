@@ -8,9 +8,9 @@ leaderboard_user_c.methods = {"PUT", "DELETE"}
 
 leaderboard_user_c.context.PUT = {"leaderboard_user", "request_session"}
 leaderboard_user_c.policies.PUT = {{"authenticated"}}
-leaderboard_user_c.PUT = function(request)
-	local params = request.params
-    local leaderboard_user = request.context.leaderboard_user
+leaderboard_user_c.PUT = function(self)
+	local params = self.params
+    local leaderboard_user = self.context.leaderboard_user
     if not leaderboard_user then
         leaderboard_user = Leaderboard_users:create({
 			leaderboard_id = params.leaderboard_id,
@@ -23,8 +23,8 @@ end
 
 leaderboard_user_c.context.DELETE = {"leaderboard_user", "request_session"}
 leaderboard_user_c.policies.DELETE = {{"authenticated", "context_loaded"}}
-leaderboard_user_c.DELETE = function(request)
-    local leaderboard_user = request.context.leaderboard_user
+leaderboard_user_c.DELETE = function(self)
+    local leaderboard_user = self.context.leaderboard_user
     leaderboard_user:delete()
 
 	return {status = 204}

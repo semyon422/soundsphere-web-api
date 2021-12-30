@@ -20,7 +20,7 @@ local function load_community_user(communities, community_user)
 	table.insert(communities, {
 		community_id = community_user.community_id,
 		role = Roles:to_name(community_user.role),
-	)
+	})
 	communities.select = select
 end
 

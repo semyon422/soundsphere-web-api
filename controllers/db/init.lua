@@ -6,7 +6,7 @@ db_c.path = "/db"
 db_c.methods = {"GET"}
 
 db_c.policies.GET = {{"permit"}}
-db_c.GET = function(request)
+db_c.GET = function(self)
 	return {}
 end
 

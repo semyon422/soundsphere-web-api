@@ -11,8 +11,8 @@ user_sessions_c.policies.GET = {{"authenticated"}}
 user_sessions_c.validations.GET = {
 	{"show_ip", type = "boolean", optional = true},
 }
-user_sessions_c.GET = function(request)
-	local params = request.params
+user_sessions_c.GET = function(self)
+	local params = self.params
 	local sessions = Sessions:find_all({params.user_id}, {
 		key = "user_id",
 		where = {
@@ -20,7 +20,7 @@ user_sessions_c.GET = function(request)
 		}
 	})
 
-	local request_session = request.context.request_session
+	local request_session = self.context.request_session
 	local request_session_id = request_session and request_session.id
 	
 	local safe_sessions = {}

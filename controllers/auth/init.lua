@@ -6,7 +6,7 @@ auth_c.path = "/auth"
 auth_c.methods = {"GET"}
 
 auth_c.policies.GET = {{"permit"}}
-auth_c.GET = function(request)
+auth_c.GET = function(self)
 	return {}
 end
 

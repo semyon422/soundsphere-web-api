@@ -11,8 +11,8 @@ difftable_inputmodes_c.policies.GET = {{"permit"}}
 difftable_inputmodes_c.validations.GET = {
 	require("validations.no_data"),
 }
-difftable_inputmodes_c.GET = function(request)
-	local params = request.params
+difftable_inputmodes_c.GET = function(self)
+	local params = self.params
 	local difftable_inputmodes = Difftable_inputmodes:find_all({params.difftable_id}, "difftable_id")
 
 	if params.no_data then

@@ -86,9 +86,9 @@ leaderboard_c.validations.GET = {
 	{"requirements", type = "boolean", optional = true},
 }
 add_belongs_to_validations(Leaderboards.relations, leaderboard_c.validations.GET)
-leaderboard_c.GET = function(request)
-	local params = request.params
-	local leaderboard = request.context.leaderboard
+leaderboard_c.GET = function(self)
+	local params = self.params
+	local leaderboard = self.context.leaderboard
 
 	local fields = {}
 	for param, controller in pairs(additions) do
@@ -96,7 +96,7 @@ leaderboard_c.GET = function(request)
 		if value ~= nil then
 			local param_count = param .. "_count"
 			params.no_data = value == false
-			local _, response = controller.GET(request)
+			local response = controller.GET(self).json
 			leaderboard[param] = response[param]
 			if leaderboard[param_count] and leaderboard[param_count] ~= response.total then
 				leaderboard[param_count] = response.total
@@ -108,7 +108,7 @@ leaderboard_c.GET = function(request)
 		leaderboard:update(unpack(fields))
 	end
 
-	get_relatives(leaderboard, request.params, true)
+	get_relatives(leaderboard, self.params, true)
 
 	return {json = {leaderboard = leaderboard}}
 end
@@ -122,9 +122,9 @@ leaderboard_c.validations.PATCH = {
 		{"banner", type = "string"},
 	}},
 }
-leaderboard_c.PATCH = function(request)
-	local params = request.params
-	local leaderboard = request.context.leaderboard
+leaderboard_c.PATCH = function(self)
+	local params = self.params
+	local leaderboard = self.context.leaderboard
 
 	leaderboard.name = params.leaderboard.name
 	leaderboard.description = params.leaderboard.description

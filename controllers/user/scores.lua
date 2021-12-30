@@ -7,8 +7,8 @@ user_scores_c.path = "/users/:user_id[%d]/scores"
 user_scores_c.methods = {"GET"}
 
 user_scores_c.policies.GET = {{"permit"}}
-user_scores_c.GET = function(request)
-	local params = request.params
+user_scores_c.GET = function(self)
+	local params = self.params
 	local scores = Scores:find_all({params.user_id}, "user_id")
 
 	return {json = {scores = scores}}

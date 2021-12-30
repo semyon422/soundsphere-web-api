@@ -9,8 +9,8 @@ difftable_leaderboards_c.methods = {"GET"}
 
 difftable_leaderboards_c.context.GET = {"difftable"}
 difftable_leaderboards_c.policies.GET = {{"permit"}}
-difftable_leaderboards_c.GET = function(request)
-	local params = request.params
+difftable_leaderboards_c.GET = function(self)
+	local params = self.params
 	local leaderboard_difftables = Leaderboard_difftables:find_all({params.difftable_id}, "difftable_id")
 
 	if params.no_data then

@@ -7,14 +7,14 @@ logout_c.methods = {"POST"}
 
 logout_c.context.POST = {"request_session"}
 logout_c.policies.POST = {{"authenticated"}}
-logout_c.POST = function(request)
-	local session = request.context.request_session
+logout_c.POST = function(self)
+	local session = self.context.request_session
 
 	session.active = false
 	session:update("active")
 
 	for key, value in pairs(session) do
-		request.session[key] = nil
+		self.session[key] = nil
 	end
 
 	return {}

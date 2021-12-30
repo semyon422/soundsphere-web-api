@@ -12,16 +12,16 @@ score_c.methods = {"GET", "DELETE"}
 score_c.context.GET = {"score"}
 score_c.policies.GET = {{"permit"}}
 score_c.validations.GET = add_belongs_to_validations(Scores.relations)
-score_c.GET = function(request)
-	local score = request.context.score
+score_c.GET = function(self)
+	local score = self.context.score
 
-	get_relatives(score, request.params, true)
+	get_relatives(score, self.params, true)
 
 	return {json = {score = score:to_name()}}
 end
 
 score_c.policies.DELETE = {{"permit"}}
-score_c.DELETE = function(request)
+score_c.DELETE = function(self)
 	return {status = 204}
 end
 

@@ -26,9 +26,9 @@ difftable_c.validations.GET = {
 	{"inputmodes", type = "boolean", optional = true},
 }
 add_belongs_to_validations(Difftables.relations, difftable_c.validations.GET)
-difftable_c.GET = function(request)
-	local params = request.params
-	local difftable = request.context.difftable
+difftable_c.GET = function(self)
+	local params = self.params
+	local difftable = self.context.difftable
 
 	local fields = {}
 	for param, controller in pairs(additions) do
@@ -36,7 +36,7 @@ difftable_c.GET = function(request)
 		if value ~= nil then
 			local param_count = param .. "_count"
 			params.no_data = value == false
-			local _, response = controller.GET(request)
+			local response = controller.GET(self).json
 			difftable[param] = response[param]
 			if difftable[param_count] and difftable[param_count] ~= response.total then
 				difftable[param_count] = response.total
@@ -48,18 +48,18 @@ difftable_c.GET = function(request)
 		difftable:update(unpack(fields))
 	end
 
-	get_relatives(difftable, request.params, true)
+	get_relatives(difftable, self.params, true)
 
 	return {json = {difftable = difftable}}
 end
 
 difftable_c.policies.PATCH = {{"permit"}}
-difftable_c.PATCH = function(request)
+difftable_c.PATCH = function(self)
 	return {}
 end
 
 difftable_c.policies.DELETE = {{"permit"}}
-difftable_c.DELETE = function(request)
+difftable_c.DELETE = function(self)
 	return {status = 204}
 end
 

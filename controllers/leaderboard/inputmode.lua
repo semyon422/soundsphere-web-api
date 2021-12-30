@@ -12,10 +12,10 @@ leaderboard_inputmode_c.validations.path = {
 
 leaderboard_inputmode_c.context.PUT = {"leaderboard_inputmode", "request_session"}
 leaderboard_inputmode_c.policies.PUT = {{"authenticated"}}
-leaderboard_inputmode_c.PUT = function(request)
-	local params = request.params
+leaderboard_inputmode_c.PUT = function(self)
+	local params = self.params
 
-    local leaderboard_inputmode = request.context.leaderboard_inputmode
+    local leaderboard_inputmode = self.context.leaderboard_inputmode
     if not leaderboard_inputmode then
         leaderboard_inputmode = Leaderboard_inputmodes:create({
 			leaderboard_id = params.leaderboard_id,
@@ -28,8 +28,8 @@ end
 
 leaderboard_inputmode_c.context.DELETE = {"leaderboard_inputmode", "request_session"}
 leaderboard_inputmode_c.policies.DELETE = {{"authenticated"}}
-leaderboard_inputmode_c.DELETE = function(request)
-    local leaderboard_inputmode = request.context.leaderboard_inputmode
+leaderboard_inputmode_c.DELETE = function(self)
+    local leaderboard_inputmode = self.context.leaderboard_inputmode
     leaderboard_inputmode:delete()
 
 	return {status = 204}

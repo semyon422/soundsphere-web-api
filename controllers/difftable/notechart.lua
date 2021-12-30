@@ -12,10 +12,10 @@ difftable_notechart_c.policies.PUT = {{"authenticated"}}
 difftable_notechart_c.validations.PUT = {
 	{"difficulty", type = "number", optional = true},
 }
-difftable_notechart_c.PUT = function(request)
-	local params = request.params
+difftable_notechart_c.PUT = function(self)
+	local params = self.params
 
-	local difftable_notechart = request.context.difftable_notechart
+	local difftable_notechart = self.context.difftable_notechart
 	if difftable_notechart then
 		difftable_notechart.difficulty = params.difficulty
 		difftable_notechart:update("difficulty")
@@ -33,8 +33,8 @@ end
 
 difftable_notechart_c.context.DELETE = {"difftable_notechart", "request_session"}
 difftable_notechart_c.policies.DELETE = {{"authenticated", "context_loaded"}}
-difftable_notechart_c.DELETE = function(request)
-    local difftable_notechart = Dequest.context.difftable_notechart
+difftable_notechart_c.DELETE = function(self)
+    local difftable_notechart = self.context.difftable_notechart
     difftable_notechart:delete()
 
 	return {status = 204}

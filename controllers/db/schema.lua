@@ -1,4 +1,5 @@
 local Controller = require("Controller")
+local db = require("db")
 
 local schema_c = Controller:new()
 
@@ -7,7 +8,7 @@ schema_c.methods = {"GET", "POST"}
 
 schema_c.context.GET = {"request_session"}
 schema_c.policies.GET = {{"authenticated"}}
-schema_c.GET = function(request)
+schema_c.GET = function(self)
 	return {}
 end
 
@@ -16,8 +17,8 @@ schema_c.policies.POST = {{"authenticated"}}
 schema_c.validations.POST = {
 	{"db_test", type = "boolean", optional = true},
 }
-schema_c.POST = function(request)
-	local params = request.params
+schema_c.POST = function(self)
+	local params = self.params
 
 	if params.db_test then
 		local db_test = require("db_test")

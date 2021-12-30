@@ -9,8 +9,8 @@ difftable_communities_c.methods = {"GET"}
 
 difftable_communities_c.context.GET = {"difftable"}
 difftable_communities_c.policies.GET = {{"permit"}}
-difftable_communities_c.GET = function(request)
-	local params = request.params
+difftable_communities_c.GET = function(self)
+	local params = self.params
 	local community_difftables = Community_difftables:find_all({params.difftable_id}, "difftable_id")
 
 	if params.no_data then

@@ -13,8 +13,8 @@ local community_users_c = Controller:new()
 community_users_c.path = "/communities/:community_id[%d]/users"
 community_users_c.methods = {"GET"}
 
-community_users_c.get_invitations = function(request, invitation)
-	local params = request.params
+community_users_c.get_invitations = function(self, invitation)
+	local params = self.params
 
 	local where = {
 		community_id = params.community_id,
@@ -33,8 +33,8 @@ local staff_roles = {}
 for _, role in ipairs({"creator", "admin", "moderator"}) do
 	table.insert(staff_roles, Roles:for_db(role))
 end
-community_users_c.get_staff = function(request)
-	local params = request.params
+community_users_c.get_staff = function(self)
+	local params = self.params
 
 	local db = Community_users.db
 	local where = {
@@ -49,8 +49,8 @@ community_users_c.get_staff = function(request)
 	return community_users, clause
 end
 
-community_users_c.get_users = function(request)
-	local params = request.params
+community_users_c.get_users = function(self)
+	local params = self.params
 
 	local where = {
 		community_id = params.community_id,
@@ -91,7 +91,7 @@ community_users_c.get_users = function(request)
 	return community_users
 end
 
-community_users_c.update_users = function(request, community_id, users)
+community_users_c.update_users = function(self, community_id, users)
 	if not users then
 		return
 	end
@@ -111,8 +111,8 @@ community_users_c.update_users = function(request, community_id, users)
 
 	local community_users = Community_users:find_all(community_user_ids)
 	for _, community_user in ipairs(community_users) do
-		request.context.community_user = community_user
-		if community_user_c:check_access(request) then
+		self.context.community_user = community_user
+		if community_user_c:check_access(self) then
 			local new_community_user = community_users_map[community_user.id]
 			if community_user.role ~= new_community_user.role then
 				community_user.role = new_community_user.role
@@ -129,18 +129,18 @@ community_users_c.validations.GET = {
 	{"requests", type = "boolean", optional = true},
 	{"staff", type = "boolean", optional = true},
 }
-community_users_c.GET = function(request)
-	local params = request.params
+community_users_c.GET = function(self)
+	local params = self.params
 
 	local community_users, filtered_clause
 	if params.invitations then
-		community_users, filtered_clause = community_users_c.get_invitations(request, true)
+		community_users, filtered_clause = community_users_c.get_invitations(self, true)
 	elseif params.requests then
-		community_users, filtered_clause = community_users_c.get_invitations(request, false)
+		community_users, filtered_clause = community_users_c.get_invitations(self, false)
 	elseif params.staff then
-		community_users, filtered_clause = community_users_c.get_staff(request)
+		community_users, filtered_clause = community_users_c.get_staff(self)
 	else
-		community_users = community_users_c.get_users(request)
+		community_users = community_users_c.get_users(self)
 	end
 
 	local db = Community_users.db
@@ -179,10 +179,10 @@ community_users_c.GET = function(request)
 	}}
 end
 
-community_users_c.PATCH = function(request)
-	local params = request.params
+community_users_c.PATCH = function(self)
+	local params = self.params
 
-	community_users_c.update_users(request, params.community_id, params.users)
+	community_users_c.update_users(self, params.community_id, params.users)
 
 	return {}
 end

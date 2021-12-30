@@ -8,7 +8,7 @@ migrations_c.methods = {"GET", "POST"}
 
 migrations_c.context.GET = {"request_session"}
 migrations_c.policies.GET = {{"authenticated"}}
-migrations_c.GET = function(request)
+migrations_c.GET = function(self)
 	local names = {}
 	for _, migration in ipairs(migrations.LapisMigrations:select()) do
 		table.insert(names, migration.name)
@@ -22,7 +22,7 @@ end
 
 migrations_c.context.POST = {"request_session"}
 migrations_c.policies.POST = {{"authenticated"}}
-migrations_c.POST = function(request)
+migrations_c.POST = function(self)
 	migrations.run_migrations(require("migrations"))
 	local total = migrations.LapisMigrations:count()
 	return {json = {total = tonumber(total)}}

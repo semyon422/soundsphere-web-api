@@ -22,8 +22,8 @@ leaderboards_c.validations.GET = {
 	{"inputmodes", type = "boolean", optional = true},
 	{"top_user", type = "boolean", optional = true},
 }
-leaderboards_c.GET = function(request)
-	local params = request.params
+leaderboards_c.GET = function(self)
+	local params = self.params
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
 
@@ -73,8 +73,8 @@ leaderboards_c.validations.POST = {
 		{"banner", exists = true, type = "string"},
 	}}
 }
-leaderboards_c.POST = function(request)
-	local params = request.params
+leaderboards_c.POST = function(self)
+	local params = self.params
 	local leaderboard = Leaderboards:create({
 		name = params.leaderboard.name or "Leaderboard",
 		description = params.leaderboard.description,
@@ -85,7 +85,7 @@ leaderboards_c.POST = function(request)
 		community_id = params.community_id,
 		leaderboard_id = leaderboard.id,
 		is_owner = true,
-		sender_id = request.session.user_id,
+		sender_id = self.session.user_id,
 		accepted = true,
 		created_at = os.time(),
 		message = "",
@@ -95,7 +95,7 @@ leaderboards_c.POST = function(request)
 	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.difftables)
 	leaderboard_c.update_requirements(leaderboard.id, params.leaderboard.requirements)
 
-	return {status = 201, redirect_to = request:url_for(leaderboard)}
+	return {status = 201, redirect_to = self:url_for(leaderboard)}
 end
 
 return leaderboards_c

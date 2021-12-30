@@ -18,8 +18,8 @@ difftables_c.validations.GET = {
 	require("validations.search"),
 	{"inputmodes", type = "boolean", optional = true},
 }
-difftables_c.GET = function(request)
-	local params = request.params
+difftables_c.GET = function(self)
+	local params = self.params
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
 
@@ -64,8 +64,8 @@ difftables_c.validations.POST = {
 		{"owner_community_id", exists = true, type = "number"},
 	}}
 }
-difftables_c.POST = function(request)
-	local params = request.params
+difftables_c.POST = function(self)
+	local params = self.params
 	local difftable = params.difftable
 	difftable = Difftables:create({
 		name = difftable.name or "Difficulty table",
@@ -74,7 +74,7 @@ difftables_c.POST = function(request)
 		owner_community_id = params.community_id,
 	})
 
-	return {status = 201, redirect_to = request:url_for(difftable)}
+	return {status = 201, redirect_to = self:url_for(difftable)}
 end
 
 return difftables_c

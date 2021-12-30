@@ -10,10 +10,10 @@ leaderboard_requirement_c.methods = {"GET", "PATCH", "DELETE"}
 
 leaderboard_requirement_c.context.GET = {"leaderboard_requirement", "request_session"}
 leaderboard_requirement_c.policies.GET = {{"authenticated", "context_loaded"}}
-leaderboard_requirement_c.GET = function(request)
-	local params = request.params
+leaderboard_requirement_c.GET = function(self)
+	local params = self.params
 
-    local requirement = request.context.leaderboard_requirement
+    local requirement = self.context.leaderboard_requirement
 
 	return {json = {requirement = requirement:to_name()}}
 end
@@ -28,10 +28,10 @@ leaderboard_requirement_c.validations.PATCH = {
 		{"value", exists = true, type = "string"},
 	}}
 }
-leaderboard_requirement_c.PATCH = function(request)
-	local params = request.params
+leaderboard_requirement_c.PATCH = function(self)
+	local params = self.params
 
-    local requirement = request.context.leaderboard_requirement
+    local requirement = self.context.leaderboard_requirement
 	local params_requirement = params.requirement
 
 	requirement.name = params_requirement.name
@@ -47,8 +47,8 @@ end
 
 leaderboard_requirement_c.context.DELETE = {"leaderboard_requirement", "request_session"}
 leaderboard_requirement_c.policies.DELETE = {{"authenticated", "context_loaded"}}
-leaderboard_requirement_c.DELETE = function(request)
-    local requirement = request.context.leaderboard_requirement
+leaderboard_requirement_c.DELETE = function(self)
+    local requirement = self.context.leaderboard_requirement
     requirement:delete()
 
 	return {status = 204}

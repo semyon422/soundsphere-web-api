@@ -15,8 +15,8 @@ local community_c = Controller:new()
 community_c.path = "/communities/:community_id[%d]"
 community_c.methods = {"GET", "PATCH", "DELETE"}
 
-community_c.update_users = function(request, community_id, users)
-	return community_users_c.update_users(request, community_id, users)
+community_c.update_users = function(self, community_id, users)
+	return community_users_c.update_users(self, community_id, users)
 end
 
 community_c.context.GET = {"community"}
@@ -26,9 +26,9 @@ community_c.validations.GET = {
 	{"leaderboards", type = "boolean", optional = true},
 	{"users", type = "boolean", optional = true},
 }
-community_c.GET = function(request)
-	local params = request.params
-	local community = request.context.community
+community_c.GET = function(self)
+	local params = self.params
+	local community = self.context.community
 
 	local fields = {}
 	for param, controller in pairs(additions) do
@@ -36,7 +36,7 @@ community_c.GET = function(request)
 		if value ~= nil then
 			local param_count = param .. "_count"
 			params.no_data = value == false
-			local _, response = controller.GET(request)
+			local response = controller.GET(self).json
 			community[param] = response[param]
 			if community[param_count] and community[param_count] ~= response.total then
 				community[param_count] = response.total
@@ -53,9 +53,9 @@ end
 
 community_c.context.PATCH = {"community", "request_session"}
 community_c.policies.PATCH = {{"authenticated", "context_loaded"}}
-community_c.PATCH = function(request)
-	local params = request.params
-	local community = request.context.community
+community_c.PATCH = function(self)
+	local params = self.params
+	local community = self.context.community
 
 	community.name = params.community.name
 	community.alias = params.community.alias
@@ -77,14 +77,14 @@ community_c.PATCH = function(request)
 		"default_leaderboard_id"
 	)
 
-	community_c.update_users(request, community.id, params.community.users)
+	community_c.update_users(self, community.id, params.community.users)
 
 	return {json = {community = community}}
 end
 
 community_c.context.DELETE = {"community"}
 community_c.policies.DELETE = {{"permit"}}
-community_c.DELETE = function(request)
+community_c.DELETE = function(self)
 	return {status = 204}
 end
 

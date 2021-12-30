@@ -47,8 +47,8 @@ notechart_scores_c.validations.GET = {
 	{"rivals", type = "boolean", optional = true},
 	{"friends", type = "boolean", optional = true},
 }
-notechart_scores_c.GET = function(request)
-	local params = request.params
+notechart_scores_c.GET = function(self)
+	local params = self.params
 	local scores
 	local notechart_id = params.notechart_id
 	if params.rivals then

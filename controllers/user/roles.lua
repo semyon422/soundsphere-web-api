@@ -8,8 +8,8 @@ user_roles_c.path = "/users/:user_id[%d]/roles"
 user_roles_c.methods = {"GET"}
 
 user_roles_c.policies.GET = {{"permit"}}
-user_roles_c.GET = function(request)
-	local params = request.params
+user_roles_c.GET = function(self)
+	local params = self.params
     local user_roles = User_roles:find_all({params.user_id}, "user_id")
     local roles = {}
 	for _, user_role in ipairs(user_roles) do

@@ -261,10 +261,11 @@ local function route_datatables(controller, name)
 			if datatable.params then
 				datatable.params(self)
 			end
-			local code, response = controller.GET(self)
-			return {json = datatable.response(response, self), status = code}
+			local response = controller.GET(self)
+			response.json = datatable.response(response.json or {}, self)
+			return response
 		else
-			return {json = {decision = context.decision}, status = 200}
+			return {json = {decision = context.decision}, status = 403}
 		end
 	end)
 end
