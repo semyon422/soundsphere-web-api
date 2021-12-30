@@ -14,7 +14,7 @@
 	<% if controller.name ~= "resources" then %>
 		<p class="menu-label">
 			<%= controller.name %>
-			<% if data_type == "object" then %>
+			<% if data_type == "object" and data.url_params then %>
 				<a href="<%= url_for(data):gsub("/api", "/api/html") %>">
 					<b>
 					<% if data.name then %>
