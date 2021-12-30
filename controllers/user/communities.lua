@@ -46,7 +46,7 @@ user_communities_c.GET = function(self)
 	return {json = {
 		total = count,
 		filtered = count,
-		communities = communities
+		communities = communities,
 	}}
 end
 

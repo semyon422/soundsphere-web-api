@@ -29,7 +29,7 @@ user_friends_c.GET = function(self)
 	return {json = {
 		total = count,
 		filtered = count,
-		friends = friends
+		friends = friends,
 	}}
 end
 
