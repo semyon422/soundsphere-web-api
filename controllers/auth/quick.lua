@@ -1,25 +1,18 @@
-local hmac = require("openssl.hmac")
-local digest = require("openssl.digest")
+local rand = require("openssl.rand")
 local users = require("models.users")
-local quick_logins = require("models.quick_logins")
+local Quick_logins = require("models.quick_logins")
 local login_c = require("controllers.auth.login")
-local secret = require("secret")
 local Controller = require("Controller")
 local Ip = require("util.ip")
+local Filehash = require("util.filehash")
 
 local quick_c = Controller:new()
 
 quick_c.path = "/auth/quick"
 quick_c.methods = {"GET", "POST"}
 
-local function hex(str)
-	return (str:gsub(".", function(c)
-		return string.format("%02x", string.byte(c))
-	end))
-end
-
 local new_key = function()
-	return hex(digest.new("md5"):final(hmac.new(secret.token_key, "sha256"):final(ngx.time() + ngx.worker.pid())))
+	return rand.bytes(16)
 end
 
 local messages = {}
@@ -28,23 +21,27 @@ messages.success = "Success"
 
 quick_c.policies.GET = {{"permit"}}
 quick_c.validations.GET = {
-	{"key", exists = true, type = "string"},
+	{"key", exists = true, type = "string", optional = true},
 }
 quick_c.GET = function(self)
 	local params = self.params
 	local ip = self.context.ip
 	local time = os.time()
-	local quick_login = quick_logins:find({ip = Ip:for_db(ip)})
+	local quick_login = Quick_logins:find({ip = Ip:for_db(ip)})
 
 	if not quick_login then
+		if params.key then
+			return {json = {message = messages.not_allowed}}
+		end
+
 		local key = new_key()
-		quick_logins:create({
+		Quick_logins:create({
 			ip = Ip:for_db(ip),
 			key = key,
 			next_update_time = time + 5 * 60,
 		})
 
-		return {json = {key = key}}
+		return {json = {key = Filehash:to_name(key)}}
 	end
 
 	if quick_login.next_update_time < time or not params.key then
@@ -54,9 +51,10 @@ quick_c.GET = function(self)
 		quick_login.complete = false
 		quick_login:update("key", "next_update_time", "complete")
 
-		return {json = {key = key}}
+		return {json = {key = Filehash:to_name(key)}}
 	end
 
+	params.key = Filehash:for_db(params.key)
 	if quick_login.key ~= params.key or not quick_login.complete then
 		return {json = {message = messages.not_allowed}}
 	end
@@ -66,12 +64,10 @@ quick_c.GET = function(self)
 		quick_login:delete()
 		local token, payload = login_c.new_token(user, ip)
 
-		return {
-			json = {
-				token = token,
-				session = payload,
-			}
-		}
+		return {json = {
+			token = token,
+			session = payload,
+		}}
 	end
 
 	return {json = {message = messages.not_allowed}}
@@ -89,7 +85,8 @@ quick_c.POST = function(self)
 		return {json = {message = messages.not_allowed}}
 	end
 
-	local quick_login = quick_logins:find({
+	key = Filehash:for_db(key)
+	local quick_login = Quick_logins:find({
 		ip = Ip:for_db(self.context.ip),
 		key = key
 	})
