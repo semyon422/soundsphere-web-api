@@ -1,44 +1,12 @@
 local Users = require("models.users")
 local bcrypt = require("bcrypt")
-local db_search = require("util.db_search")
-local db_where = require("util.db_where")
 local Controller = require("Controller")
+local login_c = require("controllers.auth.login")
 
 local register_c = Controller:new()
 
 register_c.path = "/auth/register"
 register_c.methods = {"POST"}
-
-register_c.register = function(name, email, password)
-	if not name then
-		return false, "Invalid name"
-	elseif not email then
-		return false, "Invalid email"
-	elseif not password then
-		return false, "Invalid password"
-	end
-
-	email = email:lower()
-
-	local user = Users:find({email = email})
-
-	if user then
-		return false, "This email is already registered"
-	end
-
-	local time = os.time()
-	user = Users:create({
-		name = name,
-		tag = ("%4d"):format(math.random(1, 9999)),
-		email = email,
-		password = bcrypt.digest(password, 5),
-		latest_activity = time,
-		created_at = time,
-		description = "",
-	})
-
-	return user
-end
 
 register_c.policies.POST = {{"permit"}}
 register_c.validations.POST = {
@@ -50,13 +18,28 @@ register_c.validations.POST = {
 }
 register_c.POST = function(self)
 	local params = self.params
-	local user = params.user
-	local err
-	user, err = register_c.register(user.name, user.email, user.password)
 
-	if not user then
-		return {json = {message = err}}
+	local user = Users:find({email = params.user.email:lower()})
+	if user then
+		return {json = {message = "This email is already registered"}}
 	end
+	user = Users:find({name = params.user.name})
+	if user then
+		return {json = {message = "This name is already taken"}}
+	end
+
+	local time = os.time()
+	user = Users:create({
+		name = params.user.name,
+		email = params.user.email:lower(),
+		password = bcrypt.digest(params.user.password, 10),
+		latest_activity = time,
+		created_at = time,
+		description = "",
+	})
+
+	local token, payload = login_c.new_token(user, self.context.ip)
+	login_c.copy_session(payload, self.session)
 
 	return {status = 201, redirect_to = self:url_for(user)}
 end

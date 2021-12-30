@@ -2,7 +2,6 @@ local db = require("db")
 
 local admin = {
 	name = "admin",
-	tag = "0000",
 	email = "admin@admin",
 	password = "password"
 }
@@ -27,9 +26,8 @@ db_test.create = function()
 
 	local user = Users:create({
 		name = admin.name,
-		tag = admin.tag,
 		email = admin.email,
-		password = bcrypt.digest(admin.password, 5),
+		password = bcrypt.digest(admin.password, 10),
 		latest_activity = 0,
 		created_at = 0,
 		description = "",

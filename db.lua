@@ -150,12 +150,12 @@ table_declarations.user_roles = {
 table_declarations.users = {
 	{"id", types.id},
 	{"name", types.varchar},
-	{"tag", types.varchar},
 	{"email", "VARCHAR(100) NOT NULL"},
 	{"password", types.varchar},
 	{"latest_activity", types.time},
 	{"created_at", types.time},
 	{"description", types.varchar},
+	"UNIQUE KEY `name` (`name`)",
 	"UNIQUE KEY `email` (`email`)"
 }
 
