@@ -220,7 +220,7 @@ local function route_api(controller, html)
 		if self.params.params then
 			response.params = self.params
 		end
-		if not html then
+		if not html or response.content_type == "application/octet-stream" then
 			return response
 		end
 		local json_response = response.json

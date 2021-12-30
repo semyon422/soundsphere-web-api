@@ -43,4 +43,26 @@ function Files:load(row)
 	return _load(self, row)
 end
 
+function Files:write_file(file, content)
+	local storage = Storages:to_name(file.storage)
+	local hash = Filehash:to_name(file.hash)
+
+	local path = "storages/" .. storage .. "/" .. hash
+	local f = assert(io.open(path, "wb"))
+	f:write(content)
+	f:close()
+end
+
+function Files:read_file(file)
+	local storage = Storages:to_name(file.storage)
+	local hash = Filehash:to_name(file.hash)
+
+	local path = "storages/" .. storage .. "/" .. hash
+	local f = assert(io.open(path, "rb"))
+	local content = f:read("*a")
+	f:close()
+
+	return content
+end
+
 return Files

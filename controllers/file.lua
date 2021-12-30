@@ -11,8 +11,29 @@ file_c.methods = {"GET", "PUT", "DELETE"}
 
 file_c.context.GET = {"file"}
 file_c.policies.GET = {{"context_loaded"}}
+file_c.validations.GET = {
+	{"download", type = "boolean", optional = true},
+}
 file_c.GET = function(self)
-	return {json = {file = self.context.file:to_name()}}
+	local params = self.params
+
+	local file = self.context.file
+
+	if not params.download then
+		return {json = {file = file:to_name()}}
+	end
+
+	return {
+		Files:read_file(file),
+		status = 200,
+		content_type = "application/octet-stream",
+		headers = {
+			["Pragma"] = "public",
+			["Cache-Control"] = "must-revalidate, post-check=0, pre-check=0",
+			["Content-Disposition"] = 'attachment; filename="' .. file.name .. '"',
+			["Content-Transfer-Encoding"] = "binary",
+		},
+	}
 end
 
 file_c.context.DELETE = {"file"}
@@ -24,6 +45,7 @@ end
 file_c.context.PUT = {"file"}
 file_c.policies.PUT = {{"context_loaded"}}
 file_c.validations.PUT = {
+	{"force", type = "boolean", optional = true},
 	{"file", is_file = true, param_type = "body"},
 }
 file_c.PUT = function(self)
@@ -31,8 +53,8 @@ file_c.PUT = function(self)
 
 	local file = self.context.file
 
-	if file.uploaded then
-		return {}
+	if file.uploaded and not params.force then
+		return {status = 204}
 	end
 
 	file.hash = Filehash:sum_for_db(params.file.content)
@@ -41,6 +63,8 @@ file_c.PUT = function(self)
 	file.uploaded = true
 	file.size = #params.file.content
 	file:update("hash", "name", "format", "uploaded", "size")
+
+	Files:write_file(file, params.file.content)
 
 	return {json = {file = file:to_name()}}
 end
