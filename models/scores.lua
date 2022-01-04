@@ -33,7 +33,7 @@ function Scores.for_db(self, row) return for_db(row) end
 local _load = Scores.load
 function Scores:load(row)
 	row.is_valid = toboolean(row.is_valid)
-	row.calculated = toboolean(row.calculated)
+	row.is_complete = toboolean(row.is_complete)
 	row.replay_uploaded = toboolean(row.replay_uploaded)
 	row.created_at = tonumber(row.created_at)
 	row.to_name = to_name

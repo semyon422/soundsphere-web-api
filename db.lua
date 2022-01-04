@@ -260,6 +260,7 @@ table_declarations.notecharts = {
 	{"scores_count", types.size},
 	{"inputmode", types.enum},
 	{"difficulty", types.float},
+	{"is_valid", types.boolean},
 	{"song_title", types.text},
 	{"song_artist", types.text},
 	{"difficulty_name", types.text},
@@ -278,21 +279,20 @@ table_declarations.scores = {
 	{"file_id", types.fk_id},
 	{"inputmode", types.enum},
 	{"is_valid", types.boolean},
-	{"calculated", types.boolean},
+	{"is_complete", types.boolean},
 	{"created_at", types.time},
 	{"score", types.float},
 	{"accuracy", types.float},
 	{"max_combo", types.size},
 	{"performance", types.float},
-	[[
-		UNIQUE KEY `file_id` (`file_id`),
-		KEY `user_id` (`user_id`),
-		KEY `notechart_id` (`notechart_id`),
-		KEY `modifierset_id` (`modifierset_id`),
-		KEY `inputmode` (`inputmode`),
-		KEY `performance` (`performance`),
-		KEY `calculated` (`calculated`)
-	]]
+	"UNIQUE KEY `file_id` (`file_id`)",
+	"KEY `user_id` (`user_id`)",
+	"KEY `notechart_id` (`notechart_id`)",
+	"KEY `modifierset_id` (`modifierset_id`)",
+	"KEY `inputmode` (`inputmode`)",
+	"KEY `is_valid` (`is_valid`)",
+	"KEY `is_complete` (`is_complete`)",
+	"KEY `performance` (`performance`)",
 }
 
 table_declarations.sessions = {
