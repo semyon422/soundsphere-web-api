@@ -53,6 +53,9 @@ notechart_c.PATCH = function(self)
 	local json_response = from_json(body)
 	local response_notechart = json_response.notechart
 
+	notechart_file.loaded = true
+	notechart_file:update("loaded")
+
 	notechart.is_valid = true
 	notechart.inputmode = Inputmodes:for_db(response_notechart.inputMode)
 	-- notechart.difficulty = response_notechart.difficulty
