@@ -57,6 +57,7 @@ return {
 	"notechart.scores",
 	"scores",
 	"score",
+	"score.leaderboards",
 	"files",
 	"file",
 }
