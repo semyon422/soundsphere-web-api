@@ -1,5 +1,6 @@
 local Leaderboard_scores = require("models.leaderboard_scores")
 local Community_leaderboards = require("models.community_leaderboards")
+local Community_users = require("models.community_users")
 local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
 
@@ -11,21 +12,24 @@ score_leaderboards_c.methods = {"GET"}
 score_leaderboards_c.get_joined = function(self)
 	local params = self.params
 
-	local where = {
-		score_id = params.score_id,
-	}
-
-	local clause = Leaderboard_scores.db.encode_clause(where)
-    local score_leaderboards = Leaderboard_scores:select("where " .. clause .. " order by id asc")
+    local score_leaderboards = Leaderboard_scores:find_all({params.score_id}, "score_id")
 	preload(score_leaderboards, {"leaderboard", "notechart"})
 
-	return score_leaderboards
+	local leaderboards = {}
+	for _, score_leaderboard in ipairs(score_leaderboards) do
+		table.insert(leaderboards, score_leaderboard.leaderboard)
+	end
+
+	return leaderboards
 end
 
 score_leaderboards_c.get_available = function(self)
 	local score = self.context.score
-	local user = score:get_user()
-	local community_users = user:get_community_users()
+    local community_users = Community_users:find_all({score.user_id}, {
+		key = "user_id",
+		where = {accepted = true},
+		fields = "community_id",
+	})
 	local community_ids = {}
 	for _, community_user in ipairs(community_users) do
 		table.insert(community_ids, community_user.community_id)
@@ -33,7 +37,38 @@ score_leaderboards_c.get_available = function(self)
 	local community_leaderboards = Community_leaderboards:find_all(community_ids, "community_id")
 	preload(community_leaderboards, {leaderboard = "leaderboard_requirements"})
 
-	return community_leaderboards
+	local leaderboards = {}
+	for _, community_leaderboard in ipairs(community_leaderboards) do
+		local leaderboard = community_leaderboard.leaderboard
+		if score_leaderboards_c.match_requirements(score, leaderboard.leaderboard_requirements) then
+			table.insert(leaderboards, leaderboard)
+		end
+	end
+
+	return leaderboards
+end
+
+score_leaderboards_c.match_requirements = function(score, requirements)
+	for _, requirement in ipairs(requirements) do
+		if not score_leaderboards_c.match_requirement(score, requirement) then
+			return false
+		end
+	end
+	return true
+end
+
+score_leaderboards_c.match_requirement = function(score, requirement)
+	requirement:to_name()
+	if requirement.name ~= "modifier" then
+		return false
+	end
+	local modifierset = score:get_modifierset()
+	-- requirement
+	-- rule
+	-- key
+	-- value
+	return true
+	-- return false
 end
 
 score_leaderboards_c.context.GET = {"score"}
@@ -45,31 +80,23 @@ score_leaderboards_c.validations.GET = {
 score_leaderboards_c.GET = function(self)
 	local params = self.params
 
-	local score_leaderboards
+	local leaderboards
 	if params.available then
-		score_leaderboards = score_leaderboards_c.get_available(self)
+		leaderboards = score_leaderboards_c.get_available(self)
 	else
-		score_leaderboards = score_leaderboards_c.get_joined(self)
+		leaderboards = score_leaderboards_c.get_joined(self)
 	end
 
 	if params.no_data then
 		return {json = {
-			total = #score_leaderboards,
-			filtered = #score_leaderboards,
+			total = #leaderboards,
+			filtered = #leaderboards,
 		}}
 	end
 
-	local leaderboards = {}
-	for _, score_leaderboard in ipairs(score_leaderboards) do
-		local leaderboard = score_leaderboard.leaderboard
-		-- leaderboard.score_leaderboard = score_leaderboard
-		-- score_leaderboard.leaderboard = nil
-		table.insert(leaderboards, leaderboard)
-	end
-
 	return {json = {
-		total = #score_leaderboards,
-		filtered = #score_leaderboards,
+		total = #leaderboards,
+		filtered = #leaderboards,
 		leaderboards = leaderboards,
 	}}
 end
