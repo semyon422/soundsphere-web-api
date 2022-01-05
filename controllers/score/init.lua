@@ -1,5 +1,6 @@
 local Scores = require("models.scores")
 local Files = require("models.files")
+local Modifiersets = require("models.modifiersets")
 local Controller = require("Controller")
 local Formats = require("enums.formats")
 local Inputmodes = require("enums.inputmodes")
@@ -44,18 +45,28 @@ score_c.load_replay = function(score)
 	local json_response = from_json(body)
 	local response_score = json_response.score
 
+	local new_modifierset = {
+		encoded = json_response.modifiersEncoded,
+		displayed = json_response.modifiersString,
+	}
+	local modifierset = Modifiersets:find(new_modifierset)
+	if not modifierset then
+		modifierset = Modifiersets:create(new_modifierset)
+	end
+
 	replay_file.loaded = true
 	replay_file:update("loaded")
 
-	-- score.modifierset_id = response_score.modifierset_id
-	-- score.inputmode = Inputmodes:for_db(response_score.inputMode)
+	score.modifierset_id = modifierset.id
+	score.inputmode = Inputmodes:for_db(json_response.inputMode)
 	score.is_valid = true
 	score.score = response_score.normalscore.scoreAdjusted
 	score.accuracy = response_score.normalscore.accuracyAdjusted
 	score.max_combo = response_score.base.maxCombo
 	score.performance = response_score.normalscore.rating32
 	score:update(
-		-- "inputmode",
+		"modifierset_id",
+		"inputmode",
 		"is_valid",
 		"score",
 		"accuracy",
@@ -64,6 +75,7 @@ score_c.load_replay = function(score)
 	)
 	score.file = nil
 	score.notechart = nil
+	score.modifierset = modifierset
 
 	return {json = {score = score:to_name()}}
 end
