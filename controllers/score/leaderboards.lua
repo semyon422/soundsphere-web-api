@@ -1,6 +1,8 @@
 local Leaderboard_scores = require("models.leaderboard_scores")
 local Community_leaderboards = require("models.community_leaderboards")
 local Community_users = require("models.community_users")
+local Modifiersets = require("models.modifiersets")
+local Requirements = require("enums.requirements")
 local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
 
@@ -49,26 +51,63 @@ score_leaderboards_c.get_available = function(self)
 end
 
 score_leaderboards_c.match_requirements = function(score, requirements)
+	local modifierset = score:get_modifierset()
+	local modifiers = Modifiersets:decode(modifierset.encoded)
+
 	for _, requirement in ipairs(requirements) do
-		if not score_leaderboards_c.match_requirement(score, requirement) then
+		requirement:to_name()
+		if requirement.rule == "required" then
+			if requirement.name == "modifier" then
+				local matching = false
+				for _, modifier in ipairs(modifiers) do
+					if modifier.name == requirement.key then
+						if score_leaderboards_c.match_requirement(modifier.value, requirement.value) then
+							matching = true
+						end
+					end
+				end
+				if not matching then
+					return false
+				end
+			elseif requirement.name == "score" then
+				if not score_leaderboards_c.match_requirement(score[requirement.key], requirement.value) then
+					return false
+				end
+			end
+		end
+	end
+	for _, modifier in ipairs(modifiers) do
+		local matching = false
+		for _, requirement in ipairs(requirements) do
+			if requirement.name == "modifier" and (requirement.rule == "allowed" or requirement.rule == "required") then
+				if modifier.name == requirement.key and score_leaderboards_c.match_requirement(modifier.value, requirement.value) then
+					matching = true
+				end
+			end
+		end
+		if not matching then
 			return false
 		end
 	end
 	return true
 end
 
-score_leaderboards_c.match_requirement = function(score, requirement)
-	requirement:to_name()
-	if requirement.name ~= "modifier" then
+score_leaderboards_c.match_requirement = function(value, req)
+	if not value then
 		return false
 	end
-	local modifierset = score:get_modifierset()
-	-- requirement
-	-- rule
-	-- key
-	-- value
-	return true
-	-- return false
+	if req:find(",") then
+		for subreq in (req .. ","):gmatch("%s*([^,]-)%s*,") do
+			if score_leaderboards_c.match_requirement(value, subreq) then
+				return true
+			end
+		end
+	elseif req:find("^.+to.+$") and tonumber(value) then
+		local min, max = req:match("^(.+)to(.+)$")
+		min, max, value = tonumber(min), tonumber(max), tonumber(value)
+		return value >= min and value <= max
+	end
+	return tostring(req) == tostring(value)
 end
 
 score_leaderboards_c.context.GET = {"score"}
