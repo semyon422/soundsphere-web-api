@@ -58,7 +58,7 @@ notechart_c.PATCH = function(self)
 
 	notechart.is_valid = true
 	notechart.inputmode = Inputmodes:for_db(response_notechart.inputMode)
-	-- notechart.difficulty = response_notechart.difficulty
+	notechart.difficulty = response_notechart.difficulty
 	notechart.song_title = response_notechart.title
 	notechart.song_artist = response_notechart.artist
 	notechart.difficulty_name = response_notechart.name
