@@ -1,5 +1,8 @@
 local function get(object, params, to_name)
 	local relations = object.__class.relations
+	if not relations then
+		return
+	end
 
 	for _, relation in ipairs(relations) do
 		if params[relation[1]] then
