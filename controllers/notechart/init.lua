@@ -3,12 +3,11 @@ local Files = require("models.files")
 local Formats = require("enums.formats")
 local Inputmodes = require("enums.inputmodes")
 local Controller = require("Controller")
-local add_belongs_to_validations = require("util.add_belongs_to_validations")
-local get_relatives = require("util.get_relatives")
+local util = require("util")
 local http = require("lapis.nginx.http")
-local util = require("lapis.util")
-local to_json = util.to_json
-local from_json = util.from_json
+local lapis_util = require("lapis.util")
+local to_json = lapis_util.to_json
+local from_json = lapis_util.from_json
 
 local notechart_c = Controller:new()
 
@@ -17,11 +16,11 @@ notechart_c.methods = {"GET", "PATCH"}
 
 notechart_c.context.GET = {"notechart"}
 notechart_c.policies.GET = {{"context_loaded"}}
-notechart_c.validations.GET = add_belongs_to_validations(Notecharts.relations)
+notechart_c.validations.GET = util.add_belongs_to_validations(Notecharts.relations)
 notechart_c.GET = function(self)
 	local notechart = self.context.notechart
 
-	get_relatives(notechart, self.params, true)
+	util.get_relatives(notechart, self.params, true)
 
 	return {json = {notechart = notechart:to_name()}}
 end

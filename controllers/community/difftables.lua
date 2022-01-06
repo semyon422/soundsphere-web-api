@@ -1,10 +1,9 @@
 local Community_difftables = require("models.community_difftables")
 local Community_leaderboards = require("models.community_leaderboards")
-local Leaderboard_difftables = require("models.leaderboard_difftables")
-local Difftables = require("models.difftables")
 local array_update = require("util.array_update")
 local preload = require("lapis.db.model").preload
 local Controller = require("Controller")
+local util = require("util")
 
 local community_difftables_c = Controller:new()
 
@@ -12,6 +11,7 @@ community_difftables_c.path = "/communities/:community_id[%d]/difftables"
 community_difftables_c.methods = {"GET"}
 
 community_difftables_c.policies.GET = {{"permit"}}
+community_difftables_c.validations.GET = util.add_belongs_to_validations(Community_difftables.relations)
 community_difftables_c.GET = function(self)
 	local params = self.params
 
@@ -43,26 +43,14 @@ community_difftables_c.GET = function(self)
 		})
 	end
 
-	local difftables = Difftables:find_all({params.community_id}, "owner_community_id")
-	local difftable_ids = {}
-	for _, difftable in ipairs(difftables) do
-		difftable_ids[difftable.id] = true
-		difftable.is_owner = true
-	end
+	local community_difftables = Community_difftables:find_all({params.community_id}, "community_id")
+	preload(community_difftables, util.get_relatives_preload(Community_difftables, params))
+	util.recursive_to_name(community_difftables)
 
-	for _, community_leaderboard in ipairs(community_leaderboards) do
-		for _, leaderboard_difftable in ipairs(community_leaderboard.leaderboard.leaderboard_difftables) do
-			local difftable = leaderboard_difftable.difftable
-			if not difftable_ids[difftable.id] then
-				table.insert(difftables, difftable)
-			end
-		end
-	end
-	
 	return {json = {
-		total = #difftables,
-		filtered = #difftables,
-		difftables = difftables,
+		total = #community_difftables,
+		filtered = #community_difftables,
+		community_difftables = community_difftables,
 	}}
 end
 

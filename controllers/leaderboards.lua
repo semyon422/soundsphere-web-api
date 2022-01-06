@@ -1,9 +1,7 @@
 local Leaderboards = require("models.leaderboards")
-local Users = require("models.users")
 local Community_leaderboards = require("models.community_leaderboards")
 local Inputmodes = require("enums.inputmodes")
-local db_search = require("util.db_search")
-local db_where = require("util.db_where")
+local util = require("util")
 local preload = require("lapis.db.model").preload
 local leaderboard_c = require("controllers.leaderboard")
 local Controller = require("Controller")
@@ -34,9 +32,9 @@ leaderboards_c.GET = function(self)
 		table.insert(relations, "top_user")
 	end
 
-	local clause = params.search and db_search(Leaderboards.db, params.search, "name")
+	local clause = params.search and util.db_search(Leaderboards.db, params.search, "name")
 	local paginator = Leaderboards:paginated(
-		db_where(clause), "order by id asc",
+		util.db_where(clause), "order by id asc",
 		{
 			per_page = per_page,
 			prepare_results = function(entries)

@@ -2,10 +2,8 @@ local Leaderboards = require("models.leaderboards")
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Leaderboard_difftables = require("models.leaderboard_difftables")
 local Inputmodes = require("enums.inputmodes")
-local array_update = require("util.array_update")
+local util = require("util")
 local Controller = require("Controller")
-local add_belongs_to_validations = require("util.add_belongs_to_validations")
-local get_relatives = require("util.get_relatives")
 
 local additions = {
 	difftables = require("controllers.leaderboard.difftables"),
@@ -31,7 +29,7 @@ leaderboard_c.update_inputmodes = function(leaderboard_id, inputmodes)
 
 	local leaderboard_inputmodes = Leaderboard_inputmodes:find_all({leaderboard_id}, "leaderboard_id")
 
-	local new_inputmodes, old_inputmodes = array_update(
+	local new_inputmodes, old_inputmodes = util.array_update(
 		inputmodes,
 		leaderboard_inputmodes,
 		function(i) return Inputmodes:for_db(i) end,
@@ -57,7 +55,7 @@ leaderboard_c.update_difftables = function(leaderboard_id, difftables)
 
 	local leaderboard_difftables = Leaderboard_difftables:find_all({leaderboard_id}, "leaderboard_id")
 
-	local new_difftable_ids, old_difftable_ids = array_update(
+	local new_difftable_ids, old_difftable_ids = util.array_update(
 		difftables,
 		leaderboard_difftables,
 		function(d) return d.id end,
@@ -78,37 +76,15 @@ end
 
 leaderboard_c.context.GET = {"leaderboard"}
 leaderboard_c.policies.GET = {{"context_loaded"}}
-leaderboard_c.validations.GET = {
-	{"difftables", type = "boolean", optional = true},
-	{"communities", type = "boolean", optional = true},
-	{"users", type = "boolean", optional = true},
-	{"inputmodes", type = "boolean", optional = true},
-	{"requirements", type = "boolean", optional = true},
-}
-add_belongs_to_validations(Leaderboards.relations, leaderboard_c.validations.GET)
+leaderboard_c.validations.GET = {}
+util.add_additions_validations(additions, leaderboard_c.validations.GET)
+util.add_belongs_to_validations(Leaderboards.relations, leaderboard_c.validations.GET)
 leaderboard_c.GET = function(self)
 	local params = self.params
 	local leaderboard = self.context.leaderboard
 
-	local fields = {}
-	for param, controller in pairs(additions) do
-		local value = params[param]
-		if value ~= nil then
-			local param_count = param .. "_count"
-			params.no_data = value == false
-			local response = controller.GET(self).json
-			leaderboard[param] = response[param]
-			if leaderboard[param_count] and leaderboard[param_count] ~= response.total then
-				leaderboard[param_count] = response.total
-				table.insert(fields, param_count)
-			end
-		end
-	end
-	if #fields > 0 then
-		leaderboard:update(unpack(fields))
-	end
-
-	get_relatives(leaderboard, self.params, true)
+	util.load_additions(self, leaderboard, params, additions)
+	util.get_relatives(leaderboard, self.params, true)
 
 	return {json = {leaderboard = leaderboard}}
 end

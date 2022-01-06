@@ -2,7 +2,7 @@ local models = require("models")
 
 local function add(relations, validations, prefix)
 	prefix = prefix or ""
-	local validations = validations or {}
+	validations = validations or {}
 	for _, relation in ipairs(relations) do
 		if relation.belongs_to then
 			table.insert(validations, {prefix .. relation[1], type = "boolean", optional = true})

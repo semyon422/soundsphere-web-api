@@ -1,7 +1,6 @@
 local Difftables = require("models.difftables")
 local Inputmodes = require("enums.inputmodes")
-local db_search = require("util.db_search")
-local db_where = require("util.db_where")
+local util = require("util")
 local preload = require("lapis.db.model").preload
 local Controller = require("Controller")
 
@@ -28,9 +27,9 @@ difftables_c.GET = function(self)
 		table.insert(relations, "difftable_inputmodes")
 	end
 
-	local clause = params.search and db_search(Difftables.db, params.search, "name")
+	local clause = params.search and util.db_search(Difftables.db, params.search, "name")
 	local paginator = Difftables:paginated(
-		db_where(clause), "order by id asc",
+		util.db_where(clause), "order by id asc",
 		{
 			per_page = per_page,
 			prepare_results = function(entries)

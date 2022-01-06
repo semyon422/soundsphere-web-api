@@ -5,7 +5,7 @@ local function get(object, params, to_name)
 	end
 
 	for _, relation in ipairs(relations) do
-		if params[relation[1]] then
+		if params[relation[1]] and relation.belongs_to then
 			local relative = object["get_" .. relation[1]](object)
 			if relative then
 				if to_name and relative.to_name then

@@ -1,5 +1,7 @@
 local Notecharts = require("models.notecharts")
 local Controller = require("Controller")
+local util = require("util")
+local preload = require("lapis.db.model").preload
 
 local notecharts_c = Controller:new()
 
@@ -12,6 +14,7 @@ notecharts_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.get_all"),
 }
+util.add_belongs_to_validations(Notecharts.relations, notecharts_c.validations.GET)
 notecharts_c.GET = function(self)
 	local params = self.params
 	local per_page = params.per_page or 10
@@ -25,9 +28,8 @@ notecharts_c.GET = function(self)
 	)
 	local notecharts = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
-	for _, notechart in ipairs(notecharts) do
-		notechart:to_name()
-	end
+	preload(notecharts, util.get_relatives_preload(Notecharts, params))
+	util.recursive_to_name(notecharts)
 
 	local count = tonumber(Notecharts:count())
 

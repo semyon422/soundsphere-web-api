@@ -1,7 +1,5 @@
 local Users = require("models.users")
-local bcrypt = require("bcrypt")
-local db_search = require("util.db_search")
-local db_where = require("util.db_where")
+local util = require("util")
 local Controller = require("Controller")
 local register_c = require("controllers.auth.register")
 
@@ -22,9 +20,9 @@ users_c.GET = function(self)
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
 
-	local clause = params.search and db_search(Users.db, params.search, "name")
+	local clause = params.search and util.db_search(Users.db, params.search, "name")
 	local paginator = Users:paginated(
-		db_where(clause), "order by id asc",
+		util.db_where(clause), "order by id asc",
 		{
 			per_page = per_page,
 			prepare_results = function(users)

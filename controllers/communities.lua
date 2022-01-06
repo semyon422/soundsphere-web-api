@@ -2,9 +2,7 @@ local Communities = require("models.communities")
 local Community_users = require("models.community_users")
 local Inputmodes = require("enums.inputmodes")
 local Roles = require("enums.roles")
-local db_search = require("util.db_search")
-local db_where = require("util.db_where")
-local db_and = require("util.db_and")
+local util = require("util")
 local preload = require("lapis.db.model").preload
 local Controller = require("Controller")
 
@@ -34,7 +32,7 @@ communities_c.GET = function(self)
 
 	local db = Communities.db
 
-	local search_clause = params.search and db_search(db, params.search, "name")
+	local search_clause = params.search and util.db_search(db, params.search, "name")
 
 	local joined_clause
 	local joined_community_ids = {}
@@ -56,9 +54,9 @@ communities_c.GET = function(self)
 		end
 	end
 
-	local clause = db_and(joined_clause, search_clause)
+	local clause = util.db_and(joined_clause, search_clause)
 	local paginator = Communities:paginated(
-		db_where(clause), "order by id asc",
+		util.db_where(clause), "order by id asc",
 		{
 			per_page = per_page,
 			prepare_results = function(entries)

@@ -4,13 +4,11 @@ local Modifiersets = require("models.modifiersets")
 local Controller = require("Controller")
 local Formats = require("enums.formats")
 local Inputmodes = require("enums.inputmodes")
-local add_belongs_to_validations = require("util.add_belongs_to_validations")
-local get_relatives = require("util.get_relatives")
+local util = require("util")
 local http = require("lapis.nginx.http")
-local util = require("lapis.util")
-local to_json = util.to_json
-local from_json = util.from_json
-
+local lapis_util = require("lapis.util")
+local to_json = lapis_util.to_json
+local from_json = lapis_util.from_json
 
 local score_c = Controller:new()
 
@@ -82,11 +80,11 @@ end
 
 score_c.context.GET = {"score"}
 score_c.policies.GET = {{"context_loaded"}}
-score_c.validations.GET = add_belongs_to_validations(Scores.relations)
+score_c.validations.GET = util.add_belongs_to_validations(Scores.relations)
 score_c.GET = function(self)
 	local score = self.context.score
 
-	get_relatives(score, self.params, true)
+	util.get_relatives(score, self.params, true)
 
 	return {json = {score = score:to_name()}}
 end

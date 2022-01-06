@@ -7,7 +7,10 @@ local Leaderboard_users = Model:extend(
 		relations = {
 			{"leaderboard", belongs_to = "leaderboards", key = "leaderboard_id"},
 			{"user", belongs_to = "users", key = "user_id"},
-		}
+		},
+		url_params = function(self, req, ...)
+			return "leaderboard.user", {leaderboard_id = self.leaderboard_id, user_id = self.user_id}, ...
+		end,
 	}
 )
 

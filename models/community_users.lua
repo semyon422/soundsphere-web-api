@@ -9,7 +9,10 @@ local Community_users = Model:extend(
 			{"community", belongs_to = "communities", key = "community_id"},
 			{"user", belongs_to = "users", key = "user_id"},
 			{"sender", belongs_to = "users", key = "sender_id"},
-		}
+		},
+		url_params = function(self, req, ...)
+			return "community.user", {community_id = self.community_id, user_id = self.user_id}, ...
+		end,
 	}
 )
 

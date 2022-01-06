@@ -1,5 +1,6 @@
 local Difftable_notecharts = require("models.difftable_notecharts")
 local preload = require("lapis.db.model").preload
+local util = require("util")
 local Controller = require("Controller")
 
 local difftable_notecharts_c = Controller:new()
@@ -9,6 +10,7 @@ difftable_notecharts_c.methods = {"GET"}
 
 difftable_notecharts_c.context.GET = {"difftable"}
 difftable_notecharts_c.policies.GET = {{"permit"}}
+difftable_notecharts_c.validations.GET = util.add_belongs_to_validations(Difftable_notecharts.relations)
 difftable_notecharts_c.GET = function(self)
 	local params = self.params
 
@@ -21,17 +23,13 @@ difftable_notecharts_c.GET = function(self)
 		}}
 	end
 
-	preload(difftable_notecharts, "notechart")
-
-	local notecharts = {}
-	for _, difftable_notechart in ipairs(difftable_notecharts) do
-		table.insert(notecharts, difftable_notechart.notechart:to_name())
-	end
+	preload(difftable_notecharts, util.get_relatives_preload(Difftable_notecharts, params))
+	util.recursive_to_name(difftable_notecharts)
 
 	return {json = {
-		total = #notecharts,
-		filtered = #notecharts,
-		notecharts = notecharts,
+		total = #difftable_notecharts,
+		filtered = #difftable_notecharts,
+		difftable_notecharts = difftable_notecharts,
 	}}
 end
 

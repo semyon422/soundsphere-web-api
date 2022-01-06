@@ -1,8 +1,6 @@
-local Communities = require("models.communities")
-local Community_users = require("models.community_users")
-local Roles = require("enums.roles")
 local Controller = require("Controller")
 local community_users_c = require("controllers.community.users")
+local util = require("util")
 
 local additions = {
 	inputmodes = require("controllers.community.inputmodes"),
@@ -21,32 +19,13 @@ end
 
 community_c.context.GET = {"community"}
 community_c.policies.GET = {{"context_loaded"}}
-community_c.validations.GET = {
-	{"inputmodes", type = "boolean", optional = true},
-	{"leaderboards", type = "boolean", optional = true},
-	{"users", type = "boolean", optional = true},
-}
+community_c.validations.GET = {}
+util.add_additions_validations(additions, community_c.validations.GET)
 community_c.GET = function(self)
 	local params = self.params
 	local community = self.context.community
 
-	local fields = {}
-	for param, controller in pairs(additions) do
-		local value = params[param]
-		if value ~= nil then
-			local param_count = param .. "_count"
-			params.no_data = value == false
-			local response = controller.GET(self).json
-			community[param] = response[param]
-			if community[param_count] and community[param_count] ~= response.total then
-				community[param_count] = response.total
-				table.insert(fields, param_count)
-			end
-		end
-	end
-	if #fields > 0 then
-		community:update(unpack(fields))
-	end
+	util.load_additions(self, community, params, additions)
 
 	return {json = {community = community}}
 end

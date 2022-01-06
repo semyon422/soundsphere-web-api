@@ -85,5 +85,5 @@
 	<% end %>
 	</ul>
 	<% render("views.relations") %>
+	<% render("views.response_table") %>
 </aside>
-<% render("views.response_table") %>

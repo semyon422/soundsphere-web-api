@@ -6,6 +6,8 @@ local Formats = require("enums.formats")
 local Storages = require("enums.storages")
 local Filehash = require("util.filehash")
 local Inputmodes = require("enums.inputmodes")
+local util = require("util")
+local preload = require("lapis.db.model").preload
 
 local scores_c = Controller:new()
 
@@ -18,6 +20,7 @@ scores_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.get_all"),
 }
+util.add_belongs_to_validations(Scores.relations, scores_c.validations.GET)
 scores_c.GET = function(self)
 	local params = self.params
 	local per_page = params.per_page or 10
@@ -31,9 +34,8 @@ scores_c.GET = function(self)
 	)
 	local scores = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
-	for _, score in ipairs(scores) do
-		score:to_name()
-	end
+	preload(scores, util.get_relatives_preload(Scores, params))
+	util.recursive_to_name(scores)
 
 	local count = tonumber(Scores:count())
 

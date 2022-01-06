@@ -1,9 +1,6 @@
 local Difftables = require("models.difftables")
-local Difftable_notecharts = require("models.difftable_notecharts")
-local Inputmodes = require("enums.inputmodes")
 local Controller = require("Controller")
-local add_belongs_to_validations = require("util.add_belongs_to_validations")
-local get_relatives = require("util.get_relatives")
+local util = require("util")
 
 local additions = {
 	communities = require("controllers.difftable.communities"),
@@ -19,13 +16,9 @@ difftable_c.methods = {"GET", "PATCH", "DELETE"}
 
 difftable_c.context.GET = {"difftable"}
 difftable_c.policies.GET = {{"context_loaded"}}
-difftable_c.validations.GET = {
-	{"communities", type = "boolean", optional = true},
-	{"leaderboards", type = "boolean", optional = true},
-	{"notecharts", type = "boolean", optional = true},
-	{"inputmodes", type = "boolean", optional = true},
-}
-add_belongs_to_validations(Difftables.relations, difftable_c.validations.GET)
+difftable_c.validations.GET = {}
+util.add_additions_validations(additions, difftable_c.validations.GET)
+util.add_belongs_to_validations(Difftables.relations, difftable_c.validations.GET)
 difftable_c.GET = function(self)
 	local params = self.params
 	local difftable = self.context.difftable
@@ -48,7 +41,7 @@ difftable_c.GET = function(self)
 		difftable:update(unpack(fields))
 	end
 
-	get_relatives(difftable, self.params, true)
+	util.get_relatives(difftable, self.params, true)
 
 	return {json = {difftable = difftable}}
 end
