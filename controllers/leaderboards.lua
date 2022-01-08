@@ -1,6 +1,5 @@
 local Leaderboards = require("models.leaderboards")
 local Community_leaderboards = require("models.community_leaderboards")
-local Inputmodes = require("enums.inputmodes")
 local util = require("util")
 local preload = require("lapis.db.model").preload
 local leaderboard_c = require("controllers.leaderboard")
@@ -17,43 +16,24 @@ leaderboards_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.get_all"),
 	require("validations.search"),
-	{"inputmodes", type = "boolean", optional = true},
-	{"top_user", type = "boolean", optional = true},
 }
+util.add_belongs_to_validations(Leaderboards.relations, leaderboards_c.validations.GET)
+util.add_has_many_validations(Leaderboards.relations, leaderboards_c.validations.GET)
 leaderboards_c.GET = function(self)
 	local params = self.params
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
-
-	local relations = {}
-	if params.inputmodes then
-		table.insert(relations, "leaderboard_inputmodes")
-	elseif params.top_user then
-		table.insert(relations, "top_user")
-	end
 
 	local clause = params.search and util.db_search(Leaderboards.db, params.search, "name")
 	local paginator = Leaderboards:paginated(
 		util.db_where(clause), "order by id asc",
 		{
 			per_page = per_page,
-			prepare_results = function(entries)
-				preload(entries, relations)
-				return entries
-			end
 		}
 	)
 	local leaderboards = params.get_all and paginator:get_all() or paginator:get_page(page_num)
-
-	for _, leaderboard in ipairs(leaderboards) do
-		if params.top_user then
-			leaderboard.top_user = leaderboard.top_user:to_name()
-		end
-		if params.inputmodes then
-			leaderboard.inputmodes = Inputmodes:entries_to_list(leaderboard.leaderboard_inputmodes)
-			leaderboard.leaderboard_inputmodes = nil
-		end
-	end
+	preload(leaderboards, util.get_relatives_preload(Leaderboards, params))
+	util.recursive_to_name(leaderboards)
 
 	return {json = {
 		total = tonumber(Leaderboards:count()),

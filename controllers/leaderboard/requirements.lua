@@ -110,12 +110,12 @@ leaderboard_requirements_c.validations.PATCH = {
 leaderboard_requirements_c.PATCH = function(self)
 	local params = self.params
 
-	local requirements = leaderboard_requirements_c.update_requirements(params.leaderboard_id, params.requirements)
+	local leaderboard_requirements = leaderboard_requirements_c.update_requirements(params.leaderboard_id, params.requirements)
 
 	return {json = {
-		total = #requirements,
-		filtered = #requirements,
-		requirements = requirements,
+		total = #leaderboard_requirements,
+		filtered = #leaderboard_requirements,
+		leaderboard_requirements = leaderboard_requirements,
 	}}
 end
 
@@ -137,7 +137,7 @@ leaderboard_requirements_c.POST = function(self)
 	requirement.leaderboard_id = params.leaderboard_id
 	requirement.id = nil
 	Leaderboard_requirements:for_db(requirement)
-	local requirement = Leaderboard_requirements:create(requirement)
+	requirement = Leaderboard_requirements:create(requirement)
 
 	return {status = 201, redirect_to = self:url_for(requirement)}
 end

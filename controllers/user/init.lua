@@ -1,5 +1,16 @@
 local Users = require("models.users")
 local Controller = require("Controller")
+local util = require("util")
+
+local additions = {
+	user_communities = require("controllers.user.communities"),
+	user_leaderboards = require("controllers.user.leaderboards"),
+	user_roles = require("controllers.user.roles"),
+	user_scores = require("controllers.user.scores"),
+	user_sessions = require("controllers.user.sessions"),
+	user_relations_friends = require("controllers.user.friends"),
+	user_relations_rivals = require("controllers.user.rivals"),
+}
 
 local user_c = Controller:new()
 
@@ -8,8 +19,16 @@ user_c.methods = {"GET", "PATCH", "DELETE"}
 
 user_c.context.GET = {"user"}
 user_c.policies.GET = {{"context_loaded"}}
+user_c.validations.GET = {}
+util.add_additions_validations(additions, user_c.validations.GET)
+util.add_belongs_to_validations(Users.relations, user_c.validations.GET)
 user_c.GET = function(self)
-	return {json = {user = self.context.user:to_name()}}
+	local user = self.context.user
+
+	util.load_additions(self, user, self.params, additions)
+	util.get_relatives(user, self.params, true)
+
+	return {json = {user = user:to_name()}}
 end
 
 user_c.context.PATCH = {"user", "request_session"}

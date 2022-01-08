@@ -23,7 +23,7 @@ user_role_c.PUT = function(self)
 		})
     end
 
-	return {json = {user_role = user_role}}
+	return {json = {user_role = user_role:to_name()}}
 end
 
 user_role_c.context.DELETE = {"user_role", "request_session"}

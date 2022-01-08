@@ -1,6 +1,6 @@
 local User_roles = require("models.user_roles")
-local Roles = require("enums.roles")
 local Controller = require("Controller")
+local util = require("util")
 
 local user_roles_c = Controller:new()
 
@@ -11,12 +11,17 @@ user_roles_c.policies.GET = {{"permit"}}
 user_roles_c.GET = function(self)
 	local params = self.params
     local user_roles = User_roles:find_all({params.user_id}, "user_id")
-    local roles = {}
-	for _, user_role in ipairs(user_roles) do
-		table.insert(roles, Roles:to_name(user_role.role))
+
+	if params.no_data then
+		return {json = {
+			total = #user_roles,
+			filtered = #user_roles,
+		}}
 	end
 
-	return {json = {roles = roles}}
+	util.recursive_to_name(user_roles)
+
+	return {json = {user_roles = user_roles}}
 end
 
 return user_roles_c

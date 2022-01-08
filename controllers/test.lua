@@ -14,7 +14,11 @@ test_c.validations.GET = {
 	{"query_boolean", type = "boolean"},
 }
 test_c.GET = function(self)
-	return {json = {message = "success"}}
+	local response = {message = "success"}
+	if self.params.params then
+		response.params = self.params
+	end
+	return {json = response}
 end
 
 test_c.policies.POST = {{"permit"}}
@@ -34,7 +38,11 @@ test_c.validations.POST = {
 	}},
 }
 test_c.POST = function(self)
-	return {json = {message = "success"}}
+	local response = {message = "success"}
+	if self.params.params then
+		response.params = self.params
+	end
+	return {json = response}
 end
 
 return test_c

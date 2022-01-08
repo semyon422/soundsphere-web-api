@@ -21,6 +21,7 @@ scores_c.validations.GET = {
 	require("validations.get_all"),
 }
 util.add_belongs_to_validations(Scores.relations, scores_c.validations.GET)
+util.add_has_many_validations(Scores.relations, scores_c.validations.GET)
 scores_c.GET = function(self)
 	local params = self.params
 	local per_page = params.per_page or 10
@@ -33,7 +34,6 @@ scores_c.GET = function(self)
 		}
 	)
 	local scores = params.get_all and paginator:get_all() or paginator:get_page(page_num)
-
 	preload(scores, util.get_relatives_preload(Scores, params))
 	util.recursive_to_name(scores)
 

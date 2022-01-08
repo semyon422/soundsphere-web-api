@@ -2,6 +2,7 @@ local Users = require("models.users")
 local util = require("util")
 local Controller = require("Controller")
 local register_c = require("controllers.auth.register")
+local preload = require("lapis.db.model").preload
 
 local users_c = Controller:new()
 
@@ -15,6 +16,8 @@ users_c.validations.GET = {
 	require("validations.get_all"),
 	require("validations.search"),
 }
+util.add_belongs_to_validations(Users.relations, users_c.validations.GET)
+util.add_has_many_validations(Users.relations, users_c.validations.GET)
 users_c.GET = function(self)
 	local params = self.params
 	local per_page = params.per_page or 10
@@ -24,16 +27,12 @@ users_c.GET = function(self)
 	local paginator = Users:paginated(
 		util.db_where(clause), "order by id asc",
 		{
-			per_page = per_page,
-			prepare_results = function(users)
-				for i, user in ipairs(users) do
-					users[i] = user:to_name()
-				end
-				return users
-			end
+			per_page = per_page
 		}
 	)
 	local users = params.get_all and paginator:get_all() or paginator:get_page(page_num)
+	preload(users, util.get_relatives_preload(Users, params))
+	util.recursive_to_name(users)
 
 	return {json = {
 		total = tonumber(Users:count()),

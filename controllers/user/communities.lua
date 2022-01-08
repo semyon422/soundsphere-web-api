@@ -2,6 +2,7 @@ local Community_users = require("models.community_users")
 local Roles = require("enums.roles")
 local preload = require("lapis.db.model").preload
 local Controller = require("Controller")
+local util = require("util")
 
 local user_communities_c = Controller:new()
 
@@ -14,6 +15,7 @@ user_communities_c.validations.GET = {
 	{"requests", type = "boolean", optional = true},
 	{"is_admin", type = "boolean", optional = true},
 }
+user_communities_c.validations.GET = util.add_belongs_to_validations(Community_users.relations)
 user_communities_c.GET = function(self)
 	local params = self.params
 	local where = {accepted = true}
@@ -29,24 +31,29 @@ user_communities_c.GET = function(self)
 		key = "user_id",
 		where = where
 	})
-	preload(community_users, "community")
 
-    local communities = {}
+	if params.no_data then
+		return {json = {
+			total = #community_users,
+			filtered = #community_users,
+		}}
+	end
+
+	preload(community_users, util.get_relatives_preload(Community_users, params))
+	util.recursive_to_name(community_users)
+
+    local filtered_community_users = {}
 	for _, community_user in ipairs(community_users) do
-		local community = community_user.community
-		local role = Roles:to_name(community_user.role)
+		local role = community_user.role
 		if not params.is_admin or role == "admin" or role == "creator" then
-			community.role = role
-			table.insert(communities, community)
+			table.insert(filtered_community_users, community_user)
 		end
 	end
 
-	local count = tonumber(Community_users:count())
-
 	return {json = {
-		total = count,
-		filtered = count,
-		communities = communities,
+		total = #community_users,
+		filtered = #filtered_community_users,
+		user_communities = filtered_community_users,
 	}}
 end
 

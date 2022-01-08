@@ -4,6 +4,7 @@ local db_search = require("util.db_search")
 local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
 local community_user_c = require("controllers.community.user")
+local util = require("util")
 
 local community_users_c = Controller:new()
 
@@ -21,7 +22,6 @@ community_users_c.get_invitations = function(self, invitation)
 
 	local clause = Community_users.db.encode_clause(where)
     local community_users = Community_users:select("where " .. clause .. " order by id asc")
-	preload(community_users, "sender")
 
 	return community_users, clause
 end
@@ -53,7 +53,7 @@ community_users_c.get_users = function(self)
 		community_id = params.community_id,
 		accepted = true,
 	}
-	
+
 	local db = Community_users.db
 	local clause = db.encode_clause(where)
 
@@ -66,7 +66,6 @@ community_users_c.get_users = function(self)
 			"where " .. clause .. " order by id asc",
 			{
 				per_page = per_page,
-				page_num = page_num
 			}
 		)
 	else
@@ -78,7 +77,6 @@ community_users_c.get_users = function(self)
 			params.community_id,
 			{
 				per_page = per_page,
-				page_num = page_num,
 				fields = "cu.*"
 			}
 		)
@@ -88,17 +86,17 @@ community_users_c.get_users = function(self)
 	return community_users
 end
 
-community_users_c.update_users = function(self, community_id, users)
-	if not users then
+community_users_c.update_users = function(self, community_users)
+	if not community_users then
 		return
 	end
 
 	local community_user_ids = {}
 	local community_users_map = {}
-	for _, user in ipairs(users) do
-		local community_user = user.community_user
-		table.insert(community_user_ids, community_user.id)
-		community_users_map[community_user.id] = community_user
+	for _, community_user in ipairs(community_users) do
+		local id = tonumber(community_user.id)
+		table.insert(community_user_ids, id)
+		community_users_map[id] = community_user
 		community_user.role = Roles:for_db(community_user.role)
 	end
 
@@ -106,7 +104,7 @@ community_users_c.update_users = function(self, community_id, users)
 		return
 	end
 
-	local community_users = Community_users:find_all(community_user_ids)
+	community_users = Community_users:find_all(community_user_ids)
 	for _, community_user in ipairs(community_users) do
 		self.context.community_user = community_user
 		if community_user_c:check_access(self) then
@@ -126,6 +124,7 @@ community_users_c.validations.GET = {
 	{"requests", type = "boolean", optional = true},
 	{"staff", type = "boolean", optional = true},
 }
+util.add_belongs_to_validations(Community_users.relations, community_users_c.validations.GET)
 community_users_c.GET = function(self)
 	local params = self.params
 
@@ -153,33 +152,20 @@ community_users_c.GET = function(self)
 		}}
 	end
 
-	preload(community_users, "user")
-
-	local users = {}
-	for _, community_user in ipairs(community_users) do
-		local user = community_user.user:to_name()
-		user.community_user = community_user
-		community_user.user = nil
-		community_user.role = Roles:to_name(community_user.role)
-		community_user.message = community_user.message
-		community_user.created_at = community_user.created_at
-		if community_user.sender then
-			community_user.sender = community_user.sender:to_name()
-		end
-		table.insert(users, user)
-	end
+	preload(community_users, util.get_relatives_preload(Community_users, params))
+	util.recursive_to_name(community_users)
 
 	return {json = {
 		total = tonumber(Community_users:count(total_clause)),
 		filtered = tonumber(Community_users:count(filtered_clause or total_clause)),
-		users = users,
+		community_users = community_users,
 	}}
 end
 
 community_users_c.PATCH = function(self)
 	local params = self.params
 
-	community_users_c.update_users(self, params.community_id, params.users)
+	community_users_c.update_users(self, params.community_users)
 
 	return {}
 end

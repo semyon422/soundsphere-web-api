@@ -1,6 +1,7 @@
 local Community_difftables = require("models.community_difftables")
 local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
+local util = require("util")
 
 local difftable_communities_c = Controller:new()
 
@@ -9,6 +10,7 @@ difftable_communities_c.methods = {"GET"}
 
 difftable_communities_c.context.GET = {"difftable"}
 difftable_communities_c.policies.GET = {{"permit"}}
+difftable_communities_c.validations.GET = util.add_belongs_to_validations(Community_difftables.relations)
 difftable_communities_c.GET = function(self)
 	local params = self.params
 	local community_difftables = Community_difftables:find_all({params.difftable_id}, "difftable_id")
@@ -20,17 +22,13 @@ difftable_communities_c.GET = function(self)
 		}}
 	end
 
-	preload(community_difftables, "community")
-
-	local communities = {}
-	for _, community_difftable in ipairs(community_difftables) do
-		table.insert(communities, community_difftable.community)
-	end
+	preload(community_difftables, util.get_relatives_preload(Community_difftables, params))
+	util.recursive_to_name(community_difftables)
 
 	return {json = {
-		total = #communities,
-		filtered = #communities,
-		communities = communities,
+		total = #community_difftables,
+		filtered = #community_difftables,
+		community_difftables = community_difftables,
 	}}
 end
 

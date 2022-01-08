@@ -17,18 +17,14 @@ communities_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.get_all"),
 	require("validations.search"),
-	{"inputmodes", type = "boolean", optional = true},
 	{"hide_joined", type = "boolean", optional = true},
 }
+util.add_belongs_to_validations(Communities.relations, communities_c.validations.GET)
+util.add_has_many_validations(Communities.relations, communities_c.validations.GET)
 communities_c.GET = function(self)
 	local params = self.params
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
-
-	local relations = {}
-	if params.inputmodes then
-		table.insert(relations, "difftable_inputmodes")
-	end
 
 	local db = Communities.db
 
@@ -59,19 +55,13 @@ communities_c.GET = function(self)
 		util.db_where(clause), "order by id asc",
 		{
 			per_page = per_page,
-			prepare_results = function(entries)
-				preload(entries, relations)
-				return entries
-			end
 		}
 	)
 	local communities = params.get_all and paginator:get_all() or paginator:get_page(page_num)
+	preload(communities, util.get_relatives_preload(Communities, params))
+	util.recursive_to_name(communities)
 
 	for _, community in ipairs(communities) do
-		if params.inputmodes then
-			community.inputmodes = Inputmodes:entries_to_list(community.community_inputmodes)
-			community.community_inputmodes = nil
-		end
 		community.joined = joined_community_ids_map[community.id]
 	end
 

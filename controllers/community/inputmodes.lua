@@ -1,9 +1,9 @@
 local Community_inputmodes = require("models.community_inputmodes")
 local Community_leaderboards = require("models.community_leaderboards")
-local Inputmodes = require("enums.inputmodes")
 local array_update = require("util.array_update")
 local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
+local util = require("util")
 
 local community_inputmodes_c = Controller:new()
 
@@ -14,6 +14,7 @@ community_inputmodes_c.policies.GET = {{"permit"}}
 community_inputmodes_c.validations.GET = {
 	require("validations.no_data"),
 }
+util.add_belongs_to_validations(Community_inputmodes.relations, community_inputmodes_c.validations.GET)
 community_inputmodes_c.GET = function(self)
 	local params = self.params
 
@@ -52,15 +53,14 @@ community_inputmodes_c.GET = function(self)
 		}}
 	end
 
-	local inputmodes = {}
-	for _, inputmode in ipairs(all_inputmodes) do
-		table.insert(inputmodes, Inputmodes:to_name(inputmode))
-	end
+	local community_inputmodes = Community_inputmodes:find_all({params.community_id}, "community_id")
+	preload(community_inputmodes, util.get_relatives_preload(Community_inputmodes, params))
+	util.recursive_to_name(community_inputmodes)
 
 	return {json = {
-		total = #inputmodes,
-		filtered = #inputmodes,
-		inputmodes = inputmodes,
+		total = #community_inputmodes,
+		filtered = #community_inputmodes,
+		community_inputmodes = community_inputmodes,
 	}}
 end
 

@@ -3,6 +3,8 @@ local Formats = require("enums.formats")
 local Storages = require("enums.storages")
 local Filehash = require("util.filehash")
 local Controller = require("Controller")
+local util = require("util")
+local preload = require("lapis.db.model").preload
 
 local files_c = Controller:new()
 
@@ -15,6 +17,8 @@ files_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.get_all"),
 }
+util.add_belongs_to_validations(Files.relations, files_c.validations.GET)
+util.add_has_many_validations(Files.relations, files_c.validations.GET)
 files_c.GET = function(self)
 	local params = self.params
 	local per_page = params.per_page or 10
@@ -27,10 +31,8 @@ files_c.GET = function(self)
 		}
 	)
 	local files = params.get_all and paginator:get_all() or paginator:get_page(page_num)
-
-	for _, file in ipairs(files) do
-		file:to_name()
-	end
+	preload(files, util.get_relatives_preload(Files, params))
+	util.recursive_to_name(files)
 
 	local count = tonumber(Files:count())
 

@@ -1,6 +1,7 @@
 local Difftable_inputmodes = require("models.difftable_inputmodes")
-local Inputmodes = require("enums.inputmodes")
 local Controller = require("Controller")
+local util = require("util")
+local preload = require("lapis.db.model").preload
 
 local difftable_inputmodes_c = Controller:new()
 
@@ -11,6 +12,7 @@ difftable_inputmodes_c.policies.GET = {{"permit"}}
 difftable_inputmodes_c.validations.GET = {
 	require("validations.no_data"),
 }
+util.add_belongs_to_validations(Difftable_inputmodes.relations, difftable_inputmodes_c.validations.GET)
 difftable_inputmodes_c.GET = function(self)
 	local params = self.params
 	local difftable_inputmodes = Difftable_inputmodes:find_all({params.difftable_id}, "difftable_id")
@@ -22,12 +24,13 @@ difftable_inputmodes_c.GET = function(self)
 		}}
 	end
 
-	local inputmodes = Inputmodes:entries_to_list(difftable_inputmodes)
+	preload(difftable_inputmodes, util.get_relatives_preload(Difftable_inputmodes, params))
+	util.recursive_to_name(difftable_inputmodes)
 
 	return {json = {
-		total = #inputmodes,
-		filtered = #inputmodes,
-		inputmodes = inputmodes,
+		total = #difftable_inputmodes,
+		filtered = #difftable_inputmodes,
+		inputmodes = difftable_inputmodes,
 	}}
 end
 

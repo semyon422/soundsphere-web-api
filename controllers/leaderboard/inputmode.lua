@@ -23,7 +23,7 @@ leaderboard_inputmode_c.PUT = function(self)
 		})
     end
 
-	return {json = {leaderboard_inputmode = leaderboard_inputmode}}
+	return {json = {leaderboard_inputmode = leaderboard_inputmode:to_name()}}
 end
 
 leaderboard_inputmode_c.context.DELETE = {"leaderboard_inputmode", "request_session"}

@@ -16,11 +16,26 @@ local Community_users = Model:extend(
 	}
 )
 
+local function to_name(self)
+	self.role = Roles:to_name(self.role)
+	return self
+end
+
+local function for_db(self)
+	self.role = Roles:for_db(self.role)
+	return self
+end
+
+function Community_users.to_name(self, row) return to_name(row) end
+function Community_users.for_db(self, row) return for_db(row) end
+
 local _load = Community_users.load
 function Community_users:load(row)
 	row.accepted = toboolean(row.accepted)
 	row.invitation = toboolean(row.invitation)
 	row.created_at = tonumber(row.created_at)
+	row.to_name = to_name
+	row.for_db = for_db
 	return _load(self, row)
 end
 

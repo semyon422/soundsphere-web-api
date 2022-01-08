@@ -1,8 +1,7 @@
 local Community_leaderboards = require("models.community_leaderboards")
-local Users = require("models.users")
-local Inputmodes = require("enums.inputmodes")
 local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
+local util = require("util")
 
 local community_leaderboards_c = Controller:new()
 
@@ -19,7 +18,6 @@ community_leaderboards_c.get_joined = function(self)
 
 	local clause = Community_leaderboards.db.encode_clause(where)
     local community_leaderboards = Community_leaderboards:select("where " .. clause .. " order by id asc")
-	preload(community_leaderboards, {leaderboard = "leaderboard_inputmodes", "sender"})
 
 	return community_leaderboards
 end
@@ -35,7 +33,6 @@ community_leaderboards_c.get_owned = function(self)
 
 	local clause = Community_leaderboards.db.encode_clause(where)
     local community_leaderboards = Community_leaderboards:select("where " .. clause .. " order by id asc")
-	preload(community_leaderboards, {leaderboard = "leaderboard_inputmodes", "sender"})
 
 	return community_leaderboards
 end
@@ -64,7 +61,6 @@ community_leaderboards_c.get_incoming = function(self)
 		accepted = false,
 	}):gsub("`community_id` IN", "`community_id` NOT IN")
 	community_leaderboards = Community_leaderboards:select("where " .. clause .. " order by id asc")
-	preload(community_leaderboards, {"leaderboard", "community", "sender"})
 
 	return community_leaderboards
 end
@@ -80,7 +76,6 @@ community_leaderboards_c.get_outgoing = function(self)
 
 	local clause = Community_leaderboards.db.encode_clause(where)
     local community_leaderboards = Community_leaderboards:select("where " .. clause .. " order by id asc")
-	preload(community_leaderboards, {"leaderboard", "community", "sender"})
 
 	return community_leaderboards
 end
@@ -92,6 +87,7 @@ community_leaderboards_c.validations.GET = {
 	{"outgoing", type = "boolean", optional = true},
 	{"owned", type = "boolean", optional = true},
 }
+util.add_belongs_to_validations(Community_leaderboards.relations, community_leaderboards_c.validations.GET)
 community_leaderboards_c.GET = function(self)
 	local params = self.params
 
@@ -113,29 +109,13 @@ community_leaderboards_c.GET = function(self)
 		}}
 	end
 
-	for _, community_leaderboard in ipairs(community_leaderboards) do
-		local leaderboard = community_leaderboard.leaderboard
-		if leaderboard.leaderboard_inputmodes then
-			leaderboard.inputmodes = Inputmodes:entries_to_list(leaderboard.leaderboard_inputmodes)
-			leaderboard.leaderboard_inputmodes = nil
-		end
-		if community_leaderboard.sender then
-			community_leaderboard.sender = community_leaderboard.sender:to_name()
-		end
-	end
-
-	local leaderboards = {}
-	for _, community_leaderboard in ipairs(community_leaderboards) do
-		local leaderboard = community_leaderboard.leaderboard
-		leaderboard.community_leaderboard = community_leaderboard
-		community_leaderboard.leaderboard = nil
-		table.insert(leaderboards, leaderboard)
-	end
+	preload(community_leaderboards, util.get_relatives_preload(Community_leaderboards, params))
+	util.recursive_to_name(community_leaderboards)
 
 	return {json = {
 		total = #community_leaderboards,
 		filtered = #community_leaderboards,
-		leaderboards = leaderboards,
+		community_leaderboards = community_leaderboards,
 	}}
 end
 

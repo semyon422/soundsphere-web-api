@@ -2,8 +2,8 @@ local Leaderboard_scores = require("models.leaderboard_scores")
 local Community_leaderboards = require("models.community_leaderboards")
 local Community_users = require("models.community_users")
 local Modifiersets = require("models.modifiersets")
-local Requirements = require("enums.requirements")
 local Controller = require("Controller")
+local util = require("util")
 local preload = require("lapis.db.model").preload
 
 local score_leaderboards_c = Controller:new()
@@ -15,14 +15,8 @@ score_leaderboards_c.get_joined = function(self)
 	local params = self.params
 
     local score_leaderboards = Leaderboard_scores:find_all({params.score_id}, "score_id")
-	preload(score_leaderboards, {"leaderboard", "notechart"})
 
-	local leaderboards = {}
-	for _, score_leaderboard in ipairs(score_leaderboards) do
-		table.insert(leaderboards, score_leaderboard.leaderboard)
-	end
-
-	return leaderboards
+	return score_leaderboards
 end
 
 score_leaderboards_c.get_available = function(self)
@@ -39,15 +33,14 @@ score_leaderboards_c.get_available = function(self)
 	local community_leaderboards = Community_leaderboards:find_all(community_ids, "community_id")
 	preload(community_leaderboards, {leaderboard = "leaderboard_requirements"})
 
-	local leaderboards = {}
+	local available_community_leaderboard = {}
 	for _, community_leaderboard in ipairs(community_leaderboards) do
-		local leaderboard = community_leaderboard.leaderboard
-		if score_leaderboards_c.match_requirements(score, leaderboard.leaderboard_requirements) then
-			table.insert(leaderboards, leaderboard)
+		if score_leaderboards_c.match_requirements(score, community_leaderboard.leaderboard.leaderboard_requirements) then
+			table.insert(available_community_leaderboard, community_leaderboard)
 		end
 	end
 
-	return leaderboards
+	return available_community_leaderboard
 end
 
 score_leaderboards_c.match_requirements = function(score, requirements)
@@ -116,27 +109,31 @@ score_leaderboards_c.validations.GET = {
 	require("validations.no_data"),
 	{"available", type = "boolean", optional = true},
 }
+score_leaderboards_c.validations.GET = util.add_belongs_to_validations(Leaderboard_scores.relations)
 score_leaderboards_c.GET = function(self)
 	local params = self.params
 
-	local leaderboards
+	local score_leaderboards
 	if params.available then
-		leaderboards = score_leaderboards_c.get_available(self)
+		score_leaderboards = score_leaderboards_c.get_available(self)
 	else
-		leaderboards = score_leaderboards_c.get_joined(self)
+		score_leaderboards = score_leaderboards_c.get_joined(self)
 	end
 
 	if params.no_data then
 		return {json = {
-			total = #leaderboards,
-			filtered = #leaderboards,
+			total = #score_leaderboards,
+			filtered = #score_leaderboards,
 		}}
 	end
 
+	preload(score_leaderboards, util.get_relatives_preload(Leaderboard_scores, params))
+	util.recursive_to_name(score_leaderboards)
+
 	return {json = {
-		total = #leaderboards,
-		filtered = #leaderboards,
-		leaderboards = leaderboards,
+		total = #score_leaderboards,
+		filtered = #score_leaderboards,
+		score_leaderboards = score_leaderboards,
 	}}
 end
 

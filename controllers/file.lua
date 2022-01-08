@@ -1,8 +1,8 @@
 local Files = require("models.files")
 local Controller = require("Controller")
 local Formats = require("enums.formats")
-local Storages = require("enums.storages")
 local Filehash = require("util.filehash")
+local util = require("util")
 
 local file_c = Controller:new()
 
@@ -14,12 +14,14 @@ file_c.policies.GET = {{"context_loaded"}}
 file_c.validations.GET = {
 	{"download", type = "boolean", optional = true},
 }
+util.add_belongs_to_validations(Files.relations, file_c.validations.GET)
 file_c.GET = function(self)
 	local params = self.params
 
 	local file = self.context.file
 
 	if not params.download then
+		util.get_relatives(file, self.params, true)
 		return {json = {file = file:to_name()}}
 	end
 

@@ -3,10 +3,10 @@ local Controller = require("Controller")
 local util = require("util")
 
 local additions = {
-	communities = require("controllers.difftable.communities"),
-	leaderboards = require("controllers.difftable.leaderboards"),
-	notecharts = require("controllers.difftable.notecharts"),
-	inputmodes = require("controllers.difftable.inputmodes"),
+	difftable_communities = require("controllers.difftable.communities"),
+	difftable_leaderboards = require("controllers.difftable.leaderboards"),
+	difftable_notecharts = require("controllers.difftable.notecharts"),
+	difftable_inputmodes = require("controllers.difftable.inputmodes"),
 }
 
 local difftable_c = Controller:new()
@@ -23,8 +23,8 @@ difftable_c.GET = function(self)
 	local params = self.params
 	local difftable = self.context.difftable
 
-	util.load_additions(self, difftable, params, additions)
 	util.get_relatives(difftable, self.params, true)
+	util.load_additions(self, difftable, params, additions)
 
 	return {json = {difftable = difftable}}
 end

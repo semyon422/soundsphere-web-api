@@ -6,11 +6,11 @@ local util = require("util")
 local Controller = require("Controller")
 
 local additions = {
-	difftables = require("controllers.leaderboard.difftables"),
-	communities = require("controllers.leaderboard.communities"),
-	users = require("controllers.leaderboard.users"),
-	inputmodes = require("controllers.leaderboard.inputmodes"),
-	requirements = require("controllers.leaderboard.requirements"),
+	leaderboard_difftables = require("controllers.leaderboard.difftables"),
+	leaderboard_communities = require("controllers.leaderboard.communities"),
+	leaderboard_users = require("controllers.leaderboard.users"),
+	leaderboard_inputmodes = require("controllers.leaderboard.inputmodes"),
+	leaderboard_requirements = require("controllers.leaderboard.requirements"),
 }
 
 local leaderboard_c = Controller:new()
