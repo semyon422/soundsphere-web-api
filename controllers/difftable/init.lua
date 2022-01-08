@@ -23,24 +23,7 @@ difftable_c.GET = function(self)
 	local params = self.params
 	local difftable = self.context.difftable
 
-	local fields = {}
-	for param, controller in pairs(additions) do
-		local value = params[param]
-		if value ~= nil then
-			local param_count = param .. "_count"
-			params.no_data = value == false
-			local response = controller.GET(self).json
-			difftable[param] = response[param]
-			if difftable[param_count] and difftable[param_count] ~= response.total then
-				difftable[param_count] = response.total
-				table.insert(fields, param_count)
-			end
-		end
-	end
-	if #fields > 0 then
-		difftable:update(unpack(fields))
-	end
-
+	util.load_additions(self, difftable, params, additions)
 	util.get_relatives(difftable, self.params, true)
 
 	return {json = {difftable = difftable}}
