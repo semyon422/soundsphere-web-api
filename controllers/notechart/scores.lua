@@ -46,7 +46,7 @@ notechart_scores_c.validations.GET = {
 	{"rivals", type = "boolean", optional = true},
 	{"friends", type = "boolean", optional = true},
 }
-notechart_scores_c.validations.GET = util.add_belongs_to_validations(Scores.relations)
+util.add_belongs_to_validations(Scores.relations, notechart_scores_c.validations.GET)
 notechart_scores_c.GET = function(self)
 	local params = self.params
 	local scores
@@ -57,6 +57,13 @@ notechart_scores_c.GET = function(self)
 		scores = get_relations_scores(params, "friend", true)
 	else
 		scores = Scores:find_all({notechart_id}, "notechart_id")
+	end
+
+	if params.no_data then
+		return {json = {
+			total = #scores,
+			filtered = #scores,
+		}}
 	end
 
 	preload(scores, util.get_relatives_preload(Scores, params))

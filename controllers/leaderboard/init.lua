@@ -6,11 +6,11 @@ local util = require("util")
 local Controller = require("Controller")
 
 local additions = {
-	leaderboard_difftables = require("controllers.leaderboard.difftables"),
-	leaderboard_communities = require("controllers.leaderboard.communities"),
-	leaderboard_users = require("controllers.leaderboard.users"),
-	leaderboard_inputmodes = require("controllers.leaderboard.inputmodes"),
-	leaderboard_requirements = require("controllers.leaderboard.requirements"),
+	difftables = require("controllers.leaderboard.difftables"),
+	communities = require("controllers.leaderboard.communities"),
+	users = require("controllers.leaderboard.users"),
+	inputmodes = require("controllers.leaderboard.inputmodes"),
+	requirements = require("controllers.leaderboard.requirements"),
 }
 
 local leaderboard_c = Controller:new()
@@ -83,7 +83,7 @@ leaderboard_c.GET = function(self)
 	local params = self.params
 	local leaderboard = self.context.leaderboard
 
-	util.load_additions(self, leaderboard, params, additions)
+	util.load_additions(self, leaderboard, additions)
 	util.get_relatives(leaderboard, self.params, true)
 
 	return {json = {leaderboard = leaderboard}}

@@ -28,7 +28,7 @@ difftable_communities_c.GET = function(self)
 	return {json = {
 		total = #community_difftables,
 		filtered = #community_difftables,
-		community_difftables = community_difftables,
+		difftable_communities = community_difftables,
 	}}
 end
 

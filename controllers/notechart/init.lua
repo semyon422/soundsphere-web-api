@@ -10,7 +10,7 @@ local to_json = lapis_util.to_json
 local from_json = lapis_util.from_json
 
 local additions = {
-	notechart_scores = require("controllers.notechart.scores"),
+	scores = require("controllers.notechart.scores"),
 }
 
 local notechart_c = Controller:new()
@@ -20,12 +20,13 @@ notechart_c.methods = {"GET", "PATCH"}
 
 notechart_c.context.GET = {"notechart"}
 notechart_c.policies.GET = {{"context_loaded"}}
+notechart_c.validations.GET = {}
 util.add_additions_validations(additions, notechart_c.validations.GET)
 util.add_belongs_to_validations(Notecharts.relations, notechart_c.validations.GET)
 notechart_c.GET = function(self)
 	local notechart = self.context.notechart
 
-	util.load_additions(self, notechart, self.params, additions)
+	util.load_additions(self, notechart, additions)
 	util.get_relatives(notechart, self.params, true)
 
 	return {json = {notechart = notechart:to_name()}}

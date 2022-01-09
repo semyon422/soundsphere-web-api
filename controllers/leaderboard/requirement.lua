@@ -11,11 +11,9 @@ leaderboard_requirement_c.methods = {"GET", "PATCH", "DELETE"}
 leaderboard_requirement_c.context.GET = {"leaderboard_requirement", "request_session"}
 leaderboard_requirement_c.policies.GET = {{"authenticated", "context_loaded"}}
 leaderboard_requirement_c.GET = function(self)
-	local params = self.params
+    local leaderboard_requirement = self.context.leaderboard_requirement
 
-    local requirement = self.context.leaderboard_requirement
-
-	return {json = {requirement = requirement:to_name()}}
+	return {json = {leaderboard_requirement = leaderboard_requirement:to_name()}}
 end
 
 leaderboard_requirement_c.context.PATCH = {"leaderboard_requirement", "request_session"}

@@ -4,9 +4,9 @@ local community_users_c = require("controllers.community.users")
 local util = require("util")
 
 local additions = {
-	community_inputmodes = require("controllers.community.inputmodes"),
-	community_leaderboards = require("controllers.community.leaderboards"),
-	community_users = require("controllers.community.users"),
+	inputmodes = require("controllers.community.inputmodes"),
+	leaderboards = require("controllers.community.leaderboards"),
+	users = require("controllers.community.users"),
 }
 
 local community_c = Controller:new()
@@ -28,7 +28,7 @@ community_c.GET = function(self)
 	local community = self.context.community
 
 	util.get_relatives(community, params, true)
-	util.load_additions(self, community, params, additions)
+	util.load_additions(self, community, additions)
 
 	return {json = {community = community}}
 end

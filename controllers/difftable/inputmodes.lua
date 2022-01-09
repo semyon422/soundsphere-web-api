@@ -30,7 +30,7 @@ difftable_inputmodes_c.GET = function(self)
 	return {json = {
 		total = #difftable_inputmodes,
 		filtered = #difftable_inputmodes,
-		inputmodes = difftable_inputmodes,
+		difftable_inputmodes = difftable_inputmodes,
 	}}
 end
 

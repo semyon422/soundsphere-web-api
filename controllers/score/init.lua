@@ -11,7 +11,7 @@ local to_json = lapis_util.to_json
 local from_json = lapis_util.from_json
 
 local additions = {
-	score_leaderboards = require("controllers.score.leaderboards"),
+	leaderboards = require("controllers.score.leaderboards"),
 }
 
 local score_c = Controller:new()
@@ -90,7 +90,7 @@ util.add_belongs_to_validations(Scores.relations, score_c.validations.GET)
 score_c.GET = function(self)
 	local score = self.context.score
 
-	util.load_additions(self, score, self.params, additions)
+	util.load_additions(self, score, additions)
 	util.get_relatives(score, self.params, true)
 
 	return {json = {score = score:to_name()}}
