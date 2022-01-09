@@ -38,6 +38,7 @@ score_leaderboards_c.get_available = function(self)
 		if score_leaderboards_c.match_requirements(score, community_leaderboard.leaderboard.leaderboard_requirements) then
 			table.insert(available_community_leaderboard, community_leaderboard)
 		end
+		community_leaderboard.leaderboard.leaderboard_requirements = nil
 	end
 
 	return available_community_leaderboard
@@ -109,7 +110,7 @@ score_leaderboards_c.validations.GET = {
 	require("validations.no_data"),
 	{"available", type = "boolean", optional = true},
 }
-score_leaderboards_c.validations.GET = util.add_belongs_to_validations(Leaderboard_scores.relations)
+util.add_belongs_to_validations(Leaderboard_scores.relations, score_leaderboards_c.validations.GET)
 score_leaderboards_c.GET = function(self)
 	local params = self.params
 

@@ -19,7 +19,7 @@ end
 leaderboard_requirement_c.context.PATCH = {"leaderboard_requirement", "request_session"}
 leaderboard_requirement_c.policies.PATCH = {{"authenticated", "context_loaded"}}
 leaderboard_requirement_c.validations.PATCH = {
-	{"requirement", exists = true, type = "table", param_type = "body", validations = {
+	{"leaderboard_requirement", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string", one_of = Requirements.list},
 		{"rule", exists = true, type = "string", one_of = Rules.list},
 		{"key", exists = true, type = "string"},
@@ -30,7 +30,7 @@ leaderboard_requirement_c.PATCH = function(self)
 	local params = self.params
 
     local requirement = self.context.leaderboard_requirement
-	local params_requirement = params.requirement
+	local params_requirement = params.leaderboard_requirement
 
 	requirement.name = params_requirement.name
 	requirement.rule = params_requirement.rule
@@ -40,7 +40,7 @@ leaderboard_requirement_c.PATCH = function(self)
 	requirement:for_db()
     requirement:update("requirement", "rule", "key", "value")
 
-	return {json = {requirement = requirement:to_name()}}
+	return {json = {leaderboard_requirement = requirement:to_name()}}
 end
 
 leaderboard_requirement_c.context.DELETE = {"leaderboard_requirement", "request_session"}
