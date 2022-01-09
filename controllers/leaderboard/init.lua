@@ -2,6 +2,9 @@ local Leaderboards = require("models.leaderboards")
 local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Leaderboard_difftables = require("models.leaderboard_difftables")
 local Inputmodes = require("enums.inputmodes")
+local Difficulty_calculators = require("enums.difficulty_calculators")
+local Rating_calculators = require("enums.rating_calculators")
+local Combiners = require("enums.combiners")
 local util = require("util")
 local Controller = require("Controller")
 
@@ -86,7 +89,7 @@ leaderboard_c.GET = function(self)
 	util.load_additions(self, leaderboard, additions)
 	util.get_relatives(leaderboard, self.params, true)
 
-	return {json = {leaderboard = leaderboard}}
+	return {json = {leaderboard = leaderboard:to_name()}}
 end
 
 leaderboard_c.context.PATCH = {"leaderboard", "request_session"}
@@ -96,6 +99,14 @@ leaderboard_c.validations.PATCH = {
 		{"name", type = "string"},
 		{"description", type = "string"},
 		{"banner", type = "string"},
+		{"difficulty_calculator", type = "string", one_of = Difficulty_calculators.list},
+		{"rating_calculator", type = "string", one_of = Rating_calculators.list},
+		{"scores_combiner", type = "string", one_of = Combiners.list},
+		{"communities_combiner", type = "string", one_of = Combiners.list},
+		{"difficulty_calculator_config", exists = true, type = "number", default = 0},
+		{"rating_calculator_config", exists = true, type = "number", default = 0},
+		{"scores_combiner_count", exists = true, type = "number", default = 20},
+		{"communities_combiner_count", exists = true, type = "number", default = 100},
 	}},
 }
 leaderboard_c.PATCH = function(self)
@@ -105,13 +116,33 @@ leaderboard_c.PATCH = function(self)
 	leaderboard.name = params.leaderboard.name
 	leaderboard.description = params.leaderboard.description
 	leaderboard.banner = params.leaderboard.banner
-	leaderboard:update("name", "description", "banner")
+	leaderboard.difficulty_calculator = Difficulty_calculators:for_db(params.leaderboard.difficulty_calculator)
+	leaderboard.rating_calculator = Rating_calculators:for_db(params.leaderboard.rating_calculator)
+	leaderboard.scores_combiner = Combiners:for_db(params.leaderboard.scores_combiner)
+	leaderboard.communities_combiner = Combiners:for_db(params.leaderboard.communities_combiner)
+	leaderboard.difficulty_calculator_config = params.leaderboard.difficulty_calculator_config
+	leaderboard.rating_calculator_config = params.leaderboard.rating_calculator_config
+	leaderboard.scores_combiner_count = params.leaderboard.scores_combiner_count
+	leaderboard.communities_combiner_count = params.leaderboard.communities_combiner_count
+	leaderboard:update(
+		"name",
+		"description",
+		"banner",
+		"difficulty_calculator",
+		"rating_calculator",
+		"scores_combiner",
+		"communities_combiner",
+		"difficulty_calculator_config",
+		"rating_calculator_config",
+		"scores_combiner_count",
+		"communities_combiner_count"
+	)
 
 	leaderboard_c.update_inputmodes(leaderboard.id, params.leaderboard.inputmodes)
 	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.difftables)
 	leaderboard_c.update_requirements(leaderboard.id, params.leaderboard.requirements)
 
-	return {json = {leaderboard = leaderboard}}
+	return {json = {leaderboard = leaderboard:to_name()}}
 end
 
 return leaderboard_c

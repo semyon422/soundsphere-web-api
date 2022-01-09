@@ -1,4 +1,7 @@
 local db = require("db")
+local Difficulty_calculators = require("enums.difficulty_calculators")
+local Rating_calculators = require("enums.rating_calculators")
+local Combiners = require("enums.combiners")
 
 local admin = {
 	name = "admin",
@@ -64,6 +67,14 @@ db_test.create = function()
 		name = "Leaderboard",
 		description = "Description",
 		banner = "",
+		difficulty_calculator = Difficulty_calculators:for_db("enps"),
+		rating_calculator = Rating_calculators:for_db("acc_inv_erf"),
+		scores_combiner = Combiners:for_db("average"),
+		communities_combiner = Combiners:for_db("additive"),
+		difficulty_calculator_config = 0,
+		rating_calculator_config = 0,
+		scores_combiner_count = 20,
+		communities_combiner_count = 100,
 	})
 
 	Community_leaderboards:create({

@@ -72,7 +72,7 @@ table_declarations.leaderboard_users = {
 	{"user_id", types.fk_id},
 	{"active", types.boolean},
 	{"scores_count", types.size},
-	{"total_performance", types.float},
+	{"total_rating", types.float},
 	{"total_accuracy", types.float},
 	"UNIQUE KEY `leaderboard_users` (`leaderboard_id`,`user_id`)"
 }
@@ -83,6 +83,7 @@ table_declarations.leaderboard_scores = {
 	{"user_id", types.fk_id},
 	{"notechart_id", types.fk_id},
 	{"score_id", types.fk_id},
+	{"rating", types.float},
 	"UNIQUE KEY `leaderboard_user_notechart` (`leaderboard_id`,`user_id`,`notechart_id`)"
 }
 
@@ -109,6 +110,14 @@ table_declarations.leaderboards = {
 	{"description", types.varchar},
 	{"banner", types.varchar},
 	{"top_user_id", types.fk_id},
+	{"difficulty_calculator", types.enum},
+	{"rating_calculator", types.enum},
+	{"scores_combiner", types.enum},
+	{"communities_combiner", types.enum},
+	{"difficulty_calculator_config", types.size},
+	{"rating_calculator_config", types.size},
+	{"scores_combiner_count", types.size},
+	{"communities_combiner_count", types.size},
 	{"communities_count", types.size},
 	{"difftables_count", types.size},
 	{"users_count", types.size},
@@ -284,7 +293,7 @@ table_declarations.scores = {
 	{"score", types.float},
 	{"accuracy", types.float},
 	{"max_combo", types.size},
-	{"performance", types.float},
+	-- {"performance", types.float},
 	"UNIQUE KEY `file_id` (`file_id`)",
 	"KEY `user_id` (`user_id`)",
 	"KEY `notechart_id` (`notechart_id`)",
@@ -292,7 +301,7 @@ table_declarations.scores = {
 	"KEY `inputmode` (`inputmode`)",
 	"KEY `is_valid` (`is_valid`)",
 	"KEY `is_complete` (`is_complete`)",
-	"KEY `performance` (`performance`)",
+	-- "KEY `performance` (`performance`)",
 }
 
 table_declarations.sessions = {
