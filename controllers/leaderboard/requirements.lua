@@ -98,7 +98,7 @@ leaderboard_requirements_c.GET = function(self)
 	return {json = {
 		total = #leaderboard_requirements,
 		filtered = #leaderboard_requirements,
-		requirements = leaderboard_requirements,
+		leaderboard_requirements = leaderboard_requirements,
 	}}
 end
 
