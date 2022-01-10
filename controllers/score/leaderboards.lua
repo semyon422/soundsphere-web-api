@@ -226,7 +226,7 @@ score_leaderboards_c.get_total_rating = function(user_id, leaderboard)
 		"where " .. clause .. " order by rating desc limit " .. count
 	)
 
-	local scores_combiner = leaderboard.scores_combiner
+	local combiner = leaderboard.scores_combiner
 
 	local total_rating = 0
 	for i = 1, count do
@@ -235,13 +235,13 @@ score_leaderboards_c.get_total_rating = function(user_id, leaderboard)
 		if leaderboard_score then
 			rating = leaderboard_score.rating
 		end
-		if scores_combiner == "average" or scores_combiner == "additive" then
+		if combiner == "average" or combiner == "additive" then
 			total_rating = total_rating + rating
-		elseif scores_combiner == "logarithmic" then
+		elseif combiner == "logarithmic" then
 			total_rating = total_rating + rating * 0.95 ^ (i - 1)
 		end
 	end
-	if scores_combiner == "average" then
+	if combiner == "average" then
 		total_rating = total_rating / count
 	end
 
@@ -249,10 +249,73 @@ score_leaderboards_c.get_total_rating = function(user_id, leaderboard)
 	return total_rating, total_count
 end
 
+score_leaderboards_c.get_community_total_rating = function(leaderboard_users, leaderboard)
+	local count = leaderboard.communities_combiner_count
+	local combiner = leaderboard.communities_combiner
+
+	local total_rating = 0
+	for i = 1, count do
+		local rating = 0
+		local leaderboard_user = leaderboard_users[i]
+		if leaderboard_user then
+			rating = leaderboard_user.total_rating
+		end
+		if combiner == "average" or combiner == "additive" then
+			total_rating = total_rating + rating
+		elseif combiner == "logarithmic" then
+			total_rating = total_rating + rating * 0.95 ^ (i - 1)
+		end
+	end
+	if combiner == "average" then
+		total_rating = total_rating / count
+	end
+
+	return total_rating
+end
+
 score_leaderboards_c.update_top_user = function(leaderboard)
 	local top_leaderboard_user = Leaderboard_users:find({leaderboard_id = leaderboard.id}, "order by rating desc")
 	leaderboard.top_user_id = top_leaderboard_user.user_id
 	leaderboard:update("top_user_id")
+end
+
+score_leaderboards_c.update_community_leaderboards = function(user_id, leaderboard)
+	local community_users = Community_users:find_all({user_id}, "user_id")
+	local community_ids_map = {}
+	local community_ids = {}
+	for _, community_user in ipairs(community_users) do
+		community_ids_map[community_user.community_id] = true
+	end
+
+	local community_leaderboards_map = {}
+	local community_leaderboards = leaderboard:get_community_leaderboards()
+	for _, community_leaderboard in ipairs(community_leaderboards) do
+		local community_id = community_leaderboard.community_id
+		if community_ids_map[community_id] then
+			table.insert(community_ids, community_id)
+			community_leaderboards_map[community_id] = community_leaderboard
+		end
+	end
+
+	--[[
+		select total_rating from leaderboard_users lu
+		inner join community_users cu on lu.user_id = cu.user_id
+		where cu.community_id = 1 and lu.leaderboard_id = 1 order by total_rating desc limit 100
+	]]
+	local count = leaderboard.communities_combiner_count
+	for _, community_id in ipairs(community_ids) do
+		local leaderboard_users = Leaderboard_users:select(
+			"lu inner join community_users cu on lu.user_id = cu.user_id",
+			"where cu.community_id = ? and lu.leaderboard_id = ?",
+			community_id, leaderboard.id,
+			"order by total_rating desc limit ?", count,
+			{fields = "total_rating"}
+		)
+		local total_rating = score_leaderboards_c.get_community_total_rating(leaderboard_users, leaderboard)
+		local community_leaderboard = community_leaderboards_map[community_id]
+		community_leaderboard.total_rating = total_rating
+		community_leaderboard:update("total_rating")
+	end
 end
 
 score_leaderboards_c.update_user_leaderboard = function(user_id, leaderboard)
@@ -268,6 +331,7 @@ score_leaderboards_c.update_user_leaderboard = function(user_id, leaderboard)
 		new_leaderboard_user.total_rating = total_rating
 		Leaderboard_users:create(new_leaderboard_user)
 		score_leaderboards_c.update_top_user(leaderboard)
+		score_leaderboards_c.update_community_leaderboards(user_id, leaderboard)
 		return
 	end
 	leaderboard_user.scores_count = total_count
@@ -275,6 +339,7 @@ score_leaderboards_c.update_user_leaderboard = function(user_id, leaderboard)
 	leaderboard_user:update("scores_count", "total_rating")
 
 	score_leaderboards_c.update_top_user(leaderboard)
+	score_leaderboards_c.update_community_leaderboards(user_id, leaderboard)
 end
 
 score_leaderboards_c.insert_score = function(score, leaderboard)

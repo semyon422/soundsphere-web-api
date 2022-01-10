@@ -202,11 +202,13 @@ table_declarations.community_leaderboards = {
 	{"sender_id", types.fk_id},
 	{"accepted", types.boolean},
 	{"created_at", types.time},
+	{"total_rating", types.float},
 	{"message", types.varchar},
 	"UNIQUE KEY `community_leaderboards` (`community_id`,`leaderboard_id`)",
 	"KEY `is_owner` (`is_owner`)",
 	"KEY `sender_id` (`sender_id`)",
 	"KEY `accepted` (`accepted`)",
+	"KEY `total_rating` (`total_rating`)",
 }
 
 table_declarations.community_users = {
