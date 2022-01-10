@@ -8,5 +8,6 @@
 	"editor.detectIndentation": false,
 	"editor.insertSpaces": false,
 	"Lua.runtime.version": "LuaJIT",
-	"rest-client.rememberCookiesForSubsequentRequests": false
+	"rest-client.rememberCookiesForSubsequentRequests": false,
+	"Lua.completion.autoRequire": false
 }
