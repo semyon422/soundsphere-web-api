@@ -6,6 +6,7 @@ local Scores = Model:extend(
 	"scores",
 	{
 		relations = {
+			{"leaderboard_scores", has_many = "leaderboard_scores", key = "score_id"},
 			{"user", belongs_to = "users", key = "user_id"},
 			{"notechart", belongs_to = "notecharts", key = "notechart_id"},
 			{"modifierset", belongs_to = "modifiersets", key = "modifierset_id"},

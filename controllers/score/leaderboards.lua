@@ -1,11 +1,13 @@
 local Leaderboard_scores = require("models.leaderboard_scores")
 local Leaderboard_difftables = require("models.leaderboard_difftables")
+local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
 local Leaderboard_users = require("models.leaderboard_users")
 local Community_leaderboards = require("models.community_leaderboards")
 local Difftable_notecharts = require("models.difftable_notecharts")
 local Community_users = require("models.community_users")
 local Leaderboards = require("models.leaderboards")
 local Modifiersets = require("models.modifiersets")
+local Inputmodes = require("enums.inputmodes")
 local Controller = require("Controller")
 local util = require("util")
 local erfunc = require("erfunc")
@@ -15,14 +17,6 @@ local score_leaderboards_c = Controller:new()
 
 score_leaderboards_c.path = "/scores/:score_id[%d]/leaderboards"
 score_leaderboards_c.methods = {"GET", "PUT"}
-
-score_leaderboards_c.get_joined = function(self)
-	local params = self.params
-
-    local score_leaderboards = Leaderboard_scores:find_all({params.score_id}, "score_id")
-
-	return score_leaderboards
-end
 
 score_leaderboards_c.get_available = function(self)
 	local score = self.context.score
@@ -40,7 +34,7 @@ score_leaderboards_c.get_available = function(self)
 
 	local leaderboards = {}
 	for _, community_leaderboard in ipairs(community_leaderboards) do
-		if score_leaderboards_c.match_requirements(score, community_leaderboard.leaderboard.leaderboard_requirements) then
+		if score_leaderboards_c.match_requirements(score, community_leaderboard.leaderboard) then
 			table.insert(leaderboards, community_leaderboard.leaderboard)
 		end
 		community_leaderboard.leaderboard.leaderboard_requirements = nil
@@ -49,10 +43,32 @@ score_leaderboards_c.get_available = function(self)
 	return leaderboards
 end
 
-score_leaderboards_c.match_requirements = function(score, requirements)
+score_leaderboards_c.match_requirements = function(score, leaderboard)
+	local leaderboard_inputmodes = leaderboard:get_leaderboard_inputmodes()
+	if #leaderboard_inputmodes > 0 then
+		local matching = false
+		for _, leaderboard_inputmode in ipairs(leaderboard_inputmodes) do
+			if score.inputmode == leaderboard_inputmode.inputmode then
+				matching = true
+			end
+		end
+		if not matching then
+			return false
+		end
+	end
+
+	local leaderboard_difftables = leaderboard:get_leaderboard_difftables()
+	if #leaderboard_difftables > 0 then
+		local difftable_notecharts = score_leaderboards_c.get_difftable_notecharts(score, leaderboard)
+		if #difftable_notecharts == 0 then
+			return false
+		end
+	end
+
 	local modifierset = score:get_modifierset()
 	local modifiers = Modifiersets:decode(modifierset.encoded)
 
+	local requirements = leaderboard.leaderboard_requirements
 	for _, requirement in ipairs(requirements) do
 		requirement:to_name()
 		if requirement.rule == "required" then
@@ -123,7 +139,7 @@ score_leaderboards_c.GET = function(self)
 	if params.available then
 		leaderboards = score_leaderboards_c.get_available(self)
 	else
-		score_leaderboards = score_leaderboards_c.get_joined(self)
+		score_leaderboards = self.context.score:get_leaderboard_scores()
 	end
 	local objects = score_leaderboards or leaderboards
 
@@ -149,30 +165,38 @@ score_leaderboards_c.GET = function(self)
 	}}
 end
 
+score_leaderboards_c.get_difftable_notecharts = function(score, leaderboard)
+	local leaderboard_difftables = leaderboard:get_leaderboard_difftables()
+	if #leaderboard_difftables == 0 then
+		return {}
+	end
+	local difftable_ids = {}
+	for _, leaderboard_difftable in ipairs(leaderboard_difftables) do
+		table.insert(difftable_ids, leaderboard_difftable.difftable_id)
+	end
+	local difftable_notecharts = Difftable_notecharts:find_all(difftable_ids, {
+		key = "difftable_id",
+		where = {notechart_id = score.notechart_id},
+	})
+	if #difftable_notecharts == 0 then
+		return {}
+	end
+	table.sort(difftable_notecharts, function(a, b)
+		return a.difftable_id > b.difftable_id
+	end)
+	return difftable_notecharts
+end
+
 score_leaderboards_c.get_difficulty = function(score, leaderboard)
 	local difficulty_calculator = leaderboard.difficulty_calculator
 	local difficulty_calculator_config = leaderboard.difficulty_calculator_config
 	if difficulty_calculator == "enps" then
 		return score.difficulty
 	elseif difficulty_calculator == "difftable" then
-		local leaderboard_difftables = Leaderboard_difftables:find_all({leaderboard.id}, "leaderboard_id")
-		if #leaderboard_difftables == 0 then
-			return 0
-		end
-		local difftable_ids = {}
-		for _, leaderboard_difftable in ipairs(leaderboard_difftables) do
-			table.insert(difftable_ids, leaderboard_difftable.difftable_id)
-		end
-		local difftable_notecharts = Difftable_notecharts:find_all(difftable_ids, {
-			key = "difftable_id",
-			where = {notechart_id = score.notechart_id},
-		})
+		local difftable_notecharts = score_leaderboards_c.get_difftable_notecharts(score, leaderboard)
 		if #difftable_notecharts == 0 then
 			return 0
 		end
-		table.sort(difftable_notecharts, function(a, b)
-			return a.difftable_id > b.difftable_id
-		end)
 		return difftable_notecharts[1].difficulty * score.timerate
 	end
 	return 0
