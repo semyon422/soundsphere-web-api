@@ -370,15 +370,24 @@ end
 score_leaderboards_c.context.PUT = {"score"}
 score_leaderboards_c.policies.PUT = {{"context_loaded"}}
 score_leaderboards_c.PUT = function(self)
+	local score = self.context.score
+
+	if score.is_complete then
+		return {status = 204}
+	end
+
 	local leaderboards = score_leaderboards_c.get_available(self)
 	util.recursive_to_name(leaderboards)
 
 	local count = 0
 	for _, leaderboard in ipairs(leaderboards) do
-		if score_leaderboards_c.insert_score(self.context.score, leaderboard) then
+		if score_leaderboards_c.insert_score(score, leaderboard) then
 			count = count + 1
 		end
 	end
+
+	score.is_complete = true
+	score:update("is_complete")
 
 	return {json = {count = count}}
 end
