@@ -72,6 +72,7 @@ notechart_c.PATCH = function(self)
 	notechart:update(
 		"is_valid",
 		"inputmode",
+		"difficulty",
 		"song_title",
 		"song_artist",
 		"difficulty_name",

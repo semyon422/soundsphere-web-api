@@ -62,18 +62,22 @@ score_c.load_replay = function(score)
 	score.modifierset_id = modifierset.id
 	score.inputmode = Inputmodes:for_db(json_response.inputMode)
 	score.is_valid = true
+	score.timerate = response_score.base.timeRate
 	score.score = response_score.normalscore.scoreAdjusted
 	score.accuracy = response_score.normalscore.accuracyAdjusted
 	score.max_combo = response_score.base.maxCombo
-	score.performance = response_score.normalscore.rating32
+	score.difficulty = response_score.normalscore.enps
+	score.rating = response_score.normalscore.rating32
 	score:update(
 		"modifierset_id",
 		"inputmode",
 		"is_valid",
+		"timerate",
 		"score",
 		"accuracy",
 		"max_combo",
-		"performance"
+		"difficulty",
+		"rating"
 	)
 	score.file = nil
 	score.notechart = nil

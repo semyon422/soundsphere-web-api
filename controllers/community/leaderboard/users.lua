@@ -23,11 +23,11 @@ community_leaderboard_users_c.GET = function(self)
 
 	local paginator = Community_users:paginated(
 		[[cu inner join leaderboard_users lu on cu.user_id = lu.user_id
-		where cu.community_id = ? and lu.leaderboard_id = ? order by total_performance desc, user_id asc]],
+		where cu.community_id = ? and lu.leaderboard_id = ? order by total_rating desc, user_id asc]],
 		params.community_id, params.leaderboard_id,
 		{
 			per_page = per_page,
-			fields = "cu.user_id, lu.total_performance"
+			fields = "cu.user_id, lu.total_rating"
 		}
 	)
 	local community_users = params.get_all and paginator:get_all() or paginator:get_page(page_num)

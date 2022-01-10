@@ -73,8 +73,10 @@ table_declarations.leaderboard_users = {
 	{"active", types.boolean},
 	{"scores_count", types.size},
 	{"total_rating", types.float},
-	{"total_accuracy", types.float},
-	"UNIQUE KEY `leaderboard_users` (`leaderboard_id`,`user_id`)"
+	"UNIQUE KEY `leaderboard_users` (`leaderboard_id`,`user_id`)",
+	"KEY `active` (`active`)",
+	"KEY `scores_count` (`scores_count`)",
+	"KEY `total_rating` (`total_rating`)",
 }
 
 table_declarations.leaderboard_scores = {
@@ -290,10 +292,12 @@ table_declarations.scores = {
 	{"is_valid", types.boolean},
 	{"is_complete", types.boolean},
 	{"created_at", types.time},
+	{"timerate", types.float},
 	{"score", types.float},
 	{"accuracy", types.float},
 	{"max_combo", types.size},
-	-- {"performance", types.float},
+	{"difficulty", types.float},
+	{"rating", types.float},
 	"UNIQUE KEY `file_id` (`file_id`)",
 	"KEY `user_id` (`user_id`)",
 	"KEY `notechart_id` (`notechart_id`)",
@@ -301,7 +305,6 @@ table_declarations.scores = {
 	"KEY `inputmode` (`inputmode`)",
 	"KEY `is_valid` (`is_valid`)",
 	"KEY `is_complete` (`is_complete`)",
-	-- "KEY `performance` (`performance`)",
 }
 
 table_declarations.sessions = {

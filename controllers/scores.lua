@@ -125,10 +125,12 @@ scores_c.POST = function(self)
 		is_valid = false,
 		is_complete = false,
 		created_at = created_at,
+		timerate = 0,
 		score = 0,
 		accuracy = 0,
 		max_combo = 0,
-		performance = 0,
+		difficulty = 0,
+		rating = 0,
 	})
 
 	return {status = 201, redirect_to = self:url_for(score)}
