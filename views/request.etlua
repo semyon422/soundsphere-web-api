@@ -87,7 +87,7 @@ function requestBlock() {return {
 			if (!this.responseJson.err) {
 				responseBody.innerHTML = JSONstringifyOrder(this.responseJson, 2)
 			} else {
-				responseBody.innerHTML = this.responseJson.err
+				responseBody.innerHTML = this.responseJson.err + '\n' + this.responseJson.trace
 			}
 		} else {
 			responseBody.innerHTML = ''
