@@ -305,10 +305,11 @@ score_leaderboards_c.update_community_leaderboards = function(user_id, leaderboa
 	local count = leaderboard.communities_combiner_count
 	for _, community_id in ipairs(community_ids) do
 		local leaderboard_users = Leaderboard_users:select(
-			"lu inner join community_users cu on lu.user_id = cu.user_id",
-			"where cu.community_id = ? and lu.leaderboard_id = ?",
-			community_id, leaderboard.id,
-			"order by total_rating desc limit ?", count,
+			"lu " ..
+			"inner join community_users cu on lu.user_id = cu.user_id " ..
+			"where cu.community_id = ? and lu.leaderboard_id = ? " ..
+			"order by total_rating desc limit ?",
+			community_id, leaderboard.id, count,
 			{fields = "total_rating"}
 		)
 		local total_rating = score_leaderboards_c.get_community_total_rating(leaderboard_users, leaderboard)

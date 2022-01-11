@@ -66,10 +66,11 @@ community_users_c.get_users = function(self)
 		)
 	else
 		paginator = Community_users:paginated(
-			[[cu inner join users u on cu.user_id = u.id
-			where cu.community_id = ? and accepted = true and (]] ..
-			db_search(db, params.search, "name") ..
-			[[) order by user_id asc]],
+			"cu " ..
+			"inner join users u on cu.user_id = u.id " ..
+			"where cu.community_id = ? and accepted = true " ..
+			"and (" .. db_search(db, params.search, "name") .. ") " ..
+			"order by user_id asc",
 			params.community_id,
 			{
 				per_page = per_page,
