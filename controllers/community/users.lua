@@ -38,7 +38,9 @@ community_users_c.get_users = function(self)
 	if params.leaderboard_id then
 		table.insert(clause_table, "inner join leaderboard_users lu on cu.user_id = lu.user_id")
 		table.insert(fields, "lu.total_rating")
+		table.insert(fields, "lu.scores_count")
 		table.insert(orders, "lu.total_rating desc")
+		table.insert(where_table, "lu.active = true")
 		table.insert(where_table, "lu.leaderboard_id = ?")
 		table.insert(opts, params.leaderboard_id)
 	end
