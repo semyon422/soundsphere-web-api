@@ -7,6 +7,7 @@ local additions = {
 	inputmodes = require("controllers.community.inputmodes"),
 	leaderboards = require("controllers.community.leaderboards"),
 	users = require("controllers.community.users"),
+	difftables = require("controllers.community.difftables"),
 }
 
 local community_c = Controller:new()

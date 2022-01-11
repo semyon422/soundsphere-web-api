@@ -44,6 +44,14 @@ community_difftables_c.GET = function(self)
 	end
 
 	local community_difftables = Community_difftables:find_all({params.community_id}, "community_id")
+
+	if params.no_data then
+		return {json = {
+			total = #community_difftables,
+			filtered = #community_difftables,
+		}}
+	end
+
 	preload(community_difftables, util.get_relatives_preload(Community_difftables, params))
 	util.recursive_to_name(community_difftables)
 
