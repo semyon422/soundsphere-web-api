@@ -16,4 +16,9 @@ Roles.list = {
 	"moderator",
 }
 
+Roles.staff_roles = {}
+for _, role in ipairs({"creator", "admin", "moderator"}) do
+	table.insert(Roles.staff_roles, Roles:for_db(role))
+end
+
 return Roles

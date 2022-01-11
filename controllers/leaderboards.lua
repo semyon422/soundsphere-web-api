@@ -1,4 +1,5 @@
 local Leaderboards = require("models.leaderboards")
+local Leaderboard_users = require("models.leaderboard_users")
 local Community_leaderboards = require("models.community_leaderboards")
 local util = require("util")
 local preload = require("lapis.db.model").preload
@@ -19,6 +20,7 @@ leaderboards_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.get_all"),
 	require("validations.search"),
+	{"hide_joined", type = "boolean", optional = true},
 }
 util.add_belongs_to_validations(Leaderboards.relations, leaderboards_c.validations.GET)
 util.add_has_many_validations(Leaderboards.relations, leaderboards_c.validations.GET)
@@ -27,7 +29,30 @@ leaderboards_c.GET = function(self)
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
 
-	local clause = params.search and util.db_search(Leaderboards.db, params.search, "name")
+	local db = Leaderboards.db
+	local search_clause = params.search and util.db_search(db, params.search, "name")
+
+	local joined_clause
+	local joined_leaderboard_ids = {}
+	local joined_leaderboard_ids_map = {}
+	if self.session.user_id then
+		local leaderboard_users = Leaderboard_users:find_all({self.session.user_id}, {
+			key = "user_id",
+			fields = "leaderboard_id"
+		})
+		for _, leaderboard_user in ipairs(leaderboard_users) do
+			local id = leaderboard_user.leaderboard_id
+			table.insert(joined_leaderboard_ids, id)
+			joined_leaderboard_ids_map[id] = true
+		end
+		if params.hide_joined and #joined_leaderboard_ids > 0 then
+			joined_clause = db.encode_clause({
+				id = db.list(joined_leaderboard_ids)
+			}):gsub("IN", "NOT IN")
+		end
+	end
+
+	local clause = util.db_and(joined_clause, search_clause)
 	local paginator = Leaderboards:paginated(
 		util.db_where(clause), "order by id asc",
 		{

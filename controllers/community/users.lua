@@ -26,10 +26,6 @@ community_users_c.get_invitations = function(self, invitation)
 	return community_users, clause
 end
 
-local staff_roles = {}
-for _, role in ipairs({"creator", "admin", "moderator"}) do
-	table.insert(staff_roles, Roles:for_db(role))
-end
 community_users_c.get_staff = function(self)
 	local params = self.params
 
@@ -37,7 +33,7 @@ community_users_c.get_staff = function(self)
 	local where = {
 		community_id = params.community_id,
 		accepted = true,
-		role = db.list(staff_roles)
+		role = db.list(Roles.staff_roles)
 	}
 
 	local clause = db.encode_clause(where)

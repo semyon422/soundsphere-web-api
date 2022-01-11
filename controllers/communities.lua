@@ -27,7 +27,6 @@ communities_c.GET = function(self)
 	local page_num = params.page_num or 1
 
 	local db = Communities.db
-
 	local search_clause = params.search and util.db_search(db, params.search, "name")
 
 	local joined_clause
@@ -43,7 +42,7 @@ communities_c.GET = function(self)
 			table.insert(joined_community_ids, id)
 			joined_community_ids_map[id] = true
 		end
-		if params.hide_joined == 1 and #joined_community_ids > 0 then
+		if params.hide_joined and #joined_community_ids > 0 then
 			joined_clause = db.encode_clause({
 				id = db.list(joined_community_ids)
 			}):gsub("IN", "NOT IN")
