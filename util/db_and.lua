@@ -1,4 +1,8 @@
-return function(...)
+local function db_and(...)
+	local t = ...
+	if type(t) == "table" then
+		return db_and(unpack(t))
+	end
 	local clauses = {}
 	for i = 1, select("#", ...) do
 		local clause = select(i, ...)
@@ -11,3 +15,5 @@ return function(...)
 	end
 	return table.concat(clauses, " and ")
 end
+
+return db_and

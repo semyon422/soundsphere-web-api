@@ -1,6 +1,5 @@
 local Community_users = require("models.community_users")
 local Roles = require("enums.roles")
-local db_search = require("util.db_search")
 local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
 local community_user_c = require("controllers.community.user")
@@ -26,61 +25,53 @@ community_users_c.get_invitations = function(self, invitation)
 	return community_users, clause
 end
 
-community_users_c.get_staff = function(self)
-	local params = self.params
-
-	local db = Community_users.db
-	local where = {
-		community_id = params.community_id,
-		accepted = true,
-		role = db.list(Roles.staff_roles)
-	}
-
-	local clause = db.encode_clause(where)
-    local community_users = Community_users:select("where " .. clause .. " order by id asc")
-
-	return community_users, clause
-end
-
 community_users_c.get_users = function(self)
 	local params = self.params
-
-	local where = {
-		community_id = params.community_id,
-		accepted = true,
-	}
-
 	local db = Community_users.db
-	local clause = db.encode_clause(where)
+
+	local clause_table = {"cu"}
+	local where_table = {"cu.accepted = true", "cu.community_id = ?"}
+	local fields = {"cu.*"}
+	local orders = {}
+	local opts = {params.community_id}
+
+	if params.leaderboard_id then
+		table.insert(clause_table, "inner join leaderboard_users lu on cu.user_id = lu.user_id")
+		table.insert(fields, "lu.total_rating")
+		table.insert(orders, "lu.total_rating desc")
+		table.insert(where_table, "lu.leaderboard_id = ?")
+		table.insert(opts, params.leaderboard_id)
+	end
+	if params.staff then
+		table.insert(where_table, db.encode_clause({role = db.list(Roles.staff_roles)}))
+	end
+	if params.search then
+		table.insert(clause_table, "inner join users u on cu.user_id = u.id")
+		table.insert(where_table, "(" .. util.db_search(db, params.search, "name") .. ")")
+	end
+	table.insert(orders, "cu.user_id asc")
+
+	table.insert(clause_table, util.db_where(util.db_and(where_table)))
+	table.insert(clause_table, "order by " .. table.concat(orders, ", "))
 
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
+	local clause = db.interpolate_query(
+		table.concat(clause_table, " "),
+		unpack(opts)
+	)
 
-	local paginator
-	if not params.search then
-		paginator = Community_users:paginated(
-			"where " .. clause .. " order by id asc",
-			{
-				per_page = per_page,
-			}
-		)
-	else
-		paginator = Community_users:paginated(
-			"cu " ..
-			"inner join users u on cu.user_id = u.id " ..
-			"where cu.community_id = ? and accepted = true " ..
-			"and (" .. db_search(db, params.search, "name") .. ") " ..
-			"order by user_id asc",
-			params.community_id,
-			{
-				per_page = per_page,
-				fields = "cu.*"
-			}
-		)
-	end
+	local paginator = Community_users:paginated(clause, {
+		per_page = per_page,
+		fields = table.concat(fields, ", "),
+	})
 	local community_users = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
-	return community_users
+	for i, community_user in ipairs(community_users) do
+		community_user.rank = (page_num - 1) * per_page + i
+	end
+
+	return community_users, clause
 end
 
 community_users_c.update_users = function(self, community_users)
@@ -117,9 +108,14 @@ end
 community_users_c.policies.GET = {{"permit"}}
 community_users_c.validations.GET = {
 	require("validations.no_data"),
+	require("validations.per_page"),
+	require("validations.page_num"),
+	require("validations.get_all"),
+	require("validations.search"),
 	{"invitations", type = "boolean", optional = true},
 	{"requests", type = "boolean", optional = true},
 	{"staff", type = "boolean", optional = true},
+	{"leaderboard_id", exists = true, type = "number", optional = true, default = ""},
 }
 util.add_belongs_to_validations(Community_users.relations, community_users_c.validations.GET)
 community_users_c.GET = function(self)
@@ -130,10 +126,8 @@ community_users_c.GET = function(self)
 		community_users, filtered_clause = community_users_c.get_invitations(self, true)
 	elseif params.requests then
 		community_users, filtered_clause = community_users_c.get_invitations(self, false)
-	elseif params.staff then
-		community_users, filtered_clause = community_users_c.get_staff(self)
 	else
-		community_users = community_users_c.get_users(self)
+		community_users, filtered_clause = community_users_c.get_users(self)
 	end
 
 	local db = Community_users.db
@@ -145,7 +139,7 @@ community_users_c.GET = function(self)
 	if params.no_data then
 		return {json = {
 			total = tonumber(Community_users:count(total_clause)),
-			filtered = tonumber(Community_users:count(filtered_clause or total_clause)),
+			filtered = tonumber(util.db_count(Community_users, filtered_clause)),
 		}}
 	end
 
@@ -154,7 +148,7 @@ community_users_c.GET = function(self)
 
 	return {json = {
 		total = tonumber(Community_users:count(total_clause)),
-		filtered = tonumber(Community_users:count(filtered_clause or total_clause)),
+		filtered = tonumber(util.db_count(Community_users, filtered_clause)),
 		community_users = community_users,
 	}}
 end
