@@ -166,6 +166,10 @@ table_declarations.users = {
 	{"latest_activity", types.time},
 	{"created_at", types.time},
 	{"description", types.varchar},
+	{"scores_count", types.size},
+	{"notecharts_count", types.size},
+	{"notes_count", types.size},
+	{"play_time", types.size},
 	"UNIQUE KEY `name` (`name`)",
 	"UNIQUE KEY `email` (`email`)"
 }
@@ -278,6 +282,9 @@ table_declarations.notecharts = {
 	{"song_artist", types.text},
 	{"difficulty_name", types.text},
 	{"difficulty_creator", types.text},
+	{"level", types.size},
+	{"length", types.size},
+	{"notes_count", types.size},
 	[[
 		UNIQUE KEY `hashindex` (`file_id`,`index`),
 		KEY `inputmode` (`inputmode`)
@@ -293,6 +300,7 @@ table_declarations.scores = {
 	{"inputmode", types.enum},
 	{"is_valid", types.boolean},
 	{"is_complete", types.boolean},
+	{"is_top", types.boolean},
 	{"created_at", types.time},
 	{"timerate", types.float},
 	{"score", types.float},

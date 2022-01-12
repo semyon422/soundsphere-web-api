@@ -1,6 +1,5 @@
 local Scores = require("models.scores")
 local User_relations = require("models.user_relations")
-local Leaderboard_scores = require("models.leaderboard_scores")
 local preload = require("lapis.db.model").preload
 local Controller = require("Controller")
 local util = require("util")
@@ -14,29 +13,24 @@ notechart_scores_c.get_relations_scores = function(params, relationtype, mutual)
 	local user_id = tonumber(params[relationtype .. "s"])
 
 	local user_ids = {user_id}
-	local user_relations = User_relations:find_all(
-		user_ids,
-		"user_id",
-		{where = {relationtype = User_relations.types[relationtype]}}
-	)
+	local user_relations = User_relations:find_all(user_ids, {
+		key = "user_id",
+		where = {
+			relationtype = User_relations.types[relationtype],
+			mutual = mutual,
+		},
+	})
 	for _, user_relation in ipairs(user_relations) do
 		table.insert(user_ids, user_relation.relative_user_id)
 	end
 
-	local leaderboard_scores = Leaderboard_scores:find_all(
-		user_ids,
-		"user_id",
-		{where = {
+	local scores = Scores:find_all(user_ids, {
+		key = "user_id",
+		where = {
 			notechart_id = params.notechart_id,
-			mutual = mutual
-		}}
-	)
-	preload(leaderboard_scores, {"score"})
-
-	local scores = {}
-	for _, leaderboard_score in ipairs(leaderboard_scores) do
-		table.insert(scores, leaderboard_score.score)
-	end
+			is_top = true,
+		},
+	})
 
 	return scores
 end
@@ -46,10 +40,10 @@ notechart_scores_c.get_scores = function(self)
 	local db = Scores.db
 
 	local clause_table = {"s"}
-	local where_table = {"s.notechart_id = ?", "s.is_valid = ?", "s.is_complete = ?"}
+	local where_table = {"s.notechart_id = ?", "s.is_valid = ?", "s.is_complete = ?", "s.is_top = ?"}
 	local fields = {"s.*"}
 	local orders = {}
-	local opts = {params.notechart_id, true, true}
+	local opts = {params.notechart_id, true, true, true}
 
 	if params.leaderboard_id then
 		table.insert(clause_table, "inner join leaderboard_users lu on s.user_id = lu.user_id")

@@ -36,6 +36,9 @@ register_c.POST = function(self)
 		latest_activity = time,
 		created_at = time,
 		description = "",
+		scores_count = 0,
+		notecharts_count = 0,
+		play_time = 0,
 	})
 
 	local token, payload = login_c.new_token(user, self.context.ip)

@@ -70,6 +70,9 @@ notechart_c.PATCH = function(self)
 	notechart.song_artist = response_notechart.artist
 	notechart.difficulty_name = response_notechart.name
 	notechart.difficulty_creator = response_notechart.creator
+	notechart.level = response_notechart.level
+	notechart.length = response_notechart.length
+	notechart.notes_count = response_notechart.noteCount
 	notechart:update(
 		"is_valid",
 		"inputmode",
@@ -77,7 +80,10 @@ notechart_c.PATCH = function(self)
 		"song_title",
 		"song_artist",
 		"difficulty_name",
-		"difficulty_creator"
+		"difficulty_creator",
+		"level",
+		"length",
+		"notes_count"
 	)
 	notechart.file = nil
 

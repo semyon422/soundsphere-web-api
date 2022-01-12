@@ -34,6 +34,9 @@ db_test.create = function()
 		latest_activity = 0,
 		created_at = 0,
 		description = "",
+		scores_count = 0,
+		notecharts_count = 0,
+		play_time = 0,
 	})
 
 	local community = Communities:create({

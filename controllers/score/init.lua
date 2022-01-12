@@ -23,6 +23,7 @@ score_c.load_replay = function(score)
 	local replay_file = score:get_file()
 	local notechart = score:get_notechart()
 	local notechart_file = notechart:get_file()
+	local user = score:get_user()
 
 	local body, status_code, headers = http.simple({
 		url = "http://127.0.0.1:8082/replay",
@@ -81,7 +82,37 @@ score_c.load_replay = function(score)
 	)
 	score.file = nil
 	score.notechart = nil
+	score.user = nil
 	score.modifierset = modifierset
+
+	local new_top_score = {
+		notechart_id = score.notechart_id,
+		user_id = score.user_id,
+		is_top = true,
+	}
+	local top_score = Scores:find(new_top_score)
+	if not top_score then
+		user.notecharts_count = user.notecharts_count + 1
+	end
+	if not top_score or score.rating > top_score.rating then
+		score.is_top = true
+		score:update("is_top")
+	end
+	if top_score and score.rating > top_score.rating then
+		top_score.is_top = false
+		top_score:update("is_top")
+	end
+
+	user.notes_count = user.notes_count + notechart.notes_count
+	user.play_time = user.play_time + notechart.length
+	user.scores_count = user.scores_count + 1
+	user:update(
+		"scores_count",
+		"notecharts_count",
+		"notes_count",
+		"play_time",
+		"scores_count"
+	)
 
 	return {json = {score = score:to_name()}}
 end
@@ -109,11 +140,12 @@ score_c.PATCH = function(self)
 	local params = self.params
 	local score = self.context.score
 
+	if score.is_valid then
+		return {json = {score = score:to_name()}}
+	end
 	if params.load_replay then
 		return score_c.load_replay(score)
 	end
-
-	return {}
 end
 
 score_c.context.DELETE = {"score"}
