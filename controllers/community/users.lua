@@ -49,7 +49,7 @@ community_users_c.get_users = function(self)
 	end
 	if params.search then
 		table.insert(clause_table, "inner join users u on cu.user_id = u.id")
-		table.insert(where_table, "(" .. util.db_search(db, params.search, "name") .. ")")
+		table.insert(where_table, util.db_search(db, params.search, "name"))
 	end
 	table.insert(orders, "cu.user_id asc")
 
