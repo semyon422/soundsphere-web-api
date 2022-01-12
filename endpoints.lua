@@ -54,6 +54,7 @@ return {
 	"notecharts",
 	"notechart",
 	"notechart.scores",
+	"notechart.difftables",
 	"scores",
 	"score",
 	"score.leaderboards",

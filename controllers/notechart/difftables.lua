@@ -3,17 +3,17 @@ local preload = require("lapis.db.model").preload
 local util = require("util")
 local Controller = require("Controller")
 
-local difftable_notecharts_c = Controller:new()
+local notechart_difftables_c = Controller:new()
 
-difftable_notecharts_c.path = "/difftables/:difftable_id[%d]/notecharts"
-difftable_notecharts_c.methods = {"GET"}
+notechart_difftables_c.path = "/notecharts/:notechart_id[%d]/difftables"
+notechart_difftables_c.methods = {"GET"}
 
-difftable_notecharts_c.policies.GET = {{"permit"}}
-difftable_notecharts_c.validations.GET = util.add_belongs_to_validations(Difftable_notecharts.relations)
-difftable_notecharts_c.GET = function(self)
+notechart_difftables_c.policies.GET = {{"permit"}}
+notechart_difftables_c.validations.GET = util.add_belongs_to_validations(Difftable_notecharts.relations)
+notechart_difftables_c.GET = function(self)
 	local params = self.params
 
-	local difftable_notecharts = Difftable_notecharts:find_all({params.difftable_id}, "difftable_id")
+	local difftable_notecharts = Difftable_notecharts:find_all({params.notechart_id}, "notechart_id")
 
 	if params.no_data then
 		return {json = {
@@ -32,4 +32,4 @@ difftable_notecharts_c.GET = function(self)
 	}}
 end
 
-return difftable_notecharts_c
+return notechart_difftables_c

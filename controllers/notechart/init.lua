@@ -11,6 +11,7 @@ local from_json = lapis_util.from_json
 
 local additions = {
 	scores = require("controllers.notechart.scores"),
+	difftables = require("controllers.notechart.difftables"),
 }
 
 local notechart_c = Controller:new()
