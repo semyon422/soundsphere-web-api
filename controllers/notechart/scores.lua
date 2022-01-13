@@ -41,7 +41,7 @@ notechart_scores_c.get_scores = function(self)
 
 	local clause_table = {"s"}
 	local where_table = {"s.notechart_id = ?", "s.is_valid = ?", "s.is_complete = ?", "s.is_top = ?"}
-	local fields = {"s.*"}
+	local fields = {"s.*", "row_number() over(order by s.rating) row_number"}
 	local orders = {}
 	local opts = {params.notechart_id, true, true, true}
 
@@ -73,18 +73,18 @@ notechart_scores_c.get_scores = function(self)
 	})
 	local scores = params.get_all and paginator:get_all() or paginator:get_page(page_num)
 
-	return scores, clause
+	return scores, clause, table.concat(fields, ", ")
 end
 
 notechart_scores_c.policies.GET = {{"permit"}}
 notechart_scores_c.validations.GET = {
-	{"rivals", type = "boolean", optional = true},
-	{"friends", type = "boolean", optional = true},
 	require("validations.no_data"),
 	require("validations.per_page"),
 	require("validations.page_num"),
 	require("validations.get_all"),
 	require("validations.search"),
+	{"rivals", type = "boolean", optional = true},
+	{"friends", type = "boolean", optional = true},
 	{"leaderboard_id", exists = true, type = "number", optional = true, default = ""},
 }
 util.add_belongs_to_validations(Scores.relations, notechart_scores_c.validations.GET)
@@ -92,13 +92,32 @@ notechart_scores_c.GET = function(self)
 	local params = self.params
 	local scores
 
-	local clause
+	local clause, fields
 	if params.rivals then
 		scores = notechart_scores_c.get_relations_scores(params, "rival")
 	elseif params.friends then
 		scores = notechart_scores_c.get_relations_scores(params, "friend", true)
 	else
-		scores, clause = notechart_scores_c.get_scores(self)
+		scores, clause, fields = notechart_scores_c.get_scores(self)
+	end
+
+	--[[
+		SELECT COUNT(1) as c from `scores` s
+		inner join leaderboard_users lu on s.user_id = lu.user_id
+		where (s.notechart_id = 1) and (s.is_valid = TRUE) and (s.is_complete = TRUE) and (s.is_top = TRUE) and (lu.active = true) and (lu.leaderboard_id = 1)
+		order by s.rating desc
+	]]
+	local per_page = params.per_page or 10
+	local user_id = self.session.user_id
+	local row_number, row_page_num
+	if user_id and clause then
+		local score = Scores.db.select(
+			fields .. " from scores " .. clause .. " limit 1"
+		)[1]
+		if score then
+			row_number = tonumber(score.row_number)
+			row_page_num = math.floor(row_number / per_page) + 1
+		end
 	end
 
 	local total_clause = Scores.db.encode_clause({
@@ -109,6 +128,8 @@ notechart_scores_c.GET = function(self)
 
 	if params.no_data then
 		return {json = {
+			row_number = row_number,
+			row_page_num = row_page_num,
 			total = tonumber(Scores:count(total_clause)),
 			filtered = not clause and #scores or tonumber(util.db_count(Scores, clause)),
 		}}
@@ -118,6 +139,8 @@ notechart_scores_c.GET = function(self)
 	util.recursive_to_name(scores)
 
 	return {json = {
+		row_number = row_number,
+		row_page_num = row_page_num,
 		total = tonumber(Scores:count(total_clause)),
 		filtered = not clause and #scores or tonumber(util.db_count(Scores, clause)),
 		scores = scores,
