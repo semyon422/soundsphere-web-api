@@ -36,11 +36,16 @@ end
 notechart_c.context.PATCH = {"notechart"}
 notechart_c.policies.PATCH = {{"context_loaded"}}
 notechart_c.validations.PATCH = {
-	{"load_file", type = "boolean", optional = true}
+	{"force", type = "boolean", optional = true}
 }
 notechart_c.PATCH = function(self)
+	local params = self.params
 	local notechart = self.context.notechart
 	local notechart_file = notechart:get_file()
+
+	if notechart.is_valid and not params.force then
+		return {status = 204}
+	end
 
 	local body, status_code, headers = http.simple({
 		url = "http://127.0.0.1:8082/notechart",

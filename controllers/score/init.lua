@@ -19,11 +19,70 @@ local score_c = Controller:new()
 score_c.path = "/scores/:score_id[%d]"
 score_c.methods = {"GET", "PATCH", "DELETE"}
 
-score_c.load_replay = function(score)
+score_c.update_stats = function(score)
+	local notechart = score:get_notechart()
+	local user = score:get_user()
+
+	local new_top_score = {
+		notechart_id = score.notechart_id,
+		user_id = score.user_id,
+		is_top = true,
+	}
+	local top_score = Scores:find(new_top_score)
+	if not top_score then
+		user.notecharts_count = user.notecharts_count + 1
+	end
+	if not top_score or score.rating > top_score.rating then
+		score.is_top = true
+		score:update("is_top")
+	end
+	if top_score and score.rating > top_score.rating then
+		top_score.is_top = false
+		top_score:update("is_top")
+	end
+
+	user.notes_count = user.notes_count + notechart.notes_count
+	user.play_time = user.play_time + notechart.length
+	user.scores_count = user.scores_count + 1
+	user:update(
+		"scores_count",
+		"notecharts_count",
+		"notes_count",
+		"play_time",
+		"scores_count"
+	)
+end
+
+score_c.context.GET = {"score"}
+score_c.policies.GET = {{"context_loaded"}}
+score_c.validations.GET = {}
+util.add_additions_validations(additions, score_c.validations.GET)
+util.add_belongs_to_validations(Scores.relations, score_c.validations.GET)
+score_c.GET = function(self)
+	local score = self.context.score
+
+	util.load_additions(self, score, additions)
+	util.get_relatives(score, self.params, true)
+
+	return {json = {score = score:to_name()}}
+end
+
+score_c.context.PATCH = {"score"}
+score_c.policies.PATCH = {{"context_loaded"}}
+score_c.validations.PATCH = {
+	{"force", type = "boolean", optional = true},
+}
+score_c.PATCH = function(self)
+	local params = self.params
+	local score = self.context.score
+
+	if score.is_valid and not params.force then
+		return {status = 204}
+	end
+
 	local replay_file = score:get_file()
 	local notechart = score:get_notechart()
 	local notechart_file = notechart:get_file()
-	local user = score:get_user()
 
 	local body, status_code, headers = http.simple({
 		url = "http://127.0.0.1:8082/replay",
@@ -60,6 +119,8 @@ score_c.load_replay = function(score)
 	replay_file.loaded = true
 	replay_file:update("loaded")
 
+	local is_valid = score.is_valid
+
 	score.modifierset_id = modifierset.id
 	score.inputmode = Inputmodes:for_db(json_response.inputMode)
 	score.is_valid = true
@@ -80,72 +141,17 @@ score_c.load_replay = function(score)
 		"difficulty",
 		"rating"
 	)
+
+	if not is_valid and score.is_valid then
+		score_c.update_stats(score)
+	end
+
 	score.file = nil
 	score.notechart = nil
 	score.user = nil
 	score.modifierset = modifierset
 
-	local new_top_score = {
-		notechart_id = score.notechart_id,
-		user_id = score.user_id,
-		is_top = true,
-	}
-	local top_score = Scores:find(new_top_score)
-	if not top_score then
-		user.notecharts_count = user.notecharts_count + 1
-	end
-	if not top_score or score.rating > top_score.rating then
-		score.is_top = true
-		score:update("is_top")
-	end
-	if top_score and score.rating > top_score.rating then
-		top_score.is_top = false
-		top_score:update("is_top")
-	end
-
-	user.notes_count = user.notes_count + notechart.notes_count
-	user.play_time = user.play_time + notechart.length
-	user.scores_count = user.scores_count + 1
-	user:update(
-		"scores_count",
-		"notecharts_count",
-		"notes_count",
-		"play_time",
-		"scores_count"
-	)
-
 	return {json = {score = score:to_name()}}
-end
-
-score_c.context.GET = {"score"}
-score_c.policies.GET = {{"context_loaded"}}
-score_c.validations.GET = {}
-util.add_additions_validations(additions, score_c.validations.GET)
-util.add_belongs_to_validations(Scores.relations, score_c.validations.GET)
-score_c.GET = function(self)
-	local score = self.context.score
-
-	util.load_additions(self, score, additions)
-	util.get_relatives(score, self.params, true)
-
-	return {json = {score = score:to_name()}}
-end
-
-score_c.context.PATCH = {"score"}
-score_c.policies.PATCH = {{"context_loaded"}}
-score_c.validations.PATCH = {
-	{"load_replay", type = "boolean", optional = true},
-}
-score_c.PATCH = function(self)
-	local params = self.params
-	local score = self.context.score
-
-	if score.is_valid then
-		return {json = {score = score:to_name()}}
-	end
-	if params.load_replay then
-		return score_c.load_replay(score)
-	end
 end
 
 score_c.context.DELETE = {"score"}

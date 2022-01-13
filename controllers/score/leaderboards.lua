@@ -370,10 +370,14 @@ end
 
 score_leaderboards_c.context.PUT = {"score"}
 score_leaderboards_c.policies.PUT = {{"context_loaded"}}
+score_leaderboards_c.validations.PUT = {
+	{"force", type = "boolean", optional = true},
+}
 score_leaderboards_c.PUT = function(self)
+	local params = self.params
 	local score = self.context.score
 
-	if score.is_complete then
+	if score.is_complete and not params.force then
 		return {status = 204}
 	end
 
