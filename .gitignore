@@ -1,7 +1,6 @@
 lapis/*
 temp/*
 logs
-secret.lua
 nginx.conf.compiled
 storages/notecharts/*
 storages/replays/*
