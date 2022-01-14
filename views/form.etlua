@@ -29,6 +29,24 @@
 					></span>
 				</label>
 			</div>
+		<% elseif validation.captcha then %>
+			<label class="label"><%= validation[1] %>/<%= validation.captcha %></label>
+			<div class="field has-addons">
+				<div class="control is-expanded">
+					<input id="<%= validation[1] %>" class="input" type="text" placeholder="<%= validation[1] %>" x-model="<%= model .. "." .. validation[1] %>">
+				</div>
+				<div class="control">
+					<a class="button is-info" :class="doingRequest ? 'is-loading' : ''" @click="
+						grecaptcha.ready(function() {
+							grecaptcha.execute('<%= recaptcha_site_key %>', {action: '<%= validation.captcha %>'}).then(function(token) {
+								<%= model .. "." .. validation[1] %> = token
+							})
+						})
+					">
+						get
+					</a>
+				</div>
+			</div>
 		<% elseif not validation.type or validation.type == "string" then %>
 			<label class="label"><%= validation[1] %></label>
 			<div class="control">

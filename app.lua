@@ -18,6 +18,7 @@ validate.validate_functions.param_type = function(input) return true, "" end
 validate.validate_functions.no_value = function(input, validations) return true, "" end
 validate.validate_functions.validations = function(input, validations) return true, "" end
 validate.validate_functions.default = function(input, validations) return true, "" end
+validate.validate_functions.captcha = function(input, validations) return true, "" end
 
 validate.validate_functions.range = function(v, ...)
 	local range = {...}
@@ -227,6 +228,10 @@ local function route_api(controller, html)
 			return response
 		end
 		local json_response = response.json
+		if controller.captcha then
+			self.captcha = true
+			self.recaptcha_site_key = secret.recaptcha_site_key
+		end
 		self.data_name = get_data_name(json_response)
 		self.data_type = get_data_type(json_response, self.data_name)
 		self.data = json_response and json_response[self.data_name] or {}

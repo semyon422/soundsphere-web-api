@@ -22,7 +22,7 @@ Controller.check_access = function(self, request, method)
 	end
 	local methods = self.permited_methods
 	methods[method] = methods[method] or pep:check(request, self.policies[method])
-	return methods[method] 
+	return methods[method]
 end
 
 Controller.load_context = function(self, request, method)
