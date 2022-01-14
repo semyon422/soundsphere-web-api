@@ -13,7 +13,7 @@ local function get(model, params, preload)
 
 	for _, relation in ipairs(relations) do
 		local relative = relation[1]
-		if params[relative] and (relation.belongs_to or ((relation.has_many or relation.fetch) and not relation.deny_auto)) then
+		if params[relative] and (relation.belongs_to or relation.polymorphic_belongs_to or ((relation.has_many or relation.fetch) and not relation.deny_auto)) then
 			preload[relative] = {}
 			local new_params = {}
 			for key, value in pairs(params) do
