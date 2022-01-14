@@ -13,7 +13,7 @@ local tables = {
 	"leaderboards",
 	"difftables",
 	"difftable_notecharts",
-	"difftable_inputmodes",
+	"difftable_inputmodes",  -- cached from difftable_notecharts.notechart
 	"users",
 	"user_relations",
 	"user_roles",
@@ -148,7 +148,9 @@ table_declarations.difftable_inputmodes = {
 	{"id", types.id},
 	{"difftable_id", types.fk_id},
 	{"inputmode", types.enum},
-	"UNIQUE KEY `difftable_inputmodes` (`difftable_id`,`inputmode`)"
+	{"notecharts_count", types.size},
+	"UNIQUE KEY `difftable_inputmodes` (`difftable_id`,`inputmode`)",
+	"KEY `notecharts_count` (`notecharts_count`)",
 }
 
 table_declarations.user_roles = {

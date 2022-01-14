@@ -9,6 +9,7 @@ local http = require("lapis.nginx.http")
 local lapis_util = require("lapis.util")
 local to_json = lapis_util.to_json
 local from_json = lapis_util.from_json
+local preload = require("lapis.db.model").preload
 
 local additions = {
 	leaderboards = require("controllers.score.leaderboards"),
@@ -31,6 +32,7 @@ score_c.update_stats = function(score)
 	local top_score = Scores:find(new_top_score)
 	if not top_score then
 		user.notecharts_count = user.notecharts_count + 1
+		score_c.update_difftables(score)
 	end
 	if not top_score or score.rating > top_score.rating then
 		score.is_top = true
@@ -51,6 +53,14 @@ score_c.update_stats = function(score)
 		"play_time",
 		"scores_count"
 	)
+
+	local difftable_notecharts = notechart:get_difftable_notecharts()
+	preload(difftable_notecharts, "difftable")
+	for _, difftable_notechart in ipairs(difftable_notecharts) do
+		local difftable = difftable_notechart.difftable
+		difftable.scores_count = difftable.scores_count + 1
+		difftable:update("scores_count")
+	end
 end
 
 score_c.context.GET = {"score"}
