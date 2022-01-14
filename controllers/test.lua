@@ -1,7 +1,5 @@
 local Controller = require("Controller")
-local http = require("lapis.nginx.http")
-local util = require("lapis.util")
-local secret = require("secret")
+local util = require("util")
 
 local test_c = Controller:new()
 
@@ -25,12 +23,7 @@ test_c.GET = function(self)
 		response.params = params
 	end
 	if params.recaptcha_token then
-		local body, status_code, headers = http.simple("https://www.google.com/recaptcha/api/siteverify", {
-			secret = secret.recaptcha_secret_key,
-			response = params.recaptcha_token,
-			remoteip = self.context.ip
-		})
-		response.captcha = util.from_json(body)
+		response.captcha = util.recaptcha_verify(params.recaptcha_token, self.context.ip)
 	end
 
 	return {json = response}
@@ -54,10 +47,16 @@ test_c.validations.POST = {
 	{"recaptcha_token", exists = true, type = "string", param_type = "body", captcha = "test"},
 }
 test_c.POST = function(self)
+	local params = self.params
 	local response = {message = "success"}
-	if self.params.params then
-		response.params = self.params
+
+	if params.params then
+		response.params = params
 	end
+	if params.recaptcha_token then
+		response.captcha = util.recaptcha_verify(params.recaptcha_token, self.context.ip)
+	end
+
 	return {json = response}
 end
 

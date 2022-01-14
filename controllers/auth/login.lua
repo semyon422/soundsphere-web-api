@@ -4,6 +4,7 @@ local Sessions = require("models.sessions")
 local bcrypt = require("bcrypt")
 local jwt = require("luajwt")
 local secret = require("secret")
+local util = require("util")
 local Controller = require("Controller")
 local Ip = require("util.ip")
 
@@ -11,6 +12,7 @@ local login_c = Controller:new()
 
 login_c.path = "/auth/login"
 login_c.methods = {"POST"}
+login_c.captcha = true
 
 local failed = "Login failed. Invalid email or password"
 local function login(email, password)
@@ -51,14 +53,22 @@ login_c.policies.POST = {{"permit"}}
 login_c.validations.POST = {
 	{"email", exists = true, type = "string", param_type = "body"},
 	{"password", exists = true, type = "string", param_type = "body"},
+	{"recaptcha_token", exists = true, type = "string", param_type = "body", captcha = "login"},
 }
 login_c.POST = function(self)
 	local params = self.params
 
+	local captcha = util.recaptcha_verify(params.recaptcha_token, self.context.ip)
+	if not captcha.success or captcha.score < 0.5 or captcha.action ~= "login" then
+		return {status = 401, json = {
+			message = [[not captcha.success or captcha.score < 0.5 or captcha.action ~= "login"]]
+		}}
+	end
+
 	local user, err = login(params.email, params.password)
 
 	if not user then
-		return {json = {message = err}}
+		return {status = 401, json = {message = err}}
 	end
 
 	local token, payload = login_c.new_token(user, self.context.ip)
