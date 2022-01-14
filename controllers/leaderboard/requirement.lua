@@ -9,7 +9,7 @@ leaderboard_requirement_c.path = "/leaderboards/:leaderboard_id[%d]/requirements
 leaderboard_requirement_c.methods = {"GET", "PATCH", "DELETE"}
 
 leaderboard_requirement_c.context.GET = {"leaderboard_requirement", "request_session"}
-leaderboard_requirement_c.policies.GET = {{"authenticated", "context_loaded"}}
+leaderboard_requirement_c.policies.GET = {{"context_loaded", "authenticated"}}
 leaderboard_requirement_c.GET = function(self)
     local leaderboard_requirement = self.context.leaderboard_requirement
 
@@ -17,7 +17,7 @@ leaderboard_requirement_c.GET = function(self)
 end
 
 leaderboard_requirement_c.context.PATCH = {"leaderboard_requirement", "request_session"}
-leaderboard_requirement_c.policies.PATCH = {{"authenticated", "context_loaded"}}
+leaderboard_requirement_c.policies.PATCH = {{"context_loaded", "authenticated"}}
 leaderboard_requirement_c.validations.PATCH = {
 	{"leaderboard_requirement", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string", one_of = Requirements.list},
@@ -44,7 +44,7 @@ leaderboard_requirement_c.PATCH = function(self)
 end
 
 leaderboard_requirement_c.context.DELETE = {"leaderboard_requirement", "request_session"}
-leaderboard_requirement_c.policies.DELETE = {{"authenticated", "context_loaded"}}
+leaderboard_requirement_c.policies.DELETE = {{"context_loaded", "authenticated"}}
 leaderboard_requirement_c.DELETE = function(self)
     local requirement = self.context.leaderboard_requirement
     requirement:delete()

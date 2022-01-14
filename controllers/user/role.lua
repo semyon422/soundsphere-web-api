@@ -27,7 +27,7 @@ user_role_c.PUT = function(self)
 end
 
 user_role_c.context.DELETE = {"user_role", "request_session"}
-user_role_c.policies.DELETE = {{"authenticated", "context_loaded"}}
+user_role_c.policies.DELETE = {{"context_loaded", "authenticated"}}
 user_role_c.DELETE = function(self)
     local user_role = self.context.user_role
     user_role:delete()

@@ -29,12 +29,14 @@ difftable_c.GET = function(self)
 	return {json = {difftable = difftable}}
 end
 
-difftable_c.policies.PATCH = {{"permit"}}
+difftable_c.context.PATCH = {"difftable", "request_session"}
+difftable_c.policies.PATCH = {{"context_loaded", "authenticated"}}
 difftable_c.PATCH = function(self)
 	return {}
 end
 
-difftable_c.policies.DELETE = {{"permit"}}
+difftable_c.context.DELETE = {"difftable", "request_session"}
+difftable_c.policies.DELETE = {{"context_loaded", "authenticated"}}
 difftable_c.DELETE = function(self)
 	return {status = 204}
 end

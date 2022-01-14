@@ -27,7 +27,7 @@ leaderboard_inputmode_c.PUT = function(self)
 end
 
 leaderboard_inputmode_c.context.DELETE = {"leaderboard_inputmode", "request_session"}
-leaderboard_inputmode_c.policies.DELETE = {{"authenticated"}}
+leaderboard_inputmode_c.policies.DELETE = {{"context_loaded", "authenticated"}}
 leaderboard_inputmode_c.DELETE = function(self)
     local leaderboard_inputmode = self.context.leaderboard_inputmode
     leaderboard_inputmode:delete()

@@ -60,7 +60,7 @@ difftable_notechart_c.PUT = function(self)
 end
 
 difftable_notechart_c.context.PATCH = {"difftable_notechart", "request_session"}
-difftable_notechart_c.policies.PATCH = {{"authenticated", "context_loaded"}}
+difftable_notechart_c.policies.PATCH = {{"context_loaded", "authenticated"}}
 difftable_notechart_c.validations.PATCH = {
 	{"difficulty", type = "number", optional = true},
 }
@@ -75,7 +75,7 @@ difftable_notechart_c.PATCH = function(self)
 end
 
 difftable_notechart_c.context.DELETE = {"difftable_notechart", "request_session"}
-difftable_notechart_c.policies.DELETE = {{"authenticated", "context_loaded"}}
+difftable_notechart_c.policies.DELETE = {{"context_loaded", "authenticated"}}
 difftable_notechart_c.DELETE = function(self)
 	local params = self.params
 

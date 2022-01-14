@@ -40,7 +40,8 @@ difftables_c.GET = function(self)
 	}}
 end
 
-difftables_c.policies.POST = {{"permit"}}
+difftables_c.context.POST = {"request_session"}
+difftables_c.policies.POST = {{"authenticated"}}
 difftables_c.validations.POST = {
 	{"difftable", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},

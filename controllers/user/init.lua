@@ -51,7 +51,8 @@ user_c.PATCH = function(self)
 	return {json = {user = user:to_name()}}
 end
 
-user_c.policies.DELETE = {{"permit"}}
+user_c.context.DELETE = {"user", "request_session"}
+user_c.policies.DELETE = {{"context_loaded", "authenticated"}}
 user_c.DELETE = function(self)
 	return {status = 204}
 end

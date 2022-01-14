@@ -8,7 +8,7 @@ leaderboard_user_c.path = "/leaderboards/:leaderboard_id[%d]/users/:user_id[%d]"
 leaderboard_user_c.methods = {"GET", "PATCH"}
 
 leaderboard_user_c.context.GET = {"leaderboard_user", "request_session"}
-leaderboard_user_c.policies.GET = {{"authenticated", "context_loaded"}}
+leaderboard_user_c.policies.GET = {{"context_loaded", "authenticated"}}
 leaderboard_user_c.validations.GET = util.add_belongs_to_validations(Leaderboard_users.relations)
 leaderboard_user_c.GET = function(self)
     local leaderboard_user = self.context.leaderboard_user
@@ -17,7 +17,7 @@ leaderboard_user_c.GET = function(self)
 end
 
 leaderboard_user_c.context.PATCH = {"leaderboard_user", "request_session"}
-leaderboard_user_c.policies.PATCH = {{"authenticated", "context_loaded"}}
+leaderboard_user_c.policies.PATCH = {{"context_loaded", "authenticated"}}
 leaderboard_user_c.validations.PATCH = {
 	{"active", type = "boolean", optional = true},
 }

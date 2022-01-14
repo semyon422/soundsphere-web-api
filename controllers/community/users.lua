@@ -8,7 +8,7 @@ local util = require("util")
 local community_users_c = Controller:new()
 
 community_users_c.path = "/communities/:community_id[%d]/users"
-community_users_c.methods = {"GET"}
+community_users_c.methods = {"GET", "PATCH"}
 
 community_users_c.get_invitations = function(self, invitation)
 	local params = self.params
@@ -154,6 +154,8 @@ community_users_c.GET = function(self)
 	}}
 end
 
+community_users_c.context.PATCH = {"request_session"}
+community_users_c.policies.PATCH = {{"authenticated"}}
 community_users_c.PATCH = function(self)
 	local params = self.params
 

@@ -35,7 +35,7 @@ community_c.GET = function(self)
 end
 
 community_c.context.PATCH = {"community", "request_session"}
-community_c.policies.PATCH = {{"authenticated", "context_loaded"}}
+community_c.policies.PATCH = {{"context_loaded", "authenticated"}}
 community_c.PATCH = function(self)
 	local params = self.params
 	local community = self.context.community
@@ -65,8 +65,8 @@ community_c.PATCH = function(self)
 	return {json = {community = community}}
 end
 
-community_c.context.DELETE = {"community"}
-community_c.policies.DELETE = {{"permit"}}
+community_c.context.DELETE = {"community", "request_session"}
+community_c.policies.DELETE = {{"context_loaded", "authenticated"}}
 community_c.DELETE = function(self)
 	return {status = 204}
 end

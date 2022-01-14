@@ -48,8 +48,8 @@ community_leaderboard_c.PUT = function(self)
 	return {json = {community_leaderboard = community_leaderboard}}
 end
 
-community_leaderboard_c.context.DELETE = {"community_leaderboard"}
-community_leaderboard_c.policies.DELETE = {{"context_loaded"}}
+community_leaderboard_c.context.DELETE = {"community_leaderboard", "request_session"}
+community_leaderboard_c.policies.DELETE = {{"context_loaded", "authenticated"}}
 community_leaderboard_c.DELETE = function(self)
 	local community_leaderboard = self.context.community_leaderboard
     community_leaderboard:delete()
@@ -57,8 +57,8 @@ community_leaderboard_c.DELETE = function(self)
 	return {status = 204}
 end
 
-community_leaderboard_c.context.PATCH = {"community_leaderboard"}
-community_leaderboard_c.policies.PATCH = {{"context_loaded"}}
+community_leaderboard_c.context.PATCH = {"community_leaderboard", "request_session"}
+community_leaderboard_c.policies.PATCH = {{"context_loaded", "authenticated"}}
 community_leaderboard_c.PATCH = function(self)
 	local community_leaderboard = self.context.community_leaderboard
 

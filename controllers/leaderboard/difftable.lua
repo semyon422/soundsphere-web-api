@@ -23,7 +23,7 @@ leaderboard_difftable_c.PUT = function(self)
 end
 
 leaderboard_difftable_c.context.DELETE = {"leaderboard_difftable", "request_session"}
-leaderboard_difftable_c.policies.DELETE = {{"authenticated", "context_loaded"}}
+leaderboard_difftable_c.policies.DELETE = {{"context_loaded", "authenticated"}}
 leaderboard_difftable_c.DELETE = function(self)
 	local params = self.params
     local leaderboard_difftable = self.context.leaderboard_difftable

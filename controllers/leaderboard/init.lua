@@ -93,7 +93,7 @@ leaderboard_c.GET = function(self)
 end
 
 leaderboard_c.context.PATCH = {"leaderboard", "request_session"}
-leaderboard_c.policies.PATCH = {{"authenticated", "context_loaded"}}
+leaderboard_c.policies.PATCH = {{"context_loaded", "authenticated"}}
 leaderboard_c.validations.PATCH = {
 	{"leaderboard", type = "table", param_type = "body", validations = {
 		{"name", type = "string"},

@@ -33,8 +33,8 @@ notechart_c.GET = function(self)
 	return {json = {notechart = notechart:to_name()}}
 end
 
-notechart_c.context.PATCH = {"notechart"}
-notechart_c.policies.PATCH = {{"context_loaded"}}
+notechart_c.context.PATCH = {"notechart", "request_session"}
+notechart_c.policies.PATCH = {{"context_loaded", "authenticated"}}
 notechart_c.validations.PATCH = {
 	{"force", type = "boolean", optional = true}
 }

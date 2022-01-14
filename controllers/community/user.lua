@@ -47,7 +47,7 @@ community_user_c.PUT = function(self)
 end
 
 community_user_c.context.DELETE = {"community_user", "request_session"}
-community_user_c.policies.DELETE = {{"authenticated", "context_loaded"}}
+community_user_c.policies.DELETE = {{"context_loaded", "authenticated"}}
 community_user_c.DELETE = function(self)
 	local community_user = self.context.community_user
     community_user:delete()
@@ -67,7 +67,7 @@ community_user_c.GET = function(self)
 end
 
 community_user_c.context.PATCH = {"community_user", "request_session"}
-community_user_c.policies.PATCH = {{"authenticated", "context_loaded"}}
+community_user_c.policies.PATCH = {{"context_loaded", "authenticated"}}
 community_user_c.validations.PATCH = {
 	{"role", exists = true, type = "string", one_of = Roles.list},
 }

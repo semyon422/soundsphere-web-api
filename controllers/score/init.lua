@@ -77,8 +77,8 @@ score_c.GET = function(self)
 	return {json = {score = score:to_name()}}
 end
 
-score_c.context.PATCH = {"score"}
-score_c.policies.PATCH = {{"context_loaded"}}
+score_c.context.PATCH = {"score", "request_session"}
+score_c.policies.PATCH = {{"context_loaded", "authenticated"}}
 score_c.validations.PATCH = {
 	{"force", type = "boolean", optional = true},
 }
@@ -164,8 +164,8 @@ score_c.PATCH = function(self)
 	return {json = {score = score:to_name()}}
 end
 
-score_c.context.DELETE = {"score"}
-score_c.policies.DELETE = {{"context_loaded"}}
+score_c.context.DELETE = {"score", "request_session"}
+score_c.policies.DELETE = {{"context_loaded", "authenticated"}}
 score_c.DELETE = function(self)
 	return {status = 204}
 end
