@@ -51,7 +51,7 @@ communities_c.GET = function(self)
 
 	local clause = util.db_and(joined_clause, search_clause)
 	local paginator = Communities:paginated(
-		util.db_where(clause), "order by id asc",
+		util.db_where(clause) .. " order by id asc",
 		{
 			per_page = per_page,
 		}

@@ -25,7 +25,7 @@ difftables_c.GET = function(self)
 
 	local clause = params.search and util.db_search(Difftables.db, params.search, "name")
 	local paginator = Difftables:paginated(
-		util.db_where(clause), "order by id asc",
+		util.db_where(clause) .. " order by id asc",
 		{
 			per_page = per_page,
 		}
