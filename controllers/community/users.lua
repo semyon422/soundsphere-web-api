@@ -67,7 +67,7 @@ community_users_c.get_users = function(self)
 		per_page = per_page,
 		fields = table.concat(fields, ", "),
 	})
-	local community_users = params.get_all and paginator:get_all() or paginator:get_page(page_num)
+	local community_users = paginator:get_page(page_num)
 
 	for i, community_user in ipairs(community_users) do
 		community_user.rank = (page_num - 1) * per_page + i
@@ -112,7 +112,6 @@ community_users_c.validations.GET = {
 	require("validations.no_data"),
 	require("validations.per_page"),
 	require("validations.page_num"),
-	require("validations.get_all"),
 	require("validations.search"),
 	{"invitations", type = "boolean", optional = true},
 	{"requests", type = "boolean", optional = true},

@@ -71,7 +71,7 @@ notechart_scores_c.get_scores = function(self)
 		per_page = per_page,
 		fields = table.concat(fields, ", "),
 	})
-	local scores = params.get_all and paginator:get_all() or paginator:get_page(page_num)
+	local scores = paginator:get_page(page_num)
 
 	return scores, clause, table.concat(fields, ", ")
 end
@@ -81,7 +81,6 @@ notechart_scores_c.validations.GET = {
 	require("validations.no_data"),
 	require("validations.per_page"),
 	require("validations.page_num"),
-	require("validations.get_all"),
 	require("validations.search"),
 	{"rivals", type = "boolean", optional = true},
 	{"friends", type = "boolean", optional = true},

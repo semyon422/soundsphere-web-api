@@ -257,9 +257,7 @@ local function route_datatables(controller, name)
 		local context = get_context(self, controller)
 		if controller:check_access(self, "GET") then
 			local params = self.params
-			if tonumber(params.length) == -1 then
-				params.get_all = true
-			else
+			if tonumber(params.length) ~= -1 then
 				params.page_num = math.floor((params.start or 0) / (params.length or 1)) + 1
 				params.per_page = params.length
 			end

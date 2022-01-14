@@ -15,7 +15,6 @@ communities_c.policies.GET = {{"permit"}}
 communities_c.validations.GET = {
 	require("validations.per_page"),
 	require("validations.page_num"),
-	require("validations.get_all"),
 	require("validations.search"),
 	{"hide_joined", type = "boolean", optional = true},
 }
@@ -56,7 +55,7 @@ communities_c.GET = function(self)
 			per_page = per_page,
 		}
 	)
-	local communities = params.get_all and paginator:get_all() or paginator:get_page(page_num)
+	local communities = paginator:get_page(page_num)
 	preload(communities, util.get_relatives_preload(Communities, params))
 	util.recursive_to_name(communities)
 

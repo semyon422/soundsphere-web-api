@@ -13,7 +13,6 @@ users_c.policies.GET = {{"permit"}}
 users_c.validations.GET = {
 	require("validations.per_page"),
 	require("validations.page_num"),
-	require("validations.get_all"),
 	require("validations.search"),
 }
 util.add_belongs_to_validations(Users.relations, users_c.validations.GET)
@@ -30,7 +29,7 @@ users_c.GET = function(self)
 			per_page = per_page
 		}
 	)
-	local users = params.get_all and paginator:get_all() or paginator:get_page(page_num)
+	local users = paginator:get_page(page_num)
 	preload(users, util.get_relatives_preload(Users, params))
 	util.recursive_to_name(users)
 

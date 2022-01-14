@@ -18,7 +18,6 @@ scores_c.policies.GET = {{"permit"}}
 scores_c.validations.GET = {
 	require("validations.per_page"),
 	require("validations.page_num"),
-	require("validations.get_all"),
 }
 util.add_belongs_to_validations(Scores.relations, scores_c.validations.GET)
 util.add_has_many_validations(Scores.relations, scores_c.validations.GET)
@@ -33,7 +32,7 @@ scores_c.GET = function(self)
 			per_page = per_page
 		}
 	)
-	local scores = params.get_all and paginator:get_all() or paginator:get_page(page_num)
+	local scores = paginator:get_page(page_num)
 	preload(scores, util.get_relatives_preload(Scores, params))
 	util.recursive_to_name(scores)
 

@@ -13,7 +13,6 @@ user_scores_c.validations.GET = {
 	require("validations.no_data"),
 	require("validations.per_page"),
 	require("validations.page_num"),
-	require("validations.get_all"),
 	require("validations.search"),
 	{"is_not_valid", type = "boolean", optional = true},
 	{"is_not_complete", type = "boolean", optional = true},
@@ -74,7 +73,7 @@ user_scores_c.GET = function(self)
 		per_page = per_page,
 		fields = table.concat(fields, ", "),
 	})
-	local scores = params.get_all and paginator:get_all() or paginator:get_page(page_num)
+	local scores = paginator:get_page(page_num)
 
 	if params.best then
 		for i, score in ipairs(scores) do

@@ -13,7 +13,6 @@ community_changes_c.validations.GET = {
 	require("validations.no_data"),
 	require("validations.per_page"),
 	require("validations.page_num"),
-	require("validations.get_all"),
 }
 util.add_belongs_to_validations(Community_changes.relations, community_changes_c.validations.GET)
 community_changes_c.GET = function(self)
@@ -27,7 +26,7 @@ community_changes_c.GET = function(self)
 			per_page = per_page,
 		}
 	)
-	local community_changes = params.get_all and paginator:get_all() or paginator:get_page(page_num)
+	local community_changes = paginator:get_page(page_num)
 
 	local count = tonumber(Community_changes:count("community_id = ?", params.community_id))
 	if params.no_data then

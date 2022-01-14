@@ -12,7 +12,6 @@ notecharts_c.policies.GET = {{"permit"}}
 notecharts_c.validations.GET = {
 	require("validations.per_page"),
 	require("validations.page_num"),
-	require("validations.get_all"),
 }
 util.add_belongs_to_validations(Notecharts.relations, notecharts_c.validations.GET)
 util.add_has_many_validations(Notecharts.relations, notecharts_c.validations.GET)
@@ -27,7 +26,7 @@ notecharts_c.GET = function(self)
 			per_page = per_page
 		}
 	)
-	local notecharts = params.get_all and paginator:get_all() or paginator:get_page(page_num)
+	local notecharts = paginator:get_page(page_num)
 	preload(notecharts, util.get_relatives_preload(Notecharts, params))
 	util.recursive_to_name(notecharts)
 
