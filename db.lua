@@ -22,6 +22,7 @@ local tables = {
 	"community_users",
 	"community_difftables",  -- cached from community_leaderboards.leaderboard_difftables
 	"community_inputmodes",  -- cached from community_leaderboards.leaderboard_inputmodes
+	"community_changes",
 	"files",
 	"modifiersets",
 	"notecharts",
@@ -244,6 +245,22 @@ table_declarations.community_inputmodes = {
 	{"community_id", types.fk_id},
 	{"inputmode", types.enum},
 	"UNIQUE KEY `community_inputmodes` (`community_id`,`inputmode`)"
+}
+
+table_declarations.community_changes = {
+	{"id", types.id},
+	{"user_id", types.fk_id},
+	{"community_id", types.fk_id},
+	{"created_at", types.time},
+	{"change", types.enum},
+	{"object_id", types.fk_id},
+	{"object_type", types.enum},
+	"KEY `user_id` (`user_id`)",
+	"KEY `community_id` (`community_id`)",
+	"KEY `created_at` (`created_at`)",
+	"KEY `change` (`change`)",
+	"KEY `object_id` (`object_id`)",
+	"KEY `object_type` (`object_type`)",
 }
 
 table_declarations.files = {

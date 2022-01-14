@@ -17,6 +17,7 @@ local Communities = require("models.communities")
 local Leaderboards = require("models.leaderboards")
 local Community_users = require("models.community_users")
 local Community_leaderboards = require("models.community_leaderboards")
+local Community_changes = require("models.community_changes")
 local Difftables = require("models.difftables")
 local Roles = require("enums.roles")
 local leaderboard_c = require("controllers.leaderboard")
@@ -79,6 +80,7 @@ db_test.create = function()
 		scores_combiner_count = 20,
 		communities_combiner_count = 100,
 	})
+	Community_changes:add_change(user.id, community.id, "create", leaderboard)
 
 	Community_leaderboards:create({
 		community_id = community.id,

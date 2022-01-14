@@ -32,6 +32,7 @@ return {
 	"community.leaderboard",
 	"community.inputmodes",
 	"community.difftables",
+	"community.changes",
 	"leaderboards",
 	"leaderboard",
 	"leaderboard.difftables",
