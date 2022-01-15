@@ -10,24 +10,28 @@ user_role_c.validations.path = {
 	{"role", type = "string", one_of = Roles.list, param_type = "path"},
 }
 
-user_role_c.context.PUT = {"user_role", "request_session"}
-user_role_c.policies.PUT = {{"authenticated"}}
+user_role_c.context.PUT = {"user_role", "request_session", "user", "session_user", "user_roles"}
+user_role_c.policies.PUT = {
+	{
+		{not_context = "user_role"},
+		{context = {"request_session", "user", "session_user"}},
+		"authenticated",
+		"change_role",
+	}
+}
 user_role_c.PUT = function(self)
 	local params = self.params
 
-    local user_role = self.context.user_role
-    if not user_role then
-        user_role = User_roles:create({
-			user_id = params.user_id,
-			role = Roles:for_db(params.role),
-		})
-    end
+    local user_role = User_roles:create({
+		user_id = params.user_id,
+		role = Roles:for_db(params.role),
+	})
 
 	return {json = {user_role = user_role:to_name()}}
 end
 
-user_role_c.context.DELETE = {"user_role", "request_session"}
-user_role_c.policies.DELETE = {{"context_loaded", "authenticated"}}
+user_role_c.context.DELETE = {"user_role", "request_session", "user", "session_user", "user_roles"}
+user_role_c.policies.DELETE = {{"authenticated", "context_loaded", "change_role"}}
 user_role_c.DELETE = function(self)
     local user_role = self.context.user_role
     user_role:delete()

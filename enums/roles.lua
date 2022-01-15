@@ -16,8 +16,10 @@ Roles.list = {
 	"moderator",
 }
 
+-- from high to low
+Roles.staff_role_names = {"creator", "admin", "moderator"}
 Roles.staff_roles = {}
-for _, role in ipairs({"creator", "admin", "moderator"}) do
+for _, role in ipairs(Roles.staff_role_names) do
 	table.insert(Roles.staff_roles, Roles:for_db(role))
 end
 
