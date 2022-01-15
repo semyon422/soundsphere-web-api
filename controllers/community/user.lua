@@ -21,15 +21,15 @@ community_user_c.PUT = function(self)
 
 	if not community_user then
 		local community = Communities:find(params.community_id)
-		local sender_id = 0
+		local staff_user_id = 0
 		if params.invitation then
-			sender_id = self.session.user_id
+			staff_user_id = self.session.user_id
 		end
 		community_user = {
 			community_id = params.community_id,
 			user_id = params.user_id,
 			invitation = params.invitation,
-			sender_id = sender_id,
+			staff_user_id = staff_user_id,
 			created_at = os.time(),
 			message = params.message or "",
 			accepted = community.is_public,
@@ -42,10 +42,10 @@ community_user_c.PUT = function(self)
 			not community_user.invitation and params.invitation
 		then
 			if params.invitation then
-				community_user.sender_id = self.session.user_id
+				community_user.staff_user_id = self.session.user_id
 			end
 			community_user.accepted = true
-			community_user:update("accepted", "sender_id")
+			community_user:update("accepted", "staff_user_id")
 			return {}
 		end
 	end

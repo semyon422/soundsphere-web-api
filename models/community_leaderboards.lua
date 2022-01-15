@@ -7,7 +7,7 @@ local Community_leaderboards = Model:extend(
 		relations = {
 			{"community", belongs_to = "communities", key = "community_id"},
 			{"leaderboard", belongs_to = "leaderboards", key = "leaderboard_id"},
-			{"sender", belongs_to = "users", key = "sender_id"},
+			{"user", belongs_to = "users", key = "user_id"},
 		},
 		url_params = function(self, req, ...)
 			return "community.leaderboard", {community_id = self.community_id, leaderboard_id = self.leaderboard_id}, ...

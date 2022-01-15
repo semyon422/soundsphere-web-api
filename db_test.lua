@@ -58,7 +58,7 @@ db_test.create = function()
 	Community_users:create({
 		community_id = community.id,
 		user_id = user.id,
-		sender_id = user.id,
+		staff_user_id = user.id,
 		role = Roles:for_db("creator"),
 		accepted = true,
 		created_at = os.time(),
@@ -91,7 +91,7 @@ db_test.create = function()
 		community_id = community.id,
 		leaderboard_id = leaderboard.id,
 		is_owner = true,
-		sender_id = user.id,
+		user_id = user.id,
 		accepted = true,
 		created_at = os.time(),
 		message = "",

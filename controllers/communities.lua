@@ -101,7 +101,7 @@ communities_c.POST = function(self)
 	Community_users:create({
 		community_id = community.id,
 		user_id = session.user_id,
-		sender_id = session.user_id,
+		staff_user_id = session.user_id,
 		role = Roles:for_db("creator"),
 		accepted = true,
 		created_at = os.time(),

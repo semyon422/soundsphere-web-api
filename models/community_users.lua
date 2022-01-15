@@ -8,7 +8,7 @@ local Community_users = Model:extend(
 		relations = {
 			{"community", belongs_to = "communities", key = "community_id"},
 			{"user", belongs_to = "users", key = "user_id"},
-			{"sender", belongs_to = "users", key = "sender_id"},
+			{"staff_user", belongs_to = "users", key = "staff_user_id"},
 		},
 		url_params = function(self, req, ...)
 			return "community.user", {community_id = self.community_id, user_id = self.user_id}, ...
