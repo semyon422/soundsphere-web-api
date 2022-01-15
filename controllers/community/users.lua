@@ -94,6 +94,7 @@ community_users_c.update_users = function(self, community_users)
 		return
 	end
 
+	local updated_community_users = {}
 	community_users = Community_users:find_all(community_user_ids)
 	for _, community_user in ipairs(community_users) do
 		self.context.community_user = community_user
@@ -102,9 +103,11 @@ community_users_c.update_users = function(self, community_users)
 			if community_user.role ~= new_community_user.role then
 				community_user.role = new_community_user.role
 				community_user:update("role")
+				table.insert(updated_community_users, community_user)
 			end
 		end
 	end
+	return updated_community_users
 end
 
 community_users_c.policies.GET = {{"permit"}}
@@ -156,12 +159,16 @@ end
 
 community_users_c.context.PATCH = {"request_session"}
 community_users_c.policies.PATCH = {{"authenticated"}}
+community_users_c.validations.PATCH = {
+	{"community_users", exists = true, type = "table", param_type = "body"}
+}
 community_users_c.PATCH = function(self)
 	local params = self.params
 
-	community_users_c.update_users(self, params.community_users)
+	local community_users = community_users_c.update_users(self, params.community_users)
+	util.recursive_to_name(community_users)
 
-	return {}
+	return {json = {community_users = community_users}}
 end
 
 return community_users_c

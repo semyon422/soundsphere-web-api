@@ -62,7 +62,12 @@ community_c.PATCH = function(self)
 		"is_public",
 		"default_leaderboard_id",
 	})
-	community_c.update_users(self, params.community.community_users)
+	local community_users = community_c.update_users(self, params.community.community_users)
+	if community_users then
+		community.community_users = community_users
+	end
+
+	util.recursive_to_name(community)
 
 	return {json = {community = community}}
 end
