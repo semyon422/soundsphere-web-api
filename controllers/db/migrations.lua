@@ -20,8 +20,11 @@ migrations_c.GET = function(self)
 	}}
 end
 
-migrations_c.context.POST = {"request_session"}
-migrations_c.policies.POST = {{"authenticated"}}
+migrations_c.context.POST = {"request_session", "session_user", "user_roles"}
+migrations_c.policies.POST = {
+	{"authenticated", {role = "creator"}},
+	{"authenticated", {role = "admin"}},
+}
 migrations_c.POST = function(self)
 	migrations.run_migrations(require("migrations"))
 	local total = migrations.LapisMigrations:count()

@@ -13,6 +13,7 @@ local lapisdb = require("lapis.db")
 local bcrypt = require("bcrypt")
 
 local Users = require("models.users")
+local User_roles = require("models.user_roles")
 local Communities = require("models.communities")
 local Leaderboards = require("models.leaderboards")
 local Community_users = require("models.community_users")
@@ -38,6 +39,10 @@ db_test.create = function()
 		scores_count = 0,
 		notecharts_count = 0,
 		play_time = 0,
+	})
+	User_roles:create({
+		user_id = user.id,
+		role = Roles:for_db("creator"),
 	})
 
 	local community = Communities:create({

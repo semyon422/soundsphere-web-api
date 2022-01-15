@@ -12,8 +12,11 @@ schema_c.GET = function(self)
 	return {}
 end
 
-schema_c.context.POST = {"request_session"}
-schema_c.policies.POST = {{"authenticated"}}
+schema_c.context.POST = {"request_session", "session_user", "user_roles"}
+schema_c.policies.POST = {
+	{"authenticated", {role = "creator"}},
+	{"authenticated", {role = "admin"}},
+}
 schema_c.validations.POST = {
 	{"db_test", type = "boolean", optional = true},
 }
