@@ -2,6 +2,7 @@ local Leaderboard_requirements = require("models.leaderboard_requirements")
 local Requirements = require("enums.requirements")
 local Rules = require("enums.rules")
 local Controller = require("Controller")
+local util = require("util")
 
 local leaderboard_requirement_c = Controller:new()
 
@@ -30,15 +31,14 @@ leaderboard_requirement_c.PATCH = function(self)
 	local params = self.params
 
     local requirement = self.context.leaderboard_requirement
-	local params_requirement = params.leaderboard_requirement
 
-	requirement.name = params_requirement.name
-	requirement.rule = params_requirement.rule
-	requirement.key = params_requirement.key
-	requirement.value = params_requirement.value
-
-	requirement:for_db()
-    requirement:update("requirement", "rule", "key", "value")
+	Leaderboard_requirements:for_db(params.leaderboard_requirement)
+	util.patch(requirement, params.leaderboard_requirement, {
+		"requirement",
+		"rule",
+		"key",
+		"value",
+	})
 
 	return {json = {leaderboard_requirement = requirement:to_name()}}
 end

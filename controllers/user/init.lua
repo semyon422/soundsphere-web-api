@@ -43,10 +43,10 @@ user_c.PATCH = function(self)
 	local params = self.params
 	local user = self.context.user
 
-	user.name = params.user.name
-	user.description = params.user.description
-
-	user:update("name", "description")
+	util.patch(user, params.user, {
+		"name",
+		"description",
+	})
 
 	return {json = {user = user:to_name()}}
 end

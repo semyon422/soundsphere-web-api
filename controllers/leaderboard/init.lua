@@ -113,18 +113,8 @@ leaderboard_c.PATCH = function(self)
 	local params = self.params
 	local leaderboard = self.context.leaderboard
 
-	leaderboard.name = params.leaderboard.name
-	leaderboard.description = params.leaderboard.description
-	leaderboard.banner = params.leaderboard.banner
-	leaderboard.difficulty_calculator = Difficulty_calculators:for_db(params.leaderboard.difficulty_calculator)
-	leaderboard.rating_calculator = Rating_calculators:for_db(params.leaderboard.rating_calculator)
-	leaderboard.scores_combiner = Combiners:for_db(params.leaderboard.scores_combiner)
-	leaderboard.communities_combiner = Combiners:for_db(params.leaderboard.communities_combiner)
-	leaderboard.difficulty_calculator_config = params.leaderboard.difficulty_calculator_config
-	leaderboard.rating_calculator_config = params.leaderboard.rating_calculator_config
-	leaderboard.scores_combiner_count = params.leaderboard.scores_combiner_count
-	leaderboard.communities_combiner_count = params.leaderboard.communities_combiner_count
-	leaderboard:update(
+	Leaderboards:for_db(params.leaderboard)
+	util.patch(leaderboard, params.leaderboard, {
 		"name",
 		"description",
 		"banner",
@@ -135,8 +125,8 @@ leaderboard_c.PATCH = function(self)
 		"difficulty_calculator_config",
 		"rating_calculator_config",
 		"scores_combiner_count",
-		"communities_combiner_count"
-	)
+		"communities_combiner_count",
+	})
 
 	leaderboard_c.update_inputmodes(leaderboard.id, params.leaderboard.inputmodes)
 	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.difftables)

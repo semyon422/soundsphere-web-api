@@ -31,8 +31,26 @@ end
 
 difftable_c.context.PATCH = {"difftable", "request_session"}
 difftable_c.policies.PATCH = {{"context_loaded", "authenticated"}}
+difftable_c.validations.PATCH = {
+	{"difftable", exists = true, type = "table", param_type = "body", validations = {
+		{"name", exists = true, type = "string"},
+		{"link", exists = true, type = "string"},
+		{"description", exists = true, type = "string"},
+		{"owner_community_id", exists = true, type = "number"},
+	}}
+}
 difftable_c.PATCH = function(self)
-	return {}
+	local params = self.params
+	local difftable = self.context.difftable
+
+	util.patch(difftable, params.difftable, {
+		"name",
+		"link",
+		"description",
+		"owner_community_id",
+	})
+
+	return {json = {difftable = difftable}}
 end
 
 difftable_c.context.DELETE = {"difftable", "request_session"}

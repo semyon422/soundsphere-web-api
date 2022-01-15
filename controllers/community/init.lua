@@ -36,20 +36,23 @@ end
 
 community_c.context.PATCH = {"community", "request_session"}
 community_c.policies.PATCH = {{"context_loaded", "authenticated"}}
+community_c.validations.PATCH = {
+	{"community", exists = true, type = "table", param_type = "body", validations = {
+		{"name", exists = true, type = "string"},
+		{"alias", exists = true, type = "string"},
+		{"link", exists = true, type = "string"},
+		{"short_description", exists = true, type = "string"},
+		{"description", exists = true, type = "string"},
+		{"banner", exists = true, type = "string", optional = true},
+		{"is_public", type = "boolean"},
+		{"default_leaderboard_id", exists = true, type = "number"},
+	}}
+}
 community_c.PATCH = function(self)
 	local params = self.params
 	local community = self.context.community
 
-	community.name = params.community.name
-	community.alias = params.community.alias
-	community.link = params.community.link
-	community.short_description = params.community.short_description
-	community.description = params.community.description
-	community.banner = params.community.banner
-	community.is_public = params.community.is_public
-	community.default_leaderboard_id = params.community.default_leaderboard_id
-
-	community:update(
+	util.patch(community, params.community, {
 		"name",
 		"alias",
 		"link",
@@ -57,9 +60,8 @@ community_c.PATCH = function(self)
 		"description",
 		"banner",
 		"is_public",
-		"default_leaderboard_id"
-	)
-
+		"default_leaderboard_id",
+	})
 	community_c.update_users(self, params.community.community_users)
 
 	return {json = {community = community}}
