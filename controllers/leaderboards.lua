@@ -72,6 +72,7 @@ end
 leaderboards_c.context.POST = {"request_session"}
 leaderboards_c.policies.POST = {{"authenticated"}}
 leaderboards_c.validations.POST = {
+	{"community_id", exists = true, type = "number", range = {1}},
 	{"leaderboard", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},
 		{"description", exists = true, type = "string"},
