@@ -157,8 +157,11 @@ community_users_c.GET = function(self)
 	}}
 end
 
-community_users_c.context.PATCH = {"request_session"}
-community_users_c.policies.PATCH = {{"authenticated"}}
+community_users_c.context.PATCH = {"request_session", "session_user", "user_communities"}
+community_users_c.policies.PATCH = {
+	{"context_loaded", "authenticated", {community_role = "creator"}},
+	{"context_loaded", "authenticated", {community_role = "admin"}},
+}
 community_users_c.validations.PATCH = {
 	{"community_users", exists = true, type = "table", param_type = "body"}
 }

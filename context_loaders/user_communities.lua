@@ -16,20 +16,12 @@ local select = function(self, where)
 	return communities
 end
 
-local function load_community_user(communities, community_user)
-	table.insert(communities, {
-		community_id = community_user.community_id,
-		role = Roles:to_name(community_user.role),
-	})
-	communities.select = select
-end
-
 local function load_communities(user)
-	local communities = {}
+	local communities = {select = select}
 
 	local community_users = user:get_community_users()
 	for _, community_user in ipairs(community_users) do
-		load_community_user(communities, community_user)
+		table.insert(communities, community_user:to_name())
 	end
 
 	user.communities = communities

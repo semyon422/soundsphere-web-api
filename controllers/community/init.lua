@@ -34,8 +34,11 @@ community_c.GET = function(self)
 	return {json = {community = community}}
 end
 
-community_c.context.PATCH = {"community", "request_session"}
-community_c.policies.PATCH = {{"context_loaded", "authenticated"}}
+community_c.context.PATCH = {"community", "request_session", "session_user", "user_communities"}
+community_c.policies.PATCH = {
+	{"context_loaded", "authenticated", {community_role = "creator"}},
+	{"context_loaded", "authenticated", {community_role = "admin"}},
+}
 community_c.validations.PATCH = {
 	{"community", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},
@@ -72,8 +75,10 @@ community_c.PATCH = function(self)
 	return {json = {community = community}}
 end
 
-community_c.context.DELETE = {"community", "request_session"}
-community_c.policies.DELETE = {{"context_loaded", "authenticated"}}
+community_c.context.DELETE = {"community", "request_session", "session_user", "user_communities"}
+community_c.policies.DELETE = {
+	{"context_loaded", "authenticated", {community_role = "creator"}},
+}
 community_c.DELETE = function(self)
 	return {status = 204}
 end

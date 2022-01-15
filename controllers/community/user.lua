@@ -9,8 +9,11 @@ local community_user_c = Controller:new()
 community_user_c.path = "/communities/:community_id[%d]/users/:user_id[%d]"
 community_user_c.methods = {"GET", "PUT", "DELETE", "PATCH"}
 
-community_user_c.context.PUT = {"community_user", "request_session"}
-community_user_c.policies.PUT = {{"authenticated"}}
+community_user_c.context.PUT = {"community_user", "request_session", "session_user", "user_communities"}
+community_user_c.policies.PUT = {
+	{{context = {"request_session", "session_user"}}, "authenticated", "community_user_request"},
+	{{context = {"request_session", "session_user"}}, "authenticated", "community_user_invitation"},
+}
 community_user_c.validations.PUT = {
 	{"invitation", type = "boolean", optional = true},
 	{"message", exists = true, type = "string", optional = true},
@@ -53,12 +56,13 @@ community_user_c.PUT = function(self)
 	return {status = 204}
 end
 
-community_user_c.context.DELETE = {"community_user", "request_session"}
-community_user_c.policies.DELETE = {{"context_loaded", "authenticated"}}
+community_user_c.context.DELETE = {"community_user", "request_session", "session_user", "user", "user_communities"}
+community_user_c.policies.DELETE = {
+	{"context_loaded", "authenticated", "community_user_leave"},
+	{"context_loaded", "authenticated", "community_user_kick"},
+}
 community_user_c.DELETE = function(self)
-	local community_user = self.context.community_user
-    community_user:delete()
-
+    self.context.community_user:delete()
 	return {status = 204}
 end
 
@@ -73,8 +77,10 @@ community_user_c.GET = function(self)
 	return {json = {community_user = community_user:to_name()}}
 end
 
-community_user_c.context.PATCH = {"community_user", "request_session"}
-community_user_c.policies.PATCH = {{"context_loaded", "authenticated"}}
+community_user_c.context.PATCH = {"community_user", "request_session", "session_user", "user", "user_communities"}
+community_user_c.policies.PATCH = {
+	{"context_loaded", "authenticated", "community_user_change_role"},
+}
 community_user_c.validations.PATCH = {
 	{"role", exists = true, type = "string", one_of = Roles.list},
 }
