@@ -3,6 +3,7 @@ local array_update = require("util.array_update")
 local Rules = require("enums.rules")
 local Requirements = require("enums.requirements")
 local Controller = require("Controller")
+local util = require("util")
 
 local leaderboard_requirements_c = Controller:new()
 
@@ -69,11 +70,6 @@ leaderboard_requirements_c.update_requirements = function(leaderboard_id, requir
 	if #old_ids > 0 then
 		db.delete("leaderboard_requirements", {id = db.list(old_ids)})
 	end
-
-	for _, requirement in ipairs(requirements) do
-		Leaderboard_requirements:to_name(requirement)
-	end
-	return requirements
 end
 
 leaderboard_requirements_c.policies.GET = {{"permit"}}
@@ -90,7 +86,7 @@ leaderboard_requirements_c.GET = function(self)
 			filtered = #leaderboard_requirements,
 		}}
 	end
-	
+
 	for _, requirement in ipairs(leaderboard_requirements) do
 		Leaderboard_requirements:to_name(requirement)
 	end
@@ -105,12 +101,14 @@ end
 leaderboard_requirements_c.context.PATCH = {"request_session"}
 leaderboard_requirements_c.policies.PATCH = {{"authenticated"}}
 leaderboard_requirements_c.validations.PATCH = {
-	{"requirements", exists = true, param_type = "body", optional = true, type = "table"},
+	{"leaderboard_requirements", exists = true, type = "table", param_type = "body"},
 }
 leaderboard_requirements_c.PATCH = function(self)
 	local params = self.params
 
-	local leaderboard_requirements = leaderboard_requirements_c.update_requirements(params.leaderboard_id, params.requirements)
+	leaderboard_requirements_c.update_requirements(params.leaderboard_id, params.leaderboard_requirements)
+	local leaderboard_requirements = Leaderboard_requirements:find_all({params.leaderboard_id}, "leaderboard_id")
+	util.recursive_to_name(leaderboard_requirements)
 
 	return {json = {
 		total = #leaderboard_requirements,

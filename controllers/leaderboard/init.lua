@@ -1,7 +1,4 @@
 local Leaderboards = require("models.leaderboards")
-local Leaderboard_inputmodes = require("models.leaderboard_inputmodes")
-local Leaderboard_difftables = require("models.leaderboard_difftables")
-local Inputmodes = require("enums.inputmodes")
 local Difficulty_calculators = require("enums.difficulty_calculators")
 local Rating_calculators = require("enums.rating_calculators")
 local Combiners = require("enums.combiners")
@@ -26,55 +23,11 @@ leaderboard_c.update_requirements = function(leaderboard_id, requirements)
 end
 
 leaderboard_c.update_inputmodes = function(leaderboard_id, inputmodes)
-	if not inputmodes then
-		return
-	end
-
-	local leaderboard_inputmodes = Leaderboard_inputmodes:find_all({leaderboard_id}, "leaderboard_id")
-
-	local new_inputmodes, old_inputmodes = util.array_update(
-		inputmodes,
-		leaderboard_inputmodes,
-		function(i) return Inputmodes:for_db(i) end,
-		function(li) return li.inputmode end
-	)
-
-	local db = Leaderboard_inputmodes.db
-	if #old_inputmodes > 0 then
-		db.delete("leaderboard_inputmodes", {inputmode = db.list(old_inputmodes)})
-	end
-	for _, inputmode in ipairs(new_inputmodes) do
-		db.insert("leaderboard_inputmodes", {
-			leaderboard_id = leaderboard_id,
-			inputmode = inputmode,
-		})
-	end
+	return additions.inputmodes.update_inputmodes(leaderboard_id, inputmodes)
 end
 
 leaderboard_c.update_difftables = function(leaderboard_id, difftables)
-	if not difftables then
-		return
-	end
-
-	local leaderboard_difftables = Leaderboard_difftables:find_all({leaderboard_id}, "leaderboard_id")
-
-	local new_difftable_ids, old_difftable_ids = util.array_update(
-		difftables,
-		leaderboard_difftables,
-		function(d) return d.id end,
-		function(ld) return ld.difftable_id end
-	)
-
-	local db = Leaderboard_difftables.db
-	if #old_difftable_ids > 0 then
-		db.delete("leaderboard_difftables", {difftable_id = db.list(old_difftable_ids)})
-	end
-	for _, difftable_id in ipairs(new_difftable_ids) do
-		db.insert("leaderboard_difftables", {
-			leaderboard_id = leaderboard_id,
-			difftable_id = difftable_id,
-		})
-	end
+	return additions.difftables.update_difftables(leaderboard_id, difftables)
 end
 
 leaderboard_c.context.GET = {"leaderboard"}
@@ -128,11 +81,22 @@ leaderboard_c.PATCH = function(self)
 		"communities_combiner_count",
 	})
 
-	leaderboard_c.update_inputmodes(leaderboard.id, params.leaderboard.inputmodes)
-	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.difftables)
-	leaderboard_c.update_requirements(leaderboard.id, params.leaderboard.requirements)
+	leaderboard_c.update_inputmodes(leaderboard.id, params.leaderboard.leaderboard_inputmodes)
+	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.leaderboard_difftables)
+	leaderboard_c.update_requirements(leaderboard.id, params.leaderboard.leaderboard_requirements)
+	if params.leaderboard.leaderboard_inputmodes then
+		leaderboard:get_leaderboard_inputmodes()
+	end
+	if params.leaderboard.leaderboard_difftables then
+		leaderboard:get_leaderboard_difftables()
+	end
+	if params.leaderboard.leaderboard_requirements then
+		leaderboard:get_leaderboard_requirements()
+	end
 
-	return {json = {leaderboard = leaderboard:to_name()}}
+	util.recursive_to_name(leaderboard)
+
+	return {json = {leaderboard = leaderboard}}
 end
 
 return leaderboard_c
