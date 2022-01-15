@@ -7,7 +7,7 @@ local util = require("util")
 local community_user_c = Controller:new()
 
 community_user_c.path = "/communities/:community_id[%d]/users/:user_id[%d]"
-community_user_c.methods = {"PUT", "DELETE", "GET", "PATCH"}
+community_user_c.methods = {"GET", "PUT", "DELETE", "PATCH"}
 
 community_user_c.context.PUT = {"community_user", "request_session"}
 community_user_c.policies.PUT = {{"authenticated"}}

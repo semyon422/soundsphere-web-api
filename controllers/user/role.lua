@@ -5,10 +5,16 @@ local Controller = require("Controller")
 local user_role_c = Controller:new()
 
 user_role_c.path = "/users/:user_id[%d]/roles/:role"
-user_role_c.methods = {"PUT", "DELETE"}
+user_role_c.methods = {"GET", "PUT", "DELETE"}
 user_role_c.validations.path = {
 	{"role", type = "string", one_of = Roles.list, param_type = "path"},
 }
+
+user_role_c.context.GET = {"user_role", "request_session"}
+user_role_c.policies.GET = {{"context_loaded", "authenticated"}}
+user_role_c.GET = function(self)
+	return {json = {user_role = self.context.user_role:to_name()}}
+end
 
 user_role_c.context.PUT = {"user_role", "request_session", "user", "session_user", "user_roles"}
 user_role_c.policies.PUT = {

@@ -19,6 +19,10 @@
 					<b>
 					<% if data.name then %>
 						<%= data.name %>
+					<% elseif data.role then %>
+						<%= data.role %>
+					<% elseif data.inputmode then %>
+						<%= data.inputmode %>
 					<% elseif data.created_at then %>
 						<%= os.date("%c", data.created_at) %>
 					<% end %>

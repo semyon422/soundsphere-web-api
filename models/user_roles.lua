@@ -6,7 +6,10 @@ local User_roles = Model:extend(
 	{
 		relations = {
 			{"user", belongs_to = "users", key = "user_id"},
-		}
+		},
+		url_params = function(self, req, ...)
+			return "user.role", {role = self.role, user_id = self.user_id}, ...
+		end,
 	}
 )
 

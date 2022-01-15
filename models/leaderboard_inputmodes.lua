@@ -5,8 +5,11 @@ local Leaderboard_inputmodes = Model:extend(
 	"leaderboard_inputmodes",
 	{
 		relations = {
-			{"leaderboard", belongs_to = "communities", key = "leaderboard_id"},
-		}
+			{"leaderboard", belongs_to = "leaderboards", key = "leaderboard_id"},
+		},
+		url_params = function(self, req, ...)
+			return "leaderboard.inputmode", {inputmode = self.inputmode, leaderboard_id = self.leaderboard_id}, ...
+		end,
 	}
 )
 

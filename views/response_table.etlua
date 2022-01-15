@@ -16,6 +16,10 @@
 								<a href="<%= url_for(object):gsub("/api", "/api/html") %>">
 									<% if object.name then %>
 										<%= object.name %>
+									<% elseif object.role then %>
+										<%= object.role %>
+									<% elseif object.inputmode then %>
+										<%= object.inputmode %>
 									<% elseif object.created_at then %>
 										<%= os.date("%c", object.created_at) %>
 									<% else %>
