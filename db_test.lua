@@ -52,7 +52,7 @@ db_test.create = function()
 		short_description = "Short descr.",
 		description = "Long description",
 		banner = "",
-		is_public = true,
+		is_public = false,
 	})
 
 	Community_users:create({

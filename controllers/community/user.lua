@@ -20,25 +20,32 @@ community_user_c.PUT = function(self)
 	local community_user = self.context.community_user
 
 	if not community_user then
+		local community = Communities:find(params.community_id)
+		local sender_id = 0
+		if params.invitation then
+			sender_id = self.session.user_id
+		end
 		community_user = {
 			community_id = params.community_id,
 			user_id = params.user_id,
 			invitation = params.invitation,
-			sender_id = self.session.user_id,
+			sender_id = sender_id,
 			created_at = os.time(),
 			message = params.message or "",
+			accepted = community.is_public,
 		}
-		local community = Communities:find(params.community_id)
-		Community_users:set_role(community_user, community.is_public and "user" or "guest")
+		Community_users:set_role(community_user, "user")
 		Community_users:create(community_user)
 		return {status = 201}
 	elseif not community_user.accepted then
 		if community_user.invitation and not params.invitation or
 			not community_user.invitation and params.invitation
 		then
+			if params.invitation then
+				community_user.sender_id = self.session.user_id
+			end
 			community_user.accepted = true
-			Community_users:set_role(community_user, "user")
-			community_user:update("accepted", "role")
+			community_user:update("accepted", "sender_id")
 			return {}
 		end
 	end
