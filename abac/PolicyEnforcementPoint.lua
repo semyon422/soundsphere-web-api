@@ -1,5 +1,5 @@
 local first_applicable = require("abac.combine.first_applicable")
-local permit_all_or_deny = require("abac.combine.permit_all_or_deny")
+local all_applicable = require("abac.combine.all_applicable")
 local autoload = require("lapis.util").autoload
 local auto_rules = autoload("rules")
 local auto_policies = autoload("policies")
@@ -25,9 +25,12 @@ function PolicyEnforcementPoint:check(request, policies)
 			local rule = policy[j]
 			if type(rule) == "string" then
 				rule = auto_rules[rule]
+			elseif type(rule) == "table" then
+				local key = next(rule)
+				rule = auto_rules[key]:new(rule)
 			end
 			local rule_decision = rule:evaluate(request)
-			local combine = policy.combine or permit_all_or_deny
+			local combine = policy.combine or all_applicable
 			if type(combine) == "string" then
 				combine = combines[combine]
 			end

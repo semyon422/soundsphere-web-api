@@ -1,7 +1,10 @@
 local Rule = {}
 
-function Rule:new()
-	return setmetatable({}, {__index = Rule})
+function Rule:new(rule)
+	rule = rule or {}
+	setmetatable(rule, self)
+	self.__index = self
+	return rule
 end
 
 function Rule:target() return true end
