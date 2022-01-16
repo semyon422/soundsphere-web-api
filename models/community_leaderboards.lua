@@ -17,7 +17,6 @@ local Community_leaderboards = Model:extend(
 
 local _load = Community_leaderboards.load
 function Community_leaderboards:load(row)
-	row.is_owner = toboolean(row.is_owner)
 	row.accepted = toboolean(row.accepted)
 	row.created_at = tonumber(row.created_at)
 	return _load(self, row)

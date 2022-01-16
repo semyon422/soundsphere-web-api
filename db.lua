@@ -87,7 +87,8 @@ table_declarations.leaderboard_scores = {
 	{"notechart_id", types.fk_id},
 	{"score_id", types.fk_id},
 	{"rating", types.float},
-	"UNIQUE KEY `leaderboard_user_notechart` (`leaderboard_id`,`user_id`,`notechart_id`)"
+	"UNIQUE KEY `leaderboard_user_notechart` (`leaderboard_id`,`user_id`,`notechart_id`)",
+	"KEY `rating` (`rating`)",
 }
 
 table_declarations.leaderboard_inputmodes = {
@@ -113,6 +114,7 @@ table_declarations.leaderboards = {
 	{"description", types.varchar},
 	{"banner", types.varchar},
 	{"top_user_id", types.fk_id},
+	{"owner_community_id", types.fk_id},
 	{"difficulty_calculator", types.enum},
 	{"rating_calculator", types.enum},
 	{"scores_combiner", types.enum},
@@ -124,6 +126,8 @@ table_declarations.leaderboards = {
 	{"communities_count", types.size},
 	{"difftables_count", types.size},
 	{"users_count", types.size},
+	"KEY `top_user_id` (`top_user_id`)",
+	"KEY `owner_community_id` (`owner_community_id`)",
 }
 
 table_declarations.difftables = {
@@ -205,14 +209,12 @@ table_declarations.community_leaderboards = {
 	{"id", types.id},
 	{"community_id", types.fk_id},
 	{"leaderboard_id", types.fk_id},
-	{"is_owner", types.boolean},
 	{"user_id", types.fk_id},
 	{"accepted", types.boolean},
 	{"created_at", types.time},
 	{"total_rating", types.float},
 	{"message", types.varchar},
 	"UNIQUE KEY `community_leaderboards` (`community_id`,`leaderboard_id`)",
-	"KEY `is_owner` (`is_owner`)",
 	"KEY `user_id` (`user_id`)",
 	"KEY `accepted` (`accepted`)",
 	"KEY `total_rating` (`total_rating`)",

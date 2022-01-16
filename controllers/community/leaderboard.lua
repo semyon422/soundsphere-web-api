@@ -1,4 +1,5 @@
 local Community_leaderboards = require("models.community_leaderboards")
+local Leaderboards = require("models.leaderboards")
 local Controller = require("Controller")
 local util = require("util")
 
@@ -30,15 +31,10 @@ community_leaderboard_c.PUT = function(self)
 		return {}
 	end
 
-	local owner_community_leaderboard = Community_leaderboards:find({
-		leaderboard_id = params.leaderboard_id,
-		is_owner = true
-	})
-	local owner_community = owner_community_leaderboard:get_community()
+	local owner_community = Leaderboards:find(params.leaderboard_id)
 	local community_leaderboard = Community_leaderboards:create({
 		community_id = params.community_id,
 		leaderboard_id = params.leaderboard_id,
-		is_owner = false,
 		user_id = self.session.user_id,
 		accepted = owner_community.is_public,
 		created_at = os.time(),

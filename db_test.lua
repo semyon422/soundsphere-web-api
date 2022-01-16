@@ -76,6 +76,7 @@ db_test.create = function()
 		name = "Leaderboard",
 		description = "Description",
 		banner = "",
+		owner_community_id = community.id,
 		difficulty_calculator = Difficulty_calculators:for_db("enps"),
 		rating_calculator = Rating_calculators:for_db("acc_inv_erf"),
 		scores_combiner = Combiners:for_db("average"),
@@ -90,15 +91,14 @@ db_test.create = function()
 	Community_leaderboards:create({
 		community_id = community.id,
 		leaderboard_id = leaderboard.id,
-		is_owner = true,
 		user_id = user.id,
 		accepted = true,
 		created_at = os.time(),
 		message = "",
 	})
 
-	leaderboard_c.update_inputmodes(leaderboard.id, {"10key"})
-	leaderboard_c.update_difftables(leaderboard.id, {difftable})
+	leaderboard_c.update_inputmodes(leaderboard.id, {{inputmode = "10key"}})
+	leaderboard_c.update_difftables(leaderboard.id, {{difftable_id = difftable.id}})
 	leaderboard_c.update_requirements(leaderboard.id, {
 		{
 			name = "modifier",

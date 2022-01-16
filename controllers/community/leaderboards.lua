@@ -25,42 +25,29 @@ end
 community_leaderboards_c.get_owned = function(self)
 	local params = self.params
 
-	local where = {
-		community_id = params.community_id,
-		is_owner = true,
-		accepted = true,
-	}
-
-	local clause = Community_leaderboards.db.encode_clause(where)
-    local community_leaderboards = Community_leaderboards:select("where " .. clause .. " order by id asc")
+    local community_leaderboards = Community_leaderboards:select(
+		"cl " ..
+		"inner join leaderboards l on cl.leaderboard_id = l.id and cl.community_id = l.owner_community_id " ..
+		"where cl.community_id = ? and cl.accepted = ? " ..
+		"order by id asc",
+		params.community_id, true,
+		{fields = "cl.*"}
+	)
 
 	return community_leaderboards
 end
 
 community_leaderboards_c.get_incoming = function(self)
 	local params = self.params
-	local db = Community_leaderboards.db
 
-	local clause = db.encode_clause({
-		community_id = params.community_id,
-		is_owner = true,
-	})
     local community_leaderboards = Community_leaderboards:select(
-		"where " .. clause .. " order by id asc",
-		{fields = "leaderboard_id"}
+		"cl " ..
+		"inner join leaderboards l on cl.leaderboard_id = l.id and cl.community_id = l.owner_community_id " ..
+		"where cl.community_id != ? and cl.accepted = ? " ..
+		"order by id asc",
+		params.community_id, false,
+		{fields = "cl.*"}
 	)
-
-	local leaderboard_ids = {}
-	for _, community_leaderboard in ipairs(community_leaderboards) do
-		table.insert(leaderboard_ids, community_leaderboard.leaderboard_id)
-	end
-
-	clause = db.encode_clause({
-		leaderboard_id = #leaderboard_ids > 0 and db.list(leaderboard_ids),
-		community_id = db.list({params.community_id}),
-		accepted = false,
-	}):gsub("`community_id` IN", "`community_id` NOT IN")
-	community_leaderboards = Community_leaderboards:select("where " .. clause .. " order by id asc")
 
 	return community_leaderboards
 end
@@ -68,14 +55,14 @@ end
 community_leaderboards_c.get_outgoing = function(self)
 	local params = self.params
 
-	local where = {
-		community_id = params.community_id,
-		is_owner = false,
-		accepted = false,
-	}
-
-	local clause = Community_leaderboards.db.encode_clause(where)
-    local community_leaderboards = Community_leaderboards:select("where " .. clause .. " order by id asc")
+    local community_leaderboards = Community_leaderboards:select(
+		"cl " ..
+		"inner join leaderboards l on cl.leaderboard_id = l.id and cl.community_id != l.owner_community_id " ..
+		"where cl.community_id = ? and cl.accepted = ? " ..
+		"order by id asc",
+		params.community_id, false,
+		{fields = "cl.*"}
+	)
 
 	return community_leaderboards
 end
