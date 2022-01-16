@@ -45,7 +45,7 @@ leaderboard_c.GET = function(self)
 	return {json = {leaderboard = leaderboard:to_name()}}
 end
 
-leaderboard_c.context.PATCH = util.get_owner_context("leaderboard", "context")
+leaderboard_c.context.PATCH = util.add_owner_context("leaderboard", "context")
 leaderboard_c.policies.PATCH = {
 	{"authed", {community_role = "moderator"}},
 	{"authed", {community_role = "admin"}},
@@ -103,7 +103,7 @@ leaderboard_c.PATCH = function(self)
 	return {json = {leaderboard = leaderboard}}
 end
 
-leaderboard_c.context.DELETE = util.get_owner_context("leaderboard", "context")
+leaderboard_c.context.DELETE = util.add_owner_context("leaderboard", "context")
 leaderboard_c.policies.DELETE = {
 	{"authed", {community_role = "admin"}},
 	{"authed", {community_role = "creator"}},

@@ -45,7 +45,7 @@ leaderboard_difftable_c.PUT = function(self)
 end
 
 leaderboard_difftable_c.context.DELETE = {"leaderboard_difftable"}
-util.get_owner_context("leaderboard", "context", leaderboard_difftable_c.context.DELETE)
+util.add_owner_context("leaderboard", "context", leaderboard_difftable_c.context.DELETE)
 leaderboard_difftable_c.policies.DELETE = {
 	{"authed", {community_role = "moderator"}},
 	{"authed", {community_role = "admin"}},

@@ -98,7 +98,7 @@ leaderboard_requirements_c.GET = function(self)
 	}}
 end
 
-leaderboard_requirements_c.context.PATCH = util.get_owner_context("leaderboard", "context")
+leaderboard_requirements_c.context.PATCH = util.add_owner_context("leaderboard", "context")
 leaderboard_requirements_c.policies.PATCH = {
 	{"authed", {community_role = "moderator"}},
 	{"authed", {community_role = "admin"}},

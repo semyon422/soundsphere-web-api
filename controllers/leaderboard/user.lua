@@ -17,7 +17,7 @@ leaderboard_user_c.GET = function(self)
 end
 
 leaderboard_user_c.context.PATCH = {"leaderboard_user"}
-util.get_owner_context("leaderboard", "context", leaderboard_user_c.context.PATCH)
+util.add_owner_context("leaderboard", "context", leaderboard_user_c.context.PATCH)
 leaderboard_user_c.policies.PATCH = {
 	{"authed", {community_role = "moderator"}},
 	{"authed", {community_role = "admin"}},

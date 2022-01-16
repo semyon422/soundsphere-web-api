@@ -49,7 +49,7 @@ leaderboard_inputmode_c.PUT = function(self)
 end
 
 leaderboard_inputmode_c.context.DELETE = {"leaderboard_requirement"}
-util.get_owner_context("leaderboard", "context", leaderboard_inputmode_c.context.DELETE)
+util.add_owner_context("leaderboard", "context", leaderboard_inputmode_c.context.DELETE)
 leaderboard_inputmode_c.policies.DELETE = {
 	{"authed", {community_role = "moderator"}},
 	{"authed", {community_role = "admin"}},
