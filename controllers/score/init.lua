@@ -78,7 +78,7 @@ end
 
 score_c.context.PATCH = {"score", "request_session", "session_user", "user_roles"}
 score_c.policies.PATCH = {
-	{"authed", {not_params = "force"}},
+	{"authed", {not_params = "force"}, "score_owner"},
 	{"authed", {role = "moderator"}},
 	{"authed", {role = "admin"}},
 	{"authed", {role = "creator"}},
@@ -176,8 +176,10 @@ score_c.PATCH = function(self)
 	return {json = {score = score:to_name()}}
 end
 
-score_c.context.DELETE = {"score", "request_session"}
-score_c.policies.DELETE = {{"authed"}}
+score_c.context.DELETE = {"score", "request_session", "session_user", "user_roles"}
+score_c.policies.DELETE = {
+	{"authed", "score_owner"},
+}
 score_c.DELETE = function(self)
 	return {status = 204}
 end

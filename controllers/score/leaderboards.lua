@@ -38,6 +38,8 @@ score_leaderboards_c.get_available = function(self)
 			table.insert(leaderboards, community_leaderboard.leaderboard)
 		end
 		community_leaderboard.leaderboard.leaderboard_requirements = nil
+		community_leaderboard.leaderboard.leaderboard_inputmodes = nil
+		community_leaderboard.leaderboard.leaderboard_difftables = nil
 	end
 
 	return leaderboards
@@ -371,7 +373,7 @@ end
 
 score_leaderboards_c.context.PUT = {"score", "request_session", "session_user", "user_roles"}
 score_leaderboards_c.policies.PUT = {
-	{"authed", {not_params = "force"}},
+	{"authed", {not_params = "force"}, "score_owner"},
 	{"authed", {role = "moderator"}},
 	{"authed", {role = "admin"}},
 	{"authed", {role = "creator"}},
