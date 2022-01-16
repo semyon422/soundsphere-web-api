@@ -40,8 +40,17 @@ difftables_c.GET = function(self)
 	}}
 end
 
-difftables_c.context.POST = {"request_session"}
-difftables_c.policies.POST = {{"authenticated"}}
+local set_community_id = function(self)
+	local params = self.params
+	params.community_id = params.difftable and params.difftable.owner_community_id or 0
+	return true
+end
+
+difftables_c.context.POST = {"request_session", "session_user", "user_communities", set_community_id}
+difftables_c.policies.POST = {
+	{"context_loaded", "authenticated", {community_role = "creator"}},
+	{"context_loaded", "authenticated", {community_role = "admin"}},
+}
 difftables_c.validations.POST = {
 	{"difftable", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},
@@ -57,7 +66,7 @@ difftables_c.POST = function(self)
 		name = difftable.name or "Difficulty table",
 		link = difftable.link,
 		description = difftable.description,
-		owner_community_id = params.community_id,
+		owner_community_id = difftable.owner_community_id,
 	})
 
 	return {status = 201, redirect_to = self:url_for(difftable)}

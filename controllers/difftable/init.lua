@@ -14,6 +14,11 @@ local difftable_c = Controller:new()
 difftable_c.path = "/difftables/:difftable_id[%d]"
 difftable_c.methods = {"GET", "PATCH", "DELETE"}
 
+local set_community_id = function(self)
+	self.params.community_id = self.context.difftable.owner_community_id
+	return true
+end
+
 difftable_c.context.GET = {"difftable"}
 difftable_c.policies.GET = {{"context_loaded"}}
 difftable_c.validations.GET = {}
@@ -29,8 +34,11 @@ difftable_c.GET = function(self)
 	return {json = {difftable = difftable}}
 end
 
-difftable_c.context.PATCH = {"difftable", "request_session"}
-difftable_c.policies.PATCH = {{"context_loaded", "authenticated"}}
+difftable_c.context.PATCH = {"difftable", "request_session", "session_user", "user_communities", set_community_id}
+difftable_c.policies.PATCH = {
+	{"context_loaded", "authenticated", {community_role = "admin"}},
+	{"context_loaded", "authenticated", {community_role = "creator"}},
+}
 difftable_c.validations.PATCH = {
 	{"difftable", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},
@@ -53,8 +61,11 @@ difftable_c.PATCH = function(self)
 	return {json = {difftable = difftable}}
 end
 
-difftable_c.context.DELETE = {"difftable", "request_session"}
-difftable_c.policies.DELETE = {{"context_loaded", "authenticated"}}
+difftable_c.context.DELETE = {"difftable", "request_session", "session_user", "user_communities", set_community_id}
+difftable_c.policies.DELETE = {
+	{"context_loaded", "authenticated", {community_role = "admin"}},
+	{"context_loaded", "authenticated", {community_role = "creator"}},
+}
 difftable_c.DELETE = function(self)
 	return {status = 204}
 end

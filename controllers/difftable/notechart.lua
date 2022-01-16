@@ -8,6 +8,11 @@ local difftable_notechart_c = Controller:new()
 difftable_notechart_c.path = "/difftables/:difftable_id[%d]/notecharts/:notechart_id[%d]"
 difftable_notechart_c.methods = {"GET", "PUT", "PATCH", "DELETE"}
 
+local set_community_id = function(self)
+	self.params.community_id = self.context.difftable.owner_community_id
+	return true
+end
+
 difftable_notechart_c.context.GET = {"difftable_notechart"}
 difftable_notechart_c.policies.GET = {{"context_loaded"}}
 difftable_notechart_c.validations.GET = util.add_belongs_to_validations(Difftable_notecharts.relations)
@@ -19,8 +24,12 @@ difftable_notechart_c.GET = function(self)
 	return {json = {difftable_notechart = difftable_notechart}}
 end
 
-difftable_notechart_c.context.PUT = {"difftable_notechart", "request_session"}
-difftable_notechart_c.policies.PUT = {{"authenticated"}}
+difftable_notechart_c.context.PUT = {"difftable", "notechart", "difftable_notechart", "request_session", "session_user", "user_communities", set_community_id}
+difftable_notechart_c.policies.PUT = {
+	{{context = {"difftable", "notechart", "request_session", "session_user"}}, "authenticated", {community_role = "moderator"}},
+	{{context = {"difftable", "notechart", "request_session", "session_user"}}, "authenticated", {community_role = "admin"}},
+	{{context = {"difftable", "notechart", "request_session", "session_user"}}, "authenticated", {community_role = "creator"}},
+}
 difftable_notechart_c.validations.PUT = {
 	{"difficulty", type = "number", optional = true},
 }
@@ -38,7 +47,7 @@ difftable_notechart_c.PUT = function(self)
 		difficulty = params.difficulty or 0,
 	})
 
-	local notechart = difftable_notechart:get_notechart()
+	local notechart = self.context.notechart
 	local new_difftable_inputmode = {
 		difftable_id = params.difftable_id,
 		inputmode = notechart.inputmode,
@@ -59,8 +68,12 @@ difftable_notechart_c.PUT = function(self)
 	return {json = {difftable_notechart = difftable_notechart}}
 end
 
-difftable_notechart_c.context.PATCH = {"difftable_notechart", "request_session"}
-difftable_notechart_c.policies.PATCH = {{"context_loaded", "authenticated"}}
+difftable_notechart_c.context.PATCH = {"difftable", "notechart", "difftable_notechart", "request_session", "session_user", "user_communities", set_community_id}
+difftable_notechart_c.policies.PATCH = {
+	{"context_loaded", "authenticated", {community_role = "moderator"}},
+	{"context_loaded", "authenticated", {community_role = "admin"}},
+	{"context_loaded", "authenticated", {community_role = "creator"}},
+}
 difftable_notechart_c.validations.PATCH = {
 	{"difficulty", type = "number", optional = true},
 }
@@ -74,8 +87,12 @@ difftable_notechart_c.PATCH = function(self)
 	return {json = {difftable_notechart = difftable_notechart}}
 end
 
-difftable_notechart_c.context.DELETE = {"difftable_notechart", "request_session"}
-difftable_notechart_c.policies.DELETE = {{"context_loaded", "authenticated"}}
+difftable_notechart_c.context.DELETE = {"difftable", "notechart", "difftable_notechart", "request_session", "session_user", "user_communities", set_community_id}
+difftable_notechart_c.policies.DELETE = {
+	{"context_loaded", "authenticated", {community_role = "moderator"}},
+	{"context_loaded", "authenticated", {community_role = "admin"}},
+	{"context_loaded", "authenticated", {community_role = "creator"}},
+}
 difftable_notechart_c.DELETE = function(self)
 	local params = self.params
 

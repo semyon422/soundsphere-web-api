@@ -32,7 +32,13 @@ Controller.load_context = function(self, request, method)
 	end
 	local loaded = true
 	for _, name in ipairs(self.context[method]) do
-		local result = context_loaders[name](request)
+		local result
+		if type(name) == "string" then
+			result = context_loaders[name](request)
+		elseif type(name) == "function" then
+			local status, res = pcall(name, request)
+			result = status and res
+		end
 		loaded = loaded and result
 	end
 	request.context.loaded[method] = not not loaded
