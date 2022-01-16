@@ -33,8 +33,13 @@ notechart_c.GET = function(self)
 	return {json = {notechart = notechart:to_name()}}
 end
 
-notechart_c.context.PATCH = {"notechart", "request_session"}
-notechart_c.policies.PATCH = {{"authed"}}
+notechart_c.context.PATCH = {"notechart", "request_session", "session_user", "user_roles"}
+notechart_c.policies.PATCH = {
+	{"authed", {not_params = "force"}},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
 notechart_c.validations.PATCH = {
 	{"force", type = "boolean", optional = true}
 }

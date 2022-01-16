@@ -38,14 +38,23 @@ file_c.GET = function(self)
 	}
 end
 
-file_c.context.DELETE = {"file", "request_session"}
-file_c.policies.DELETE = {{"authed"}}
+file_c.context.DELETE = {"file", "request_session", "session_user", "user_roles"}
+file_c.policies.DELETE = {
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
 file_c.DELETE = function(self)
 	return {status = 204}
 end
 
-file_c.context.PUT = {"file", "request_session"}
-file_c.policies.PUT = {{"authed"}}
+file_c.context.PUT = {"file", "request_session", "session_user", "user_roles"}
+file_c.policies.PUT = {
+	{"authed", {not_params = "force"}},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
 file_c.validations.PUT = {
 	{"force", type = "boolean", optional = true},
 	{"file", is_file = true, param_type = "body"},
@@ -59,11 +68,21 @@ file_c.PUT = function(self)
 		return {status = 204}
 	end
 
-	file.hash = Filehash:sum_for_db(params.file.content)
+	local size = #params.file.content
+	if size ~= file.size then
+		return {status = 400, json = {message = "Wrong file size"}}
+	end
+
+	local hash = Filehash:sum_for_db(params.file.content)
+	if hash ~= file.hash then
+		return {status = 400, json = {message = "Wrong file hash"}}
+	end
+
+	file.hash = hash
 	file.name = params.file.filename
 	file.format = Formats:get_format_for_db(params.file.filename)
 	file.uploaded = true
-	file.size = #params.file.content
+	file.size = size
 	file:update("hash", "name", "format", "uploaded", "size")
 
 	Files:write_file(file, params.file.content)

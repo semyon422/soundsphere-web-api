@@ -77,8 +77,13 @@ score_c.GET = function(self)
 	return {json = {score = score:to_name()}}
 end
 
-score_c.context.PATCH = {"score", "request_session"}
-score_c.policies.PATCH = {{"authed"}}
+score_c.context.PATCH = {"score", "request_session", "session_user", "user_roles"}
+score_c.policies.PATCH = {
+	{"authed", {not_params = "force"}},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
 score_c.validations.PATCH = {
 	{"force", type = "boolean", optional = true},
 }

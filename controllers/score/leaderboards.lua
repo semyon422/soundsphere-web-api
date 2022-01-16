@@ -368,8 +368,13 @@ score_leaderboards_c.insert_score = function(score, leaderboard)
 	return true
 end
 
-score_leaderboards_c.context.PUT = {"score", "request_session"}
-score_leaderboards_c.policies.PUT = {{"authed"}}
+score_leaderboards_c.context.PUT = {"score", "request_session", "session_user", "user_roles"}
+score_leaderboards_c.policies.PUT = {
+	{"authed", {not_params = "force"}},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
 score_leaderboards_c.validations.PUT = {
 	{"force", type = "boolean", optional = true},
 }
