@@ -89,8 +89,8 @@ communities_c.POST = function(self)
 
 	local community = params.community
 	community = Communities:create({
-		name = community.name or "Community",
-		alias = community.alias or "???",
+		name = community.name,
+		alias = community.alias,
 		link = community.link,
 		short_description = community.short_description,
 		description = community.description,
