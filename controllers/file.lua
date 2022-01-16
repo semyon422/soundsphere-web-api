@@ -77,7 +77,7 @@ file_c.PUT = function(self)
 	file.name = params.file.filename
 	file.format = Formats:get_format_for_db(params.file.filename)
 	file.uploaded = true
-	file.size = size
+	file.size = #params.file.content
 	file:update("hash", "name", "format", "uploaded", "size")
 
 	Files:write_file(file, params.file.content)
