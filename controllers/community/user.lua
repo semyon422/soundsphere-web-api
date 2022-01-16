@@ -16,8 +16,8 @@ community_user_c.context.PUT = {
 	"user_communities",
 }
 community_user_c.policies.PUT = {
-	{"authenticated", "community_user_request"},
-	{"authenticated", "community_user_invitation"},
+	{"authed", "community_user_request"},
+	{"authed", "community_user_invitation"},
 }
 community_user_c.validations.PUT = {
 	{"invitation", type = "boolean", optional = true},
@@ -63,8 +63,8 @@ end
 
 community_user_c.context.DELETE = {"community_user", "request_session", "session_user", "user", "user_communities"}
 community_user_c.policies.DELETE = {
-	{"authenticated", "community_user_leave"},
-	{"authenticated", "community_user_kick"},
+	{"authed", "community_user_leave"},
+	{"authed", "community_user_kick"},
 }
 community_user_c.DELETE = function(self)
     self.context.community_user:delete()
@@ -84,7 +84,7 @@ end
 
 community_user_c.context.PATCH = {"community_user", "request_session", "session_user", "user", "user_communities"}
 community_user_c.policies.PATCH = {
-	{"authenticated", "community_user_change_role"},
+	{"authed", "community_user_change_role"},
 }
 community_user_c.validations.PATCH = {
 	{"role", exists = true, type = "string", one_of = Roles.list},

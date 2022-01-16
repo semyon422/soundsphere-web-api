@@ -45,7 +45,7 @@ notecharts_c.GET = function(self)
 end
 
 notecharts_c.context.POST = {"request_session"}
-notecharts_c.policies.POST = {{"authenticated"}}
+notecharts_c.policies.POST = {{"authed"}}
 notecharts_c.validations.POST = {
 	{"notechart_hash", exists = true, type = "string", param_type = "body"},
 	{"notechart_index", exists = true, type = "number", param_type = "body"},

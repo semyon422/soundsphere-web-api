@@ -6,7 +6,7 @@ logout_c.path = "/auth/logout"
 logout_c.methods = {"POST"}
 
 logout_c.context.POST = {"request_session"}
-logout_c.policies.POST = {{"authenticated"}}
+logout_c.policies.POST = {{"authed"}}
 logout_c.POST = function(self)
 	local session = self.context.request_session
 

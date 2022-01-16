@@ -159,8 +159,8 @@ end
 
 community_users_c.context.PATCH = {"request_session", "session_user", "user_communities"}
 community_users_c.policies.PATCH = {
-	{"authenticated", {community_role = "creator"}},
-	{"authenticated", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
+	{"authed", {community_role = "admin"}},
 }
 community_users_c.validations.PATCH = {
 	{"community_users", exists = true, type = "table", param_type = "body"}

@@ -33,9 +33,9 @@ leaderboard_inputmode_c.context.PUT = {
 	set_community_id,
 }
 leaderboard_inputmode_c.policies.PUT = {
-	{"authenticated", {community_role = "moderator"}},
-	{"authenticated", {community_role = "admin"}},
-	{"authenticated", {community_role = "creator"}},
+	{"authed", {community_role = "moderator"}},
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
 }
 leaderboard_inputmode_c.PUT = function(self)
 	local params = self.params
@@ -51,9 +51,9 @@ end
 leaderboard_inputmode_c.context.DELETE = {"leaderboard_requirement"}
 util.get_owner_context("leaderboard", "context", leaderboard_inputmode_c.context.DELETE)
 leaderboard_inputmode_c.policies.DELETE = {
-	{"authenticated", {community_role = "moderator"}},
-	{"authenticated", {community_role = "admin"}},
-	{"authenticated", {community_role = "creator"}},
+	{"authed", {community_role = "moderator"}},
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
 }
 leaderboard_inputmode_c.DELETE = function(self)
     local leaderboard_inputmode = self.context.leaderboard_inputmode

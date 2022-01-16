@@ -20,7 +20,7 @@ community_leaderboard_c.GET = function(self)
 end
 
 community_leaderboard_c.context.PUT = {"community_leaderboard", "request_session"}
-community_leaderboard_c.policies.PUT = {{"authenticated"}}
+community_leaderboard_c.policies.PUT = {{"authed"}}
 community_leaderboard_c.validations.PUT = {
 	{"message", exists = true, type = "string"},
 }
@@ -45,7 +45,7 @@ community_leaderboard_c.PUT = function(self)
 end
 
 community_leaderboard_c.context.DELETE = {"community_leaderboard", "request_session"}
-community_leaderboard_c.policies.DELETE = {{"authenticated"}}
+community_leaderboard_c.policies.DELETE = {{"authed"}}
 community_leaderboard_c.DELETE = function(self)
 	local community_leaderboard = self.context.community_leaderboard
     community_leaderboard:delete()
@@ -54,7 +54,7 @@ community_leaderboard_c.DELETE = function(self)
 end
 
 community_leaderboard_c.context.PATCH = {"community_leaderboard", "request_session"}
-community_leaderboard_c.policies.PATCH = {{"authenticated"}}
+community_leaderboard_c.policies.PATCH = {{"authed"}}
 community_leaderboard_c.PATCH = function(self)
 	local community_leaderboard = self.context.community_leaderboard
 

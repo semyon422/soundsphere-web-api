@@ -71,7 +71,7 @@ communities_c.GET = function(self)
 end
 
 communities_c.context.POST = {"request_session"}
-communities_c.policies.POST = {{"authenticated"}}
+communities_c.policies.POST = {{"authed"}}
 communities_c.validations.POST = {
 	{"community", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},

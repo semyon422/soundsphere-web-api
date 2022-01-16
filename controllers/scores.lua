@@ -48,7 +48,7 @@ scores_c.GET = function(self)
 end
 
 scores_c.context.POST = {"request_session"}
-scores_c.policies.POST = {{"authenticated"}}
+scores_c.policies.POST = {{"authed"}}
 scores_c.validations.POST = {
 	{"replay_hash", exists = true, type = "string", param_type = "body"},
 	{"replay_size", exists = true, type = "number", param_type = "body"},

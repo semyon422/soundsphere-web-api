@@ -70,7 +70,7 @@ leaderboards_c.GET = function(self)
 end
 
 leaderboards_c.context.POST = {"request_session"}
-leaderboards_c.policies.POST = {{"authenticated"}}
+leaderboards_c.policies.POST = {{"authed"}}
 leaderboards_c.validations.POST = {
 	{"community_id", exists = true, type = "number", range = {1}},
 	{"leaderboard", exists = true, type = "table", param_type = "body", validations = {

@@ -43,7 +43,7 @@ files_c.GET = function(self)
 end
 
 files_c.context.POST = {"request_session"}
-files_c.policies.POST = {{"authenticated"}}
+files_c.policies.POST = {{"authed"}}
 files_c.validations.POST = {
 	{"storage", exists = true, type = "string", one_of = Storages.list, default = Storages.list[1]},
 	{"file", is_file = true, param_type = "body"},

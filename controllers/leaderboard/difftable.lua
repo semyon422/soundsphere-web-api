@@ -29,9 +29,9 @@ leaderboard_difftable_c.context.PUT = {
 	set_community_id,
 }
 leaderboard_difftable_c.policies.PUT = {
-	{"authenticated", {community_role = "moderator"}},
-	{"authenticated", {community_role = "admin"}},
-	{"authenticated", {community_role = "creator"}},
+	{"authed", {community_role = "moderator"}},
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
 }
 leaderboard_difftable_c.PUT = function(self)
 	local params = self.params
@@ -47,9 +47,9 @@ end
 leaderboard_difftable_c.context.DELETE = {"leaderboard_difftable"}
 util.get_owner_context("leaderboard", "context", leaderboard_difftable_c.context.DELETE)
 leaderboard_difftable_c.policies.DELETE = {
-	{"authenticated", {community_role = "moderator"}},
-	{"authenticated", {community_role = "admin"}},
-	{"authenticated", {community_role = "creator"}},
+	{"authed", {community_role = "moderator"}},
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
 }
 leaderboard_difftable_c.DELETE = function(self)
     local leaderboard_difftable = self.context.leaderboard_difftable

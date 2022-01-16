@@ -74,7 +74,7 @@ quick_c.GET = function(self)
 end
 
 quick_c.context.POST = {"request_session"}
-quick_c.policies.POST = {{"authenticated"}}
+quick_c.policies.POST = {{"authed"}}
 quick_c.validations.POST = {
 	{"key", exists = true, type = "string"},
 }

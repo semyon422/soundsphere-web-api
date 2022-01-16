@@ -32,7 +32,7 @@ check_c.GET = function(self)
 end
 
 check_c.context.POST = {"request_session"}
-check_c.policies.POST = {{"authenticated"}}
+check_c.policies.POST = {{"authed"}}
 check_c.POST = check_c.GET
 
 return check_c

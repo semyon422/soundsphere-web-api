@@ -48,8 +48,8 @@ end
 
 difftables_c.context.POST = {"request_session", "session_user", "user_communities", set_community_id}
 difftables_c.policies.POST = {
-	{"authenticated", {community_role = "creator"}},
-	{"authenticated", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
+	{"authed", {community_role = "admin"}},
 }
 difftables_c.validations.POST = {
 	{"difftable", exists = true, type = "table", param_type = "body", validations = {

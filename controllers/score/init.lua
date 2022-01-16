@@ -78,7 +78,7 @@ score_c.GET = function(self)
 end
 
 score_c.context.PATCH = {"score", "request_session"}
-score_c.policies.PATCH = {{"authenticated"}}
+score_c.policies.PATCH = {{"authed"}}
 score_c.validations.PATCH = {
 	{"force", type = "boolean", optional = true},
 }
@@ -165,7 +165,7 @@ score_c.PATCH = function(self)
 end
 
 score_c.context.DELETE = {"score", "request_session"}
-score_c.policies.DELETE = {{"authenticated"}}
+score_c.policies.DELETE = {{"authed"}}
 score_c.DELETE = function(self)
 	return {status = 204}
 end

@@ -36,8 +36,8 @@ end
 
 community_c.context.PATCH = {"community", "request_session", "session_user", "user_communities"}
 community_c.policies.PATCH = {
-	{"authenticated", {community_role = "creator"}},
-	{"authenticated", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
+	{"authed", {community_role = "admin"}},
 }
 community_c.validations.PATCH = {
 	{"community", exists = true, type = "table", param_type = "body", validations = {
@@ -77,7 +77,7 @@ end
 
 community_c.context.DELETE = {"community", "request_session", "session_user", "user_communities"}
 community_c.policies.DELETE = {
-	{"authenticated", {community_role = "creator"}},
+	{"authed", {community_role = "creator"}},
 }
 community_c.DELETE = function(self)
 	return {status = 204}

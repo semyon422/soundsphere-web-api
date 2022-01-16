@@ -9,7 +9,7 @@ user_sessions_c.path = "/users/:user_id[%d]/sessions"
 user_sessions_c.methods = {"GET"}
 
 user_sessions_c.context.GET = {"request_session"}
-user_sessions_c.policies.GET = {{"authenticated"}}
+user_sessions_c.policies.GET = {{"authed"}}
 user_sessions_c.validations.GET = {
 	{"show_ip", type = "boolean", optional = true},
 }

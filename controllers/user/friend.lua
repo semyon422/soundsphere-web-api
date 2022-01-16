@@ -7,7 +7,7 @@ user_friend_c.path = "/users/:user_id[%d]/friends/:friend_id[%d]"
 user_friend_c.methods = {"GET", "PUT", "DELETE"}
 
 user_friend_c.context.GET = {"request_session"}
-user_friend_c.policies.GET = {{"authenticated"}}
+user_friend_c.policies.GET = {{"authed"}}
 user_friend_c.GET = function(self)
 	local params = self.params
 
@@ -21,7 +21,7 @@ user_friend_c.GET = function(self)
 end
 
 user_friend_c.context.PUT = {"request_session"}
-user_friend_c.policies.PUT = {{"authenticated"}}
+user_friend_c.policies.PUT = {{"authed"}}
 user_friend_c.PUT = function(self)
 	local params = self.params
 
@@ -31,7 +31,7 @@ user_friend_c.PUT = function(self)
 end
 
 user_friend_c.context.DELETE = {"request_session"}
-user_friend_c.policies.DELETE = {{"authenticated"}}
+user_friend_c.policies.DELETE = {{"authed"}}
 user_friend_c.DELETE = function(self)
 	local params = self.params
 	User_relations:unrelate("friend", params.user_id, params.friend_id)

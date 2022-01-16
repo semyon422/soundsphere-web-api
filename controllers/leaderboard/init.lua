@@ -47,9 +47,9 @@ end
 
 leaderboard_c.context.PATCH = util.get_owner_context("leaderboard", "context")
 leaderboard_c.policies.PATCH = {
-	{"authenticated", {community_role = "moderator"}},
-	{"authenticated", {community_role = "admin"}},
-	{"authenticated", {community_role = "creator"}},
+	{"authed", {community_role = "moderator"}},
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
 }
 leaderboard_c.validations.PATCH = {
 	{"leaderboard", type = "table", param_type = "body", validations = {
@@ -105,8 +105,8 @@ end
 
 leaderboard_c.context.DELETE = util.get_owner_context("leaderboard", "context")
 leaderboard_c.policies.DELETE = {
-	{"authenticated", {community_role = "admin"}},
-	{"authenticated", {community_role = "creator"}},
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
 }
 leaderboard_c.DELETE = function(self)
 	return {status = 204}

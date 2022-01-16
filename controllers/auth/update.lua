@@ -10,7 +10,7 @@ update_c.path = "/auth/update"
 update_c.methods = {"POST"}
 
 update_c.context.POST = {"request_session"}
-update_c.policies.POST = {{"authenticated"}}
+update_c.policies.POST = {{"authed"}}
 update_c.POST = function(self)
 	local session = self.context.request_session
 

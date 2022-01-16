@@ -39,13 +39,13 @@ file_c.GET = function(self)
 end
 
 file_c.context.DELETE = {"file", "request_session"}
-file_c.policies.DELETE = {{"authenticated"}}
+file_c.policies.DELETE = {{"authed"}}
 file_c.DELETE = function(self)
 	return {status = 204}
 end
 
 file_c.context.PUT = {"file", "request_session"}
-file_c.policies.PUT = {{"authenticated"}}
+file_c.policies.PUT = {{"authed"}}
 file_c.validations.PUT = {
 	{"force", type = "boolean", optional = true},
 	{"file", is_file = true, param_type = "body"},

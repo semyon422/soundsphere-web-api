@@ -62,9 +62,9 @@ end
 
 leaderboard_difftables_c.context.PATCH = util.get_owner_context("leaderboard", "context")
 leaderboard_difftables_c.policies.PATCH = {
-	{"authenticated", {community_role = "moderator"}},
-	{"authenticated", {community_role = "admin"}},
-	{"authenticated", {community_role = "creator"}},
+	{"authed", {community_role = "moderator"}},
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
 }
 leaderboard_difftables_c.validations.PATCH = {
 	{"leaderboard_difftables", exists = true, type = "table", param_type = "body"}

@@ -34,9 +34,9 @@ difftable_notechart_c.context.PUT = {
 	set_community_id,
 }
 difftable_notechart_c.policies.PUT = {
-	{"authenticated", {community_role = "moderator"}},
-	{"authenticated", {community_role = "admin"}},
-	{"authenticated", {community_role = "creator"}},
+	{"authed", {community_role = "moderator"}},
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
 }
 difftable_notechart_c.validations.PUT = {
 	{"difficulty", type = "number", optional = true},
@@ -73,9 +73,9 @@ end
 
 difftable_notechart_c.context.PATCH = {"difftable", "notechart", "difftable_notechart", "request_session", "session_user", "user_communities", set_community_id}
 difftable_notechart_c.policies.PATCH = {
-	{"authenticated", {community_role = "moderator"}},
-	{"authenticated", {community_role = "admin"}},
-	{"authenticated", {community_role = "creator"}},
+	{"authed", {community_role = "moderator"}},
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
 }
 difftable_notechart_c.validations.PATCH = {
 	{"difficulty", type = "number", optional = true},
@@ -92,9 +92,9 @@ end
 
 difftable_notechart_c.context.DELETE = {"difftable", "notechart", "difftable_notechart", "request_session", "session_user", "user_communities", set_community_id}
 difftable_notechart_c.policies.DELETE = {
-	{"authenticated", {community_role = "moderator"}},
-	{"authenticated", {community_role = "admin"}},
-	{"authenticated", {community_role = "creator"}},
+	{"authed", {community_role = "moderator"}},
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
 }
 difftable_notechart_c.DELETE = function(self)
 	local params = self.params
