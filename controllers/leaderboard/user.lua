@@ -16,8 +16,9 @@ leaderboard_user_c.GET = function(self)
 	return {json = {leaderboard_user = leaderboard_user}}
 end
 
-leaderboard_user_c.context.PATCH = {"leaderboard_user", "request_session"}
-leaderboard_user_c.policies.PATCH = {{"context_loaded", "authenticated"}}
+leaderboard_user_c.context.PATCH, leaderboard_user_c.policies.PATCH =
+util.get_owner_context_and_policies("leaderboard", "context", {"moderator", "admin", "creator"})
+table.insert(leaderboard_user_c.context.PATCH, 1, "leaderboard_user")
 leaderboard_user_c.validations.PATCH = {
 	{"active", type = "boolean", optional = true},
 }

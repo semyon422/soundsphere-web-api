@@ -9,16 +9,17 @@ local leaderboard_requirement_c = Controller:new()
 leaderboard_requirement_c.path = "/leaderboards/:leaderboard_id[%d]/requirements/:requirement_id[%d]"
 leaderboard_requirement_c.methods = {"GET", "PATCH", "DELETE"}
 
-leaderboard_requirement_c.context.GET = {"leaderboard_requirement", "request_session"}
-leaderboard_requirement_c.policies.GET = {{"context_loaded", "authenticated"}}
+leaderboard_requirement_c.context.GET = {"leaderboard_requirement"}
+leaderboard_requirement_c.policies.GET = {{"context_loaded"}}
 leaderboard_requirement_c.GET = function(self)
     local leaderboard_requirement = self.context.leaderboard_requirement
 
 	return {json = {leaderboard_requirement = leaderboard_requirement:to_name()}}
 end
 
-leaderboard_requirement_c.context.PATCH = {"leaderboard_requirement", "request_session"}
-leaderboard_requirement_c.policies.PATCH = {{"context_loaded", "authenticated"}}
+leaderboard_requirement_c.context.PATCH, leaderboard_requirement_c.policies.PATCH =
+util.get_owner_context_and_policies("leaderboard", "context", {"moderator", "admin", "creator"})
+table.insert(leaderboard_requirement_c.context.PATCH, 1, "leaderboard_requirement")
 leaderboard_requirement_c.validations.PATCH = {
 	{"leaderboard_requirement", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string", one_of = Requirements.list},
@@ -43,8 +44,8 @@ leaderboard_requirement_c.PATCH = function(self)
 	return {json = {leaderboard_requirement = requirement:to_name()}}
 end
 
-leaderboard_requirement_c.context.DELETE = {"leaderboard_requirement", "request_session"}
-leaderboard_requirement_c.policies.DELETE = {{"context_loaded", "authenticated"}}
+leaderboard_requirement_c.context.DELETE = leaderboard_requirement_c.context.PATCH
+leaderboard_requirement_c.policies.DELETE = leaderboard_requirement_c.policies.PATCH
 leaderboard_requirement_c.DELETE = function(self)
     local requirement = self.context.leaderboard_requirement
     requirement:delete()

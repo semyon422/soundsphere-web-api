@@ -45,8 +45,8 @@ leaderboard_c.GET = function(self)
 	return {json = {leaderboard = leaderboard:to_name()}}
 end
 
-leaderboard_c.context.PATCH = {"leaderboard", "request_session"}
-leaderboard_c.policies.PATCH = {{"context_loaded", "authenticated"}}
+leaderboard_c.context.PATCH, leaderboard_c.policies.PATCH =
+util.get_owner_context_and_policies("leaderboard", "context", {"moderator", "admin", "creator"})
 leaderboard_c.validations.PATCH = {
 	{"leaderboard", type = "table", param_type = "body", validations = {
 		{"name", type = "string"},
@@ -97,6 +97,12 @@ leaderboard_c.PATCH = function(self)
 	util.recursive_to_name(leaderboard)
 
 	return {json = {leaderboard = leaderboard}}
+end
+
+leaderboard_c.context.DELETE, leaderboard_c.policies.DELETE =
+util.get_owner_context_and_policies("leaderboard", "context", {"admin", "creator"})
+leaderboard_c.DELETE = function(self)
+	return {status = 204}
 end
 
 return leaderboard_c

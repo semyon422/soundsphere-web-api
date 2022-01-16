@@ -60,7 +60,8 @@ leaderboard_difftables_c.GET = function(self)
 	}}
 end
 
-leaderboard_difftables_c.policies.PATCH = {{"permit"}}
+leaderboard_difftables_c.context.PATCH, leaderboard_difftables_c.policies.PATCH =
+util.get_owner_context_and_policies("leaderboard", "context", {"moderator", "admin", "creator"})
 leaderboard_difftables_c.validations.PATCH = {
 	{"leaderboard_difftables", exists = true, type = "table", param_type = "body"}
 }

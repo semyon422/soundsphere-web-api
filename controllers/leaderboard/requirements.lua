@@ -98,8 +98,8 @@ leaderboard_requirements_c.GET = function(self)
 	}}
 end
 
-leaderboard_requirements_c.context.PATCH = {"request_session"}
-leaderboard_requirements_c.policies.PATCH = {{"authenticated"}}
+leaderboard_requirements_c.context.PATCH, leaderboard_requirements_c.policies.PATCH =
+util.get_owner_context_and_policies("leaderboard", "context", {"moderator", "admin", "creator"})
 leaderboard_requirements_c.validations.PATCH = {
 	{"leaderboard_requirements", exists = true, type = "table", param_type = "body"},
 }
@@ -117,8 +117,8 @@ leaderboard_requirements_c.PATCH = function(self)
 	}}
 end
 
-leaderboard_requirements_c.context.POST = {"request_session"}
-leaderboard_requirements_c.policies.POST = {{"authenticated"}}
+leaderboard_requirements_c.context.POST = leaderboard_requirements_c.context.PATCH
+leaderboard_requirements_c.policies.POST = leaderboard_requirements_c.policies.PATCH
 leaderboard_requirements_c.validations.POST = {
 	{"requirement", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string", one_of = Requirements.list},
