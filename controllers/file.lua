@@ -68,11 +68,6 @@ file_c.PUT = function(self)
 		return {status = 204}
 	end
 
-	local size = #params.file.content
-	if size ~= file.size then
-		return {status = 400, json = {message = "Wrong file size"}}
-	end
-
 	local hash = Filehash:sum_for_db(params.file.content)
 	if hash ~= file.hash then
 		return {status = 400, json = {message = "Wrong file hash"}}
