@@ -46,16 +46,25 @@ files_c.context.POST = {"request_session"}
 files_c.policies.POST = {{"authed"}}
 files_c.validations.POST = {
 	{"storage", exists = true, type = "string", one_of = Storages.list, default = Storages.list[1]},
-	{"file", is_file = true, param_type = "body"},
+	{"file", is_file = true, param_type = "body", optional = true},
+	{"hash", exists = true, type = "string", param_type = "body", optional = true},
+	{"size", exists = true, type = "number", param_type = "body", optional = true},
 }
 files_c.POST = function(self)
 	local params = self.params
 
-	local hash = Filehash:sum_for_db(params.file.content)
+	local hash = params.hash and Filehash:sum_for_db(params.hash)
+	local size = params.size
+	if params.file then
+		hash = Filehash:sum_for_db(params.file.content)
+		size = #params.file.content
+	end
 
-	local file = Files:find({
-		hash = hash
-	})
+	if not hash or not size then
+		return {status = 200, json = {message = "Missing file or hash and size"}}
+	end
+
+	local file = Files:find({hash = hash})
 	if file then
 		return {
 			status = 200,
@@ -68,11 +77,14 @@ files_c.POST = function(self)
 		name = params.file.filename,
 		format = Formats:get_format_for_db(params.file.filename),
 		storage = Storages:for_db(params.storage),
-		uploaded = true,
-		size = #params.file.content,
+		uploaded = params.file ~= nil,
+		size = size,
 		loaded = false,
 		created_at = os.time(),
 	})
+	if not Files:exists(file) then
+		Files:write_file(file, params.file.content)
+	end
 
 	return {status = 201, redirect_to = self:url_for(file)}
 end

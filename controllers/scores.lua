@@ -76,6 +76,10 @@ scores_c.POST = function(self)
 			loaded = false,
 			created_at = created_at,
 		})
+		if Files:exists(notechart_file) then
+			notechart_file.uploaded = true
+			notechart_file:update("uploaded")
+		end
 	end
 
 	local notechart = Notecharts:find({
@@ -115,6 +119,11 @@ scores_c.POST = function(self)
 		loaded = false,
 		created_at = created_at,
 	})
+	if Files:exists(replay_file) then
+		replay_file.uploaded = true
+		replay_file:update("uploaded")
+	end
+
 	local score = Scores:create({
 		user_id = self.session.user_id,
 		notechart_id = notechart.id,

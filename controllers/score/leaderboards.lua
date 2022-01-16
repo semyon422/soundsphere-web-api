@@ -135,13 +135,14 @@ util.add_belongs_to_validations(Leaderboard_scores.relations, score_leaderboards
 score_leaderboards_c.GET = function(self)
 	local params = self.params
 
-	local score_leaderboards, leaderboards
+	local leaderboard_scores, leaderboards
 	if params.available then
 		leaderboards = score_leaderboards_c.get_available(self)
 	else
-		score_leaderboards = self.context.score:get_leaderboard_scores()
+		leaderboard_scores = self.context.score:get_leaderboard_scores()
+		self.context.score.leaderboard_scores = nil
 	end
-	local objects = score_leaderboards or leaderboards
+	local objects = leaderboard_scores or leaderboards
 
 	if params.no_data then
 		return {json = {
@@ -150,8 +151,8 @@ score_leaderboards_c.GET = function(self)
 		}}
 	end
 
-	if score_leaderboards then
-		preload(score_leaderboards, util.get_relatives_preload(Leaderboard_scores, params))
+	if leaderboard_scores then
+		preload(leaderboard_scores, util.get_relatives_preload(Leaderboard_scores, params))
 	elseif leaderboards then
 		preload(leaderboards, util.get_relatives_preload(Leaderboards, params))
 	end
@@ -160,7 +161,7 @@ score_leaderboards_c.GET = function(self)
 	return {json = {
 		total = #objects,
 		filtered = #objects,
-		score_leaderboards = score_leaderboards,
+		leaderboard_scores = leaderboard_scores,
 		leaderboards = leaderboards,
 	}}
 end

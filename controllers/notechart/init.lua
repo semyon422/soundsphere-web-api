@@ -46,10 +46,14 @@ notechart_c.validations.PATCH = {
 notechart_c.PATCH = function(self)
 	local params = self.params
 	local notechart = self.context.notechart
-	local notechart_file = notechart:get_file()
 
 	if notechart.is_valid and not params.force then
 		return {status = 204}
+	end
+
+	local notechart_file = notechart:get_file()
+	if not notechart_file.uploaded then
+		return {status = 400, json = {message = "not notechart_file.uploaded"}}
 	end
 
 	local body, status_code, headers = http.simple({

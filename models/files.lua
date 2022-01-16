@@ -49,6 +49,15 @@ function Files:get_path(file)
 	return "storages/" .. storage .. "/" .. hash
 end
 
+function Files:exists(file)
+	local f = io.open(self:get_path(file), "r")
+	if f then
+		io.close(f)
+		return true
+	end
+	return false
+end
+
 function Files:write_file(file, content)
 	local path = self:get_path(file)
 	local f = assert(io.open(path, "wb"))

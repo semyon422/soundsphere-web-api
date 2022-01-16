@@ -32,7 +32,6 @@ score_c.update_stats = function(score)
 	local top_score = Scores:find(new_top_score)
 	if not top_score then
 		user.notecharts_count = user.notecharts_count + 1
-		score_c.update_difftables(score)
 	end
 	if not top_score or score.rating > top_score.rating then
 		score.is_top = true
@@ -95,8 +94,16 @@ score_c.PATCH = function(self)
 		return {status = 204}
 	end
 
-	local replay_file = score:get_file()
 	local notechart = score:get_notechart()
+	if not notechart.is_valid then
+		return {status = 400, json = {message = "not notechart.is_valid"}}
+	end
+
+	local replay_file = score:get_file()
+	if not replay_file.uploaded then
+		return {status = 400, json = {message = "not replay_file.uploaded"}}
+	end
+
 	local notechart_file = notechart:get_file()
 
 	local body, status_code, headers = http.simple({
