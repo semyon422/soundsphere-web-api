@@ -20,11 +20,18 @@ leaderboard_difftable_c.GET = function(self)
 	return {json = {leaderboard_difftable = self.context.leaderboard_difftable}}
 end
 
-leaderboard_difftable_c.context.PUT = {"leaderboard_difftable", "leaderboard", "request_session", "session_user", "user_communities", set_community_id}
+leaderboard_difftable_c.context.PUT = {
+	{"leaderboard_difftable", missing = true},
+	"leaderboard",
+	"request_session",
+	"session_user",
+	"user_communities",
+	set_community_id,
+}
 leaderboard_difftable_c.policies.PUT = {
-	{{not_context = "leaderboard_difftable"}, {context = "request_session"}, "authenticated", {community_role = "moderator"}},
-	{{not_context = "leaderboard_difftable"}, {context = "request_session"}, "authenticated", {community_role = "admin"}},
-	{{not_context = "leaderboard_difftable"}, {context = "request_session"}, "authenticated", {community_role = "creator"}},
+	{"authenticated", {community_role = "moderator"}},
+	{"authenticated", {community_role = "admin"}},
+	{"authenticated", {community_role = "creator"}},
 }
 leaderboard_difftable_c.PUT = function(self)
 	local params = self.params
@@ -37,9 +44,13 @@ leaderboard_difftable_c.PUT = function(self)
 	return {json = {leaderboard_difftable = leaderboard_difftable}}
 end
 
-leaderboard_difftable_c.context.DELETE, leaderboard_difftable_c.policies.DELETE =
-util.get_owner_context_and_policies("leaderboard", "context", {"moderator", "admin", "creator"})
-table.insert(leaderboard_difftable_c.context.DELETE, 1, "leaderboard_difftable")
+leaderboard_difftable_c.context.DELETE = {"leaderboard_difftable"}
+util.get_owner_context("leaderboard", "context", leaderboard_difftable_c.context.DELETE)
+leaderboard_difftable_c.policies.DELETE = {
+	{"authenticated", {community_role = "moderator"}},
+	{"authenticated", {community_role = "admin"}},
+	{"authenticated", {community_role = "creator"}},
+}
 leaderboard_difftable_c.DELETE = function(self)
     local leaderboard_difftable = self.context.leaderboard_difftable
     leaderboard_difftable:delete()

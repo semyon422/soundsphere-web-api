@@ -32,7 +32,7 @@ user_c.GET = function(self)
 end
 
 user_c.context.PATCH = {"user", "request_session"}
-user_c.policies.PATCH = {{"context_loaded", "authenticated"}}
+user_c.policies.PATCH = {{"authenticated"}}
 user_c.validations.PATCH = {
 	{"user", type = "table", param_type = "body", validations = {
 		{"name", type = "string"},
@@ -52,7 +52,7 @@ user_c.PATCH = function(self)
 end
 
 user_c.context.DELETE = {"user", "request_session"}
-user_c.policies.DELETE = {{"context_loaded", "authenticated"}}
+user_c.policies.DELETE = {{"authenticated"}}
 user_c.DELETE = function(self)
 	return {status = 204}
 end

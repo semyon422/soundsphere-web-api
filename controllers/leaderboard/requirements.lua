@@ -98,8 +98,12 @@ leaderboard_requirements_c.GET = function(self)
 	}}
 end
 
-leaderboard_requirements_c.context.PATCH, leaderboard_requirements_c.policies.PATCH =
-util.get_owner_context_and_policies("leaderboard", "context", {"moderator", "admin", "creator"})
+leaderboard_requirements_c.context.PATCH = util.get_owner_context("leaderboard", "context")
+leaderboard_requirements_c.policies.PATCH = {
+	{"authenticated", {community_role = "moderator"}},
+	{"authenticated", {community_role = "admin"}},
+	{"authenticated", {community_role = "creator"}},
+}
 leaderboard_requirements_c.validations.PATCH = {
 	{"leaderboard_requirements", exists = true, type = "table", param_type = "body"},
 }

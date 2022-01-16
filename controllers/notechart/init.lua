@@ -34,7 +34,7 @@ notechart_c.GET = function(self)
 end
 
 notechart_c.context.PATCH = {"notechart", "request_session"}
-notechart_c.policies.PATCH = {{"context_loaded", "authenticated"}}
+notechart_c.policies.PATCH = {{"authenticated"}}
 notechart_c.validations.PATCH = {
 	{"force", type = "boolean", optional = true}
 }

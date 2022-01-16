@@ -24,11 +24,18 @@ leaderboard_inputmode_c.GET = function(self)
 	return {json = {leaderboard_inputmode = self.context.leaderboard_inputmode:to_name()}}
 end
 
-leaderboard_inputmode_c.context.PUT = {"leaderboard_inputmode", "leaderboard", "request_session", "session_user", "user_communities", set_community_id}
+leaderboard_inputmode_c.context.PUT = {
+	{"leaderboard_inputmode", missing = true},
+	"leaderboard",
+	"request_session",
+	"session_user",
+	"user_communities",
+	set_community_id,
+}
 leaderboard_inputmode_c.policies.PUT = {
-	{{not_context = "leaderboard_inputmode"}, {context = "request_session"}, "authenticated", {community_role = "moderator"}},
-	{{not_context = "leaderboard_inputmode"}, {context = "request_session"}, "authenticated", {community_role = "admin"}},
-	{{not_context = "leaderboard_inputmode"}, {context = "request_session"}, "authenticated", {community_role = "creator"}},
+	{"authenticated", {community_role = "moderator"}},
+	{"authenticated", {community_role = "admin"}},
+	{"authenticated", {community_role = "creator"}},
 }
 leaderboard_inputmode_c.PUT = function(self)
 	local params = self.params
@@ -41,9 +48,13 @@ leaderboard_inputmode_c.PUT = function(self)
 	return {json = {leaderboard_inputmode = leaderboard_inputmode:to_name()}}
 end
 
-leaderboard_inputmode_c.context.DELETE, leaderboard_inputmode_c.policies.DELETE =
-util.get_owner_context_and_policies("leaderboard", "context", {"moderator", "admin", "creator"})
-table.insert(leaderboard_inputmode_c.context.DELETE, 1, "leaderboard_requirement")
+leaderboard_inputmode_c.context.DELETE = {"leaderboard_requirement"}
+util.get_owner_context("leaderboard", "context", leaderboard_inputmode_c.context.DELETE)
+leaderboard_inputmode_c.policies.DELETE = {
+	{"authenticated", {community_role = "moderator"}},
+	{"authenticated", {community_role = "admin"}},
+	{"authenticated", {community_role = "creator"}},
+}
 leaderboard_inputmode_c.DELETE = function(self)
     local leaderboard_inputmode = self.context.leaderboard_inputmode
     leaderboard_inputmode:delete()

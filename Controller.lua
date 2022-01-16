@@ -17,7 +17,7 @@ end
 
 Controller.check_access = function(self, request, method)
 	method = method or request.req.method
-	if not self[method] then
+	if not self[method] or not request.context.loaded[method] then
 		return
 	end
 	local methods = self.permited_methods
@@ -28,7 +28,8 @@ end
 Controller.load_context = function(self, request, method)
 	method = method or request.req.method
 	if not self[method] or not self.context[method] then
-		return true
+		request.context.loaded[method] = true
+		return
 	end
 	local loaded = true
 	for _, name in ipairs(self.context[method]) do
@@ -38,6 +39,13 @@ Controller.load_context = function(self, request, method)
 		elseif type(name) == "function" then
 			local status, res = pcall(name, request)
 			result = status and res
+		elseif type(name) == "table" then
+			result = context_loaders[name[1]](request)
+			if name.missing then
+				result = not result
+			elseif name.optional then
+				result = true
+			end
 		end
 		loaded = loaded and result
 	end

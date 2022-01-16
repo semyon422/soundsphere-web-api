@@ -10,7 +10,7 @@ file_c.path = "/files/:file_id[%d]"
 file_c.methods = {"GET", "PUT", "DELETE"}
 
 file_c.context.GET = {"file"}
-file_c.policies.GET = {{"context_loaded"}}
+file_c.policies.GET = {{"permit"}}
 file_c.validations.GET = {
 	{"download", type = "boolean", optional = true},
 }
@@ -39,13 +39,13 @@ file_c.GET = function(self)
 end
 
 file_c.context.DELETE = {"file", "request_session"}
-file_c.policies.DELETE = {{"context_loaded", "authenticated"}}
+file_c.policies.DELETE = {{"authenticated"}}
 file_c.DELETE = function(self)
 	return {status = 204}
 end
 
 file_c.context.PUT = {"file", "request_session"}
-file_c.policies.PUT = {{"context_loaded", "authenticated"}}
+file_c.policies.PUT = {{"authenticated"}}
 file_c.validations.PUT = {
 	{"force", type = "boolean", optional = true},
 	{"file", is_file = true, param_type = "body"},

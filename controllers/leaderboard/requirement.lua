@@ -17,9 +17,13 @@ leaderboard_requirement_c.GET = function(self)
 	return {json = {leaderboard_requirement = leaderboard_requirement:to_name()}}
 end
 
-leaderboard_requirement_c.context.PATCH, leaderboard_requirement_c.policies.PATCH =
-util.get_owner_context_and_policies("leaderboard", "context", {"moderator", "admin", "creator"})
-table.insert(leaderboard_requirement_c.context.PATCH, 1, "leaderboard_requirement")
+leaderboard_requirement_c.context.PATCH = {"leaderboard_requirement"}
+util.get_owner_context("leaderboard", "context", leaderboard_requirement_c.context.PATCH)
+leaderboard_requirement_c.policies.PATCH = {
+	{"authenticated", {community_role = "moderator"}},
+	{"authenticated", {community_role = "admin"}},
+	{"authenticated", {community_role = "creator"}},
+}
 leaderboard_requirement_c.validations.PATCH = {
 	{"leaderboard_requirement", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string", one_of = Requirements.list},

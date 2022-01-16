@@ -36,8 +36,8 @@ end
 
 difftable_c.context.PATCH = {"difftable", "request_session", "session_user", "user_communities", set_community_id}
 difftable_c.policies.PATCH = {
-	{"context_loaded", "authenticated", {community_role = "admin"}},
-	{"context_loaded", "authenticated", {community_role = "creator"}},
+	{"authenticated", {community_role = "admin"}},
+	{"authenticated", {community_role = "creator"}},
 }
 difftable_c.validations.PATCH = {
 	{"difftable", exists = true, type = "table", param_type = "body", validations = {
@@ -63,8 +63,8 @@ end
 
 difftable_c.context.DELETE = {"difftable", "request_session", "session_user", "user_communities", set_community_id}
 difftable_c.policies.DELETE = {
-	{"context_loaded", "authenticated", {community_role = "admin"}},
-	{"context_loaded", "authenticated", {community_role = "creator"}},
+	{"authenticated", {community_role = "admin"}},
+	{"authenticated", {community_role = "creator"}},
 }
 difftable_c.DELETE = function(self)
 	return {status = 204}

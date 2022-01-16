@@ -369,7 +369,7 @@ score_leaderboards_c.insert_score = function(score, leaderboard)
 end
 
 score_leaderboards_c.context.PUT = {"score", "request_session"}
-score_leaderboards_c.policies.PUT = {{"context_loaded", "authenticated"}}
+score_leaderboards_c.policies.PUT = {{"authenticated"}}
 score_leaderboards_c.validations.PUT = {
 	{"force", type = "boolean", optional = true},
 }
