@@ -11,10 +11,10 @@ return function(a, b)
 	then
 		return "deny"
 	end
-	if a == "permit" and b == "deny" then
+	if a == "permit" and b == "deny" or a == "permit" and b == "permit" then
 		return "permit"
 	end
-	if a == "deny" and b == "permit" then
+	if a == "deny" and b == "permit" or a == "deny" and b == "deny" then
 		return "deny"
 	end
 	if a == "not_applicable" and b == "not_applicable" then
