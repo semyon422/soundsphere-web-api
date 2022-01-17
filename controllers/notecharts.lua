@@ -5,6 +5,7 @@ local Inputmodes = require("enums.inputmodes")
 local Filehash = require("util.filehash")
 local Controller = require("Controller")
 local Files = require("models.files")
+local Ranked_caches = require("models.ranked_caches")
 local util = require("util")
 local preload = require("lapis.db.model").preload
 
@@ -44,9 +45,65 @@ notecharts_c.GET = function(self)
 	}}
 end
 
-notecharts_c.context.POST = {"request_session"}
-notecharts_c.policies.POST = {{"authed"}}
+notecharts_c.check_notechart = function(self, hash, format, trusted)
+	local created_at = os.time()
+	local hash_for_db = Filehash:for_db(hash)
+	local format_for_db = Formats:for_db(format)
+	local ranked_cache = Ranked_caches:find({hash = hash_for_db, format = format_for_db})
+	if not ranked_cache then
+		if trusted then
+			return true
+		end
+		local exists, ranked = Ranked_caches:check(hash, format)
+		if not ranked then
+			local delay = exists and 3600 * 24 or 3600 * 24 * 7
+			ranked_cache = Ranked_caches:create({
+				hash = hash_for_db,
+				format = format_for_db,
+				exists = exists,
+				ranked = false,
+				created_at = created_at,
+				expires_at = created_at + delay,
+				user_id = self.session.user_id,
+			})
+			return false, "Untrusted notechart"
+		end
+	else
+		if not trusted and not ranked_cache.ranked then
+			if ranked_cache.expires_at > created_at then
+				return false, "Untrusted notechart (cached)"
+			else
+				local exists, ranked = Ranked_caches:check(hash, format)
+				if not ranked then
+					local delay = exists and 3600 * 24 or 3600 * 24 * 7
+					ranked_cache.expires_at = created_at + delay
+					ranked_cache.exists = exists
+					ranked_cache:update("expires_at", "exists")
+					return false, "Untrusted notechart"
+				end
+			end
+		end
+		local ranked_caches = Ranked_caches:find_all({hash_for_db}, "hash")
+		for _, current_ranked_cache in ipairs(ranked_caches) do
+			if current_ranked_cache.format ~= format_for_db then
+				local user_id = current_ranked_cache.user_id
+				-- ban(user_id)
+			end
+			current_ranked_cache:delete()
+		end
+	end
+	return true
+end
+
+notecharts_c.context.POST = {"request_session", "session_user", "user_roles"}
+notecharts_c.policies.POST = {
+	{"authed", {not_params = "trusted"}},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
 notecharts_c.validations.POST = {
+	{"trusted", type = "boolean", optional = true},
 	{"notechart_hash", exists = true, type = "string", param_type = "body"},
 	{"notechart_index", exists = true, type = "number", param_type = "body"},
 	{"notechart_filename", exists = true, type = "string", param_type = "body"},
@@ -56,15 +113,26 @@ notecharts_c.POST = function(self)
 	local params = self.params
 
 	local created_at = os.time()
+	local hash_for_db = Filehash:for_db(params.notechart_hash)
+	local format_for_db = Formats:get_format_for_db(params.notechart_filename)
+	local format = Formats:to_name(format_for_db)
 
-	local notechart_file = Files:find({
-		hash = Filehash:for_db(params.notechart_hash)
-	})
+	local notechart_file = Files:find({hash = hash_for_db})
 	if not notechart_file then
+		local trusted, message = notecharts_c.check_notechart(
+			self,
+			params.notechart_hash,
+			format,
+			params.trusted
+		)
+		if not trusted then
+			return {status = 400, json = {message = message}}
+		end
+
 		notechart_file = Files:create({
-			hash = Filehash:for_db(params.notechart_hash),
+			hash = hash_for_db,
 			name = params.notechart_filename,
-			format = Formats:get_format_for_db(params.notechart_filename),
+			format = format_for_db,
 			storage = Storages:for_db("notecharts"),
 			uploaded = false,
 			size = params.notechart_filesize,

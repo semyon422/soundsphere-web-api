@@ -61,4 +61,6 @@ return {
 	"score.leaderboards",
 	"files",
 	"file",
+	"ranked_caches",
+	"ranked_cache",
 }

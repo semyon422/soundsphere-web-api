@@ -29,6 +29,7 @@ local tables = {
 	"scores",
 	"sessions",
 	"quick_logins",
+	"ranked_caches",
 }
 
 local table_declarations = {}
@@ -361,6 +362,25 @@ table_declarations.quick_logins = {
 	{"user_id", types.fk_id},
 	{"complete", types.boolean},
 	"KEY `ip` (`ip`)",
+	"KEY `key` (`key`)",
+	"KEY `user_id` (`user_id`)",
+}
+
+table_declarations.ranked_caches = {
+	{"id", types.id},
+	{"hash", types.md5_hash},
+	{"format", types.enum},
+	{"exists", types.boolean},
+	{"ranked", types.boolean},
+	{"created_at", types.time},
+	{"expires_at", types.time},
+	{"user_id", types.fk_id},
+	"KEY `hash` (`hash`)",
+	"KEY `format` (`format`)",
+	"KEY `exists` (`exists`)",
+	"KEY `ranked` (`ranked`)",
+	"KEY `created_at` (`created_at`)",
+	"KEY `expires_at` (`expires_at`)",
 	"KEY `user_id` (`user_id`)",
 }
 

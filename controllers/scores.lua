@@ -8,6 +8,7 @@ local Filehash = require("util.filehash")
 local Inputmodes = require("enums.inputmodes")
 local util = require("util")
 local preload = require("lapis.db.model").preload
+local notecharts_c = require("controllers.notecharts")
 
 local scores_c = Controller:new()
 
@@ -47,9 +48,15 @@ scores_c.GET = function(self)
 	}
 end
 
-scores_c.context.POST = {"request_session"}
-scores_c.policies.POST = {{"authed"}}
+scores_c.context.POST = {"request_session", "session_user", "user_roles"}
+scores_c.policies.POST = {
+	{"authed", {not_params = "trusted"}},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
 scores_c.validations.POST = {
+	{"trusted", type = "boolean", optional = true},
 	{"replay_hash", exists = true, type = "string", param_type = "body"},
 	{"replay_size", exists = true, type = "number", param_type = "body"},
 	{"notechart_hash", exists = true, type = "string", param_type = "body"},
@@ -61,13 +68,26 @@ scores_c.POST = function(self)
 	local params = self.params
 
 	local created_at = os.time()
+	local hash_for_db = Filehash:for_db(params.notechart_hash)
+	local format_for_db = Formats:get_format_for_db(params.notechart_filename)
+	local format = Formats:to_name(format_for_db)
 
 	local notechart_file = Files:find({
-		hash = Filehash:for_db(params.notechart_hash)
+		hash = hash_for_db
 	})
 	if not notechart_file then
+		local trusted, message = notecharts_c.check_notechart(
+			self,
+			params.notechart_hash,
+			format,
+			params.trusted
+		)
+		if not trusted then
+			return {status = 400, json = {message = message}}
+		end
+
 		notechart_file = Files:create({
-			hash = Filehash:for_db(params.notechart_hash),
+			hash = hash_for_db,
 			name = params.notechart_filename,
 			format = Formats:get_format_for_db(params.notechart_filename),
 			storage = Storages:for_db("notecharts"),
