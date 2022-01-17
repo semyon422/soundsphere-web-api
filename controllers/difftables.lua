@@ -47,6 +47,10 @@ local set_community_id = function(self)
 end
 
 difftables_c.context.POST = {"request_session", "session_user", "user_communities", set_community_id}
+difftables_c.display_policies.POST = {
+	{"authed", {any_community_role = "creator"}},
+	{"authed", {any_community_role = "admin"}},
+}
 difftables_c.policies.POST = {
 	{"authed", {community_role = "creator"}},
 	{"authed", {community_role = "admin"}},

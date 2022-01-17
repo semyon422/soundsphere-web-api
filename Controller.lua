@@ -9,19 +9,24 @@ Controller.new = function(self)
 		methods = {},
 		context = {},
 		policies = {},
+		display_policies = {},
 		validations = {},
 		params = {},
 		permited_methods = {},
 	}, {__index = self})
 end
 
-Controller.check_access = function(self, request, method)
+Controller.check_access = function(self, request, method, display)
 	method = method or request.req.method
 	if not self[method] or not request.context.loaded[method] then
 		return
 	end
 	local methods = self.permited_methods
-	methods[method] = methods[method] or pep:check(request, self.policies[method])
+	methods[method] =
+		methods[method] or
+		(display and pep:check(request, self.display_policies[method])) or
+		pep:check(request, self.policies[method])
+
 	return methods[method]
 end
 

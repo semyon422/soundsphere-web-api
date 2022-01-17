@@ -137,20 +137,12 @@ local function get_permited_methods(self, controller)
 	for _, method in ipairs(controller.methods) do
 		local req_method = self.req.method
 		self.req.method = method
-		if controller:check_access(self, method) then
+		if controller:check_access(self, method, true) then
 			table.insert(methods, method)
 		end
 		self.req.method = req_method
 	end
 	return methods
-end
-
-local function includes(list, item)
-	for _, included_item in ipairs(list) do
-		if item == included_item then
-			return true
-		end
-	end
 end
 
 local function get_data_name(response)
@@ -205,29 +197,27 @@ local function route_api(controller, html)
 		if validations then
 			errors = recursive_validate(self.params, validations)
 		end
-		local context = get_context(self, controller, self.params.methods or html)
-		local methods
-		if self.params.methods then
-			methods = get_permited_methods(self, controller)
-		end
+		get_context(self, controller, self.params.methods or html)
 		local response = {status = 403}
 		if not controller[method] then
 			response.status = 405
 		elseif errors and #errors > 0 then
 			response.status = 400
 			response.json = {errors = errors}
-		elseif methods and includes(methods, method) or controller:check_access(self, method) then
+		elseif controller:check_access(self, method) then
 			response = controller[method](self)
 			response.status = response.status or 200
 		end
-		response.methods = methods
-		if self.params.params then
-			response.params = self.params
+		local json_response = response.json
+		if self.params.methods and json_response then
+			json_response.methods = get_permited_methods(self, controller)
+		end
+		if self.params.params and json_response then
+			json_response.params = self.params
 		end
 		if not html or response.content_type == "application/octet-stream" then
 			return response
 		end
-		local json_response = response.json
 		if controller.captcha then
 			self.captcha = true
 			self.recaptcha_site_key = secret.recaptcha_site_key
@@ -237,12 +227,12 @@ local function route_api(controller, html)
 		self.data = json_response and json_response[self.data_name] or {}
 		self.response = response
 		self.controller = controller
-		self.methods = methods or get_permited_methods(self, controller)
+		self.methods = json_response.methods or get_permited_methods(self, controller)
 		return {render = "index", status = response.status}
 	end)
 	json_respond_to("/ac" .. controller.path, function(self)
 		tonumber_params(self, controller)
-		local context = get_context(self, controller, true)
+		get_context(self, controller, true)
 		return {json = {methods = get_permited_methods(self, controller)}, status = 200}
 	end)
 end

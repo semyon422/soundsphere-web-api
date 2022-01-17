@@ -76,6 +76,10 @@ local set_community_id = function(self)
 end
 
 leaderboards_c.context.POST = {"request_session", "session_user", "user_communities", set_community_id}
+leaderboards_c.display_policies.POST = {
+	{"authed", {any_community_role = "creator"}},
+	{"authed", {any_community_role = "admin"}},
+}
 leaderboards_c.policies.POST = {
 	{"authed", {community_role = "creator"}},
 	{"authed", {community_role = "admin"}},
