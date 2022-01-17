@@ -200,7 +200,7 @@ local function route_api(controller, html)
 		get_context(self, controller, self.params.methods or html)
 		local response = {status = 403}
 		if not controller[method] then
-			response.status = 405
+			response.status = method ~= "GET" and 405 or 404
 		elseif errors and #errors > 0 then
 			response.status = 400
 			response.json = {errors = errors}
@@ -208,9 +208,15 @@ local function route_api(controller, html)
 			response = controller[method](self)
 			response.status = response.status or 200
 		end
+		local methods
 		local json_response = response.json
-		if self.params.methods and json_response then
-			json_response.methods = get_permited_methods(self, controller)
+		if response.status == 405 or response.status == 404 or self.params.methods or html then
+			get_context(self, controller, true)
+			methods = get_permited_methods(self, controller)
+			self.res.headers["Allow"] = table.concat(methods, ", ")
+			if json_response then
+				json_response.methods = methods
+			end
 		end
 		if self.params.params and json_response then
 			json_response.params = self.params
@@ -227,7 +233,7 @@ local function route_api(controller, html)
 		self.data = json_response and json_response[self.data_name] or {}
 		self.response = response
 		self.controller = controller
-		self.methods = json_response.methods or get_permited_methods(self, controller)
+		self.methods = methods
 		return {render = "index", status = response.status}
 	end)
 	json_respond_to("/ac" .. controller.path, function(self)
