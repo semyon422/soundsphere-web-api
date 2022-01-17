@@ -151,7 +151,7 @@ local function get_data_name(response)
 	end
 	local names = {}
 	for key, value in pairs(response) do
-		if type(value) == "table" then
+		if type(value) == "table" and key ~= "methods" then
 			table.insert(names, key)
 		end
 	end
