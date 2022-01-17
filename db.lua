@@ -126,6 +126,7 @@ table_declarations.leaderboards = {
 	{"communities_count", types.size},
 	{"difftables_count", types.size},
 	{"users_count", types.size},
+	"UNIQUE KEY `name` (`name`)",
 	"KEY `top_user_id` (`top_user_id`)",
 	"KEY `owner_community_id` (`owner_community_id`)",
 }
@@ -138,6 +139,8 @@ table_declarations.difftables = {
 	{"owner_community_id", types.fk_id},
 	{"scores_count", types.size},
 	{"notecharts_count", types.size},
+	"UNIQUE KEY `name` (`name`)",
+	"KEY `owner_community_id` (`owner_community_id`)",
 }
 
 table_declarations.difftable_notecharts = {
@@ -203,6 +206,10 @@ table_declarations.communities = {
 	{"users_count", types.size},
 	{"leaderboards_count", types.size},
 	{"inputmodes_count", types.size},
+	"UNIQUE KEY `name` (`name`)",
+	"UNIQUE KEY `alias` (`alias`)",
+	"KEY `is_public` (`is_public`)",
+	"KEY `default_leaderboard_id` (`default_leaderboard_id`)",
 }
 
 table_declarations.community_leaderboards = {
@@ -230,11 +237,9 @@ table_declarations.community_users = {
 	{"invitation", types.boolean},
 	{"created_at", types.time},
 	{"message", types.varchar},
-	[[
-		UNIQUE KEY `community_users` (`community_id`,`user_id`),
-		KEY `invitation` (`invitation`),
-		KEY `accepted` (`accepted`)
-	]]
+	"UNIQUE KEY `community_users` (`community_id`,`user_id`)",
+	"KEY `invitation` (`invitation`)",
+	"KEY `accepted` (`accepted`)",
 }
 
 table_declarations.community_difftables = {
@@ -306,10 +311,8 @@ table_declarations.notecharts = {
 	{"level", types.size},
 	{"length", types.size},
 	{"notes_count", types.size},
-	[[
-		UNIQUE KEY `hashindex` (`file_id`,`index`),
-		KEY `inputmode` (`inputmode`)
-	]]
+	"UNIQUE KEY `hashindex` (`file_id`,`index`)",
+	"KEY `inputmode` (`inputmode`)",
 }
 
 table_declarations.scores = {
@@ -345,11 +348,9 @@ table_declarations.sessions = {
 	{"ip", types.ip},
 	{"created_at", types.time},
 	{"updated_at", types.time},
-	[[
-		KEY `created_at` (`created_at`),
-		KEY `user_id` (`user_id`),
-		KEY `ip` (`ip`)
-	]]
+	"KEY `created_at` (`created_at`)",
+	"KEY `user_id` (`user_id`)",
+	"KEY `ip` (`ip`)",
 }
 
 table_declarations.quick_logins = {
@@ -359,10 +360,8 @@ table_declarations.quick_logins = {
 	{"next_update_time", types.time},
 	{"user_id", types.fk_id},
 	{"complete", types.boolean},
-	[[
-		KEY `ip` (`ip`),
-		KEY `user_id` (`user_id`)
-	]]
+	"KEY `ip` (`ip`)",
+	"KEY `user_id` (`user_id`)",
 }
 
 function db.drop()

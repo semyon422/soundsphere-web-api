@@ -55,6 +55,13 @@ community_c.PATCH = function(self)
 	local params = self.params
 	local community = self.context.community
 
+	local found_community =
+		Communities:find({name = params.community.name}) or
+		Communities:find({alias = params.community.alias})
+	if found_community and found_community.id ~= community.id then
+		return {status = 400, json = {message = "This name is already taken"}}
+	end
+
 	util.patch(community, params.community, {
 		"name",
 		"alias",

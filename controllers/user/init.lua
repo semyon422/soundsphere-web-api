@@ -43,6 +43,11 @@ user_c.PATCH = function(self)
 	local params = self.params
 	local user = self.context.user
 
+	local found_user = Users:find({name = params.user.name})
+	if found_user and found_user.id ~= user.id then
+		return {status = 400, json = {message = "This name is already taken"}}
+	end
+
 	util.patch(user, params.user, {
 		"name",
 		"description",

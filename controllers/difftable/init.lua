@@ -51,6 +51,11 @@ difftable_c.PATCH = function(self)
 	local params = self.params
 	local difftable = self.context.difftable
 
+	local found_difftable = Difftables:find({name = params.difftable.name})
+	if found_difftable and found_difftable.id ~= difftable.id then
+		return {status = 400, json = {message = "This name is already taken"}}
+	end
+
 	util.patch(difftable, params.difftable, {
 		"name",
 		"link",

@@ -61,6 +61,11 @@ difftables_c.validations.POST = {
 }
 difftables_c.POST = function(self)
 	local params = self.params
+
+	if Difftables:find({name = params.difftable.name}) then
+		return {status = 400, json = {message = "This name is already taken"}}
+	end
+
 	local difftable = params.difftable
 	difftable = Difftables:create({
 		name = difftable.name or "Difficulty table",

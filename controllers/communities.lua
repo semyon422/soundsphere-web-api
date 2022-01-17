@@ -87,6 +87,10 @@ communities_c.POST = function(self)
 	local params = self.params
 	local session = self.session
 
+	if Communities:find({name = params.community.name}) then
+		return {status = 400, json = {message = "This name is already taken"}}
+	end
+
 	local community = params.community
 	community = Communities:create({
 		name = community.name,

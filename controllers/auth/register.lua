@@ -37,7 +37,7 @@ register_c.POST = function(self)
 	end
 	user = Users:find({name = params.user.name})
 	if user then
-		return {json = {message = "This name is already taken"}}
+		return {status = 400, json = {message = "This name is already taken"}}
 	end
 
 	local time = os.time()

@@ -70,6 +70,11 @@ leaderboard_c.PATCH = function(self)
 	local params = self.params
 	local leaderboard = self.context.leaderboard
 
+	local found_leaderboard = Leaderboards:find({name = params.leaderboard.name})
+	if found_leaderboard and found_leaderboard.id ~= leaderboard.id then
+		return {status = 400, json = {message = "This name is already taken"}}
+	end
+
 	Leaderboards:for_db(params.leaderboard)
 	util.patch(leaderboard, params.leaderboard, {
 		"name",

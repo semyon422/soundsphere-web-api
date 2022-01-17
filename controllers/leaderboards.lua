@@ -89,19 +89,25 @@ leaderboards_c.validations.POST = {
 }
 leaderboards_c.POST = function(self)
 	local params = self.params
-	local leaderboard = Leaderboards:create({
-		name = params.leaderboard.name,
-		description = params.leaderboard.description,
-		banner = params.leaderboard.banner,
+
+	if Leaderboards:find({name = params.leaderboard.name}) then
+		return {status = 400, json = {message = "This name is already taken"}}
+	end
+
+	local leaderboard = params.leaderboard
+	leaderboard = Leaderboards:create({
+		name = leaderboard.name,
+		description = leaderboard.description,
+		banner = leaderboard.banner,
 		owner_community_id = params.community_id,
-		difficulty_calculator = Difficulty_calculators:for_db(params.leaderboard.difficulty_calculator),
-		rating_calculator = Rating_calculators:for_db(params.leaderboard.rating_calculator),
-		scores_combiner = Combiners:for_db(params.leaderboard.scores_combiner),
-		communities_combiner = Combiners:for_db(params.leaderboard.communities_combiner),
-		difficulty_calculator_config = params.leaderboard.difficulty_calculator_config,
-		rating_calculator_config = params.leaderboard.rating_calculator_config,
-		scores_combiner_count = params.leaderboard.scores_combiner_count,
-		communities_combiner_count = params.leaderboard.communities_combiner_count,
+		difficulty_calculator = Difficulty_calculators:for_db(leaderboard.difficulty_calculator),
+		rating_calculator = Rating_calculators:for_db(leaderboard.rating_calculator),
+		scores_combiner = Combiners:for_db(leaderboard.scores_combiner),
+		communities_combiner = Combiners:for_db(leaderboard.communities_combiner),
+		difficulty_calculator_config = leaderboard.difficulty_calculator_config,
+		rating_calculator_config = leaderboard.rating_calculator_config,
+		scores_combiner_count = leaderboard.scores_combiner_count,
+		communities_combiner_count = leaderboard.communities_combiner_count,
 	})
 
 	Community_leaderboards:create({
