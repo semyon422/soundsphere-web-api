@@ -65,9 +65,16 @@ db_test.create = function()
 		message = "",
 	})
 
-	local difftable = Difftables:create({
-		name = "Difficulty table",
-		link = "https://soundsphere.xyz",
+	local difftable_osu = Difftables:create({
+		name = "osu!mania ranked and loved",
+		link = "",
+		description = "Description",
+		owner_community_id = community.id,
+	})
+
+	local difftable_quaver = Difftables:create({
+		name = "Quaver ranked",
+		link = "",
 		description = "Description",
 		owner_community_id = community.id,
 	})
@@ -98,7 +105,10 @@ db_test.create = function()
 	})
 
 	leaderboard_c.update_inputmodes(leaderboard.id, {{inputmode = "10key"}})
-	leaderboard_c.update_difftables(leaderboard.id, {{difftable_id = difftable.id}})
+	leaderboard_c.update_difftables(leaderboard.id, {
+		{difftable_id = difftable_osu.id},
+		{difftable_id = difftable_quaver.id},
+	})
 	leaderboard_c.update_requirements(leaderboard.id, {
 		{
 			name = "modifier",
