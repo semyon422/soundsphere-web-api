@@ -10,7 +10,8 @@ local Ranked_caches = Model:extend(
 	"ranked_caches",
 	{
 		relations = {
-			{"user", belongs_to = "users", key = "user_id"}
+			{"user", belongs_to = "users", key = "user_id"},
+			{"ranked_cache_difftables", has_many = "ranked_cache_difftables", key = "ranked_cache_id"},
 		},
 		url_params = function(self, req, ...)
 			return "ranked_cache", {ranked_cache_id = self.id}, ...
@@ -37,6 +38,7 @@ local _load = Ranked_caches.load
 function Ranked_caches:load(row)
 	row.exists = toboolean(row.exists)
 	row.ranked = toboolean(row.ranked)
+	row.is_complete = toboolean(row.is_complete)
 	row.created_at = tonumber(row.created_at)
 	row.expires_at = tonumber(row.expires_at)
 	row.to_name = to_name

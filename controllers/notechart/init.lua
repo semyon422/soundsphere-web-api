@@ -1,4 +1,5 @@
 local Notecharts = require("models.notecharts")
+local notecharts_c = require("controllers.notecharts")
 local Files = require("models.files")
 local Formats = require("enums.formats")
 local Inputmodes = require("enums.inputmodes")
@@ -112,6 +113,8 @@ notechart_c.PATCH = function(self)
 		"notes_count"
 	)
 	notechart.file = nil
+
+	notecharts_c.process_ranked_cache(notechart_file)
 
 	return {json = {notechart = notechart:to_name()}}
 end

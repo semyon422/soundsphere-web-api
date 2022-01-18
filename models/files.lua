@@ -9,6 +9,7 @@ local Files = Model:extend(
 	{
 		relations = {
 			{"notecharts", has_many = "notecharts", key = "file_id"},
+			{"scores", has_many = "scores", key = "file_id"},
 		},
 		url_params = function(self, req, ...)
 			return "file", {file_id = self.id}, ...

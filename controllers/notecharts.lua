@@ -1,4 +1,5 @@
 local Notecharts = require("models.notecharts")
+local difftable_notechart_c = require("controllers.difftable.notechart")
 local Formats = require("enums.formats")
 local Storages = require("enums.storages")
 local Inputmodes = require("enums.inputmodes")
@@ -89,10 +90,45 @@ notecharts_c.check_notechart = function(self, hash, format, trusted)
 				local user_id = current_ranked_cache.user_id
 				-- ban(user_id)
 			end
-			current_ranked_cache:delete()
+			if current_ranked_cache.id ~= ranked_cache.id then
+				current_ranked_cache:delete()
+			end
 		end
+		ranked_cache.is_complete = true
+		ranked_cache:update("is_complete")
 	end
 	return true
+end
+
+notecharts_c.process_ranked_cache = function(file)
+	local ranked_cache = Ranked_caches:find({hash = file.hash})
+	if not ranked_cache then
+		return
+	end
+
+	local notecharts = file:get_notecharts()
+	local notechart_by_index = {}
+	for _, notechart in ipairs(notecharts) do
+		notechart_by_index[notechart.index] = notechart
+	end
+
+	local ranked_cache_difftables = ranked_cache:get_ranked_cache_difftables()
+	local count = #ranked_cache_difftables
+	for _, ranked_cache_difftable in ipairs(ranked_cache_difftables) do
+		local notechart = notechart_by_index[ranked_cache_difftable.index]
+		if notechart then
+			difftable_notechart_c.add_difftable_notechart(
+				ranked_cache_difftable.difftable_id,
+				notechart,
+				ranked_cache_difftable.difficulty
+			)
+			ranked_cache_difftable:delete()
+			count = count - 1
+		end
+	end
+	if count == 0 then
+		ranked_cache:delete()
+	end
 end
 
 notecharts_c.context.POST = {"request_session", "session_user", "user_roles"}

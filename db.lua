@@ -30,6 +30,7 @@ local tables = {
 	"sessions",
 	"quick_logins",
 	"ranked_caches",
+	"ranked_cache_difftables",
 }
 
 local table_declarations = {}
@@ -377,16 +378,28 @@ table_declarations.ranked_caches = {
 	{"format", types.enum},
 	{"exists", types.boolean},
 	{"ranked", types.boolean},
+	{"is_complete", types.boolean},
 	{"created_at", types.time},
 	{"expires_at", types.time},
 	{"user_id", types.fk_id},
+	"UNIQUE KEY `hash_format` (`hash`,`format`)",
 	"KEY `hash` (`hash`)",
 	"KEY `format` (`format`)",
 	"KEY `exists` (`exists`)",
 	"KEY `ranked` (`ranked`)",
+	"KEY `is_complete` (`is_complete`)",
 	"KEY `created_at` (`created_at`)",
 	"KEY `expires_at` (`expires_at`)",
 	"KEY `user_id` (`user_id`)",
+}
+
+table_declarations.ranked_cache_difftables = {
+	{"id", types.id},
+	{"ranked_cache_id", types.fk_id},
+	{"difftable_id", types.fk_id},
+	{"index", types.enum},
+	{"difficulty", types.float},
+	"UNIQUE KEY `ranked_cache_difftable_index` (`ranked_cache_id`,`difftable_id`,`index`)",
 }
 
 function db.drop()

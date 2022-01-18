@@ -2,6 +2,10 @@ local Ranked_caches = require("models.ranked_caches")
 local Controller = require("Controller")
 local util = require("util")
 
+local additions = {
+	difftables = require("controllers.ranked_cache.difftables"),
+}
+
 local ranked_cache_c = Controller:new()
 
 ranked_cache_c.path = "/ranked_caches/:ranked_cache_id[%d]"
@@ -9,9 +13,13 @@ ranked_cache_c.methods = {"GET", "DELETE"}
 
 ranked_cache_c.context.GET = {"ranked_cache"}
 ranked_cache_c.policies.GET = {{"permit"}}
+ranked_cache_c.validations.GET = {}
+util.add_additions_validations(additions, ranked_cache_c.validations.GET)
 util.add_belongs_to_validations(Ranked_caches.relations, ranked_cache_c.validations.GET)
 ranked_cache_c.GET = function(self)
 	local ranked_cache = self.context.ranked_cache
+
+	util.load_additions(self, ranked_cache, additions)
 	util.get_relatives(ranked_cache, self.params, true)
 
 	return {json = {ranked_cache = ranked_cache:to_name()}}

@@ -24,6 +24,33 @@ difftable_notechart_c.GET = function(self)
 	return {json = {difftable_notechart = difftable_notechart}}
 end
 
+difftable_notechart_c.add_difftable_notechart = function(difftable_id, notechart, difficulty)
+	local difftable_notechart = Difftable_notecharts:create({
+		difftable_id = difftable_id,
+		notechart_id = notechart.id,
+		difficulty = difficulty or 0,
+	})
+
+	local new_difftable_inputmode = {
+		difftable_id = difftable_id,
+		inputmode = notechart.inputmode,
+	}
+	local difftable_inputmode = Difftable_inputmodes:find(new_difftable_inputmode)
+	if not difftable_inputmode then
+		new_difftable_inputmode.notecharts_count = 1
+		Difftable_inputmodes:create(new_difftable_inputmode)
+	else
+		difftable_inputmode.notecharts_count = difftable_inputmode.notecharts_count + 1
+		difftable_inputmode:update("notecharts_count")
+	end
+
+	local difftable = difftable_notechart:get_difftable()
+	difftable.notecharts_count = difftable.notecharts_count + 1
+	difftable:update("notecharts_count")
+
+	return difftable_notechart
+end
+
 difftable_notechart_c.context.PUT = {
 	"difftable",
 	"notechart",
@@ -43,30 +70,11 @@ difftable_notechart_c.validations.PUT = {
 }
 difftable_notechart_c.PUT = function(self)
 	local params = self.params
-
-	local difftable_notechart = Difftable_notecharts:create({
-		difftable_id = params.difftable_id,
-		notechart_id = params.notechart_id,
-		difficulty = params.difficulty or 0,
-	})
-
-	local notechart = self.context.notechart
-	local new_difftable_inputmode = {
-		difftable_id = params.difftable_id,
-		inputmode = notechart.inputmode,
-	}
-	local difftable_inputmode = Difftable_inputmodes:find(new_difftable_inputmode)
-	if not difftable_inputmode then
-		new_difftable_inputmode.notecharts_count = 1
-		Difftable_inputmodes:create(new_difftable_inputmode)
-	else
-		difftable_inputmode.notecharts_count = difftable_inputmode.notecharts_count + 1
-		difftable_inputmode:update("notecharts_count")
-	end
-
-	local difftable = difftable_notechart:get_difftable()
-	difftable.notecharts_count = difftable.notecharts_count + 1
-	difftable:update("notecharts_count")
+	local difftable_notechart = difftable_notechart_c.add_difftable_notechart(
+		params.difftable_id,
+		self.context.notechart,
+		params.difficulty
+	)
 
 	return {json = {difftable_notechart = difftable_notechart}}
 end

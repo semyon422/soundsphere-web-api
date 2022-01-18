@@ -63,4 +63,6 @@ return {
 	"file",
 	"ranked_caches",
 	"ranked_cache",
+	"ranked_cache.difftables",
+	"ranked_cache.difftable",
 }
