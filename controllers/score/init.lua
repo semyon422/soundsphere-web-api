@@ -90,7 +90,7 @@ score_c.PATCH = function(self)
 	local params = self.params
 	local score = self.context.score
 
-	if score.is_valid and not params.force then
+	if score.is_complete and not params.force then
 		return {status = 204}
 	end
 
@@ -122,6 +122,16 @@ score_c.PATCH = function(self)
 		})
 	})
 
+	if status_code == 502 then  -- Bad Gateway
+		return {status = 500, json = {message = "Compute server is not available"}}
+	end
+
+	if status_code == 500 then  -- Internal Server Error
+		score.is_complete = true
+		score:update("is_complete")
+		return {status = status_code, json = {message = "Invalid score"}}
+	end
+
 	if status_code ~= 200 then
 		return {status = status_code, body}
 	end
@@ -145,6 +155,7 @@ score_c.PATCH = function(self)
 
 	score.modifierset_id = modifierset.id
 	score.inputmode = Inputmodes:for_db(json_response.inputMode)
+	score.is_complete = true
 	score.is_valid = true
 	score.timerate = response_score.base.timeRate
 	score.score = response_score.normalscore.scoreAdjusted
@@ -155,6 +166,7 @@ score_c.PATCH = function(self)
 	score:update(
 		"modifierset_id",
 		"inputmode",
+		"is_complete",
 		"is_valid",
 		"timerate",
 		"score",

@@ -47,7 +47,7 @@ notechart_c.PATCH = function(self)
 	local params = self.params
 	local notechart = self.context.notechart
 
-	if notechart.is_valid and not params.force then
+	if notechart.is_complete and not params.force then
 		return {status = 204}
 	end
 
@@ -67,6 +67,16 @@ notechart_c.PATCH = function(self)
 		}})
 	})
 
+	if status_code == 502 then  -- Bad Gateway
+		return {status = 500, json = {message = "Compute server is not available"}}
+	end
+
+	if status_code == 500 then  -- Internal Server Error
+		notechart.is_complete = true
+		notechart:update("is_complete")
+		return {status = status_code, json = {message = "Invalid notechart"}}
+	end
+
 	if status_code ~= 200 then
 		return {status = status_code, body}
 	end
@@ -77,6 +87,7 @@ notechart_c.PATCH = function(self)
 	notechart_file.loaded = true
 	notechart_file:update("loaded")
 
+	notechart.is_complete = true
 	notechart.is_valid = true
 	notechart.inputmode = Inputmodes:for_db(response_notechart.inputMode)
 	notechart.difficulty = response_notechart.difficulty
@@ -88,6 +99,7 @@ notechart_c.PATCH = function(self)
 	notechart.length = response_notechart.length
 	notechart.notes_count = response_notechart.noteCount
 	notechart:update(
+		"is_complete",
 		"is_valid",
 		"inputmode",
 		"difficulty",

@@ -210,13 +210,15 @@ local function route_api(controller, html)
 		end
 		local methods
 		local json_response = response.json
-		if response.status == 405 or response.status == 404 or self.params.methods or html then
+		if self.params.methods or html then
 			get_context(self, controller, true)
 			methods = get_permited_methods(self, controller)
-			self.res.headers["Allow"] = table.concat(methods, ", ")
-			if json_response then
-				json_response.methods = methods
-			end
+		end
+		if json_response and self.params.methods then
+			json_response.methods = methods
+		end
+		if response.status == 405 then
+			self.res.headers["Allow"] = table.concat(controller.methods, ", ")
 		end
 		if self.params.params and json_response then
 			json_response.params = self.params

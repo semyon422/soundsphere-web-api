@@ -301,10 +301,11 @@ table_declarations.notecharts = {
 	{"file_id", types.fk_id},
 	{"index", types.enum},
 	{"created_at", types.time},
+	{"is_complete", types.boolean},
+	{"is_valid", types.boolean},
 	{"scores_count", types.size},
 	{"inputmode", types.enum},
 	{"difficulty", types.float},
-	{"is_valid", types.boolean},
 	{"song_title", types.text},
 	{"song_artist", types.text},
 	{"difficulty_name", types.text},
@@ -323,8 +324,9 @@ table_declarations.scores = {
 	{"modifierset_id", types.fk_id},
 	{"file_id", types.fk_id},
 	{"inputmode", types.enum},
-	{"is_valid", types.boolean},
-	{"is_complete", types.boolean},
+	{"is_complete", types.boolean},  -- is computed
+	{"is_valid", types.boolean},  -- is computed successfully
+	{"is_ranked", types.boolean},  -- is added to leaderboards
 	{"is_top", types.boolean},
 	{"created_at", types.time},
 	{"timerate", types.float},
@@ -338,8 +340,11 @@ table_declarations.scores = {
 	"KEY `notechart_id` (`notechart_id`)",
 	"KEY `modifierset_id` (`modifierset_id`)",
 	"KEY `inputmode` (`inputmode`)",
-	"KEY `is_valid` (`is_valid`)",
 	"KEY `is_complete` (`is_complete`)",
+	"KEY `is_valid` (`is_valid`)",
+	"KEY `is_ranked` (`is_ranked`)",
+	"KEY `is_top` (`is_top`)",
+	"KEY `created_at` (`created_at`)",
 }
 
 table_declarations.sessions = {

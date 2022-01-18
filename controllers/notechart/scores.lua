@@ -40,15 +40,18 @@ notechart_scores_c.get_scores = function(self)
 	local db = Scores.db
 
 	local clause_table = {"s"}
-	local where_table = {"s.notechart_id = ?", "s.is_valid = ?", "s.is_complete = ?", "s.is_top = ?"}
+	local where_table = {"s.notechart_id = ?", "s.is_complete = ?", "s.is_valid = ?", "s.is_top = ?"}
 	local fields = {"s.*", "row_number() over(order by s.rating) row_number"}
 	local orders = {}
 	local opts = {params.notechart_id, true, true, true}
 
 	if params.leaderboard_id then
 		table.insert(clause_table, "inner join leaderboard_users lu on s.user_id = lu.user_id")
-		table.insert(where_table, "lu.active = true")
+		table.insert(where_table, "s.is_ranked = ?")
+		table.insert(where_table, "lu.active = ?")
 		table.insert(where_table, "lu.leaderboard_id = ?")
+		table.insert(opts, true)
+		table.insert(opts, true)
 		table.insert(opts, params.leaderboard_id)
 	end
 	if params.search then
@@ -121,8 +124,8 @@ notechart_scores_c.GET = function(self)
 
 	local total_clause = Scores.db.encode_clause({
 		notechart_id = params.notechart_id,
-		is_valid = params.is_valid,
 		is_complete = params.is_complete,
+		is_valid = params.is_valid,
 	})
 
 	if params.no_data then

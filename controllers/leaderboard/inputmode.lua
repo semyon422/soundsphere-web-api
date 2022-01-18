@@ -48,7 +48,7 @@ leaderboard_inputmode_c.PUT = function(self)
 	return {json = {leaderboard_inputmode = leaderboard_inputmode:to_name()}}
 end
 
-leaderboard_inputmode_c.context.DELETE = {"leaderboard_requirement"}
+leaderboard_inputmode_c.context.DELETE = {"leaderboard_inputmode"}
 util.add_owner_context("leaderboard", "context", leaderboard_inputmode_c.context.DELETE)
 leaderboard_inputmode_c.policies.DELETE = {
 	{"authed", {community_role = "moderator"}},

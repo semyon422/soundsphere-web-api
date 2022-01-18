@@ -385,7 +385,7 @@ score_leaderboards_c.PUT = function(self)
 	local params = self.params
 	local score = self.context.score
 
-	if score.is_complete and not params.force then
+	if score.is_ranked and not params.force then
 		return {status = 204}
 	end
 
@@ -399,8 +399,8 @@ score_leaderboards_c.PUT = function(self)
 		end
 	end
 
-	score.is_complete = true
-	score:update("is_complete")
+	score.is_ranked = true
+	score:update("is_ranked")
 
 	return {json = {count = count}}
 end

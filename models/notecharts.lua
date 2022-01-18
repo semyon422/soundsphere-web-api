@@ -31,6 +31,7 @@ function Notecharts.for_db(self, row) return for_db(row) end
 
 local _load = Notecharts.load
 function Notecharts:load(row)
+	row.is_complete = toboolean(row.is_complete)
 	row.is_valid = toboolean(row.is_valid)
 	row.created_at = tonumber(row.created_at)
 	row.to_name = to_name

@@ -14,9 +14,9 @@ user_scores_c.validations.GET = {
 	require("validations.per_page"),
 	require("validations.page_num"),
 	require("validations.search"),
-	{"is_not_valid", type = "boolean", optional = true},
 	{"is_not_complete", type = "boolean", optional = true},
-	{"best", type = "boolean", optional = true},
+	{"is_not_valid", type = "boolean", optional = true},
+	{"latest", type = "boolean", optional = true},
 	{"leaderboard_id", exists = true, type = "number", optional = true, default = ""},
 	{"difftable_id", exists = true, type = "number", optional = true, default = ""},
 }
@@ -26,15 +26,23 @@ user_scores_c.GET = function(self)
 	local db = Scores.db
 
 	local clause_table = {"s"}
-	local where_table = {"s.user_id = ?", "s.is_valid = ?", "s.is_complete = ?"}
+	local where_table = {"s.user_id = ?", "s.is_complete = ?", "s.is_valid = ?"}
 	local fields = {"s.*"}
 	local orders = {}
-	local opts = {params.user_id, not params.is_not_valid, not params.is_not_complete}
+	local opts = {params.user_id, not params.is_not_complete, not params.is_not_valid}
+
+	if not params.latest then
+		table.insert(where_table, "s.is_top = ?")
+		table.insert(opts, true)
+	end
 
 	if params.leaderboard_id then
 		table.insert(clause_table, "inner join leaderboard_users lu on s.user_id = lu.user_id")
-		table.insert(where_table, "lu.active = true")
+		table.insert(where_table, "s.is_ranked = ?")
+		table.insert(where_table, "lu.active = ?")
 		table.insert(where_table, "lu.leaderboard_id = ?")
+		table.insert(opts, true)
+		table.insert(opts, true)
 		table.insert(opts, params.leaderboard_id)
 	end
 	if params.difftable_id then
@@ -53,10 +61,10 @@ user_scores_c.GET = function(self)
 			"n.song_title"
 		))
 	end
-	if params.best then
-		table.insert(orders, "s.rating desc")
-	else
+	if params.latest then
 		table.insert(orders, "s.created_at desc")
+	else
+		table.insert(orders, "s.rating desc")
 	end
 
 	table.insert(clause_table, util.db_where(util.db_and(where_table)))
@@ -75,7 +83,7 @@ user_scores_c.GET = function(self)
 	})
 	local scores = paginator:get_page(page_num)
 
-	if params.best then
+	if not params.latest then
 		for i, score in ipairs(scores) do
 			score.rank = (page_num - 1) * per_page + i
 		end
