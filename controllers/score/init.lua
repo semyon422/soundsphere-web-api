@@ -100,11 +100,20 @@ score_c.PATCH = function(self)
 	end
 
 	local replay_file = score:get_file()
-	if not replay_file.uploaded then
+	if not replay_file then
+		score.is_complete = true
+		score:update("is_complete")
+		return {status = 400, json = {message = "not replay_file"}}
+	elseif not replay_file.uploaded then
 		return {status = 400, json = {message = "not replay_file.uploaded"}}
 	end
 
 	local notechart_file = notechart:get_file()
+	if not notechart_file then
+		score.is_complete = true
+		score:update("is_complete")
+		return {status = 400, json = {message = "not replay_file"}}
+	end
 
 	local body, status_code, headers = http.simple({
 		url = "http://127.0.0.1:8082/replay",
@@ -148,9 +157,6 @@ score_c.PATCH = function(self)
 		modifierset = Modifiersets:create(new_modifierset)
 	end
 
-	replay_file.loaded = true
-	replay_file:update("loaded")
-
 	local is_valid = score.is_valid
 
 	score.modifierset_id = modifierset.id
@@ -178,6 +184,13 @@ score_c.PATCH = function(self)
 
 	if not is_valid and score.is_valid then
 		score_c.update_stats(score)
+	end
+
+	if score.is_top then
+		replay_file.loaded = true
+		replay_file:update("loaded")
+	else
+		replay_file:delete()
 	end
 
 	score.file = nil

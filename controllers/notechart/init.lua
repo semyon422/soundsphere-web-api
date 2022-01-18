@@ -54,6 +54,10 @@ notechart_c.PATCH = function(self)
 
 	local notechart_file = notechart:get_file()
 	if not notechart_file.uploaded then
+		notechart.is_complete = true
+		notechart:update("is_complete")
+		return {status = 400, json = {message = "not notechart_file"}}
+	elseif not notechart_file.uploaded then
 		return {status = 400, json = {message = "not notechart_file.uploaded"}}
 	end
 

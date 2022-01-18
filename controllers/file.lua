@@ -45,6 +45,7 @@ file_c.policies.DELETE = {
 	{"authed", {role = "creator"}},
 }
 file_c.DELETE = function(self)
+	self.context.file:delete()
 	return {status = 204}
 end
 
