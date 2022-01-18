@@ -31,12 +31,17 @@ user_c.GET = function(self)
 	return {json = {user = user:to_name()}}
 end
 
-user_c.context.PATCH = {"user", "request_session"}
-user_c.policies.PATCH = {{"authed"}}
+user_c.context.PATCH = {"user", "request_session", "session_user", "user_roles"}
+user_c.policies.PATCH = {
+	{"authed", "user_profile"},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
 user_c.validations.PATCH = {
 	{"user", type = "table", param_type = "body", validations = {
-		{"name", type = "string"},
-		{"description", type = "string"},
+		{"name", exists = true, type = "string"},
+		{"description", exists = true, type = "string"},
 	}},
 }
 user_c.PATCH = function(self)
@@ -56,8 +61,12 @@ user_c.PATCH = function(self)
 	return {json = {user = user:to_name()}}
 end
 
-user_c.context.DELETE = {"user", "request_session"}
-user_c.policies.DELETE = {{"authed"}}
+user_c.context.DELETE = {"user", "request_session", "session_user", "user_roles"}
+user_c.policies.DELETE = {
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
 user_c.DELETE = function(self)
 	return {status = 204}
 end

@@ -8,6 +8,7 @@ return {
 	"auth.logout",
 	"auth.quick",
 	"auth.update",
+	"auth.password",
 	"db",
 	"db.schema",
 	"db.migrations",
