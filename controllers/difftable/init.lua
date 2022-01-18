@@ -41,10 +41,10 @@ difftable_c.policies.PATCH = {
 }
 difftable_c.validations.PATCH = {
 	{"difftable", exists = true, type = "table", param_type = "body", validations = {
-		{"name", exists = true, type = "string"},
-		{"link", exists = true, type = "string"},
-		{"description", exists = true, type = "string"},
-		{"owner_community_id", exists = true, type = "number"},
+		{"name", type = "string"},
+		{"link", type = "string"},
+		{"description", type = "string"},
+		{"owner_community_id", type = "number"},
 	}}
 }
 difftable_c.PATCH = function(self)

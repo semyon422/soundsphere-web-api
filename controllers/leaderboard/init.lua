@@ -53,9 +53,9 @@ leaderboard_c.policies.PATCH = {
 }
 leaderboard_c.validations.PATCH = {
 	{"leaderboard", type = "table", param_type = "body", validations = {
-		{"name", type = "string"},
-		{"description", type = "string"},
-		{"banner", type = "string"},
+		{"name", exists = true, type = "string"},
+		{"description", exists = true, type = "string"},
+		{"banner", exists = true, type = "string"},
 		{"difficulty_calculator", type = "string", one_of = Difficulty_calculators.list},
 		{"rating_calculator", type = "string", one_of = Rating_calculators.list},
 		{"scores_combiner", type = "string", one_of = Combiners.list},

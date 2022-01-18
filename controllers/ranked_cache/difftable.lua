@@ -32,7 +32,7 @@ ranked_cache_difftable_c.policies.PUT = {
 	{"authed", {role = "creator"}},
 }
 ranked_cache_difftable_c.validations.PUT = {
-	{"index", type = "number", range = {0}},
+	{"index", exists = true, type = "number", range = {0}},
 	{"difficulty", type = "number", optional = true},
 }
 ranked_cache_difftable_c.PUT = function(self)
@@ -55,7 +55,7 @@ ranked_cache_difftable_c.policies.PATCH = {
 	{"authed", {role = "creator"}},
 }
 ranked_cache_difftable_c.validations.PATCH = {
-	{"difficulty", type = "number", optional = true},
+	{"difficulty", exists = true, type = "number"},
 }
 ranked_cache_difftable_c.PATCH = function(self)
 	local params = self.params

@@ -86,7 +86,7 @@ difftable_notechart_c.policies.PATCH = {
 	{"authed", {community_role = "creator"}},
 }
 difftable_notechart_c.validations.PATCH = {
-	{"difficulty", type = "number", optional = true},
+	{"difficulty", exists = true, type = "number"},
 }
 difftable_notechart_c.PATCH = function(self)
 	local params = self.params
