@@ -7,6 +7,7 @@ local Filehash = require("util.filehash")
 local Controller = require("Controller")
 local Files = require("models.files")
 local Ranked_caches = require("models.ranked_caches")
+local Ranked_cache_difftables = require("models.ranked_cache_difftables")
 local util = require("util")
 local preload = require("lapis.db.model").preload
 
@@ -45,6 +46,11 @@ notecharts_c.GET = function(self)
 		notecharts = notecharts,
 	}}
 end
+
+notecharts_c.default_difftable_ids = {
+	osu = 1,
+	quaver = 2,
+}
 
 notecharts_c.check_notechart = function(self, hash, format, trusted)
 	local created_at = os.time()
@@ -97,6 +103,15 @@ notecharts_c.check_notechart = function(self, hash, format, trusted)
 		ranked_cache.is_complete = true
 		ranked_cache:update("is_complete")
 	end
+	local difftable_id = notecharts_c.default_difftable_ids[format]
+	if difftable_id and not trusted then
+		Ranked_cache_difftables:create({
+			ranked_cache_id = ranked_cache.id,
+			difftable_id = difftable_id,
+			index = 0,
+			difficulty = 0,
+		})
+	end
 	return true
 end
 
@@ -115,15 +130,28 @@ notecharts_c.process_ranked_cache = function(file)
 	local ranked_cache_difftables = ranked_cache:get_ranked_cache_difftables()
 	local count = #ranked_cache_difftables
 	for _, ranked_cache_difftable in ipairs(ranked_cache_difftables) do
-		local notechart = notechart_by_index[ranked_cache_difftable.index]
-		if notechart then
-			difftable_notechart_c.add_difftable_notechart(
-				ranked_cache_difftable.difftable_id,
-				notechart,
-				ranked_cache_difftable.difficulty
-			)
+		local index = ranked_cache_difftable.index
+		if index == 0 then
+			for _, notechart in ipairs(notecharts) do
+				difftable_notechart_c.add_difftable_notechart(
+					ranked_cache_difftable.difftable_id,
+					notechart,
+					ranked_cache_difftable.difficulty
+				)
+			end
 			ranked_cache_difftable:delete()
 			count = count - 1
+		else
+			local notechart = notechart_by_index[index]
+			if notechart then
+				difftable_notechart_c.add_difftable_notechart(
+					ranked_cache_difftable.difftable_id,
+					notechart,
+					ranked_cache_difftable.difficulty
+				)
+				ranked_cache_difftable:delete()
+				count = count - 1
+			end
 		end
 	end
 	if count == 0 then
@@ -195,6 +223,9 @@ notecharts_c.POST = function(self)
 			song_artist = "",
 			difficulty_name = "",
 			difficulty_creator = "",
+			level = 0,
+			length = 0,
+			notes_count = 0,
 		})
 	end
 

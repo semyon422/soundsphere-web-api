@@ -32,7 +32,7 @@ ranked_cache_difftable_c.policies.PUT = {
 	{"authed", {role = "creator"}},
 }
 ranked_cache_difftable_c.validations.PUT = {
-	{"index", type = "number", range = {1}},
+	{"index", type = "number", range = {0}},
 	{"difficulty", type = "number", optional = true},
 }
 ranked_cache_difftable_c.PUT = function(self)
