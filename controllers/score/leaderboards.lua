@@ -277,7 +277,9 @@ score_leaderboards_c.get_community_total_rating = function(leaderboard_users, le
 end
 
 score_leaderboards_c.update_top_user = function(leaderboard)
-	local top_leaderboard_user = Leaderboard_users:find({leaderboard_id = leaderboard.id}, "order by rating desc")
+	local top_leaderboard_user = Leaderboard_users:select(
+		"where leaderboard_id = ? order by total_rating desc limit 1", leaderboard.id
+	)[1]
 	leaderboard.top_user_id = top_leaderboard_user.user_id
 	leaderboard:update("top_user_id")
 end

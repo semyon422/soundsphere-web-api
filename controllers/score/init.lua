@@ -1,4 +1,5 @@
 local Scores = require("models.scores")
+local Leaderboard_scores = require("models.leaderboard_scores")
 local Files = require("models.files")
 local Modifiersets = require("models.modifiersets")
 local Controller = require("Controller")
@@ -10,9 +11,10 @@ local lapis_util = require("lapis.util")
 local to_json = lapis_util.to_json
 local from_json = lapis_util.from_json
 local preload = require("lapis.db.model").preload
+local score_leaderboards_c = require("controllers.score.leaderboards")
 
 local additions = {
-	leaderboards = require("controllers.score.leaderboards"),
+	leaderboards = score_leaderboards_c,
 }
 
 local score_c = Controller:new()
@@ -49,8 +51,7 @@ score_c.update_stats = function(score)
 		"scores_count",
 		"notecharts_count",
 		"notes_count",
-		"play_time",
-		"scores_count"
+		"play_time"
 	)
 
 	local difftable_notecharts = notechart:get_difftable_notecharts()
@@ -186,12 +187,13 @@ score_c.PATCH = function(self)
 		score_c.update_stats(score)
 	end
 
-	if score.is_top then
+	-- if score.is_top then
 		replay_file.loaded = true
 		replay_file:update("loaded")
-	else
-		replay_file:delete()
-	end
+	-- else
+	-- 	Files:delete_file(replay_file)
+	-- 	replay_file:delete()
+	-- end
 
 	score.file = nil
 	score.notechart = nil
@@ -203,9 +205,56 @@ end
 
 score_c.context.DELETE = {"score", "request_session", "session_user", "user_roles"}
 score_c.policies.DELETE = {
-	{"authed", "score_owner"},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
 }
 score_c.DELETE = function(self)
+	local score = self.context.score
+
+	local replay_file = score:get_file()
+	if replay_file then
+		Files:delete_file(replay_file)
+		replay_file:delete()
+	end
+
+	local notechart = score:get_notechart()
+	notechart.scores_count = notechart.scores_count - 1
+	notechart:update("scores_count")
+
+	local user = score:get_user()
+	if score.is_top then
+		local not_top_score = Scores:select(
+			"where notechart_id = ? and user_id = ? and is_top = ? order by rating desc limit 1",
+			score.notechart_id,
+			score.user_id,
+			false
+		)[1]
+		if not_top_score then
+			not_top_score.is_top = true
+			not_top_score:update("is_top")
+		else
+			user.notecharts_count = user.notecharts_count - 1
+			user:update("notecharts_count")
+		end
+	end
+	user.notes_count = user.notes_count - notechart.notes_count
+	user.play_time = user.play_time - notechart.length
+	user.scores_count = user.scores_count - 1
+	user:update(
+		"scores_count",
+		"notes_count",
+		"play_time"
+	)
+
+	local leaderboard_scores = Leaderboard_scores:find_all({score.id}, "score_id")
+	preload(leaderboard_scores, "leaderboard")
+	for _, leaderboard_score in ipairs(leaderboard_scores) do
+		score_leaderboards_c.update_user_leaderboard(user.id, leaderboard_score.leaderboard)
+	end
+
+	score:delete()
+
 	return {status = 204}
 end
 

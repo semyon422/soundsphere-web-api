@@ -163,6 +163,9 @@ scores_c.POST = function(self)
 		rating = 0,
 	})
 
+	notechart.scores_count = notechart.scores_count + 1
+	notechart:update("scores_count")
+
 	return {status = 201, redirect_to = self:url_for(score)}
 end
 

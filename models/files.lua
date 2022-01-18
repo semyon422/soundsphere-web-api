@@ -75,4 +75,9 @@ function Files:read_file(file)
 	return content
 end
 
+function Files:delete_file(file)
+	local path = self:get_path(file)
+	os.remove(path)
+end
+
 return Files
