@@ -97,7 +97,7 @@ end
 
 notecharts_c.context.POST = {"request_session", "session_user", "user_roles"}
 notecharts_c.policies.POST = {
-	{"authed", {not_params = "trusted"}},
+	-- {"authed", {not_params = "trusted"}},
 	{"authed", {role = "moderator"}},
 	{"authed", {role = "admin"}},
 	{"authed", {role = "creator"}},
