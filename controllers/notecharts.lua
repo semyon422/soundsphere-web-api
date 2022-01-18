@@ -103,8 +103,20 @@ notecharts_c.check_notechart = function(self, hash, format, trusted)
 		ranked_cache.is_complete = true
 		ranked_cache:update("is_complete")
 	end
+
 	local difftable_id = notecharts_c.default_difftable_ids[format]
 	if difftable_id and not trusted then
+		if not ranked_cache then
+			ranked_cache = Ranked_caches:create({
+				hash = hash_for_db,
+				format = format_for_db,
+				exists = true,
+				ranked = true,
+				created_at = created_at,
+				expires_at = created_at,
+				user_id = self.session.user_id,
+			})
+		end
 		Ranked_cache_difftables:create({
 			ranked_cache_id = ranked_cache.id,
 			difftable_id = difftable_id,
@@ -112,6 +124,7 @@ notecharts_c.check_notechart = function(self, hash, format, trusted)
 			difficulty = 0,
 		})
 	end
+
 	return true
 end
 
