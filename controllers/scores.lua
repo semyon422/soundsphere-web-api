@@ -48,12 +48,12 @@ scores_c.GET = function(self)
 	}
 end
 
-scores_c.context.POST = {"request_session", "session_user", "user_roles"}
+scores_c.context.POST = {"request_session", "session_user", "user_roles", "user_latest_score"}
 scores_c.policies.POST = {
-	{"authed", {not_params = "trusted"}},
-	{"authed", {role = "moderator"}},
-	{"authed", {role = "admin"}},
-	{"authed", {role = "creator"}},
+	{"authed", {not_params = "trusted"}, "score_submit_limit"},
+	{"authed", {role = "moderator"}, "score_submit_limit"},
+	{"authed", {role = "admin"}, "score_submit_limit"},
+	{"authed", {role = "creator"}, "score_submit_limit"},
 }
 scores_c.validations.POST = {
 	{"trusted", type = "boolean", optional = true},
