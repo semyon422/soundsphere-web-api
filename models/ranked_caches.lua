@@ -47,34 +47,10 @@ function Ranked_caches:load(row)
 end
 
 --[[
-	curl
-	-d "chartkey=Xmd5_hash&start=0&length=1&top=true"
-	-H "Content-Type: application/x-www-form-urlencoded"
-	-X POST https://etternaonline.com/valid_score/chartOverallScores
-
 	https://osu.ppy.sh/api/get_beatmaps?k=api_key&h=md5_hash&m=3&limit=1"
 
 	https://api.quavergame.com/v1/maps/:md5_hash
 ]]
-
-local function check_etterna(hash)
-	local body, status_code, headers = http.simple({
-		url = "https://etternaonline.com/valid_score/chartOverallScores",
-		method = "POST",
-		body = {
-			chartkey = "X" .. hash,
-			start = 0,
-			length = 1,
-			top = true,
-		}
-	})
-
-	if status_code ~= 200 then
-		return false
-	end
-
-	return true, util.from_json(body).recordsTotal > 0
-end
 
 local function check_osu(hash)
 	local body, status_code, headers = http.simple(
@@ -117,8 +93,6 @@ end
 function Ranked_caches:check(hash, format)
 	if format == "osu" then
 		return check_osu(hash)
-	elseif format == "stepmania" then
-		return check_etterna(hash)
 	elseif format == "quaver" then
 		return check_quaver(hash)
 	end
