@@ -9,8 +9,13 @@ local file_c = Controller:new()
 file_c.path = "/files/:file_id[%d]"
 file_c.methods = {"GET", "PUT", "DELETE"}
 
-file_c.context.GET = {"file"}
-file_c.policies.GET = {{"permit"}}
+file_c.context.GET = {"file", "request_session", "session_user", "user_roles"}
+file_c.policies.GET = {
+	{"authed", {not_params = "download"}},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
 file_c.validations.GET = {
 	{"download", type = "boolean", optional = true},
 }
