@@ -1,9 +1,7 @@
-local preload = require("lapis.db.model").preload
 local Users = require("models.users")
 local Sessions = require("models.sessions")
 local bcrypt = require("bcrypt")
-local jwt = require("luajwt")
-local config = require("lapis.config").get()
+local encoding = require("lapis.util.encoding")
 local util = require("util")
 local Controller = require("Controller")
 local Ip = require("util.ip")
@@ -44,7 +42,7 @@ login_c.new_token = function(user, ip)
 	})
 
 	local payload = login_c.copy_session(session:to_name())
-	local token, err = jwt.encode(payload, config.secret, "HS256")
+	local token = encoding.encode_with_secret(payload)
 
 	return token, payload
 end

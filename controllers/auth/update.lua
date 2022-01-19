@@ -1,7 +1,5 @@
-local jwt = require("luajwt")
-local config = require("lapis.config").get()
+local encoding = require("lapis.util.encoding")
 local login_c = require("controllers.auth.login")
-local Sessions = require("models.sessions")
 local Controller = require("Controller")
 
 local update_c = Controller:new()
@@ -24,7 +22,7 @@ update_c.POST = function(self)
 	session:update("updated_at")
 
 	local payload = login_c.copy_session(session:to_name())
-	local token, err = jwt.encode(payload, config.secret, "HS256")
+	local token = encoding.encode_with_secret(payload)
 	login_c.copy_session(payload, self.session)
 
 	return {json = {
