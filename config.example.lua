@@ -2,8 +2,8 @@ local config = require("lapis.config")
 
 -- lapis
 config({"development", "production"}, {
-	port = 8090,
-	secret = "",
+	port = 8080,
+	secret = "please-change-me",
 	hmac_digest = "sha256",
 	session_name = "lapis_session",
 	code_cache = "off",
@@ -15,6 +15,11 @@ config({"development", "production"}, {
 	},
 })
 
+config("production", {
+	code_cache = "on",
+})
+
+-- app
 config({"development", "production"}, {
 	custom_error_page = true,
 	recaptcha = {
@@ -22,8 +27,4 @@ config({"development", "production"}, {
 		secret_key = "",
 	},
 	osu_api_key = "",
-})
-
-config("production", {
-	code_cache = "on",
 })

@@ -6,7 +6,7 @@ local validate = require("lapis.validate")
 local app_helpers = require("lapis.application")
 local app = lapis.Application()
 
-local secret = require("secret")
+local config = require("lapis.config").get()
 
 local token_auth = require("auth.token")
 local basic_auth = require("auth.basic")
@@ -228,7 +228,7 @@ local function route_api(controller, html)
 		end
 		if controller.captcha then
 			self.captcha = true
-			self.recaptcha_site_key = secret.recaptcha_site_key
+			self.recaptcha_site_key = config.recaptcha.site_key
 		end
 		self.data_name = get_data_name(json_response)
 		self.data_type = get_data_type(json_response, self.data_name)
@@ -315,7 +315,7 @@ for _, name in ipairs(endpoints) do
 end
 
 function app:handle_error(err, trace)
-	if secret.custom_error_page then
+	if config.custom_error_page then
 		return {status = 500, json = {
 			err = err,
 			trace = trace,

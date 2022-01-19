@@ -4,7 +4,7 @@ local Filehash = require("util.filehash")
 local toboolean = require("util.toboolean")
 local http = require("lapis.nginx.http")
 local util = require("lapis.util")
-local secret = require("secret")
+local config = require("lapis.config").get()
 
 local Ranked_caches = Model:extend(
 	"ranked_caches",
@@ -56,7 +56,7 @@ local function check_osu(hash)
 	local body, status_code, headers = http.simple(
 		"https://osu.ppy.sh/api/get_beatmaps?" ..
 		util.encode_query_string({
-			k = secret.osu_api_key,
+			k = config.osu_api_key,
 			h = hash,
 			m = 3,
 			limit = 1,

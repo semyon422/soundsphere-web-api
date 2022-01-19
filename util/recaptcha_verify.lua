@@ -1,10 +1,10 @@
 local http = require("lapis.nginx.http")
 local util = require("lapis.util")
-local secret = require("secret")
+local config = require("lapis.config").get()
 
 return function(response, ip)
 	local body, status_code, headers = http.simple("https://www.google.com/recaptcha/api/siteverify", {
-		secret = secret.recaptcha_secret_key,
+		secret = config.recaptcha.secret_key,
 		response = response,
 		remoteip = ip
 	})
