@@ -1,4 +1,5 @@
 lapis/*
+tree
 logs
 secret.lua
 nginx.conf.compiled
