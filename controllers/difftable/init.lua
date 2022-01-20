@@ -72,6 +72,16 @@ difftable_c.policies.DELETE = {
 	{"authed", {community_role = "creator"}},
 }
 difftable_c.DELETE = function(self)
+	local difftable = self.context.difftable
+
+	local db = Difftables.db
+	db.delete("difftable_notecharts", {difftable_id = difftable.id})
+	db.delete("difftable_inputmodes", {difftable_id = difftable.id})
+	db.delete("community_difftables", {difftable_id = difftable.id})
+	db.delete("ranked_cache_difftables", {difftable_id = difftable.id})
+
+	difftable:delete()
+
 	return {status = 204}
 end
 

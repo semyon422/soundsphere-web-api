@@ -1,4 +1,6 @@
 local Communities = require("models.communities")
+local Leaderboards = require("models.leaderboards")
+local Difftables = require("models.difftables")
 local Controller = require("Controller")
 local community_users_c = require("controllers.community.users")
 local util = require("util")
@@ -87,6 +89,27 @@ community_c.policies.DELETE = {
 	{"authed", {community_role = "creator"}},
 }
 community_c.DELETE = function(self)
+	local community = self.context.community
+
+	local leaderboards = Leaderboards:find_all({community.id}, "owner_community_id")
+	if #leaderboards > 0 then
+		return {status = 400, json = {message = "#leaderboards > 0"}}
+	end
+
+	local difftables = Difftables:find_all({community.id}, "owner_community_id")
+	if #difftables > 0 then
+		return {status = 400, json = {message = "#difftables > 0"}}
+	end
+
+	local db = Communities.db
+	db.delete("community_leaderboards", {community_id = community.id})
+	db.delete("community_users", {community_id = community.id})
+	db.delete("community_difftables", {community_id = community.id})
+	db.delete("community_inputmodes", {community_id = community.id})
+	db.delete("community_changes", {community_id = community.id})
+
+	community:delete()
+
 	return {status = 204}
 end
 

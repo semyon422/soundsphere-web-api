@@ -116,6 +116,18 @@ leaderboard_c.policies.DELETE = {
 	{"authed", {community_role = "creator"}},
 }
 leaderboard_c.DELETE = function(self)
+	local leaderboard = self.context.leaderboard
+
+	local db = Leaderboards.db
+	db.delete("community_leaderboards", {leaderboard_id = leaderboard.id})
+	db.delete("leaderboard_difftables", {leaderboard_id = leaderboard.id})
+	db.delete("leaderboard_users", {leaderboard_id = leaderboard.id})
+	db.delete("leaderboard_scores", {leaderboard_id = leaderboard.id})
+	db.delete("leaderboard_inputmodes", {leaderboard_id = leaderboard.id})
+	db.delete("leaderboard_requirements", {leaderboard_id = leaderboard.id})
+
+	leaderboard:delete()
+
 	return {status = 204}
 end
 
