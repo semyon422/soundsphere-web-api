@@ -1,5 +1,4 @@
 local Community_leaderboards = require("models.community_leaderboards")
-local Leaderboards = require("models.leaderboards")
 local Controller = require("Controller")
 local util = require("util")
 
@@ -19,7 +18,7 @@ community_leaderboard_c.GET = function(self)
 	return {json = {community_leaderboard = community_leaderboard}}
 end
 
-community_leaderboard_c.context.PUT = {"community_leaderboard", "request_session"}
+community_leaderboard_c.context.PUT = {{"community_leaderboard", missing = true}, "leaderboard", "request_session"}
 community_leaderboard_c.policies.PUT = {{"authed"}}
 community_leaderboard_c.validations.PUT = {
 	{"message", exists = true, type = "string"},
@@ -27,11 +26,7 @@ community_leaderboard_c.validations.PUT = {
 community_leaderboard_c.PUT = function(self)
 	local params = self.params
 
-	if self.context.community_leaderboard then
-		return {}
-	end
-
-	local owner_community = Leaderboards:find(params.leaderboard_id)
+	local owner_community = self.context.leaderboard:get_owner_community()
 	local community_leaderboard = Community_leaderboards:create({
 		community_id = params.community_id,
 		leaderboard_id = params.leaderboard_id,
@@ -41,7 +36,7 @@ community_leaderboard_c.PUT = function(self)
 		message = params.message or "",
 	})
 
-	return {json = {community_leaderboard = community_leaderboard}}
+	return {status = 201, redirect_to = self:url_for(community_leaderboard)}
 end
 
 community_leaderboard_c.context.DELETE = {"community_leaderboard", "request_session"}
