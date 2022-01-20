@@ -1,4 +1,5 @@
 local Difftables = require("models.difftables")
+local Communities = require("models.communities")
 local Controller = require("Controller")
 local util = require("util")
 
@@ -54,6 +55,11 @@ difftable_c.PATCH = function(self)
 	local found_difftable = Difftables:find({name = params.difftable.name})
 	if found_difftable and found_difftable.id ~= difftable.id then
 		return {status = 400, json = {message = "This name is already taken"}}
+	end
+
+	local community = Communities:find(params.difftable.owner_community_id)
+	if not community then
+		return {status = 400, json = {message = "not community"}}
 	end
 
 	util.patch(difftable, params.difftable, {

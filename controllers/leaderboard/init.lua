@@ -1,4 +1,5 @@
 local Leaderboards = require("models.leaderboards")
+local Communities = require("models.communities")
 local Difficulty_calculators = require("enums.difficulty_calculators")
 local Rating_calculators = require("enums.rating_calculators")
 local Combiners = require("enums.combiners")
@@ -74,6 +75,11 @@ leaderboard_c.PATCH = function(self)
 	local found_leaderboard = Leaderboards:find({name = params.leaderboard.name})
 	if found_leaderboard and found_leaderboard.id ~= leaderboard.id then
 		return {status = 400, json = {message = "This name is already taken"}}
+	end
+
+	local community = Communities:find(params.leaderboard.owner_community_id)
+	if not community then
+		return {status = 400, json = {message = "not community"}}
 	end
 
 	Leaderboards:for_db(params.leaderboard)
