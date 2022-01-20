@@ -68,6 +68,17 @@ user_c.policies.DELETE = {
 	{"authed", {role = "creator"}},
 }
 user_c.DELETE = function(self)
+	local user = self.context.user
+
+	local db = Users.db
+	db.delete("leaderboard_users", {user_id = user.id})
+	db.delete("community_users", {user_id = user.id})
+	db.delete("user_relations", {user_id = user.id})
+	db.delete("user_relations", {relative_user_id = user.id})
+	db.delete("user_roles", {user_id = user.id})
+
+	user:delete()
+
 	return {status = 204}
 end
 
