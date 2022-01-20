@@ -84,6 +84,8 @@ notechart_c.set_notechart_from_metadata = function(notechart_file, response_note
 		"length",
 		"notes_count"
 	)
+
+	return notechart
 end
 
 notechart_c.context.PATCH = {"notechart", "request_session", "session_user", "user_roles"}
@@ -143,9 +145,10 @@ notechart_c.PATCH = function(self)
 	local response_notechart
 
 	for _, current_notechart in ipairs(response_notecharts) do
-		notechart_c.set_notechart_from_metadata(notechart_file, current_notechart)
+		local updated_notechart = notechart_c.set_notechart_from_metadata(notechart_file, current_notechart)
 		if current_notechart.index == notechart.index then
 			response_notechart = current_notechart
+			notechart = updated_notechart
 		end
 	end
 
