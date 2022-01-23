@@ -6,7 +6,7 @@ local check_c = Controller:new()
 check_c.path = "/auth/check"
 check_c.methods = {"GET", "POST"}
 
-check_c.context.GET = {"request_session"}
+check_c.context.GET = {{"request_session", optional = true}}
 check_c.policies.GET = {{"permit"}}
 check_c.validations.GET = {
 	{"show_ip", type = "boolean", optional = true}
