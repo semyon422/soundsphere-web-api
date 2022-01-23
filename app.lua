@@ -246,35 +246,53 @@ local function route_api(controller, html)
 end
 
 local function route_datatables(controller, name)
-	local ok, datatable = pcall(require, "datatables." .. name)
-	if not ok then
-		return
-	end
 	return json_respond_to("/dt" .. controller.path, function(self)
 		tonumber_params(self, controller)
+		self.req.method = "GET"
+
+		local params = self.params
+
+		if tonumber(params.length) ~= -1 then
+			params.page_num = math.floor((params.start or 0) / (params.length or 1)) + 1
+			params.per_page = tonumber(params.length)
+		end
+		if type(params.search) == "table" then
+			params.search = params.search.value
+		end
+
+		local errors
+		local validations = controller.validations.GET
+		if validations then
+			errors = recursive_validate(self.params, validations)
+		end
 		local context = get_context(self, controller)
-		if controller:check_access(self, "GET") then
-			local params = self.params
-			if tonumber(params.length) ~= -1 then
-				params.page_num = math.floor((params.start or 0) / (params.length or 1)) + 1
-				params.per_page = params.length
-			end
-			if type(params.search) == "table" then
-				params.search = params.search.value
-			end
-			if datatable.params then
-				datatable.params(self)
-			end
-			local response = controller.GET(self)
-			response.json = datatable.response(response.json or {}, self)
-			return response
+
+		local response = {status = 403}
+		if not controller.GET then
+			response.status = 404
+		elseif errors and #errors > 0 then
+			response.status = 400
+			response.json = {errors = errors}
+		elseif controller:check_access(self, "GET") then
+			response = controller.GET(self)
+			response.status = response.status or 200
 		else
 			return {json = {decision = context.decision}, status = 403}
 		end
+		local json_response = response.json
+		local data_name = get_data_name(json_response)
+		local data = json_response and json_response[data_name] or {}
+
+		response.json = {
+			draw = params.draw,
+			recordsTotal = json_response.total or 1,
+			recordsFiltered = json_response.filtered or 1,
+			data = data,
+		}
+
+		return response
 	end)
 end
-
--- permit, deny, not_applicable, indeterminate
 
 local autoload = require("lapis.util").autoload
 local controllers = autoload("controllers")
