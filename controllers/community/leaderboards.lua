@@ -1,4 +1,5 @@
 local Community_leaderboards = require("models.community_leaderboards")
+local Leaderboards = require("models.leaderboards")
 local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
 local util = require("util")
@@ -75,6 +76,7 @@ community_leaderboards_c.validations.GET = {
 	{"owned", type = "boolean", optional = true},
 }
 util.add_belongs_to_validations(Community_leaderboards.relations, community_leaderboards_c.validations.GET)
+util.add_has_many_validations(Leaderboards.relations, community_leaderboards_c.validations.GET)
 community_leaderboards_c.GET = function(self)
 	local params = self.params
 
@@ -97,6 +99,7 @@ community_leaderboards_c.GET = function(self)
 	end
 
 	preload(community_leaderboards, util.get_relatives_preload(Community_leaderboards, params))
+	util.relatives_preload_field(community_leaderboards, "leaderboard", Leaderboards, params)
 	util.recursive_to_name(community_leaderboards)
 
 	return {json = {
