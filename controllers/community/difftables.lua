@@ -12,7 +12,8 @@ community_difftables_c.path = "/communities/:community_id[%d]/difftables"
 community_difftables_c.methods = {"GET"}
 
 community_difftables_c.policies.GET = {{"permit"}}
-community_difftables_c.validations.GET = util.add_belongs_to_validations(Community_difftables.relations)
+community_difftables_c.validations.GET = {}
+util.add_belongs_to_validations(Community_difftables.relations, community_difftables_c.validations.GET)
 util.add_has_many_validations(Difftables.relations, community_difftables_c.validations.GET)
 community_difftables_c.GET = function(self)
 	local params = self.params
