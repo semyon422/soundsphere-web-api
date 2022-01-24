@@ -88,9 +88,17 @@ community_user_c.policies.PATCH = {
 }
 community_user_c.validations.PATCH = {
 	{"role", exists = true, type = "string", one_of = Roles.list},
+	{"transfer_ownership", type = "boolean"},
 }
 community_user_c.PATCH = function(self)
+	local params = self.params
 	local community_user = self.context.community_user
+
+	if params.transfer_ownership then
+		Community_users:set_role(community_user, "creator", true)
+		Community_users:set_role(Community_users:find({user_id = self.session.user_id}), "admin", true)
+		return {json = {message = "Success"}}
+	end
 
 	Community_users:set_role(community_user, self.params.role, true)
 
