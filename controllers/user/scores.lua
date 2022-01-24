@@ -37,13 +37,12 @@ user_scores_c.GET = function(self)
 	end
 
 	if params.leaderboard_id then
-		table.insert(clause_table, "inner join leaderboard_users lu on s.user_id = lu.user_id")
+		table.insert(clause_table, "inner join leaderboard_scores ls on s.user_id = ls.user_id and s.id = ls.score_id")
 		table.insert(where_table, "s.is_ranked = ?")
-		table.insert(where_table, "lu.active = ?")
-		table.insert(where_table, "lu.leaderboard_id = ?")
-		table.insert(opts, true)
+		table.insert(where_table, "ls.leaderboard_id = ?")
 		table.insert(opts, true)
 		table.insert(opts, params.leaderboard_id)
+		table.insert(fields, "ls.rating as leaderboard_rating")
 	end
 	if params.difftable_id then
 		table.insert(clause_table, "inner join difftable_notecharts dn on s.notechart_id = dn.notechart_id")
@@ -63,6 +62,8 @@ user_scores_c.GET = function(self)
 	end
 	if params.latest then
 		table.insert(orders, "s.created_at desc")
+	elseif params.leaderboard_id then
+		table.insert(orders, "ls.rating desc")
 	else
 		table.insert(orders, "s.rating desc")
 	end
@@ -83,9 +84,13 @@ user_scores_c.GET = function(self)
 	})
 	local scores = paginator:get_page(page_num)
 
-	if not params.latest then
-		for i, score in ipairs(scores) do
+	for i, score in ipairs(scores) do
+		if not params.latest then
 			score.rank = (page_num - 1) * per_page + i
+		end
+		if score.leaderboard_rating then
+			score.rating = score.leaderboard_rating
+			score.leaderboard_rating = nil
 		end
 	end
 
