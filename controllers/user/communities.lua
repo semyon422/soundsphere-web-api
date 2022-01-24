@@ -1,5 +1,5 @@
 local Community_users = require("models.community_users")
-local Roles = require("enums.roles")
+local Communities = require("models.communities")
 local preload = require("lapis.db.model").preload
 local Controller = require("Controller")
 local util = require("util")
@@ -15,7 +15,9 @@ user_communities_c.validations.GET = {
 	{"requests", type = "boolean", optional = true},
 	{"is_admin", type = "boolean", optional = true},
 }
-user_communities_c.validations.GET = util.add_belongs_to_validations(Community_users.relations)
+user_communities_c.validations.GET = {}
+util.add_belongs_to_validations(Community_users.relations, user_communities_c.validations.GET)
+util.add_has_many_validations(Communities.relations, user_communities_c.validations.GET)
 user_communities_c.GET = function(self)
 	local params = self.params
 	local where = {accepted = true}
@@ -40,6 +42,7 @@ user_communities_c.GET = function(self)
 	end
 
 	preload(community_users, util.get_relatives_preload(Community_users, params))
+	util.relatives_preload_field(community_users, "community", Communities, params)
 	util.recursive_to_name(community_users)
 
     local filtered_community_users = {}

@@ -1,4 +1,5 @@
 local Leaderboard_difftables = require("models.leaderboard_difftables")
+local Leaderboards = require("models.leaderboards")
 local preload = require("lapis.db.model").preload
 local Controller = require("Controller")
 local util = require("util")
@@ -10,7 +11,9 @@ difftable_leaderboards_c.methods = {"GET"}
 
 difftable_leaderboards_c.context.GET = {"difftable"}
 difftable_leaderboards_c.policies.GET = {{"permit"}}
-difftable_leaderboards_c.validations.GET = util.add_belongs_to_validations(Leaderboard_difftables.relations)
+difftable_leaderboards_c.validations.GET = {}
+util.add_belongs_to_validations(Leaderboard_difftables.relations, difftable_leaderboards_c.validations.GET)
+util.add_has_many_validations(Leaderboards.relations, difftable_leaderboards_c.validations.GET)
 difftable_leaderboards_c.GET = function(self)
 	local params = self.params
 	local leaderboard_difftables = Leaderboard_difftables:find_all({params.difftable_id}, "difftable_id")
@@ -23,6 +26,7 @@ difftable_leaderboards_c.GET = function(self)
 	end
 
 	preload(leaderboard_difftables, util.get_relatives_preload(Leaderboard_difftables, params))
+	util.relatives_preload_field(leaderboard_difftables, "leaderboard", Leaderboards, params)
 	util.recursive_to_name(leaderboard_difftables)
 
 	return {json = {
