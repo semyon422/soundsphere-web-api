@@ -51,6 +51,13 @@ local function append_table(src, dst)
 	end
 end
 
+local function fix_number(v)
+	v = tonumber(v)
+	if v == v and type(v) == "number" and math.abs(v) ~= math.huge then
+		return v
+	end
+end
+
 local function fix_types(object, validations)
 	for _, validation in ipairs(validations) do
 		local key = validation[1]
@@ -59,7 +66,7 @@ local function fix_types(object, validations)
 		if vtype == "string" then
 			object[key] = value ~= nil and tostring(value) or ""
 		elseif vtype == "number" then
-			object[key] = tonumber(value)
+			object[key] = fix_number(value)
 		elseif vtype == "boolean" then
 			if value == 1 or value == "1" or value == true or value == "true" then
 				object[key] = true
@@ -180,10 +187,10 @@ end
 local function tonumber_params(self, controller)
 	local params = self.params
 	for key in controller.path:gmatch(":([^/]+)%[%%d%]") do
-		params[key] = tonumber(params[key])
+		params[key] = fix_number(params[key])
 	end
-	params.per_page = tonumber(params.per_page)
-	params.page_num = tonumber(params.page_num)
+	params.per_page = fix_number(params.per_page)
+	params.page_num = fix_number(params.page_num)
 end
 
 local function route_api(controller, html)
