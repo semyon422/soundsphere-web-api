@@ -1,4 +1,5 @@
 local Community_difftables = require("models.community_difftables")
+local Difftables = require("models.difftables")
 local Community_leaderboards = require("models.community_leaderboards")
 local array_update = require("util.array_update")
 local preload = require("lapis.db.model").preload
@@ -12,6 +13,7 @@ community_difftables_c.methods = {"GET"}
 
 community_difftables_c.policies.GET = {{"permit"}}
 community_difftables_c.validations.GET = util.add_belongs_to_validations(Community_difftables.relations)
+util.add_has_many_validations(Difftables.relations, community_difftables_c.validations.GET)
 community_difftables_c.GET = function(self)
 	local params = self.params
 
@@ -53,6 +55,7 @@ community_difftables_c.GET = function(self)
 	end
 
 	preload(community_difftables, util.get_relatives_preload(Community_difftables, params))
+	util.relatives_preload_field(community_difftables, "difftable", Difftables, params)
 	util.recursive_to_name(community_difftables)
 
 	return {json = {

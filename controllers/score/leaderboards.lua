@@ -335,6 +335,7 @@ score_leaderboards_c.update_user_leaderboard = function(user_id, leaderboard)
 		new_leaderboard_user.active = true
 		new_leaderboard_user.scores_count = total_count
 		new_leaderboard_user.total_rating = total_rating
+		new_leaderboard_user.latest_activity = os.time()
 		Leaderboard_users:create(new_leaderboard_user)
 		score_leaderboards_c.update_top_user(leaderboard)
 		score_leaderboards_c.update_community_leaderboards(user_id, leaderboard)
@@ -342,7 +343,8 @@ score_leaderboards_c.update_user_leaderboard = function(user_id, leaderboard)
 	end
 	leaderboard_user.scores_count = total_count
 	leaderboard_user.total_rating = total_rating
-	leaderboard_user:update("scores_count", "total_rating")
+	leaderboard_user.latest_activity = os.time()
+	leaderboard_user:update("scores_count", "total_rating", "latest_activity")
 
 	score_leaderboards_c.update_top_user(leaderboard)
 	score_leaderboards_c.update_community_leaderboards(user_id, leaderboard)

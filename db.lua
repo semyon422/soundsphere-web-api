@@ -76,10 +76,12 @@ table_declarations.leaderboard_users = {
 	{"active", types.boolean},
 	{"scores_count", types.size},
 	{"total_rating", types.float},
+	{"latest_activity", types.time},
 	"UNIQUE KEY `leaderboard_users` (`leaderboard_id`,`user_id`)",
 	"KEY `active` (`active`)",
 	"KEY `scores_count` (`scores_count`)",
 	"KEY `total_rating` (`total_rating`)",
+	"KEY `latest_activity` (`latest_activity`)",
 }
 
 table_declarations.leaderboard_scores = {

@@ -39,6 +39,7 @@ community_users_c.get_users = function(self)
 		table.insert(clause_table, "inner join leaderboard_users lu on cu.user_id = lu.user_id")
 		table.insert(fields, "lu.total_rating")
 		table.insert(fields, "lu.scores_count")
+		table.insert(fields, "lu.latest_activity")
 		table.insert(orders, "lu.total_rating desc")
 		table.insert(where_table, "lu.active = true")
 		table.insert(where_table, "lu.leaderboard_id = ?")
@@ -71,6 +72,7 @@ community_users_c.get_users = function(self)
 
 	for i, community_user in ipairs(community_users) do
 		community_user.rank = (page_num - 1) * per_page + i
+		community_user.latest_activity = tonumber(community_user.latest_activity)
 	end
 
 	return community_users, clause
