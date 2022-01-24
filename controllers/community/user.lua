@@ -82,7 +82,7 @@ community_user_c.GET = function(self)
 	return {json = {community_user = community_user:to_name()}}
 end
 
-community_user_c.context.PATCH = {"community_user", "request_session", "session_user", "user", "user_communities"}
+community_user_c.context.PATCH = {"community_user", "request_session", "session_user", "user_communities"}
 community_user_c.policies.PATCH = {
 	{"authed", "community_user_change_role"},
 }
