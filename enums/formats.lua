@@ -12,6 +12,18 @@ local Formats = enum({
 	sph = 255,
 })
 
+Formats.list = {
+	"undefined",
+	"osu",
+	"quaver",
+	"bms",
+	"ksm",
+	"o2jam",
+	"midi",
+	"stepmania",
+	"sph",
+}
+
 Formats.extensions = {
 	osu = "osu",
 	qua = "quaver",
