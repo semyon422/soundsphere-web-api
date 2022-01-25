@@ -9,6 +9,7 @@ local Inputmodes = require("enums.inputmodes")
 local util = require("util")
 local preload = require("lapis.db.model").preload
 local notecharts_c = require("controllers.notecharts")
+local metrics = require("metrics")
 
 local scores_c = Controller:new()
 
@@ -81,6 +82,7 @@ scores_c.POST = function(self)
 			params.trusted
 		)
 		if not trusted then
+			metrics.scores:observe(1, {false})
 			return {status = 400, json = {message = message}}
 		end
 
@@ -99,6 +101,7 @@ scores_c.POST = function(self)
 			notechart_file:update("uploaded")
 		end
 	end
+	metrics.scores:observe(1, {true})
 
 	local notechart = Notecharts:find({
 		file_id = notechart_file.id,

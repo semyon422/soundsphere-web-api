@@ -14,6 +14,17 @@ local basic_auth = require("auth.basic")
 app:enable("etlua")
 app.layout = require("views.layout")
 
+if config.code_cache == "on" then
+	local metrics = require("metrics")
+	local after_dispatch = require("lapis.nginx.context").after_dispatch
+	app:before_filter(function(self)
+		after_dispatch(function()
+			metrics.lapis()
+		end)
+	end)
+end
+
+validate.validate_functions.optional = function(input) return true, "" end
 validate.validate_functions.param_type = function(input) return true, "" end
 validate.validate_functions.no_value = function(input, validations) return true, "" end
 validate.validate_functions.validations = function(input, validations) return true, "" end
