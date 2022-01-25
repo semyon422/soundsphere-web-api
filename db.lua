@@ -183,9 +183,19 @@ table_declarations.users = {
 	{"scores_count", types.size},
 	{"notecharts_count", types.size},
 	{"notes_count", types.size},
+	{"notecharts_upload_size", types.size},
+	{"replays_upload_size", types.size},
 	{"play_time", types.size},
 	"UNIQUE KEY `name` (`name`)",
-	"UNIQUE KEY `email` (`email`)"
+	"UNIQUE KEY `email` (`email`)",
+	"KEY `latest_activity` (`latest_activity`)",
+	"KEY `created_at` (`created_at`)",
+	"KEY `scores_count` (`scores_count`)",
+	"KEY `notecharts_count` (`notecharts_count`)",
+	"KEY `notes_count` (`notes_count`)",
+	"KEY `notecharts_upload_size` (`notecharts_upload_size`)",
+	"KEY `replays_upload_size` (`replays_upload_size`)",
+	"KEY `play_time` (`play_time`)",
 }
 
 table_declarations.user_relations = {

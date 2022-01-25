@@ -88,7 +88,17 @@ file_c.PUT = function(self)
 
 	Files:write_file(file, params.file.content)
 
-	return {json = {file = file:to_name()}}
+	file:to_name()
+	local user = self.context.session_user
+	if file.storage == "notecharts" then
+		user.notecharts_upload_size = user.notecharts_upload_size + file.size
+		user:update("notecharts_upload_size")
+	elseif file.storage == "replays" then
+		user.replays_upload_size = user.replays_upload_size + file.size
+		user:update("replays_upload_size")
+	end
+
+	return {json = {file = file}}
 end
 
 return file_c

@@ -58,11 +58,9 @@ scores_c.policies.POST = {
 scores_c.validations.POST = {
 	{"trusted", type = "boolean", optional = true},
 	{"replay_hash", exists = true, type = "string", param_type = "body"},
-	{"replay_size", exists = true, type = "number", param_type = "body"},
 	{"notechart_hash", exists = true, type = "string", param_type = "body"},
 	{"notechart_index", exists = true, type = "number", param_type = "body"},
 	{"notechart_filename", exists = true, type = "string", param_type = "body"},
-	{"notechart_filesize", exists = true, type = "number", param_type = "body"},
 }
 scores_c.POST = function(self)
 	local params = self.params
@@ -92,7 +90,7 @@ scores_c.POST = function(self)
 			format = Formats:get_format_for_db(params.notechart_filename),
 			storage = Storages:for_db("notecharts"),
 			uploaded = false,
-			size = params.notechart_filesize,
+			size = 0,
 			loaded = false,
 			created_at = created_at,
 		})
@@ -135,7 +133,7 @@ scores_c.POST = function(self)
 		format = Formats:for_db("undefined"),
 		storage = Storages:for_db("replays"),
 		uploaded = false,
-		size = params.replay_size,
+		size = 0,
 		loaded = false,
 		created_at = created_at,
 	})
