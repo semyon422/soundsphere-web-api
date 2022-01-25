@@ -1,7 +1,15 @@
 local Difftables = require("models.difftables")
+local Difftable_notecharts = require("models.difftable_notecharts")
+local Files = require("models.files")
+local Notecharts = require("models.notecharts")
 local Communities = require("models.communities")
+local Ranked_caches = require("models.ranked_caches")
+local Ranked_cache_difftables = require("models.ranked_cache_difftables")
 local Controller = require("Controller")
+local Formats = require("enums.formats")
+local Filehash = require("util.filehash")
 local util = require("util")
+local difftable_notechart_c = require("controllers.difftable.notechart")
 
 local additions = {
 	communities = require("controllers.difftable.communities"),
@@ -13,7 +21,7 @@ local additions = {
 local difftable_c = Controller:new()
 
 difftable_c.path = "/difftables/:difftable_id[%d]"
-difftable_c.methods = {"GET", "PATCH", "DELETE"}
+difftable_c.methods = {"GET", "PATCH", "PUT", "DELETE"}
 
 local set_community_id = function(self)
 	self.params.community_id = self.context.difftable.owner_community_id
@@ -45,6 +53,7 @@ difftable_c.validations.PATCH = {
 		{"name", exists = true, type = "string"},
 		{"link", exists = true, type = "string"},
 		{"description", exists = true, type = "string"},
+		{"symbol", exists = true, type = "string"},
 		{"owner_community_id", exists = true, type = "number"},
 	}}
 }
@@ -66,10 +75,95 @@ difftable_c.PATCH = function(self)
 		"name",
 		"link",
 		"description",
+		"symbol",
 		"owner_community_id",
 	})
 
 	return {json = {difftable = difftable}}
+end
+
+difftable_c.add_bms_notechart = function(self, difftable_id, bms_notechart)
+	local created_at = os.time()
+	local hash_for_db = Filehash:for_db(bms_notechart.md5)
+	local format_for_db = Formats:for_db("bms")
+	local difficulty = tonumber(bms_notechart.level) or 0
+
+	local file = Files:find({hash = hash_for_db})
+	if file then
+		local notechart = Notecharts:find({file_id = file.id, index = 1})
+		if notechart then
+			local difftable_notechart = Difftable_notecharts:find({
+				difftable_id = difftable_id,
+				notechart_id = notechart.id,
+			})
+			if not difftable_notechart then
+				difftable_notechart = difftable_notechart_c.add_difftable_notechart(
+					difftable_id,
+					notechart,
+					tonumber(bms_notechart.level)
+				)
+			elseif difftable_notechart.difficulty ~= difficulty then
+				difftable_notechart.difficulty = difficulty
+				difftable_notechart:update("difficulty")
+			end
+		end
+		return
+	end
+
+	local ranked_cache = Ranked_caches:find({hash = hash_for_db, format = format_for_db})
+	if not ranked_cache then
+		ranked_cache = Ranked_caches:create({
+			hash = hash_for_db,
+			format = format_for_db,
+			exists = true,
+			ranked = true,
+			created_at = created_at,
+			expires_at = created_at,
+			user_id = self.session.user_id,
+		})
+	end
+	local ranked_cache_difftable = Ranked_cache_difftables:find({
+		ranked_cache_id = ranked_cache.id,
+		difftable_id = difftable_id,
+	})
+	if not ranked_cache_difftable then
+		ranked_cache_difftable = Ranked_cache_difftables:create({
+			ranked_cache_id = ranked_cache.id,
+			difftable_id = difftable_id,
+			index = 1,
+			difficulty = difficulty,
+		})
+	end
+end
+
+difftable_c.context.PUT = {"difftable", "request_session", "session_user", "user_roles"}
+difftable_c.policies.PUT = {
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
+difftable_c.validations.PUT = {
+	{"rank_from_bms", type = "boolean"},
+}
+difftable_c.PUT = function(self)
+	local params = self.params
+	local difftable = self.context.difftable
+
+	if params.rank_from_bms then
+		local header, data = util.get_bms_difftable(difftable.link)
+		difftable.name = header.name
+		difftable.symbol = header.symbol
+		difftable:update("name", "symbol")
+		for _, notechart in ipairs(data) do
+			difftable_c.add_bms_notechart(self, difftable.id, notechart)
+		end
+		return {status = 201, json = {
+			header = header,
+			count = #data
+		}}
+	end
+
+	return {status = 204}
 end
 
 difftable_c.context.DELETE = {"difftable", "request_session", "session_user", "user_communities", set_community_id}

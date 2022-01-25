@@ -60,6 +60,7 @@ difftables_c.validations.POST = {
 		{"name", exists = true, type = "string"},
 		{"link", exists = true, type = "string"},
 		{"description", exists = true, type = "string"},
+		{"symbol", exists = true, type = "string"},
 		{"owner_community_id", exists = true, type = "number"},
 	}}
 }
@@ -75,6 +76,7 @@ difftables_c.POST = function(self)
 		name = difftable.name or "Difficulty table",
 		link = difftable.link,
 		description = difftable.description,
+		symbol = difftable.symbol,
 		owner_community_id = difftable.owner_community_id,
 	})
 

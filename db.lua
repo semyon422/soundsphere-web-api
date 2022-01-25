@@ -140,6 +140,7 @@ table_declarations.difftables = {
 	{"name", types.varchar},
 	{"link", types.varchar},
 	{"description", types.varchar},
+	{"symbol", types.varchar},
 	{"owner_community_id", types.fk_id},
 	{"scores_count", types.size},
 	{"notecharts_count", types.size},

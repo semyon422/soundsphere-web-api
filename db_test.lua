@@ -69,6 +69,7 @@ db_test.create = function()
 		name = "osu!mania ranked and loved",
 		link = "",
 		description = "Description",
+		symbol = "",
 		owner_community_id = community.id,
 	})
 
@@ -76,6 +77,7 @@ db_test.create = function()
 		name = "Quaver ranked",
 		link = "",
 		description = "Description",
+		symbol = "",
 		owner_community_id = community.id,
 	})
 
