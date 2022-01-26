@@ -19,16 +19,19 @@ register_c.validations.POST = {
 		{"email", exists = true, type = "string"},
 		{"password", exists = true, type = "string"},
 	}},
-	{"recaptcha_token", exists = true, type = "string", param_type = "body", captcha = "register"},
+	{"recaptcha_token", exists = true, type = "string", param_type = "body", captcha = "register", optional = true},
 }
 register_c.POST = function(self)
 	local params = self.params
 
-	local captcha = util.recaptcha_verify(params.recaptcha_token, self.context.ip)
-	if not captcha.success or captcha.score < 0.5 or captcha.action ~= "register" then
-		return {status = 401, json = {
-			message = [[not captcha.success or captcha.score < 0.5 or captcha.action ~= "register"]]
-		}}
+	local success, message = util.recaptcha_verify(
+		self.context.ip,
+		params.recaptcha_token,
+		"register",
+		0.5
+	)
+	if not success then
+		return {status = 401, json = {message = message}}
 	end
 
 	local user = Users:find({email = params.user.email:lower()})

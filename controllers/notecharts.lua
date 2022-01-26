@@ -10,6 +10,7 @@ local Ranked_caches = require("models.ranked_caches")
 local Ranked_cache_difftables = require("models.ranked_cache_difftables")
 local util = require("util")
 local preload = require("lapis.db.model").preload
+local config = require("lapis.config").get()
 
 local notecharts_c = Controller:new()
 
@@ -53,6 +54,10 @@ notecharts_c.default_difftable_ids = {
 }
 
 notecharts_c.check_notechart = function(self, hash, format, trusted)
+	if not config.is_ranked_check_enabled then
+		return true
+	end
+
 	local created_at = os.time()
 	local hash_for_db = Filehash:for_db(hash)
 	local format_for_db = Formats:for_db(format)

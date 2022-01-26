@@ -51,16 +51,19 @@ login_c.policies.POST = {{"permit"}}
 login_c.validations.POST = {
 	{"email", exists = true, type = "string", param_type = "body"},
 	{"password", exists = true, type = "string", param_type = "body"},
-	{"recaptcha_token", exists = true, type = "string", param_type = "body", captcha = "login"},
+	{"recaptcha_token", exists = true, type = "string", param_type = "body", captcha = "login", optional = true},
 }
 login_c.POST = function(self)
 	local params = self.params
 
-	local captcha = util.recaptcha_verify(params.recaptcha_token, self.context.ip)
-	if not captcha.success or captcha.score < 0.5 or captcha.action ~= "login" then
-		return {status = 401, json = {
-			message = [[not captcha.success or captcha.score < 0.5 or captcha.action ~= "login"]]
-		}}
+	local success, message = util.recaptcha_verify(
+		self.context.ip,
+		params.recaptcha_token,
+		"login",
+		0.5
+	)
+	if not success then
+		return {status = 401, json = {message = message}}
 	end
 
 	local user, err = login(params.email, params.password)

@@ -23,8 +23,10 @@ config("production", {
 config({"development", "production"}, {
 	custom_error_page = true,
 	recaptcha = {
+		is_enabled = true,
 		site_key = "",
 		secret_key = "",
 	},
 	osu_api_key = "",
+	is_ranked_check_enabled = true,
 })
