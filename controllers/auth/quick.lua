@@ -63,6 +63,7 @@ quick_c.GET = function(self)
 	if user then
 		quick_login:delete()
 		local token, payload = login_c.new_token(user, ip)
+		login_c.add_user_location(user, ip, false)
 
 		return {json = {
 			token = token,

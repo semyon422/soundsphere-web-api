@@ -1,10 +1,14 @@
 local Users = require("models.users")
 local User_roles = require("models.user_roles")
+local User_locations = require("models.user_locations")
 local bcrypt = require("bcrypt")
 local Controller = require("Controller")
 local Roles = require("enums.roles")
+local Ip = require("util.ip")
 local util = require("util")
 local login_c = require("controllers.auth.login")
+
+local config = require("lapis.config").get()
 
 local register_c = Controller:new()
 
@@ -34,9 +38,18 @@ register_c.POST = function(self)
 		return {status = 401, json = {message = message}}
 	end
 
+	local user_location = User_locations:select(
+		"where ip = ? and is_register = ? order by created_at desc limit 1",
+		Ip:for_db(self.context.ip),
+		true
+	)[1]
+	if user_location and user_location.created_at + config.ip_register_delay > os.time() then
+		return {status = 400, json = {message = "Registration for this IP is temporarily not allowed"}}
+	end
+
 	local user = Users:find({email = params.user.email:lower()})
 	if user then
-		return {json = {message = "This email is already registered"}}
+		return {status = 400, json = {message = "This email is already registered"}}
 	end
 	user = Users:find({name = params.user.name})
 	if user then
@@ -61,6 +74,7 @@ register_c.POST = function(self)
 	})
 
 	local token, payload = login_c.new_token(user, self.context.ip)
+	login_c.add_user_location(user, self.context.ip, true)
 	login_c.copy_session(payload, self.session)
 
 	return {status = 201, redirect_to = self:url_for(user)}
