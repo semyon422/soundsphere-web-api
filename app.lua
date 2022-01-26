@@ -127,6 +127,12 @@ local function get_context(self, controller, all_methods)
 		controller:load_context(self)
 	end
 
+	local session_user = self.context.session_user
+	if session_user then
+		session_user.latest_activity = os.time()
+		session_user:update("latest_activity")
+	end
+
 	return self.context
 end
 
