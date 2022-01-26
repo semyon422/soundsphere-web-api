@@ -44,7 +44,7 @@ function metrics.init()
 		"lapis_performance_db_time",
 		"Time in seconds spent executing queries"
 	)
-	metrics.lapis_db_count = prometheus:histogram(
+	metrics.lapis_db_count = prometheus:counter(
 		"lapis_performance_db_count",
 		"The number of queries executed"
 	)
@@ -52,7 +52,7 @@ function metrics.init()
 		"lapis_performance_http_time",
 		"Time in seconds spent executing HTTP requests"
 	)
-	metrics.lapis_http_count = prometheus:histogram(
+	metrics.lapis_http_count = prometheus:counter(
 		"lapis_performance_http_count",
 		"The number of HTTP requests sent"
 	)
@@ -70,9 +70,9 @@ function metrics.lapis()
 	metrics.lapis_view_time:observe(tonumber(performance.view_time))
 	metrics.lapis_layout_time:observe(tonumber(performance.layout_time))
 	metrics.lapis_db_time:observe(tonumber(performance.db_time))
-	metrics.lapis_db_count:observe(tonumber(performance.db_count))
+	metrics.lapis_db_count:inc(tonumber(performance.db_count))
 	metrics.lapis_http_time:observe(tonumber(performance.http_time))
-	metrics.lapis_http_count:observe(tonumber(performance.http_count))
+	metrics.lapis_http_count:inc(tonumber(performance.http_count))
 end
 
 function metrics.location()
