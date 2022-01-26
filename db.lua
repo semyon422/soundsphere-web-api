@@ -17,6 +17,7 @@ local tables = {
 	"users",
 	"user_relations",
 	"user_roles",
+	"user_inputmodes",
 	"communities",
 	"community_leaderboards",
 	"community_users",
@@ -171,6 +172,13 @@ table_declarations.user_roles = {
 	{"role", types.enum},
 	{"expires_at", types.time},
 	"UNIQUE KEY `subject_object` (`user_id`, `role`)"
+}
+
+table_declarations.user_inputmodes = {
+	{"id", types.id},
+	{"user_id", types.fk_id},
+	{"inputmode", types.enum},
+	"UNIQUE KEY `user_inputmode` (`user_id`, `inputmode`)"
 }
 
 table_declarations.users = {

@@ -5,6 +5,7 @@ local util = require("util")
 local additions = {
 	communities = require("controllers.user.communities"),
 	leaderboards = require("controllers.user.leaderboards"),
+	inputmodes = require("controllers.user.inputmodes"),
 	roles = require("controllers.user.roles"),
 	scores = require("controllers.user.scores"),
 	sessions = require("controllers.user.sessions"),

@@ -25,6 +25,8 @@ return {
 	"user.sessions",
 	"user.session",
 	"user.scores",
+	"user.inputmodes",
+	"user.inputmode",
 	"communities",
 	"community",
 	"community.users",
