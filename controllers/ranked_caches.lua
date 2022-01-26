@@ -82,7 +82,7 @@ ranked_caches_c.POST = function(self)
 		is_complete = true,
 		user_id = self.session.user_id,
 		created_at = os.time(),
-		expires_at = 9007199254740992,  -- 2 ^ 53
+		expires_at = 0,
 	})
 
 	return {status = 201, redirect_to = self:url_for(ranked_cache)}

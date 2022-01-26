@@ -118,7 +118,7 @@ difftable_c.add_bms_notechart = function(self, difftable_id, bms_notechart)
 			exists = true,
 			ranked = true,
 			created_at = created_at,
-			expires_at = created_at,
+			expires_at = 0,
 			user_id = self.session.user_id,
 		})
 	end

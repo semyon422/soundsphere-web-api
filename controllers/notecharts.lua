@@ -118,7 +118,7 @@ notecharts_c.check_notechart = function(self, hash, format, trusted)
 				exists = true,
 				ranked = true,
 				created_at = created_at,
-				expires_at = created_at,
+				expires_at = 0,
 				user_id = self.session.user_id,
 			})
 		end
