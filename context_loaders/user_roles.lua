@@ -1,12 +1,15 @@
 local Roles = require("enums.roles")
+local User_roles = require("models.user_roles")
 
 local function load_roles(user)
 	local roles = {}
 
-    local user_roles = user:get_roles()
+	local time = os.time()
+    local user_roles = User_roles:find_all({user.id}, "user_id")
 	for _, user_role in ipairs(user_roles) do
-		local role = Roles:to_name(user_role.role)
-		roles[role] = true
+		if user_role.expires_at > time then
+			roles[Roles:to_name(user_role.role)] = true
+		end
 	end
 
 	user.roles = roles

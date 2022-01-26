@@ -19,6 +19,9 @@ user_roles_c.GET = function(self)
 		}}
 	end
 
+	for _, user_role in ipairs(user_roles) do
+		user_role.is_expired = user_role.expires_at <= os.time()
+	end
 	util.recursive_to_name(user_roles)
 
 	return {json = {user_roles = user_roles}}

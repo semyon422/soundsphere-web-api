@@ -43,6 +43,7 @@ db_test.create = function()
 	User_roles:create({
 		user_id = user.id,
 		role = Roles:for_db("creator"),
+		expires_at = 4102444800,
 	})
 
 	local community = Communities:create({

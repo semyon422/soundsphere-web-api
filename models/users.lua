@@ -5,7 +5,7 @@ local Users = Model:extend(
 	"users",
 	{
 		relations = {
-			{"roles", has_many = "user_roles", key = "user_id"},
+			{"user_roles", has_many = "user_roles", key = "user_id"},
 			{"community_users", has_many = "community_users", key = "user_id", deny_auto = true},
 		},
 		url_params = function(self, req, ...)
