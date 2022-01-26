@@ -82,7 +82,9 @@ scores_c.POST = function(self)
 			params.trusted
 		)
 		if not trusted then
-			metrics.scores:observe(1, {false})
+			if metrics.scores then
+				metrics.scores:observe(1, {false})
+			end
 			return {status = 400, json = {message = message}}
 		end
 
@@ -101,7 +103,9 @@ scores_c.POST = function(self)
 			notechart_file:update("uploaded")
 		end
 	end
-	metrics.scores:observe(1, {true})
+	if metrics.scores then
+		metrics.scores:observe(1, {true})
+	end
 
 	local notechart = Notecharts:find({
 		file_id = notechart_file.id,
