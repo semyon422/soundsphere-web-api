@@ -29,5 +29,7 @@ config({"development", "production"}, {
 	},
 	osu_api_key = "",
 	is_ranked_check_enabled = true,
+	is_register_enabled = true,
+	is_login_enabled = true,
 	ip_register_delay = 3600 * 24 * 30,
 })

@@ -9,6 +9,8 @@ local util = require("util")
 local Controller = require("Controller")
 local Ip = require("util.ip")
 
+local config = require("lapis.config").get()
+
 local login_c = Controller:new()
 
 login_c.path = "/auth/login"
@@ -95,6 +97,10 @@ login_c.POST = function(self)
 	end
 
 	if not bypass then
+		if not config.is_login_enabled then
+			return {status = 401, json = {message = "Logging in is disabled"}}
+		end
+
 		local success, message = util.recaptcha_verify(
 			self.context.ip,
 			params.recaptcha_token,

@@ -46,6 +46,10 @@ register_c.POST = function(self)
 	end
 
 	if not bypass then
+		if not config.is_register_enabled then
+			return {status = 401, json = {message = "Registration is disabled"}}
+		end
+
 		local success, message = util.recaptcha_verify(
 			self.context.ip,
 			params.recaptcha_token,
