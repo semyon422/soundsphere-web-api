@@ -9,6 +9,8 @@ return {
 	"auth.quick",
 	"auth.update",
 	"auth.password",
+	"auth.keys",
+	"auth.key",
 	"db",
 	"db.schema",
 	"db.migrations",

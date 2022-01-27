@@ -33,6 +33,7 @@ local tables = {
 	"ranked_caches",
 	"ranked_cache_difftables",
 	"user_locations",
+	"bypass_keys",
 }
 
 local table_declarations = {}
@@ -437,6 +438,20 @@ table_declarations.user_locations = {
 	"KEY `updated_at` (`updated_at`)",
 	"KEY `is_register` (`is_register`)",
 	"KEY `sessions_count` (`sessions_count`)",
+}
+
+table_declarations.bypass_keys = {
+	{"id", types.id},
+	{"key", types.md5_hash},
+	{"action", types.enum},
+	{"user_id", types.fk_id},
+	{"created_at", types.time},
+	{"expires_at", types.time},
+	"UNIQUE KEY `key` (`key`)",
+	"KEY `action` (`action`)",
+	"KEY `user_id` (`user_id`)",
+	"KEY `created_at` (`created_at`)",
+	"KEY `expires_at` (`expires_at`)",
 }
 
 function db.drop()

@@ -1,6 +1,8 @@
 local Users = require("models.users")
 local Sessions = require("models.sessions")
 local User_locations = require("models.user_locations")
+local Bypass_keys = require("models.bypass_keys")
+local Filehash = require("util.filehash")
 local bcrypt = require("bcrypt")
 local encoding = require("lapis.util.encoding")
 local util = require("util")
@@ -73,24 +75,45 @@ login_c.validations.POST = {
 	{"email", exists = true, type = "string", param_type = "body"},
 	{"password", exists = true, type = "string", param_type = "body"},
 	{"recaptcha_token", exists = true, type = "string", param_type = "body", captcha = "login", optional = true},
+	{"bypass_key", exists = true, type = "string", param_type = "body", optional = true},
 }
 login_c.POST = function(self)
 	local params = self.params
 
-	local success, message = util.recaptcha_verify(
-		self.context.ip,
-		params.recaptcha_token,
-		"login",
-		0.5
-	)
-	if not success then
-		return {status = 401, json = {message = message}}
+	local bypass_key
+	local bypass = false
+	if params.bypass_key then
+		bypass_key = Bypass_keys:find({
+			key = Filehash:for_db(params.bypass_key),
+		})
+		if bypass_key then
+			bypass_key:to_name()
+			if bypass_key.action == "login" and bypass_key.expires_at > os.time() then
+				bypass = true
+			end
+		end
+	end
+
+	if not bypass then
+		local success, message = util.recaptcha_verify(
+			self.context.ip,
+			params.recaptcha_token,
+			"login",
+			0.5
+		)
+		if not success then
+			return {status = 401, json = {message = message}}
+		end
 	end
 
 	local user, err = login(params.email, params.password)
 
 	if not user then
 		return {status = 401, json = {message = err}}
+	end
+
+	if bypass_key then
+		bypass_key:delete()
 	end
 
 	local token, payload = login_c.new_token(user, self.context.ip)
