@@ -445,11 +445,13 @@ table_declarations.bypass_keys = {
 	{"key", types.md5_hash},
 	{"action", types.enum},
 	{"user_id", types.fk_id},
+	{"target_user_id", types.fk_id},
 	{"created_at", types.time},
 	{"expires_at", types.time},
 	"UNIQUE KEY `key` (`key`)",
 	"KEY `action` (`action`)",
 	"KEY `user_id` (`user_id`)",
+	"KEY `target_user_id` (`target_user_id`)",
 	"KEY `created_at` (`created_at`)",
 	"KEY `expires_at` (`expires_at`)",
 }

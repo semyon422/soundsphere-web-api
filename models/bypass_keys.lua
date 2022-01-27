@@ -7,6 +7,7 @@ local Bypass_keys = Model:extend(
 	{
 		relations = {
 			{"user", belongs_to = "users", key = "user_id"},
+			{"target_user", belongs_to = "users", key = "target_user_id"},
 		},
 		url_params = function(self, req, ...)
 			return "auth.key", {key_id = self.id}, ...

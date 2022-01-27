@@ -9,11 +9,13 @@ keys_c.methods = {"GET", "DELETE"}
 
 keys_c.context.GET = {"bypass_key", "request_session", "session_user", "user_roles"}
 keys_c.policies.GET = {
-	{"authed", {role = "moderator"}, "bypass_key_creator"},
-	{"authed", {role = "admin"}},
+	{"authed", {role = "moderator"}, {not_params = "show_key"}, "bypass_key_creator"},
+	{"authed", {role = "admin"}, {not_params = "show_key"}},
 	{"authed", {role = "creator"}},
 }
-keys_c.validations.GET = {}
+keys_c.validations.GET = {
+	{"show_key", type = "boolean", optional = true},
+}
 util.add_belongs_to_validations(Bypass_keys.relations, keys_c.validations.GET)
 keys_c.GET = function(self)
 	local bypass_key = self.context.bypass_key
@@ -21,7 +23,12 @@ keys_c.GET = function(self)
 	bypass_key.is_expired = bypass_key.expires_at <= os.time()
 	util.get_relatives(bypass_key, self.params, true)
 
-	return {json = {bypass_key = bypass_key:to_name()}}
+	bypass_key:to_name()
+	if not self.params.show_key then
+		bypass_key.key = nil
+	end
+
+	return {json = {bypass_key = bypass_key}}
 end
 
 keys_c.context.DELETE = {"bypass_key", "request_session", "session_user", "user_roles"}

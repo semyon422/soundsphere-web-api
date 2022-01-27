@@ -11,14 +11,15 @@ keys_c.methods = {"GET", "POST"}
 
 keys_c.context.GET = {"request_session", "session_user", "user_roles"}
 keys_c.policies.GET = {
-	{"authed", {role = "moderator"}, {not_params = "all_creators"}},
-	{"authed", {role = "admin"}},
+	{"authed", {role = "moderator"}, {not_params = "show_key"}, {not_params = "all_creators"}},
+	{"authed", {role = "admin"}, {not_params = "show_key"}},
 	{"authed", {role = "creator"}},
 }
 keys_c.validations.GET = {
 	{"action", exists = true, type = "string", one_of = Bypass_actions.list, optional = true},
 	{"all_actions", type = "boolean", optional = true},
 	{"all_creators", type = "boolean", optional = true},
+	{"show_key", type = "boolean", optional = true},
 }
 keys_c.GET = function(self)
 	local params = self.params
@@ -39,11 +40,13 @@ keys_c.GET = function(self)
 		bypass_keys = Bypass_keys:select()
 	end
 
+	util.recursive_to_name(bypass_keys)
 	for _, bypass_key in ipairs(bypass_keys) do
 		bypass_key.is_expired = bypass_key.expires_at <= os.time()
+		if not params.show_key then
+			bypass_key.key = nil
+		end
 	end
-
-	util.recursive_to_name(bypass_keys)
 
 	return {json = {bypass_keys = bypass_keys}}
 end
@@ -56,6 +59,7 @@ keys_c.policies.POST = {
 }
 keys_c.validations.POST = {
 	{"action", exists = true, type = "string", one_of = Bypass_actions.list},
+	{"target_user_id", exists = true, type = "number"},
 	{"expires_at", exists = true, type = "number", default = os.time() + 3600},
 }
 keys_c.POST = function(self)
@@ -65,6 +69,7 @@ keys_c.POST = function(self)
 		key = rand.bytes(16),
 		action = Bypass_actions:for_db(params.action),
 		user_id = self.context.session_user.id,
+		target_user_id = self.params.target_user_id,
 		created_at = os.time(),
 		expires_at = params.expires_at,
 	})

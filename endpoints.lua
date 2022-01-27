@@ -11,6 +11,7 @@ return {
 	"auth.password",
 	"auth.keys",
 	"auth.key",
+	"auth.reset",
 	"db",
 	"db.schema",
 	"db.migrations",

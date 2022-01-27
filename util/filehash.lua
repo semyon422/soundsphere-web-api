@@ -11,7 +11,7 @@ function Filehash.sum_to_name(self, s)
 end
 
 function Filehash.for_db(self, hex)
-    return (hex:gsub("..", function(cc) return string.char(tonumber(cc, 16)) end))
+    return (hex:gsub("..", function(cc) return string.char(tonumber(cc, 16) or 0) end))
 end
 
 function Filehash.to_name(self, data)

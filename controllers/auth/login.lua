@@ -119,6 +119,9 @@ login_c.POST = function(self)
 	end
 
 	if bypass_key then
+		if bypass_key.target_user_id ~= user.id then
+			return {status = 401, json = {message = "Used bypass key is not allowed for this user"}}
+		end
 		bypass_key:delete()
 	end
 
