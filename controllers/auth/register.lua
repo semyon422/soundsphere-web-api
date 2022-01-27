@@ -25,11 +25,16 @@ register_c.validations.POST = {
 		{"email", exists = true, type = "string"},
 		{"password", exists = true, type = "string"},
 	}},
+	{"game_name", exists = true, type = "string", param_type = "body", optional = true},
 	{"recaptcha_token", exists = true, type = "string", param_type = "body", captcha = "register", optional = true},
 	{"bypass_key", exists = true, type = "string", param_type = "body", optional = true},
 }
 register_c.POST = function(self)
 	local params = self.params
+
+	if params.game_name ~= "soundsphere" then
+		return {status = 400, json = {message = "Wrong game name"}}
+	end
 
 	local bypass_key
 	local bypass = false
