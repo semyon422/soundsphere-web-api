@@ -13,7 +13,7 @@ user_relation_c.GET = function(self)
 end
 
 user_relation_c.context.DELETE = {"user_relation", "request_session"}
-user_relation_c.policies.DELETE = {{"authed"}}
+user_relation_c.policies.DELETE = {{"authed", "user_profile", "delete_user_relation"}}
 user_relation_c.DELETE = function(self)
 	local user_relation = self.context.user_relation
 	user_relation:delete()

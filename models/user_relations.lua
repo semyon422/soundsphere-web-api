@@ -36,6 +36,7 @@ function User_relations.for_db(self, row) return for_db(row) end
 local _load = User_relations.load
 function User_relations:load(row)
 	row.mutual = toboolean(row.mutual)
+	row.created_at = tonumber(row.created_at)
 	row.to_name = to_name
 	row.for_db = for_db
 	return _load(self, row)

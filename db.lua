@@ -215,6 +215,7 @@ table_declarations.user_relations = {
 	{"relationtype", types.enum},
 	{"user_id", types.fk_id},
 	{"relative_user_id", types.fk_id},
+	{"created_at", types.time},
 	{"mutual", types.boolean},
 	"UNIQUE KEY `user_relations` (`relationtype`,`user_id`,`relative_user_id`)"
 }

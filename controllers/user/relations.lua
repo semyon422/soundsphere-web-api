@@ -84,6 +84,7 @@ user_relations_c.POST = function(self)
 	}
 	local user_relation = User_relations:find(new_user_relation)
 	if not user_relation then
+		new_user_relation.created_at = os.time()
 		user_relation = User_relations:create(new_user_relation)
 	end
 
