@@ -48,6 +48,7 @@ end
 
 difftables_c.context.POST = {"request_session", "session_user", "user_communities", set_community_id}
 difftables_c.display_policies.POST = {
+	{"authed", "session_user_is_banned_deny"},
 	{"authed", {any_community_role = "creator"}},
 	{"authed", {any_community_role = "admin"}},
 }
