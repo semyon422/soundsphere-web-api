@@ -1,4 +1,5 @@
 local Community_users = require("models.community_users")
+local Joined_query = require("util.joined_query")
 local Roles = require("enums.roles")
 local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
@@ -29,45 +30,36 @@ community_users_c.get_users = function(self)
 	local params = self.params
 	local db = Community_users.db
 
-	local clause_table = {"cu"}
-	local where_table = {"cu.accepted = true", "cu.community_id = ?"}
-	local fields = {"cu.*"}
-	local orders = {}
-	local opts = {params.community_id}
+	local jq = Joined_query:new(db)
+	jq:select("cu")
+	jq:where("cu.accepted = ?", true)
+	jq:where("cu.community_id = ?", params.community_id)
+	jq:fields("cu.*")
 
 	if params.leaderboard_id then
-		table.insert(clause_table, "inner join leaderboard_users lu on cu.user_id = lu.user_id")
-		table.insert(fields, "lu.total_rating")
-		table.insert(fields, "lu.scores_count")
-		table.insert(fields, "lu.latest_activity")
-		table.insert(orders, "lu.total_rating desc")
-		table.insert(where_table, "lu.active = true")
-		table.insert(where_table, "lu.leaderboard_id = ?")
-		table.insert(opts, params.leaderboard_id)
+		jq:select("inner join leaderboard_users lu on cu.user_id = lu.user_id")
+		jq:where("lu.active = ?", true)
+		jq:where("lu.leaderboard_id = ?", params.leaderboard_id)
+		jq:fields("lu.total_rating", "lu.scores_count", "lu.latest_activity")
+		jq:orders("lu.total_rating desc")
 	end
 	if params.staff then
-		table.insert(where_table, db.encode_clause({role = db.list(Roles.staff_roles)}))
+		jq:where({role = db.list(Roles.staff_roles)})
 	end
 	if params.search then
-		table.insert(clause_table, "inner join users u on cu.user_id = u.id")
-		table.insert(where_table, util.db_search(db, params.search, "name"))
+		jq:select("inner join users u on cu.user_id = u.id")
+		jq:where(util.db_search(db, params.search, "name"))
 	end
-	table.insert(orders, "cu.user_id asc")
 
-	table.insert(clause_table, util.db_where(util.db_and(where_table)))
-	table.insert(clause_table, "order by " .. table.concat(orders, ", "))
+	jq:orders("cu.user_id asc")
 
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
-	local clause = db.interpolate_query(
-		table.concat(clause_table, " "),
-		unpack(opts)
-	)
 
-	local paginator = Community_users:paginated(clause, {
-		per_page = per_page,
-		fields = table.concat(fields, ", "),
-	})
+	local query, options = jq:concat()
+	options.per_page = per_page
+
+	local paginator = Community_users:paginated(query, options)
 	local community_users = paginator:get_page(page_num)
 
 	for i, community_user in ipairs(community_users) do
@@ -75,7 +67,7 @@ community_users_c.get_users = function(self)
 		community_user.latest_activity = tonumber(community_user.latest_activity)
 	end
 
-	return community_users, clause
+	return community_users, query
 end
 
 community_users_c.update_users = function(self, community_users)

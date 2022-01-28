@@ -1,4 +1,5 @@
 local Leaderboard_users = require("models.leaderboard_users")
+local Joined_query = require("util.joined_query")
 local preload = require("lapis.db.model").preload
 local Controller = require("Controller")
 local util = require("util")
@@ -12,46 +13,39 @@ leaderboard_users_c.get_users = function(self)
 	local params = self.params
 	local db = Leaderboard_users.db
 
-	local clause_table = {"lu"}
-	local where_table = {"lu.active = true", "lu.leaderboard_id = ?"}
-	local fields = {"lu.*"}
-	local orders = {}
-	local opts = {params.leaderboard_id}
+	local jq = Joined_query:new(db)
+	jq:select("lu")
+	jq:where("lu.active = ?", true)
+	jq:where("lu.leaderboard_id = ?", params.leaderboard_id)
+	jq:fields("lu.*")
 
 	if params.community_id then
-		table.insert(clause_table, "inner join community_users cu on lu.user_id = cu.user_id")
-		table.insert(where_table, "cu.accepted = true")
-		table.insert(where_table, "cu.community_id = ?")
-		table.insert(opts, params.community_id)
+		jq:select("inner join community_users cu on lu.user_id = cu.user_id")
+		jq:where("cu.accepted = ?", true)
+		jq:where("cu.community_id = ?", params.community_id)
 	end
 	if params.search then
-		table.insert(clause_table, "inner join users u on lu.user_id = u.id")
-		table.insert(where_table, util.db_search(db, params.search, "name"))
+		jq:select("inner join users u on lu.user_id = u.id")
+		jq:where(util.db_search(db, params.search, "name"))
 	end
-	table.insert(orders, "lu.total_rating desc")
-	table.insert(orders, "lu.user_id asc")
 
-	table.insert(clause_table, util.db_where(util.db_and(where_table)))
-	table.insert(clause_table, "order by " .. table.concat(orders, ", "))
+	jq:orders("lu.total_rating desc")
+	jq:orders("lu.user_id asc")
 
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
-	local clause = db.interpolate_query(
-		table.concat(clause_table, " "),
-		unpack(opts)
-	)
 
-	local paginator = Leaderboard_users:paginated(clause, {
-		per_page = per_page,
-		fields = table.concat(fields, ", "),
-	})
+	local query, options = jq:concat()
+	options.per_page = per_page
+
+	local paginator = Leaderboard_users:paginated(query, options)
 	local leaderboard_users = paginator:get_page(page_num)
 
 	for i, leaderboard_user in ipairs(leaderboard_users) do
 		leaderboard_user.rank = (page_num - 1) * per_page + i
 	end
 
-	return leaderboard_users, clause
+	return leaderboard_users, query
 end
 
 leaderboard_users_c.policies.GET = {{"permit"}}

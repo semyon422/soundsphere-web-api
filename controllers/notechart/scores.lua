@@ -1,5 +1,6 @@
 local Scores = require("models.scores")
 local User_relations = require("models.user_relations")
+local Joined_query = require("util.joined_query")
 local preload = require("lapis.db.model").preload
 local Controller = require("Controller")
 local util = require("util")
@@ -39,44 +40,37 @@ notechart_scores_c.get_scores = function(self)
 	local params = self.params
 	local db = Scores.db
 
-	local clause_table = {"s"}
-	local where_table = {"s.notechart_id = ?", "s.is_complete = ?", "s.is_valid = ?", "s.is_top = ?"}
-	local fields = {"s.*", "row_number() over(order by s.rating) row_num"}
-	local orders = {}
-	local opts = {params.notechart_id, true, true, true}
+	local jq = Joined_query:new(db)
+	jq:select("s")
+	jq:where("s.notechart_id = ?", params.notechart_id)
+	jq:where("s.is_complete = ?", true)
+	jq:where("s.is_valid = ?", true)
+	jq:where("s.is_top = ?", true)
+	jq:fields("s.*", "row_number() over(order by s.rating) row_num")
 
 	if params.leaderboard_id then
-		table.insert(clause_table, "inner join leaderboard_users lu on s.user_id = lu.user_id")
-		table.insert(where_table, "s.is_ranked = ?")
-		table.insert(where_table, "lu.active = ?")
-		table.insert(where_table, "lu.leaderboard_id = ?")
-		table.insert(opts, true)
-		table.insert(opts, true)
-		table.insert(opts, params.leaderboard_id)
+		jq:select("inner join leaderboard_users lu on s.user_id = lu.user_id")
+		jq:where("s.is_ranked = ?", true)
+		jq:where("lu.active = ?", true)
+		jq:where("lu.leaderboard_id = ?", params.leaderboard_id)
 	end
 	if params.search then
-		table.insert(clause_table, "inner join users u on s.user_id = u.id")
-		table.insert(where_table, util.db_search(db, params.search, "u.name"))
+		jq:select("inner join users u on s.user_id = u.id")
+		jq:where(util.db_search(db, params.search, "u.name"))
 	end
-	table.insert(orders, "s.rating desc")
 
-	table.insert(clause_table, util.db_where(util.db_and(where_table)))
-	table.insert(clause_table, "order by " .. table.concat(orders, ", "))
+	jq:orders("s.rating desc")
 
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
-	local clause = db.interpolate_query(
-		table.concat(clause_table, " "),
-		unpack(opts)
-	)
 
-	local paginator = Scores:paginated(clause, {
-		per_page = per_page,
-		fields = table.concat(fields, ", "),
-	})
+	local query, options = jq:concat()
+	options.per_page = per_page
+
+	local paginator = Scores:paginated(query, options)
 	local scores = paginator:get_page(page_num)
 
-	return scores, clause, table.concat(fields, ", ")
+	return scores, query, options.fields
 end
 
 notechart_scores_c.policies.GET = {{"permit"}}
