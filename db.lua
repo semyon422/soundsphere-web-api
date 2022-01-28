@@ -190,6 +190,7 @@ table_declarations.users = {
 	{"password", types.varchar},
 	{"latest_activity", types.time},
 	{"created_at", types.time},
+	{"is_banned", types.boolean},
 	{"description", types.varchar},
 	{"scores_count", types.size},
 	{"notecharts_count", types.size},

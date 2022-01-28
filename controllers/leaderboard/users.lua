@@ -24,9 +24,10 @@ leaderboard_users_c.get_users = function(self)
 		jq:where("cu.accepted = ?", true)
 		jq:where("cu.community_id = ?", params.community_id)
 	end
+	jq:select("inner join users u on lu.user_id = u.id")
+	jq:where("not u.is_banned")
 	if params.search then
-		jq:select("inner join users u on lu.user_id = u.id")
-		jq:where(util.db_search(db, params.search, "name"))
+		jq:where(util.db_search(db, params.search, "u.name"))
 	end
 
 	jq:orders("lu.total_rating desc")

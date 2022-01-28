@@ -54,8 +54,9 @@ notechart_scores_c.get_scores = function(self)
 		jq:where("lu.active = ?", true)
 		jq:where("lu.leaderboard_id = ?", params.leaderboard_id)
 	end
+	jq:select("inner join users u on s.user_id = u.id")
+	jq:where("not u.is_banned")
 	if params.search then
-		jq:select("inner join users u on s.user_id = u.id")
 		jq:where(util.db_search(db, params.search, "u.name"))
 	end
 

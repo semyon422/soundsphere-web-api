@@ -46,9 +46,10 @@ community_users_c.get_users = function(self)
 	if params.staff then
 		jq:where({role = db.list(Roles.staff_roles)})
 	end
+	jq:select("inner join users u on cu.user_id = u.id")
+	jq:where("not u.is_banned")
 	if params.search then
-		jq:select("inner join users u on cu.user_id = u.id")
-		jq:where(util.db_search(db, params.search, "name"))
+		jq:where(util.db_search(db, params.search, "u.name"))
 	end
 
 	jq:orders("cu.user_id asc")

@@ -15,7 +15,7 @@ local additions = {
 local user_c = Controller:new()
 
 user_c.path = "/users/:user_id[%d]"
-user_c.methods = {"GET", "PATCH", "DELETE"}
+user_c.methods = {"GET", "PATCH", "PUT", "DELETE"}
 
 user_c.context.GET = {"user"}
 user_c.policies.GET = {{"context_loaded"}}
@@ -61,11 +61,35 @@ user_c.PATCH = function(self)
 	return {json = {user = user:to_name()}}
 end
 
+user_c.context.PUT = {"user", "request_session", "session_user", "user_roles"}
+user_c.policies.PUT = {
+	{"authed", {role = "moderator"}, "change_role"},
+	{"authed", {role = "admin"}, "change_role"},
+	{"authed", {role = "creator"}, "change_role"},
+}
+user_c.validations.PUT = {
+	{"ban", type = "boolean", optional = true},
+	{"unban", type = "boolean", optional = true},
+}
+user_c.PUT = function(self)
+	local params = self.params
+	local user = self.context.user
+
+	if params.ban then
+		user.is_banned = true
+		user:update("is_banned")
+	elseif params.unban then
+		user.is_banned = false
+		user:update("is_banned")
+	end
+
+	return {json = {user = user:to_name()}}
+end
+
 user_c.context.DELETE = {"user", "request_session", "session_user", "user_roles"}
 user_c.policies.DELETE = {
-	{"authed", {role = "moderator"}},
-	{"authed", {role = "admin"}},
-	{"authed", {role = "creator"}},
+	{"authed", {role = "admin"}, "change_role"},
+	{"authed", {role = "creator"}, "change_role"},
 }
 user_c.DELETE = function(self)
 	local user = self.context.user

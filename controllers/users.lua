@@ -13,6 +13,7 @@ users_c.validations.GET = {
 	require("validations.per_page"),
 	require("validations.page_num"),
 	require("validations.search"),
+	{"is_banned", type = "boolean", optional = true},
 }
 util.add_belongs_to_validations(Users.relations, users_c.validations.GET)
 util.add_has_many_validations(Users.relations, users_c.validations.GET)
@@ -21,7 +22,12 @@ users_c.GET = function(self)
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
 
-	local clause = params.search and util.db_search(Users.db, params.search, "name")
+	local db = Users.db
+
+	local is_banned_clause = db.interpolate_query("is_banned = ?", not not params.is_banned)
+	local search_clause = params.search and util.db_search(db, params.search, "name")
+	local clause = util.db_and(search_clause, is_banned_clause)
+
 	local paginator = Users:paginated(
 		util.db_where(clause) .. " order by id asc",
 		{

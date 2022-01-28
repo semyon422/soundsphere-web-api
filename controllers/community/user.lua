@@ -15,6 +15,7 @@ community_user_c.context.PUT = {
 	"session_user",
 	"user_communities",
 }
+community_user_c.display_policies.PUT = {{"authed"}}
 community_user_c.policies.PUT = {
 	{"authed", "community_user_request"},
 	{"authed", "community_user_invitation"},

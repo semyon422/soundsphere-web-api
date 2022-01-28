@@ -1,5 +1,6 @@
 local Model = require("lapis.db.model").Model
 local hide_fields = require("util.hide_fields")
+local toboolean = require("util.toboolean")
 
 local Users = Model:extend(
 	"users",
@@ -33,6 +34,7 @@ function Users.for_db(self, row) return for_db(row) end
 
 local _load = Users.load
 function Users:load(row)
+	row.is_banned = toboolean(row.is_banned)
 	row.latest_activity = tonumber(row.latest_activity)
 	row.created_at = tonumber(row.created_at)
 	row.to_name = to_name

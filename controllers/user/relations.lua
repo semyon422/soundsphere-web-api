@@ -25,6 +25,10 @@ util.add_belongs_to_validations(User_relations.relations, user_relations_c.valid
 user_relations_c.GET = function(self)
 	local params = self.params
 
+	if params.who_added_me and params.type == "friend" then
+		return {status = 403}
+	end
+
 	local where = {}
 	if not params.who_added_me then
 		where.user_id = params.user_id
