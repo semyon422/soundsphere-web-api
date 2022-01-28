@@ -9,8 +9,7 @@ local additions = {
 	roles = require("controllers.user.roles"),
 	scores = require("controllers.user.scores"),
 	sessions = require("controllers.user.sessions"),
-	friends = require("controllers.user.friends"),
-	rivals = require("controllers.user.rivals"),
+	relations = require("controllers.user.relations"),
 }
 
 local user_c = Controller:new()
