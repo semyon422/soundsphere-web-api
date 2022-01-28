@@ -10,14 +10,12 @@ local notechart_scores_c = Controller:new()
 notechart_scores_c.path = "/notecharts/:notechart_id[%d]/scores"
 notechart_scores_c.methods = {"GET"}
 
-notechart_scores_c.get_relations_scores = function(params, relationtype, mutual)
-	local user_id = tonumber(params[relationtype .. "s"])
-
+notechart_scores_c.get_relations = function(user_id, relationtype, mutual)
 	local user_ids = {user_id}
 	local user_relations = User_relations:find_all(user_ids, {
 		key = "user_id",
 		where = {
-			relationtype = User_relations.types[relationtype],
+			relationtype = User_relations.types:for_db(relationtype),
 			mutual = mutual,
 		},
 	})
@@ -25,18 +23,10 @@ notechart_scores_c.get_relations_scores = function(params, relationtype, mutual)
 		table.insert(user_ids, user_relation.relative_user_id)
 	end
 
-	local scores = Scores:find_all(user_ids, {
-		key = "user_id",
-		where = {
-			notechart_id = params.notechart_id,
-			is_top = true,
-		},
-	})
-
-	return scores
+	return user_ids
 end
 
-notechart_scores_c.get_scores = function(self)
+notechart_scores_c.get_scores = function(self, user_ids)
 	local params = self.params
 	local db = Scores.db
 
@@ -47,6 +37,10 @@ notechart_scores_c.get_scores = function(self)
 	jq:where("s.is_valid = ?", true)
 	jq:where("s.is_top = ?", true)
 	jq:fields("s.*", "row_number() over(order by s.rating) row_num")
+
+	if user_ids then
+		jq:where({user_id = db.list(user_ids)})
+	end
 
 	if params.leaderboard_id then
 		jq:select("inner join leaderboard_users lu on s.user_id = lu.user_id")
@@ -74,7 +68,12 @@ notechart_scores_c.get_scores = function(self)
 	return scores, query, options.fields
 end
 
-notechart_scores_c.policies.GET = {{"permit"}}
+notechart_scores_c.context.GET = {"request_session", "session_user", "user_roles"}
+notechart_scores_c.policies.GET = {
+	{{not_params = "rivals"}, {not_params = "friends"}},
+	{"authed", {not_params = "friends"}},
+	{"authed", {role = "donator"}},
+}
 notechart_scores_c.validations.GET = {
 	require("validations.no_data"),
 	require("validations.per_page"),
@@ -89,14 +88,15 @@ notechart_scores_c.GET = function(self)
 	local params = self.params
 	local scores
 
+	local user_id = self.context.session_user.id
+	local user_ids
 	local clause, fields
 	if params.rivals then
-		scores = notechart_scores_c.get_relations_scores(params, "rival")
+		user_ids = notechart_scores_c.get_relations(user_id, "rival")
 	elseif params.friends then
-		scores = notechart_scores_c.get_relations_scores(params, "friend", true)
-	else
-		scores, clause, fields = notechart_scores_c.get_scores(self)
+		user_ids = notechart_scores_c.get_relations(user_id, "friend", true)
 	end
+	scores, clause, fields = notechart_scores_c.get_scores(self, user_ids)
 
 	--[[
 		SELECT COUNT(1) as c from `scores` s
