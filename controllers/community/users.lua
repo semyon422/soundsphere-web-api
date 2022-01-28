@@ -13,17 +13,24 @@ community_users_c.methods = {"GET", "PATCH"}
 
 community_users_c.get_invitations = function(self, invitation)
 	local params = self.params
+	local db = Community_users.db
 
-	local where = {
-		community_id = params.community_id,
-		accepted = false,
-		invitation = invitation,
-	}
+	local jq = Joined_query:new(db)
+	jq:select("cu")
+	jq:select("inner join users u on cu.user_id = u.id")
+	jq:where("cu.accepted = ?", false)
+	jq:where("cu.invitation = ?", invitation)
+	jq:where("cu.community_id = ?", params.community_id)
+	jq:where("not u.is_banned")
+	jq:fields("cu.*")
 
-	local clause = Community_users.db.encode_clause(where)
-    local community_users = Community_users:select("where " .. clause .. " order by id asc")
+	jq:orders("cu.created_at desc")
 
-	return community_users, clause
+	local query, options = jq:concat()
+
+    local community_users = Community_users:select(query, options)
+
+	return community_users, query
 end
 
 community_users_c.get_users = function(self)
