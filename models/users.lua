@@ -9,6 +9,7 @@ local Users = Model:extend(
 			{"user_roles", has_many = "user_roles", key = "user_id"},
 			{"user_inputmodes", has_many = "user_inputmodes", key = "user_id"},
 			{"community_users", has_many = "community_users", key = "user_id", deny_auto = true},
+			{"user_relations", has_many = "user_relations", key = "user_id"},
 		},
 		url_params = function(self, req, ...)
 			return "user", {user_id = self.id}, ...

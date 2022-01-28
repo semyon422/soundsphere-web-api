@@ -60,7 +60,7 @@ keys_c.policies.POST = {
 keys_c.validations.POST = {
 	{"action", exists = true, type = "string", one_of = Bypass_actions.list},
 	{"target_user_id", exists = true, type = "number"},
-	{"expires_at", exists = true, type = "number", default = os.time() + 3600},
+	{"expires_at", exists = true, type = "number"},
 }
 keys_c.POST = function(self)
 	local params = self.params

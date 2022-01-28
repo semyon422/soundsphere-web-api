@@ -20,6 +20,7 @@ local function load_communities(user)
 	local communities = {select = select}
 
 	local community_users = user:get_community_users()
+	user.community_users = nil
 	for _, community_user in ipairs(community_users) do
 		table.insert(communities, community_user:to_name())
 	end

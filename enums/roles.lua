@@ -6,6 +6,7 @@ local Roles = enum({
 	creator = 2,
 	admin = 3,
 	moderator = 4,
+	donator = 5,
 })
 
 Roles.list = {
@@ -14,6 +15,7 @@ Roles.list = {
 	"creator",
 	"admin",
 	"moderator",
+	"donator",
 }
 
 -- from high to low

@@ -60,8 +60,9 @@ user_relations_c.GET = function(self)
 	}}
 end
 
-user_relations_c.context.POST = {"user", "request_session", "session_user", "user_roles"}
-user_relations_c.policies.POST = {{"authed", "user_profile"}}
+user_relations_c.context.POST = {"request_session", "session_user", "user_relations", "user_roles"}
+user_relations_c.display_policies.POST = {{"authed", "user_profile"}}
+user_relations_c.policies.POST = {{"authed", "user_profile", "relations_limit"}}
 user_relations_c.validations.POST = {
 	{"type", exists = true, type = "string", one_of = {"friend", "rival"}},
 	{"relative_user_id", exists = true, type = "number"},
