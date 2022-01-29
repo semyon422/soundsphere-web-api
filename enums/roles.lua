@@ -4,13 +4,15 @@ local Roles = enum({
 	creator = 0,
 	admin = 1,
 	moderator = 2,
-	donator = 3,
+	user = 3,
+	donator = 4,
 })
 
 Roles.list = {
 	"creator",
 	"admin",
 	"moderator",
+	"user",
 	"donator",
 }
 

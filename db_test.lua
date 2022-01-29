@@ -74,6 +74,7 @@ db_test.create = function()
 		symbol = "",
 		owner_community_id = community.id,
 	})
+	Community_changes:add_change(user.id, community.id, "create", difftable_osu)
 
 	local difftable_quaver = Difftables:create({
 		name = "Quaver ranked",
@@ -82,6 +83,7 @@ db_test.create = function()
 		symbol = "",
 		owner_community_id = community.id,
 	})
+	Community_changes:add_change(user.id, community.id, "create", difftable_quaver)
 
 	local leaderboard = Leaderboards:create({
 		name = "Leaderboard",

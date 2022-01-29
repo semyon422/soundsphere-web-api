@@ -19,13 +19,13 @@ local Community_changes = Model:extend(
 			{"user", belongs_to = "users", key = "user_id"},
 			{"object", polymorphic_belongs_to = {
 				-- [id] = {name, model_name},
-				[0] = {"user", "users"},
-				[1] = {"community", "communities"},
-				[2] = {"leaderboard", "leaderboards"},
-				[3] = {"difftable", "difftables"},
-				[4] = {"notechart", "notecharts"},
-				[5] = {"score", "scores"},
-				[6] = {"file", "files"},
+				[1] = {"user", "users"},
+				[2] = {"community", "communities"},
+				[3] = {"leaderboard", "leaderboards"},
+				[4] = {"difftable", "difftables"},
+				[5] = {"notechart", "notecharts"},
+				[6] = {"score", "scores"},
+				[7] = {"file", "files"},
 			}},
 		}
 	}

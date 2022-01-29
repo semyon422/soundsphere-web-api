@@ -38,8 +38,8 @@ end
 
 community_c.context.PATCH = {"community", "request_session", "session_user", "user_communities"}
 community_c.policies.PATCH = {
-	{"authed", {community_role = "creator"}},
 	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
 }
 community_c.validations.PATCH = {
 	{"community", exists = true, type = "table", param_type = "body", validations = {
@@ -51,7 +51,7 @@ community_c.validations.PATCH = {
 		{"banner", exists = true, type = "string", optional = true},
 		{"is_public", type = "boolean"},
 		{"default_leaderboard_id", exists = true, type = "number"},
-	}}
+	}},
 }
 community_c.PATCH = function(self)
 	local params = self.params

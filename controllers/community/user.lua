@@ -1,5 +1,6 @@
 local Communities = require("models.communities")
 local Community_users = require("models.community_users")
+local Community_changes = require("models.community_changes")
 local Roles = require("enums.roles")
 local Controller = require("Controller")
 local util = require("util")
@@ -33,6 +34,12 @@ community_user_c.PUT = function(self)
 		local staff_user_id = 0
 		if params.invitation then
 			staff_user_id = self.session.user_id
+			Community_changes:add_change(
+				staff_user_id,
+				params.community_id,
+				"invite",
+				community_user:get_user()
+			)
 		end
 		community_user = {
 			community_id = params.community_id,
@@ -44,7 +51,15 @@ community_user_c.PUT = function(self)
 			accepted = community.is_public,
 		}
 		Community_users:set_role(community_user, "user")
-		Community_users:create(community_user)
+		community_user = Community_users:create(community_user)
+		if params.invitation then
+			Community_changes:add_change(
+				staff_user_id,
+				params.community_id,
+				"invite",
+				community_user:get_user()
+			)
+		end
 		return {status = 201}
 	elseif not community_user.accepted then
 		if community_user.invitation and not params.invitation or
@@ -52,6 +67,12 @@ community_user_c.PUT = function(self)
 		then
 			if params.invitation then
 				community_user.staff_user_id = self.session.user_id
+				Community_changes:add_change(
+					community_user.staff_user_id,
+					params.community_id,
+					"accept",
+					community_user:get_user()
+				)
 			end
 			community_user.accepted = true
 			community_user:update("accepted", "staff_user_id")
@@ -68,7 +89,16 @@ community_user_c.policies.DELETE = {
 	{"authed", "community_user_kick"},
 }
 community_user_c.DELETE = function(self)
-    self.context.community_user:delete()
+	local community_user = self.context.community_user
+
+    community_user:delete()
+	Community_changes:add_change(
+		self.context.session_user.id,
+		self.params.community_id,
+		"kick",
+		community_user:get_user()
+	)
+
 	return {status = 204}
 end
 
@@ -85,7 +115,8 @@ end
 
 community_user_c.context.PATCH = {"community_user", "request_session", "session_user", "user_communities"}
 community_user_c.policies.PATCH = {
-	{"authed", "community_user_change_role"},
+	{"authed", "community_user_change_role", {not_params = "transfer_ownership"}},
+	{"authed", "community_user_change_role", {community_role = "creator"}},
 }
 community_user_c.validations.PATCH = {
 	{"role", exists = true, type = "string", one_of = Roles.list},
@@ -98,10 +129,22 @@ community_user_c.PATCH = function(self)
 	if params.transfer_ownership then
 		Community_users:set_role(community_user, "creator", true)
 		Community_users:set_role(Community_users:find({user_id = self.session.user_id}), "admin", true)
+		Community_changes:add_change(
+			self.context.session_user.id,
+			params.community_id,
+			"transfer_ownership",
+			community_user:get_user()
+		)
 		return {json = {message = "Success"}}
 	end
 
 	Community_users:set_role(community_user, self.params.role, true)
+	Community_changes:add_change(
+		self.context.session_user.id,
+		params.community_id,
+		"update",
+		community_user:get_user()
+	)
 
 	return {json = {community_user = community_user:to_name()}}
 end

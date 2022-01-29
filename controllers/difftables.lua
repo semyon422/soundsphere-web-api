@@ -1,5 +1,5 @@
 local Difftables = require("models.difftables")
-local Inputmodes = require("enums.inputmodes")
+local Community_changes = require("models.community_changes")
 local util = require("util")
 local preload = require("lapis.db.model").preload
 local Controller = require("Controller")
@@ -80,6 +80,13 @@ difftables_c.POST = function(self)
 		symbol = difftable.symbol,
 		owner_community_id = difftable.owner_community_id,
 	})
+
+	Community_changes:add_change(
+		self.context.session_user.id,
+		difftable.owner_community_id,
+		"create",
+		difftable
+	)
 
 	return {status = 201, redirect_to = self:url_for(difftable)}
 end

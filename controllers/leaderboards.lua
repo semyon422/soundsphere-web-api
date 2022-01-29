@@ -1,6 +1,7 @@
 local Leaderboards = require("models.leaderboards")
 local Leaderboard_users = require("models.leaderboard_users")
 local Community_leaderboards = require("models.community_leaderboards")
+local Community_changes = require("models.community_changes")
 local util = require("util")
 local preload = require("lapis.db.model").preload
 local leaderboard_c = require("controllers.leaderboard")
@@ -133,6 +134,13 @@ leaderboards_c.POST = function(self)
 		created_at = os.time(),
 		message = "",
 	})
+
+	Community_changes:add_change(
+		self.context.session_user.id,
+		leaderboard.owner_community_id,
+		"create",
+		leaderboard
+	)
 
 	leaderboard_c.update_inputmodes(leaderboard.id, params.leaderboard.inputmodes)
 	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.difftables)

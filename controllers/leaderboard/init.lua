@@ -1,5 +1,6 @@
 local Leaderboards = require("models.leaderboards")
 local Communities = require("models.communities")
+local Community_changes = require("models.community_changes")
 local Difficulty_calculators = require("enums.difficulty_calculators")
 local Rating_calculators = require("enums.rating_calculators")
 local Combiners = require("enums.combiners")
@@ -48,8 +49,7 @@ end
 
 leaderboard_c.context.PATCH = util.add_owner_context("leaderboard", "context")
 leaderboard_c.policies.PATCH = {
-	{"authed", {community_role = "moderator"}},
-	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "admin"}, {not_params = "transfer_ownership"}},
 	{"authed", {community_role = "creator"}},
 }
 leaderboard_c.validations.PATCH = {
@@ -67,6 +67,7 @@ leaderboard_c.validations.PATCH = {
 		{"scores_combiner_count", exists = true, type = "number", default = 20},
 		{"communities_combiner_count", exists = true, type = "number", default = 100},
 	}},
+	{"transfer_ownership", type = "boolean", optional = true},
 }
 leaderboard_c.PATCH = function(self)
 	local params = self.params
@@ -82,12 +83,24 @@ leaderboard_c.PATCH = function(self)
 		return {status = 400, json = {message = "not community"}}
 	end
 
+	if params.transfer_ownership then
+		local owner_community_id = leaderboard.owner_community_id
+		leaderboard.owner_community_id = params.leaderboard.owner_community_id
+		leaderboard:update("owner_community_id")
+		Community_changes:add_change(
+			self.context.session_user.id,
+			owner_community_id,
+			"transfer_ownership",
+			leaderboard
+		)
+		return
+	end
+
 	Leaderboards:for_db(params.leaderboard)
 	util.patch(leaderboard, params.leaderboard, {
 		"name",
 		"description",
 		"banner",
-		"owner_community_id",
 		"difficulty_calculator",
 		"rating_calculator",
 		"scores_combiner",

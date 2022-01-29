@@ -1,6 +1,7 @@
 local Difftables = require("models.difftables")
 local Difftable_notecharts = require("models.difftable_notecharts")
 local Files = require("models.files")
+local Community_changes = require("models.community_changes")
 local Notecharts = require("models.notecharts")
 local Communities = require("models.communities")
 local Ranked_caches = require("models.ranked_caches")
@@ -45,7 +46,7 @@ end
 
 difftable_c.context.PATCH = {"difftable", "request_session", "session_user", "user_communities", set_community_id}
 difftable_c.policies.PATCH = {
-	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "admin"}, {not_params = "transfer_ownership"}},
 	{"authed", {community_role = "creator"}},
 }
 difftable_c.validations.PATCH = {
@@ -55,7 +56,8 @@ difftable_c.validations.PATCH = {
 		{"description", exists = true, type = "string"},
 		{"symbol", exists = true, type = "string"},
 		{"owner_community_id", exists = true, type = "number"},
-	}}
+	}},
+	{"transfer_ownership", type = "boolean", optional = true},
 }
 difftable_c.PATCH = function(self)
 	local params = self.params
@@ -71,12 +73,24 @@ difftable_c.PATCH = function(self)
 		return {status = 400, json = {message = "not community"}}
 	end
 
+	if params.transfer_ownership then
+		local owner_community_id = difftable.owner_community_id
+		difftable.owner_community_id = params.leaderboard.owner_community_id
+		difftable:update("owner_community_id")
+		Community_changes:add_change(
+			self.context.session_user.id,
+			owner_community_id,
+			"transfer_ownership",
+			difftable
+		)
+		return
+	end
+
 	util.patch(difftable, params.difftable, {
 		"name",
 		"link",
 		"description",
 		"symbol",
-		"owner_community_id",
 	})
 
 	return {json = {difftable = difftable}}
