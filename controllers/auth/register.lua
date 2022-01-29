@@ -100,10 +100,6 @@ register_c.POST = function(self)
 		notecharts_count = 0,
 		play_time = 0,
 	})
-	User_roles:create({
-		user_id = user.id,
-		role = Roles:for_db("user"),
-	})
 
 	local token, payload = login_c.new_token(user, self.context.ip)
 	login_c.add_user_location(user, self.context.ip, true)

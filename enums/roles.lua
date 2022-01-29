@@ -1,17 +1,13 @@
 local enum = require("lapis.db.model").enum
 
 local Roles = enum({
-	user = 0,
-	verified_user = 1,
-	creator = 2,
-	admin = 3,
-	moderator = 4,
-	donator = 5,
+	creator = 0,
+	admin = 1,
+	moderator = 2,
+	donator = 3,
 })
 
 Roles.list = {
-	"user",
-	"verified_user",
 	"creator",
 	"admin",
 	"moderator",
