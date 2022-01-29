@@ -29,6 +29,7 @@ function User_roles.for_db(self, row) return for_db(row) end
 local _load = User_roles.load
 function User_roles:load(row)
 	row.expires_at = tonumber(row.expires_at)
+	row.total_time = tonumber(row.total_time)
 	row.to_name = to_name
 	row.for_db = for_db
 	return _load(self, row)

@@ -44,6 +44,7 @@ db_test.create = function()
 		user_id = user.id,
 		role = Roles:for_db("creator"),
 		expires_at = 4102444800,
+		total_time = 4102444800 - os.time(),
 	})
 
 	local community = Communities:create({

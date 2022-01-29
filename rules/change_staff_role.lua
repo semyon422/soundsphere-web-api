@@ -10,24 +10,35 @@ function rule:condition(request)
 	local role = request.params.role
 
 	local is_staff_role = false
-	local is_staff_user = false
-
+	local role_index = #roles + 1
 	for i, current_role in ipairs(roles) do
 		if role == current_role then
+			role_index = i
 			is_staff_role = true
 			break
 		end
+	end
+	if not is_staff_role then
+		return true
 	end
 
 	local session_user_role_index = #roles + 1
 	for i, current_role in ipairs(roles) do
 		if session_user_roles[current_role] then
-			is_staff_user = true
+			session_user_role_index = i
 			break
 		end
 	end
 
-	return not is_staff_role and is_staff_user
+	local user_role_index = #roles + 1
+	for i, current_role in ipairs(roles) do
+		if user_roles[current_role] then
+			user_role_index = i
+			break
+		end
+	end
+
+	return session_user_role_index < role_index and session_user_role_index < user_role_index
 end
 
 rule.effect = "permit"

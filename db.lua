@@ -173,6 +173,7 @@ table_declarations.user_roles = {
 	{"user_id", types.fk_id},
 	{"role", types.enum},
 	{"expires_at", types.time},
+	{"total_time", types.time},
 	"UNIQUE KEY `subject_object` (`user_id`, `role`)"
 }
 

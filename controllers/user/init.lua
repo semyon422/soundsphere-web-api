@@ -63,9 +63,9 @@ end
 
 user_c.context.PUT = {"user", "request_session", "session_user", "user_roles"}
 user_c.policies.PUT = {
-	{"authed", {role = "moderator"}, "change_role"},
-	{"authed", {role = "admin"}, "change_role"},
-	{"authed", {role = "creator"}, "change_role"},
+	{"authed", {role = "moderator"}, "change_staff_role"},
+	{"authed", {role = "admin"}, "change_staff_role"},
+	{"authed", {role = "creator"}, "change_staff_role"},
 }
 user_c.validations.PUT = {
 	{"ban", type = "boolean", optional = true},
@@ -88,8 +88,8 @@ end
 
 user_c.context.DELETE = {"user", "request_session", "session_user", "user_roles"}
 user_c.policies.DELETE = {
-	{"authed", {role = "admin"}, "change_role"},
-	{"authed", {role = "creator"}, "change_role"},
+	{"authed", {role = "admin"}, "change_staff_role"},
+	{"authed", {role = "creator"}, "change_staff_role"},
 }
 user_c.DELETE = function(self)
 	local user = self.context.user
