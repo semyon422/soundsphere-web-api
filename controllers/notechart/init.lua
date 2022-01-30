@@ -6,6 +6,7 @@ local Inputmodes = require("enums.inputmodes")
 local Controller = require("Controller")
 local util = require("util")
 local http = require("lapis.nginx.http")
+local config = require("lapis.config").get()
 local lapis_util = require("lapis.util")
 local to_json = lapis_util.to_json
 local from_json = lapis_util.from_json
@@ -116,7 +117,7 @@ notechart_c.PATCH = function(self)
 	end
 
 	local body, status_code, headers = http.simple({
-		url = "http://127.0.0.1:8082/notechart",
+		url = ("http://127.0.0.1:%d/notechart"):format(config.game_server_port),
 		method = "POST",
 		headers = {["content-type"] = "application/json"},
 		body = to_json({notechart = {
