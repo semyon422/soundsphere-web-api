@@ -70,10 +70,10 @@ communities_c.GET = function(self)
 	}}
 end
 
-communities_c.context.POST = {"request_session", "session_user"}
+communities_c.context.POST = {"request_session", "session_user", "user_communities"}
 communities_c.policies.POST = {
 	{"authed", "session_user_is_banned_deny"},
-	{"authed"},
+	{"authed", "community_create"},
 }
 communities_c.validations.POST = {
 	{"community", exists = true, type = "table", param_type = "body", validations = {

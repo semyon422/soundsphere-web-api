@@ -12,6 +12,7 @@ user_relations_c.methods = {"GET", "POST"}
 user_relations_c.context.GET = {"user", "request_session", "session_user", "user_roles"}
 user_relations_c.policies.GET = {
 	{"authed", "user_profile", {not_params = "who_added_me"}},
+	{"authed", "user_profile", {role = "donator"}},
 	{"authed", "user_profile", {role = "moderator"}},
 	{"authed", "user_profile", {role = "admin"}},
 	{"authed", "user_profile", {role = "creator"}},

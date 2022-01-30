@@ -16,7 +16,7 @@ function rule:condition(request)
 		if session_user.roles.donator then
 			return #user_relations < 20
 		end
-		return #user_relations < 0
+		return #user_relations < 3
 	end
 end
 

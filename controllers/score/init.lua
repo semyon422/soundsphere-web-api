@@ -205,6 +205,7 @@ end
 
 score_c.context.DELETE = {"score", "request_session", "session_user", "user_roles"}
 score_c.policies.DELETE = {
+	{"authed", {role = "donator"}},
 	{"authed", {role = "moderator"}},
 	{"authed", {role = "admin"}},
 	{"authed", {role = "creator"}},
