@@ -10,7 +10,7 @@ leaderboard_requirement_c.path = "/leaderboards/:leaderboard_id[%d]/requirements
 leaderboard_requirement_c.methods = {"GET", "PATCH", "DELETE"}
 
 leaderboard_requirement_c.context.GET = {"leaderboard_requirement"}
-leaderboard_requirement_c.policies.GET = {{"context_loaded"}}
+leaderboard_requirement_c.policies.GET = {{"permit"}}
 leaderboard_requirement_c.GET = function(self)
     local leaderboard_requirement = self.context.leaderboard_requirement
 

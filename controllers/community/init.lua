@@ -22,7 +22,7 @@ community_c.update_users = function(self, community_users)
 end
 
 community_c.context.GET = {"community"}
-community_c.policies.GET = {{"context_loaded"}}
+community_c.policies.GET = {{"permit"}}
 community_c.validations.GET = {}
 util.add_additions_validations(additions, community_c.validations.GET)
 util.add_belongs_to_validations(Communities.relations, community_c.validations.GET)

@@ -64,7 +64,7 @@ score_c.update_stats = function(score)
 end
 
 score_c.context.GET = {"score"}
-score_c.policies.GET = {{"context_loaded"}}
+score_c.policies.GET = {{"permit"}}
 score_c.validations.GET = {}
 util.add_additions_validations(additions, score_c.validations.GET)
 util.add_belongs_to_validations(Scores.relations, score_c.validations.GET)

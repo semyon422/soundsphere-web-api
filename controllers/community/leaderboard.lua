@@ -8,7 +8,7 @@ community_leaderboard_c.path = "/communities/:community_id[%d]/leaderboards/:lea
 community_leaderboard_c.methods = {"GET", "PUT", "DELETE", "PATCH"}
 
 community_leaderboard_c.context.GET = {"community_leaderboard"}
-community_leaderboard_c.policies.GET = {{"context_loaded"}}
+community_leaderboard_c.policies.GET = {{"permit"}}
 community_leaderboard_c.validations.GET = util.add_belongs_to_validations(Community_leaderboards.relations)
 community_leaderboard_c.GET = function(self)
 	local community_leaderboard = self.context.community_leaderboard

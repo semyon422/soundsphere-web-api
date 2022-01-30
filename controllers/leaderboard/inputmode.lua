@@ -19,7 +19,7 @@ local set_community_id = function(self)
 end
 
 leaderboard_inputmode_c.context.GET = {"leaderboard_inputmode"}
-leaderboard_inputmode_c.policies.GET = {{"context_loaded"}}
+leaderboard_inputmode_c.policies.GET = {{"permit"}}
 leaderboard_inputmode_c.GET = function(self)
 	return {json = {leaderboard_inputmode = self.context.leaderboard_inputmode:to_name()}}
 end

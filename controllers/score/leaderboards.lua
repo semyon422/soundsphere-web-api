@@ -128,7 +128,7 @@ score_leaderboards_c.match_requirement = function(value, req)
 end
 
 score_leaderboards_c.context.GET = {"score"}
-score_leaderboards_c.policies.GET = {{"context_loaded"}}
+score_leaderboards_c.policies.GET = {{"permit"}}
 score_leaderboards_c.validations.GET = {
 	require("validations.no_data"),
 	{"available", type = "boolean", optional = true},

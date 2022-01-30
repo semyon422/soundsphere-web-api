@@ -15,7 +15,7 @@ local set_community_id = function(self)
 end
 
 leaderboard_difftable_c.context.GET = {"leaderboard_difftable"}
-leaderboard_difftable_c.policies.GET = {{"context_loaded"}}
+leaderboard_difftable_c.policies.GET = {{"permit"}}
 leaderboard_difftable_c.GET = function(self)
 	return {json = {leaderboard_difftable = self.context.leaderboard_difftable}}
 end

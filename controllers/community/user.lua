@@ -99,7 +99,7 @@ community_user_c.DELETE = function(self)
 end
 
 community_user_c.context.GET = {"community_user"}
-community_user_c.policies.GET = {{"context_loaded"}}
+community_user_c.policies.GET = {{"permit"}}
 community_user_c.validations.GET = util.add_belongs_to_validations(Community_users.relations)
 community_user_c.GET = function(self)
 	local community_user = self.context.community_user

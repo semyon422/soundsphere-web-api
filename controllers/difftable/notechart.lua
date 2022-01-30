@@ -14,7 +14,7 @@ local set_community_id = function(self)
 end
 
 difftable_notechart_c.context.GET = {"difftable_notechart"}
-difftable_notechart_c.policies.GET = {{"context_loaded"}}
+difftable_notechart_c.policies.GET = {{"permit"}}
 difftable_notechart_c.validations.GET = util.add_belongs_to_validations(Difftable_notecharts.relations)
 difftable_notechart_c.GET = function(self)
     local difftable_notechart = self.context.difftable_notechart

@@ -8,7 +8,7 @@ ranked_cache_difftable_c.path = "/ranked_caches/:ranked_cache_id[%d]/difftables/
 ranked_cache_difftable_c.methods = {"GET", "PUT", "PATCH", "DELETE"}
 
 ranked_cache_difftable_c.context.GET = {"ranked_cache_difftable"}
-ranked_cache_difftable_c.policies.GET = {{"context_loaded"}}
+ranked_cache_difftable_c.policies.GET = {{"permit"}}
 ranked_cache_difftable_c.validations.GET = util.add_belongs_to_validations(Difftable_notecharts.relations)
 ranked_cache_difftable_c.GET = function(self)
     local ranked_cache_difftable = self.context.ranked_cache_difftable

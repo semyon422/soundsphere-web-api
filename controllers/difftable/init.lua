@@ -30,7 +30,7 @@ local set_community_id = function(self)
 end
 
 difftable_c.context.GET = {"difftable"}
-difftable_c.policies.GET = {{"context_loaded"}}
+difftable_c.policies.GET = {{"permit"}}
 difftable_c.validations.GET = {}
 util.add_additions_validations(additions, difftable_c.validations.GET)
 util.add_belongs_to_validations(Difftables.relations, difftable_c.validations.GET)

@@ -18,7 +18,7 @@ user_c.path = "/users/:user_id[%d]"
 user_c.methods = {"GET", "PATCH", "PUT", "DELETE"}
 
 user_c.context.GET = {"user"}
-user_c.policies.GET = {{"context_loaded"}}
+user_c.policies.GET = {{"permit"}}
 user_c.validations.GET = {}
 util.add_additions_validations(additions, user_c.validations.GET)
 util.add_belongs_to_validations(Users.relations, user_c.validations.GET)

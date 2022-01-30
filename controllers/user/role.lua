@@ -76,7 +76,7 @@ user_role_c.PATCH = function(self)
 end
 
 user_role_c.context.DELETE = {"user_role", "request_session", "user", "session_user", "user_roles"}
-user_role_c.policies.DELETE = {{"authed", "context_loaded", "change_staff_role", "change_role"}}
+user_role_c.policies.DELETE = {{"authed", "change_staff_role", "change_role"}}
 user_role_c.DELETE = function(self)
     local user_role = self.context.user_role
 

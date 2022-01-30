@@ -21,7 +21,7 @@ notechart_c.path = "/notecharts/:notechart_id[%d]"
 notechart_c.methods = {"GET", "PATCH"}
 
 notechart_c.context.GET = {"notechart"}
-notechart_c.policies.GET = {{"context_loaded"}}
+notechart_c.policies.GET = {{"permit"}}
 notechart_c.validations.GET = {}
 util.add_additions_validations(additions, notechart_c.validations.GET)
 util.add_belongs_to_validations(Notecharts.relations, notechart_c.validations.GET)

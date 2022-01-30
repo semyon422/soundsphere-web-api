@@ -33,7 +33,7 @@ leaderboard_c.update_difftables = function(leaderboard_id, difftables)
 end
 
 leaderboard_c.context.GET = {"leaderboard"}
-leaderboard_c.policies.GET = {{"context_loaded"}}
+leaderboard_c.policies.GET = {{"permit"}}
 leaderboard_c.validations.GET = {}
 util.add_additions_validations(additions, leaderboard_c.validations.GET)
 util.add_belongs_to_validations(Leaderboards.relations, leaderboard_c.validations.GET)
