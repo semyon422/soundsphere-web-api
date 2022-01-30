@@ -7,7 +7,14 @@ function rule:condition(request)
 	local params = request.params
 	local roles = context.user.roles
 
-	if params.user.name ~= context.user.name and not roles.donator then
+	if
+		not roles.donator and
+		(
+			params.user.name ~= context.user.name or
+			params.user.color_left ~= context.user.color_left or
+			params.user.color_right ~= context.user.color_right
+		)
+	then
 		return false
 	end
 

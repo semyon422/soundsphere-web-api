@@ -48,7 +48,12 @@ user_c.policies.PATCH = {
 user_c.validations.PATCH = {
 	{"user", type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},
-		{"description", exists = true, type = "string"},
+		{"description", exists = true, type = "string", optional = true},
+		{"color_left", exists = true, type = "number", range = {0, 16777215}, optional = true},
+		{"color_right", exists = true, type = "number", range = {0, 16777215}, optional = true},
+		{"discord", exists = true, type = "string", optional = true},
+		{"twitter", exists = true, type = "string", optional = true},
+		{"custom_link", exists = true, type = "string", optional = true},
 	}},
 }
 user_c.PATCH = function(self)
@@ -63,6 +68,11 @@ user_c.PATCH = function(self)
 	util.patch(user, params.user, {
 		"name",
 		"description",
+		"color_left",
+		"color_right",
+		"discord",
+		"twitter",
+		"custom_link",
 	})
 
 	return {json = {user = user:to_name()}}
