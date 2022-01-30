@@ -6,7 +6,7 @@ local rule = Rule:new()
 function rule:condition(request)
 	local session_user = request.context.session_user
 
-	if request.params.user_id == session_user.id then
+	if request.params.user_id == session_user.id or not request.params.invitation then
 		return false
 	end
 
@@ -28,7 +28,14 @@ function rule:condition(request)
 		return false
 	end
 
-	return request.params.invitation
+	local user = request.context.user
+
+	return
+		#user.communities:select() < 10 and
+		#user.communities:select({
+			community_id = assert(request.params.community_id),
+			accepted = true,
+		}) == 0
 end
 
 rule.effect = "permit"

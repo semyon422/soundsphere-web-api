@@ -1,5 +1,6 @@
 local select = function(self, where)
 	local relations = {}
+	where = where or {}
 	for _, relation in ipairs(self) do
 		local match = true
 		for k, v in pairs(where) do

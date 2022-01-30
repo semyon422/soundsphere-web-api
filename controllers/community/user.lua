@@ -12,6 +12,7 @@ community_user_c.methods = {"GET", "PUT", "DELETE", "PATCH"}
 
 community_user_c.context.PUT = {
 	{"community_user", optional = true},
+	"user",
 	"request_session",
 	"session_user",
 	"user_communities",
@@ -34,12 +35,6 @@ community_user_c.PUT = function(self)
 		local staff_user_id = 0
 		if params.invitation then
 			staff_user_id = self.session.user_id
-			Community_changes:add_change(
-				staff_user_id,
-				params.community_id,
-				"invite",
-				community_user:get_user()
-			)
 		end
 		community_user = {
 			community_id = params.community_id,
@@ -57,7 +52,7 @@ community_user_c.PUT = function(self)
 				staff_user_id,
 				params.community_id,
 				"invite",
-				community_user:get_user()
+				self.context.user
 			)
 		end
 		return {status = 201}
@@ -71,7 +66,7 @@ community_user_c.PUT = function(self)
 					community_user.staff_user_id,
 					params.community_id,
 					"accept",
-					community_user:get_user()
+					self.context.user
 				)
 			end
 			community_user.accepted = true
@@ -83,7 +78,7 @@ community_user_c.PUT = function(self)
 	return {status = 204}
 end
 
-community_user_c.context.DELETE = {"community_user", "request_session", "session_user", "user", "user_communities"}
+community_user_c.context.DELETE = {"community_user", "user", "request_session", "session_user", "user", "user_communities"}
 community_user_c.policies.DELETE = {
 	{"authed", "community_user_leave"},
 	{"authed", "community_user_kick"},
@@ -96,7 +91,7 @@ community_user_c.DELETE = function(self)
 		self.context.session_user.id,
 		self.params.community_id,
 		"kick",
-		community_user:get_user()
+		self.context.user
 	)
 
 	return {status = 204}
@@ -113,7 +108,7 @@ community_user_c.GET = function(self)
 	return {json = {community_user = community_user:to_name()}}
 end
 
-community_user_c.context.PATCH = {"community_user", "request_session", "session_user", "user_communities"}
+community_user_c.context.PATCH = {"community_user", "user", "request_session", "session_user", "user_communities"}
 community_user_c.policies.PATCH = {
 	{"authed", "community_user_change_role", {not_params = "transfer_ownership"}},
 	{"authed", "community_user_change_role", {community_role = "creator"}},
@@ -133,7 +128,7 @@ community_user_c.PATCH = function(self)
 			self.context.session_user.id,
 			params.community_id,
 			"transfer_ownership",
-			community_user:get_user()
+			self.context.user
 		)
 		return {json = {message = "Success"}}
 	end
@@ -143,7 +138,7 @@ community_user_c.PATCH = function(self)
 		self.context.session_user.id,
 		params.community_id,
 		"update",
-		community_user:get_user()
+		self.context.user
 	)
 
 	return {json = {community_user = community_user:to_name()}}

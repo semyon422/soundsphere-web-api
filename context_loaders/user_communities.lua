@@ -2,6 +2,7 @@ local Roles = require("enums.roles")
 
 local select = function(self, where)
 	local communities = {}
+	where = where or {}
 	for _, community in ipairs(self) do
 		local match = true
 		for k, v in pairs(where) do
