@@ -9,7 +9,10 @@ difftable_notecharts_c.path = "/difftables/:difftable_id[%d]/notecharts"
 difftable_notecharts_c.methods = {"GET"}
 
 difftable_notecharts_c.policies.GET = {{"permit"}}
-difftable_notecharts_c.validations.GET = util.add_belongs_to_validations(Difftable_notecharts.relations)
+difftable_notecharts_c.validations.GET = {
+	require("validations.no_data"),
+}
+util.add_belongs_to_validations(Difftable_notecharts.relations, difftable_notecharts_c.validations.GET)
 difftable_notecharts_c.GET = function(self)
 	local params = self.params
 

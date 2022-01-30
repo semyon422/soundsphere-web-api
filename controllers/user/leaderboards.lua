@@ -10,7 +10,9 @@ user_leaderboards_c.path = "/users/:user_id[%d]/leaderboards"
 user_leaderboards_c.methods = {"GET"}
 
 user_leaderboards_c.policies.GET = {{"permit"}}
-user_leaderboards_c.validations.GET = {}
+user_leaderboards_c.validations.GET = {
+	require("validations.no_data"),
+}
 util.add_belongs_to_validations(Leaderboard_users.relations, user_leaderboards_c.validations.GET)
 util.add_has_many_validations(Leaderboards.relations, user_leaderboards_c.validations.GET)
 user_leaderboards_c.GET = function(self)

@@ -11,7 +11,9 @@ difftable_leaderboards_c.methods = {"GET"}
 
 difftable_leaderboards_c.context.GET = {"difftable"}
 difftable_leaderboards_c.policies.GET = {{"permit"}}
-difftable_leaderboards_c.validations.GET = {}
+difftable_leaderboards_c.validations.GET = {
+	require("validations.no_data"),
+}
 util.add_belongs_to_validations(Leaderboard_difftables.relations, difftable_leaderboards_c.validations.GET)
 util.add_has_many_validations(Leaderboards.relations, difftable_leaderboards_c.validations.GET)
 difftable_leaderboards_c.GET = function(self)

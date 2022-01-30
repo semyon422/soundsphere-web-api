@@ -11,11 +11,11 @@ user_communities_c.methods = {"GET"}
 
 user_communities_c.policies.GET = {{"permit"}}
 user_communities_c.validations.GET = {
+	require("validations.no_data"),
 	{"invitations", type = "boolean", optional = true},
 	{"requests", type = "boolean", optional = true},
 	{"is_admin", type = "boolean", optional = true},
 }
-user_communities_c.validations.GET = {}
 util.add_belongs_to_validations(Community_users.relations, user_communities_c.validations.GET)
 util.add_has_many_validations(Communities.relations, user_communities_c.validations.GET)
 user_communities_c.GET = function(self)
@@ -27,6 +27,9 @@ user_communities_c.GET = function(self)
 	elseif params.requests then
 		where.invitation = false
 		where.accepted = false
+	end
+	if params.invitations and params.requests then
+		where.invitation = nil
 	end
 
     local community_users = Community_users:find_all({params.user_id}, {

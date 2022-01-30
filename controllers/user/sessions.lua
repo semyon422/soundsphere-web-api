@@ -11,6 +11,7 @@ user_sessions_c.methods = {"GET"}
 user_sessions_c.context.GET = {"request_session"}
 user_sessions_c.policies.GET = {{"authed"}}
 user_sessions_c.validations.GET = {
+	require("validations.no_data"),
 	{"show_ip", type = "boolean", optional = true},
 }
 user_sessions_c.validations.GET = util.add_belongs_to_validations(Sessions.relations)

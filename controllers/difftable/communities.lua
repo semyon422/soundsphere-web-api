@@ -11,7 +11,9 @@ difftable_communities_c.methods = {"GET"}
 
 difftable_communities_c.context.GET = {"difftable"}
 difftable_communities_c.policies.GET = {{"permit"}}
-difftable_communities_c.validations.GET = {}
+difftable_communities_c.validations.GET = {
+	require("validations.no_data"),
+}
 util.add_belongs_to_validations(Community_difftables.relations, difftable_communities_c.validations.GET)
 util.add_has_many_validations(Communities.relations, difftable_communities_c.validations.GET)
 difftable_communities_c.GET = function(self)

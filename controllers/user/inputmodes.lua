@@ -8,6 +8,9 @@ user_inputmodes_c.path = "/users/:user_id[%d]/inputmodes"
 user_inputmodes_c.methods = {"GET"}
 
 user_inputmodes_c.policies.GET = {{"permit"}}
+user_inputmodes_c.validations.GET = {
+	require("validations.no_data"),
+}
 user_inputmodes_c.GET = function(self)
 	local params = self.params
     local user_inputmodes = User_inputmodes:find_all({params.user_id}, "user_id")

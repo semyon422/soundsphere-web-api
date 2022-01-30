@@ -18,6 +18,7 @@ user_relations_c.policies.GET = {
 	{"authed", "user_profile", {role = "creator"}},
 }
 user_relations_c.validations.GET = {
+	require("validations.no_data"),
 	{"type", exists = true, type = "string", one_of = {"friend", "rival"}, optional = true},
 	{"all_types", type = "boolean", optional = true},
 	{"who_added_me", type = "boolean", optional = true},

@@ -10,7 +10,9 @@ notechart_difftables_c.path = "/notecharts/:notechart_id[%d]/difftables"
 notechart_difftables_c.methods = {"GET"}
 
 notechart_difftables_c.policies.GET = {{"permit"}}
-notechart_difftables_c.validations.GET = {}
+notechart_difftables_c.validations.GET = {
+	require("validations.no_data"),
+}
 util.add_belongs_to_validations(Difftable_notecharts.relations, notechart_difftables_c.validations.GET)
 util.add_has_many_validations(Difftables.relations, notechart_difftables_c.validations.GET)
 notechart_difftables_c.GET = function(self)

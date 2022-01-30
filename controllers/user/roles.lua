@@ -8,6 +8,9 @@ user_roles_c.path = "/users/:user_id[%d]/roles"
 user_roles_c.methods = {"GET"}
 
 user_roles_c.policies.GET = {{"permit"}}
+user_roles_c.validations.GET = {
+	require("validations.no_data"),
+}
 user_roles_c.GET = function(self)
 	local params = self.params
     local user_roles = User_roles:find_all({params.user_id}, "user_id")

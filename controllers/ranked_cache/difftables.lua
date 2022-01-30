@@ -9,7 +9,10 @@ ranked_cache_difftables_c.path = "/ranked_caches/:ranked_cache_id[%d]/difftables
 ranked_cache_difftables_c.methods = {"GET"}
 
 ranked_cache_difftables_c.policies.GET = {{"permit"}}
-ranked_cache_difftables_c.validations.GET = util.add_belongs_to_validations(Ranked_cache_difftables.relations)
+ranked_cache_difftables_c.validations.GET = {
+	require("validations.no_data"),
+}
+util.add_belongs_to_validations(Ranked_cache_difftables.relations, ranked_cache_difftables_c.validations.GET)
 ranked_cache_difftables_c.GET = function(self)
 	local params = self.params
 
