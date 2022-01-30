@@ -32,4 +32,5 @@ config({"development", "production"}, {
 	is_register_enabled = true,
 	is_login_enabled = true,
 	ip_register_delay = 3600 * 24 * 30,
+	game_server_port = 8082,
 })
