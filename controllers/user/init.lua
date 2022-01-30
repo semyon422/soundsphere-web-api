@@ -32,8 +32,15 @@ user_c.GET = function(self)
 end
 
 user_c.context.PATCH = {"user", "request_session", "session_user", "user_roles"}
-user_c.policies.PATCH = {
+user_c.display_policies.PATCH = {
 	{"authed", "user_profile"},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
+user_c.policies.PATCH = {
+	{"authed", "user_profile", "user_profile_patch"},
+	{"authed", "user_profile", {role = "donator"}},
 	{"authed", {role = "moderator"}},
 	{"authed", {role = "admin"}},
 	{"authed", {role = "creator"}},
