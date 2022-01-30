@@ -36,10 +36,14 @@ community_c.GET = function(self)
 	return {json = {community = community}}
 end
 
-community_c.context.PATCH = {"community", "request_session", "session_user", "user_communities"}
-community_c.policies.PATCH = {
+community_c.context.PATCH = {"community", "request_session", "session_user", "user_communities", "user_roles"}
+community_c.display_policies.PATCH = {
 	{"authed", {community_role = "admin"}},
 	{"authed", {community_role = "creator"}},
+}
+community_c.policies.PATCH = {
+	{"authed", {community_role = "admin"}, "community_patch"},
+	{"authed", {community_role = "creator"}, "community_patch"},
 }
 community_c.validations.PATCH = {
 	{"community", exists = true, type = "table", param_type = "body", validations = {

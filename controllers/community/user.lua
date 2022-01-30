@@ -13,6 +13,7 @@ community_user_c.methods = {"GET", "PUT", "DELETE", "PATCH"}
 community_user_c.context.PUT = {
 	{"community_user", optional = true},
 	"user",
+	"community",
 	"request_session",
 	"session_user",
 	"user_communities",

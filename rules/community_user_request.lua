@@ -9,8 +9,10 @@ function rule:condition(request)
 		return false
 	end
 
+	local is_public = request.context.community.is_public
+
 	return
-		#session_user.communities:select() < 10 and
+		#session_user.communities:select({is_public = is_public}) < 10 and
 		#session_user.communities:select({
 			community_id = assert(request.params.community_id),
 			accepted = true,

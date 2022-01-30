@@ -70,7 +70,11 @@ communities_c.GET = function(self)
 	}}
 end
 
-communities_c.context.POST = {"request_session", "session_user", "user_communities"}
+communities_c.context.POST = {"request_session", "session_user", "user_communities", "user_roles"}
+communities_c.display_policies.POST = {
+	{"authed", "session_user_is_banned_deny"},
+	{"authed"},
+}
 communities_c.policies.POST = {
 	{"authed", "session_user_is_banned_deny"},
 	{"authed", "community_create"},
@@ -92,6 +96,9 @@ communities_c.POST = function(self)
 
 	if Communities:find({name = params.community.name}) then
 		return {status = 400, json = {message = "This name is already taken"}}
+	end
+	if Communities:find({alias = params.community.alias}) then
+		return {status = 400, json = {message = "This alias is already taken"}}
 	end
 
 	local community = params.community
