@@ -11,6 +11,7 @@ function rule:condition(request)
 		not roles.donator and
 		(
 			params.user.name ~= context.user.name or
+			params.user.banner ~= context.user.banner or
 			params.user.color_left ~= context.user.color_left or
 			params.user.color_right ~= context.user.color_right
 		)

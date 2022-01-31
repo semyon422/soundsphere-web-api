@@ -201,6 +201,7 @@ table_declarations.users = {
 	{"play_time", types.size},
 	{"color_left", types.size},
 	{"color_right", types.size},
+	{"banner", types.varchar},
 	{"discord", types.varchar},
 	{"twitter", types.varchar},
 	{"custom_link", types.varchar},
