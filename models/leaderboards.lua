@@ -41,6 +41,7 @@ function Leaderboards.for_db(self, row) return for_db(row) end
 
 local _load = Leaderboards.load
 function Leaderboards:load(row)
+	row.created_at = tonumber(row.created_at)
 	row.to_name = to_name
 	row.for_db = for_db
 	return _load(self, row)

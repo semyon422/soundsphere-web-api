@@ -16,4 +16,10 @@ local Difftable = Model:extend(
 	}
 )
 
+local _load = Difftable.load
+function Difftable:load(row)
+	row.created_at = tonumber(row.created_at)
+	return _load(self, row)
+end
+
 return Difftable

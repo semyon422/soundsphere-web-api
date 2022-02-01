@@ -80,6 +80,7 @@ difftables_c.POST = function(self)
 		description = difftable.description,
 		symbol = difftable.symbol,
 		owner_community_id = difftable.owner_community_id,
+		created_at = os.time(),
 	})
 
 	Community_changes:add_change(

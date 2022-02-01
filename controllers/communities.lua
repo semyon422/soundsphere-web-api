@@ -109,6 +109,7 @@ communities_c.POST = function(self)
 		params.community.banner = ""
 	end
 
+	local time = os.time()
 	local community = params.community
 	community = Communities:create({
 		name = community.name,
@@ -118,6 +119,7 @@ communities_c.POST = function(self)
 		description = community.description,
 		banner = community.banner,
 		is_public = community.is_public,
+		created_at = time,
 	})
 
 	Community_users:create({
@@ -126,7 +128,7 @@ communities_c.POST = function(self)
 		staff_user_id = session.user_id,
 		role = Roles:for_db("creator"),
 		accepted = true,
-		created_at = os.time(),
+		created_at = time,
 		message = "",
 	})
 

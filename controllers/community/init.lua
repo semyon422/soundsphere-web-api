@@ -96,7 +96,7 @@ end
 
 community_c.context.DELETE = {"community", "request_session", "session_user", "user_communities"}
 community_c.policies.DELETE = {
-	{"authed", {community_role = "creator"}},
+	{"authed", {community_role = "creator"}, {delete_delay = "community"}},
 }
 community_c.DELETE = function(self)
 	local community = self.context.community

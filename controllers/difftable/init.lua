@@ -182,8 +182,8 @@ end
 
 difftable_c.context.DELETE = {"difftable", "request_session", "session_user", "user_communities", set_community_id}
 difftable_c.policies.DELETE = {
-	{"authed", {community_role = "admin"}},
-	{"authed", {community_role = "creator"}},
+	{"authed", {community_role = "admin"}, {delete_delay = "difftable"}},
+	{"authed", {community_role = "creator"}, {delete_delay = "difftable"}},
 }
 difftable_c.DELETE = function(self)
 	local difftable = self.context.difftable

@@ -131,8 +131,8 @@ end
 
 leaderboard_c.context.DELETE = util.add_owner_context("leaderboard", "context")
 leaderboard_c.policies.DELETE = {
-	{"authed", {community_role = "admin"}},
-	{"authed", {community_role = "creator"}},
+	{"authed", {community_role = "admin"}, {delete_delay = "leaderboard"}},
+	{"authed", {community_role = "creator"}, {delete_delay = "leaderboard"}},
 }
 leaderboard_c.DELETE = function(self)
 	local leaderboard = self.context.leaderboard

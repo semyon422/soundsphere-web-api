@@ -115,12 +115,14 @@ leaderboards_c.POST = function(self)
 		params.community.banner = ""
 	end
 
+	local time = os.time()
 	local leaderboard = params.leaderboard
 	leaderboard = Leaderboards:create({
 		name = leaderboard.name,
 		description = leaderboard.description,
 		banner = leaderboard.banner,
 		owner_community_id = leaderboard.owner_community_id,
+		created_at = time,
 		difficulty_calculator = Difficulty_calculators:for_db(leaderboard.difficulty_calculator),
 		rating_calculator = Rating_calculators:for_db(leaderboard.rating_calculator),
 		scores_combiner = Combiners:for_db(leaderboard.scores_combiner),
@@ -136,7 +138,7 @@ leaderboards_c.POST = function(self)
 		leaderboard_id = leaderboard.id,
 		user_id = self.session.user_id,
 		accepted = true,
-		created_at = os.time(),
+		created_at = time,
 		message = "",
 	})
 

@@ -19,6 +19,7 @@ local Communities = Model:extend(
 
 local _load = Communities.load
 function Communities:load(row)
+	row.created_at = tonumber(row.created_at)
 	row.is_public = toboolean(row.is_public)
 	return _load(self, row)
 end
