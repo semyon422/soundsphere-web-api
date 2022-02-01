@@ -105,7 +105,7 @@ register_c.POST = function(self)
 	login_c.add_user_location(user, self.context.ip, true)
 	login_c.copy_session(payload, self.session)
 
-	return {status = 201, redirect_to = self:url_for(user)}
+	return {status = 201, json = {id = user.id, redirect_to = self:url_for(user)}}
 end
 
 return register_c

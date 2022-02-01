@@ -47,7 +47,7 @@ community_user_c.PUT = function(self)
 			"invite",
 			self.context.user
 		)
-		return {status = 201, redirect_to = self:url_for(community_user)}
+		return {status = 201, json = {redirect_to = self:url_for(community_user)}}
 	elseif not community_user.accepted and not community_user.invitation then
 		community_user.staff_user_id = self.session.user_id
 		community_user.accepted = true
@@ -58,7 +58,7 @@ community_user_c.PUT = function(self)
 			"accept",
 			self.context.user
 		)
-		return {status = 201, redirect_to = self:url_for(community_user)}
+		return {status = 201, json = {redirect_to = self:url_for(community_user)}}
 	end
 
 	return {status = 204}

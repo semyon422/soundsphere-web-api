@@ -59,9 +59,20 @@ function requestBlock() {return {
 				location = pair[1]
 			}
 		}
+
+		let responseJson = await response.json().catch((error) => {
+			console.log(error)
+		})
+        if (responseJson) {
+			this.responseJson = responseJson
+			location = responseJson.redirect_to
+		} else {
+			this.responseJson = null
+		}
+
 		var responseLocation = document.getElementById('response-location')
 		if (location != null) {
-			var url = new URL(location)
+			var url = new URL(location, document.location.href)
 			responseLocation.href = location.replaceAll('/api', '/api/html')
 			responseLocation.innerHTML = url.pathname
 		} else {
@@ -69,14 +80,6 @@ function requestBlock() {return {
 			responseLocation.innerHTML = ''
 		}
 
-		let responseJson = await response.json().catch((error) => {
-			console.log(error)
-		})
-        if (responseJson) {
-			this.responseJson = responseJson
-		} else {
-			this.responseJson = null
-		}
 		this.updateEffect()
 		this.doingRequest = false
 	},

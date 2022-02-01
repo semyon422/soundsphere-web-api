@@ -247,7 +247,7 @@ notecharts_c.POST = function(self)
 		})
 	end
 
-	return {status = 201, redirect_to = self:url_for(notechart)}
+	return {status = 201, json = {id = notechart.id, redirect_to = self:url_for(notechart)}}
 end
 
 return notecharts_c

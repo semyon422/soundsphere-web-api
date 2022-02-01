@@ -68,10 +68,7 @@ ranked_caches_c.POST = function(self)
 
 	local ranked_cache = Ranked_caches:find({hash = hash})
 	if ranked_cache then
-		return {
-			status = 200,
-			redirect_to = self:url_for(ranked_cache),
-		}
+		return {status = 200, json = {id = ranked_cache.id, redirect_to = self:url_for(ranked_cache)}}
 	end
 
 	ranked_cache = Ranked_caches:create({
@@ -85,7 +82,7 @@ ranked_caches_c.POST = function(self)
 		expires_at = 0,
 	})
 
-	return {status = 201, redirect_to = self:url_for(ranked_cache)}
+	return {status = 201, json = {id = ranked_cache.id, redirect_to = self:url_for(ranked_cache)}}
 end
 
 return ranked_caches_c

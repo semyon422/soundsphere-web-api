@@ -151,7 +151,7 @@ leaderboards_c.POST = function(self)
 	leaderboard_c.update_difftables(leaderboard.id, params.leaderboard.difftables)
 	leaderboard_c.update_requirements(leaderboard.id, params.leaderboard.requirements)
 
-	return {status = 201, redirect_to = self:url_for(leaderboard)}
+	return {status = 201, json = {id = leaderboard.id, redirect_to = self:url_for(leaderboard)}}
 end
 
 return leaderboards_c

@@ -89,7 +89,7 @@ difftables_c.POST = function(self)
 		difftable
 	)
 
-	return {status = 201, redirect_to = self:url_for(difftable)}
+	return {status = 201, json = {id = difftable.id, redirect_to = self:url_for(difftable)}}
 end
 
 return difftables_c
