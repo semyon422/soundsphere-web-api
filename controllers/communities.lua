@@ -71,22 +71,18 @@ communities_c.GET = function(self)
 end
 
 communities_c.context.POST = {"request_session", "session_user", "user_communities", "user_roles"}
-communities_c.display_policies.POST = {
-	{"authed", "session_user_is_banned_deny"},
-	{"authed"},
-}
 communities_c.policies.POST = {
 	{"authed", "session_user_is_banned_deny"},
-	{"authed", "community_create"},
+	{"authed"},
 }
 communities_c.validations.POST = {
 	{"community", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},
 		{"alias", exists = true, type = "string"},
-		{"link", exists = true, type = "string"},
-		{"short_description", exists = true, type = "string"},
-		{"description", exists = true, type = "string"},
-		{"banner", exists = true, type = "string"},
+		{"link", exists = true, type = "string", optional = true},
+		{"short_description", exists = true, type = "string", optional = true},
+		{"description", exists = true, type = "string", optional = true},
+		{"banner", exists = true, type = "string", optional = true},
 		{"is_public", type = "boolean"},
 	}}
 }
@@ -94,11 +90,23 @@ communities_c.POST = function(self)
 	local params = self.params
 	local session = self.session
 
+	local user = self.context.session_user
+	local is_public = params.community.is_public
+	if not user.roles.donator and not is_public then
+		return {status = 400, json = {message = "Creation of private communities is available only to donators"}}
+	end
+	if #user.communities:select({role = "creator", is_public = is_public}) >= 1 then
+		return {status = 400, json = {message = "You can create only one community of this type (public or private)"}}
+	end
 	if Communities:find({name = params.community.name}) then
 		return {status = 400, json = {message = "This name is already taken"}}
 	end
 	if Communities:find({alias = params.community.alias}) then
 		return {status = 400, json = {message = "This alias is already taken"}}
+	end
+
+	if not user.roles.donator then
+		params.community.banner = ""
 	end
 
 	local community = params.community

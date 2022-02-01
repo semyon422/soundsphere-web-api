@@ -37,21 +37,17 @@ community_c.GET = function(self)
 end
 
 community_c.context.PATCH = {"community", "request_session", "session_user", "user_communities", "user_roles"}
-community_c.display_policies.PATCH = {
+community_c.policies.PATCH = {
 	{"authed", {community_role = "admin"}},
 	{"authed", {community_role = "creator"}},
-}
-community_c.policies.PATCH = {
-	{"authed", {community_role = "admin"}, "community_patch"},
-	{"authed", {community_role = "creator"}, "community_patch"},
 }
 community_c.validations.PATCH = {
 	{"community", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},
 		{"alias", exists = true, type = "string"},
-		{"link", exists = true, type = "string"},
-		{"short_description", exists = true, type = "string"},
-		{"description", exists = true, type = "string"},
+		{"link", exists = true, type = "string", optional = true},
+		{"short_description", exists = true, type = "string", optional = true},
+		{"description", exists = true, type = "string", optional = true},
 		{"banner", exists = true, type = "string", optional = true},
 		{"is_public", type = "boolean"},
 		{"default_leaderboard_id", exists = true, type = "number"},
@@ -65,7 +61,17 @@ community_c.PATCH = function(self)
 		Communities:find({name = params.community.name}) or
 		Communities:find({alias = params.community.alias})
 	if found_community and found_community.id ~= community.id then
-		return {status = 400, json = {message = "This name is already taken"}}
+		return {status = 400, json = {message = "This name or alias is already taken"}}
+	end
+
+	local user = self.context.session_user
+	local is_public = params.community.is_public
+	if not user.roles.donator and not is_public then
+		return {status = 400, json = {message = "Creation of private communities is available only to donators"}}
+	end
+
+	if not user.roles.donator then
+		params.community.banner = ""
 	end
 
 	util.patch(community, params.community, {

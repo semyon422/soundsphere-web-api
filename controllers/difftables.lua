@@ -53,6 +53,7 @@ difftables_c.display_policies.POST = {
 	{"authed", {any_community_role = "admin"}},
 }
 difftables_c.policies.POST = {
+	{"authed", "session_user_is_banned_deny"},
 	{"authed", {community_role = "creator"}},
 	{"authed", {community_role = "admin"}},
 }

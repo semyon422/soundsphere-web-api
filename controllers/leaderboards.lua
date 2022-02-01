@@ -76,7 +76,7 @@ local set_community_id = function(self)
 	return true
 end
 
-leaderboards_c.context.POST = {"request_session", "session_user", "user_communities", set_community_id}
+leaderboards_c.context.POST = {"request_session", "session_user", "user_communities", "user_roles", set_community_id}
 leaderboards_c.display_policies.POST = {
 	{"authed", "session_user_is_banned_deny"},
 	{"authed", {any_community_role = "creator"}},
@@ -108,6 +108,11 @@ leaderboards_c.POST = function(self)
 
 	if Leaderboards:find({name = params.leaderboard.name}) then
 		return {status = 400, json = {message = "This name is already taken"}}
+	end
+
+	local user = self.context.session_user
+	if not user.roles.donator then
+		params.community.banner = ""
 	end
 
 	local leaderboard = params.leaderboard
