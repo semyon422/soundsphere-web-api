@@ -8,10 +8,6 @@ function rule:condition(request)
 	local session_user = request.context.session_user
 	local user = request.context.user
 
-	if request.params.user_id == session_user.id then
-		return false
-	end
-
 	local session_user_role
 	local user_role
 	do
@@ -19,7 +15,7 @@ function rule:condition(request)
 			community_id = assert(request.params.community_id),
 			accepted = true,
 		})
-		if community_users == 0 then
+		if #community_users == 0 then
 			return false
 		end
 		session_user_role = community_users[1].role
@@ -29,7 +25,7 @@ function rule:condition(request)
 			community_id = assert(request.params.community_id),
 			accepted = true,
 		})
-		if community_users == 0 then
+		if #community_users == 0 then
 			return false
 		end
 		user_role = community_users[1].role

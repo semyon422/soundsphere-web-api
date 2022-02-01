@@ -20,6 +20,7 @@ return {
 	"user.roles",
 	"user.role",
 	"user.communities",
+	"user.community",
 	"user.leaderboards",
 	"user.relations",
 	"user.relation",

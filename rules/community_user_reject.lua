@@ -5,10 +5,7 @@ local rule = Rule:new()
 
 function rule:condition(request)
 	local session_user = request.context.session_user
-
-	if request.context.community.is_public then
-		return false
-	end
+	local user = request.context.user
 
 	local community_users = session_user.communities:select({
 		community_id = assert(request.params.community_id)
@@ -28,14 +25,15 @@ function rule:condition(request)
 		return false
 	end
 
-	local user = request.context.user
+	community_users = user.communities:select({
+		community_id = assert(request.params.community_id),
+		accepted = false,
+	})
+	if #community_users == 0 then
+		return false
+	end
 
-	return
-		#user.communities:select() < 10 and
-		#user.communities:select({
-			community_id = assert(request.params.community_id),
-			accepted = true,
-		}) == 0
+	return true
 end
 
 rule.effect = "permit"

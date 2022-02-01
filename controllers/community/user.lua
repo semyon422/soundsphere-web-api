@@ -18,13 +18,10 @@ community_user_c.context.PUT = {
 	"session_user",
 	"user_communities",
 }
-community_user_c.display_policies.PUT = {{"authed"}}
 community_user_c.policies.PUT = {
-	{"authed", "community_user_request"},
-	{"authed", "community_user_invitation"},
+	{"authed", "not_user_profile", "community_user_invitation"},
 }
 community_user_c.validations.PUT = {
-	{"invitation", type = "boolean", optional = true},
 	{"message", exists = true, type = "string", optional = true},
 }
 community_user_c.PUT = function(self)
@@ -32,48 +29,36 @@ community_user_c.PUT = function(self)
 	local community_user = self.context.community_user
 
 	if not community_user then
-		local community = Communities:find(params.community_id)
-		local staff_user_id = 0
-		if params.invitation then
-			staff_user_id = self.session.user_id
-		end
+		local staff_user_id = self.session.user_id
 		community_user = {
 			community_id = params.community_id,
 			user_id = params.user_id,
-			invitation = params.invitation,
+			invitation = true,
 			staff_user_id = staff_user_id,
 			created_at = os.time(),
 			message = params.message or "",
-			accepted = community.is_public,
+			accepted = false,
 		}
 		Community_users:set_role(community_user, "user")
 		community_user = Community_users:create(community_user)
-		if params.invitation then
-			Community_changes:add_change(
-				staff_user_id,
-				params.community_id,
-				"invite",
-				self.context.user
-			)
-		end
-		return {status = 201}
-	elseif not community_user.accepted then
-		if community_user.invitation and not params.invitation or
-			not community_user.invitation and params.invitation
-		then
-			if params.invitation then
-				community_user.staff_user_id = self.session.user_id
-				Community_changes:add_change(
-					community_user.staff_user_id,
-					params.community_id,
-					"accept",
-					self.context.user
-				)
-			end
-			community_user.accepted = true
-			community_user:update("accepted", "staff_user_id")
-			return {}
-		end
+		Community_changes:add_change(
+			staff_user_id,
+			params.community_id,
+			"invite",
+			self.context.user
+		)
+		return {status = 201, redirect_to = self:url_for(community_user)}
+	elseif not community_user.accepted and not community_user.invitation then
+		community_user.staff_user_id = self.session.user_id
+		community_user.accepted = true
+		community_user:update("accepted", "staff_user_id")
+		Community_changes:add_change(
+			community_user.staff_user_id,
+			params.community_id,
+			"accept",
+			self.context.user
+		)
+		return {status = 201, redirect_to = self:url_for(community_user)}
 	end
 
 	return {status = 204}
@@ -81,8 +66,9 @@ end
 
 community_user_c.context.DELETE = {"community_user", "user", "request_session", "session_user", "user", "user_communities"}
 community_user_c.policies.DELETE = {
-	{"authed", "community_user_leave"},
-	{"authed", "community_user_kick"},
+	{"authed", "user_profile", "community_user_leave"},
+	{"authed", "not_user_profile", "community_user_kick"},
+	{"authed", "not_user_profile", "community_user_reject"},
 }
 community_user_c.DELETE = function(self)
 	local community_user = self.context.community_user
@@ -111,8 +97,8 @@ end
 
 community_user_c.context.PATCH = {"community_user", "user", "request_session", "session_user", "user_communities"}
 community_user_c.policies.PATCH = {
-	{"authed", "community_user_change_role", {not_params = "transfer_ownership"}},
-	{"authed", "community_user_change_role", {community_role = "creator"}},
+	{"authed", "not_user_profile", "community_user_change_role", {not_params = "transfer_ownership"}},
+	{"authed", "not_user_profile", "community_user_change_role", {community_role = "creator"}},
 }
 community_user_c.validations.PATCH = {
 	{"role", exists = true, type = "string", one_of = Roles.list},

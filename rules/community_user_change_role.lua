@@ -8,10 +8,6 @@ function rule:condition(request)
 	local session_user = request.context.session_user
 	local community_user = request.context.community_user
 
-	if request.params.user_id == session_user.id then
-		return false
-	end
-
 	local user_role = Roles:to_name(community_user.role)
 	local session_user_role
 	do
