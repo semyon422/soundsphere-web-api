@@ -141,7 +141,8 @@ leaderboard_requirements_c.POST = function(self)
 	Leaderboard_requirements:for_db(requirement)
 	requirement = Leaderboard_requirements:create(requirement)
 
-	return {status = 201, json = {id = requirement.id, redirect_to = self:url_for(requirement)}}
+	util.redirect_to(self, self:url_for(requirement))
+	return {status = 201, json = {id = requirement.id}}
 end
 
 return leaderboard_requirements_c

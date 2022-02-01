@@ -36,7 +36,7 @@ community_leaderboard_c.PUT = function(self)
 		message = params.message or "",
 	})
 
-	return {status = 201, json = {redirect_to = self:url_for(community_leaderboard)}}
+	return {status = 201, redirect_to = self:url_for(community_leaderboard)}
 end
 
 community_leaderboard_c.context.DELETE = {"community_leaderboard", "request_session"}

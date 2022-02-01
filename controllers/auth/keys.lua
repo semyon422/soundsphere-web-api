@@ -74,7 +74,8 @@ keys_c.POST = function(self)
 		expires_at = params.expires_at,
 	})
 
-	return {status = 201, json = {id = bypass_key.id, redirect_to = self:url_for(bypass_key)}}
+	util.redirect_to(self, self:url_for(bypass_key))
+	return {status = 201, json = {id = bypass_key.id}}
 end
 
 return keys_c

@@ -130,7 +130,8 @@ communities_c.POST = function(self)
 		message = "",
 	})
 
-	return {status = 201, json = {id = community.id, redirect_to = self:url_for(community)}}
+	util.redirect_to(self, self:url_for(community))
+	return {status = 201, json = {id = community.id}}
 end
 
 return communities_c

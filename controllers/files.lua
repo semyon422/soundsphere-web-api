@@ -70,7 +70,8 @@ files_c.POST = function(self)
 
 	local file = Files:find({hash = hash})
 	if file then
-		return {status = 200, json = {id = file.id, redirect_to = self:url_for(file)}}
+		util.redirect_to(self, self:url_for(file))
+		return {status = 200, json = {id = file.id}}
 	end
 
 	file = Files:create({
@@ -87,7 +88,8 @@ files_c.POST = function(self)
 		Files:write_file(file, params.file.content)
 	end
 
-	return {status = 201, json = {id = file.id, redirect_to = self:url_for(file)}}
+	util.redirect_to(self, self:url_for(file))
+	return {status = 201, json = {id = file.id}}
 end
 
 return files_c

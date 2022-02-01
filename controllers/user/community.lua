@@ -41,11 +41,11 @@ user_community_c.PUT = function(self)
 		}
 		Community_users:set_role(community_user, "user")
 		community_user = Community_users:create(community_user)
-		return {status = 201, json = {redirect_to = self:url_for(community_user)}}
+		return {status = 201, redirect_to = self:url_for(community_user)}
 	elseif not community_user.accepted and community_user.invitation then
 		community_user.accepted = true
 		community_user:update("accepted", "staff_user_id")
-		return {status = 200, json = {redirect_to = self:url_for(community_user)}}
+		return {status = 200, redirect_to = self:url_for(community_user)}
 	end
 
 	return {status = 204}

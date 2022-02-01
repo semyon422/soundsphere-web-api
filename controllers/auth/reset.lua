@@ -81,7 +81,8 @@ reset_c.POST = function(self)
 	reset_bypass_key:to_name()
 	-- send reset_bypass_key.key on email
 
-	return {status = 201, json = {id = reset_bypass_key.id, redirect_to = self:url_for(reset_bypass_key)}}
+	util.redirect_to(self, self:url_for(reset_bypass_key))
+	return {status = 201, json = {id = reset_bypass_key.id}}
 end
 
 return reset_c

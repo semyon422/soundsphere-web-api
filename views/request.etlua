@@ -39,12 +39,14 @@ function requestBlock() {return {
 			formData.append('json_params', this.requestBody)
 			response = await fetch(this.url + this.requestQuery.replaceAll('\n', ''), {
 				method: this.method,
+				redirect: 'follow',
 				body: formData,
-				credentials: 'same-origin'
+				credentials: 'same-origin',
 			})
 		} else {
 			response = await fetch(this.url + this.requestQuery.replaceAll('\n', ''), {
-				credentials: 'same-origin'
+				credentials: 'same-origin',
+				redirect: 'follow',
 			})
 		}
 		this.responseStatus = response.status
@@ -65,7 +67,6 @@ function requestBlock() {return {
 		})
         if (responseJson) {
 			this.responseJson = responseJson
-			location = responseJson.redirect_to
 		} else {
 			this.responseJson = null
 		}

@@ -103,7 +103,8 @@ user_relations_c.POST = function(self)
 		reverse_user_relation:update("mutual")
 	end
 
-	return {status = 201, json = {id = user_relation.id, redirect_to = self:url_for(user_relation)}}
+	util.redirect_to(self, self:url_for(user_relation))
+	return {status = 201, json = {id = user_relation.id}}
 end
 
 return user_relations_c

@@ -131,7 +131,8 @@ scores_c.POST = function(self)
 	})
 	if replay_file then
 		local score = Scores:find({file_id = replay_file.id})
-		return {status = 201, json = {id = score.id, redirect_to = self:url_for(score)}}
+		util.redirect_to(self, self:url_for(score))
+		return {status = 201, json = {id = score.id}}
 	end
 
 	replay_file = Files:create({
@@ -171,7 +172,8 @@ scores_c.POST = function(self)
 	notechart.scores_count = notechart.scores_count + 1
 	notechart:update("scores_count")
 
-	return {status = 201, json = {id = score.id, redirect_to = self:url_for(score)}}
+	util.redirect_to(self, self:url_for(score))
+	return {status = 201, json = {id = score.id}}
 end
 
 return scores_c
