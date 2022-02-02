@@ -33,7 +33,7 @@ user_scores_c.GET = function(self)
 	jq:where("s.is_valid = ?", not params.is_not_valid)
 	jq:fields("s.*")
 
-	if not params.latest then
+	if not params.latest and not params.leaderboard_id then
 		jq:where("s.is_top = ?", true)
 	end
 	if params.leaderboard_id then
