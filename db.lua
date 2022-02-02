@@ -369,6 +369,7 @@ table_declarations.scores = {
 	{"score", types.float},
 	{"accuracy", types.float},
 	{"max_combo", types.size},
+	{"misses_count", types.size},
 	{"difficulty", types.float},
 	{"rating", types.float},
 	"UNIQUE KEY `file_id` (`file_id`)",
@@ -381,6 +382,7 @@ table_declarations.scores = {
 	"KEY `is_ranked` (`is_ranked`)",
 	"KEY `is_top` (`is_top`)",
 	"KEY `created_at` (`created_at`)",
+	"KEY `rating` (`rating`)",
 }
 
 table_declarations.sessions = {

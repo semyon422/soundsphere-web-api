@@ -169,6 +169,7 @@ score_c.PATCH = function(self)
 	score.score = response_score.normalscore.scoreAdjusted
 	score.accuracy = response_score.normalscore.accuracyAdjusted
 	score.max_combo = response_score.base.maxCombo
+	score.misses_count = response_score.base.missCount
 	score.difficulty = response_score.normalscore.enps
 	score.rating = response_score.normalscore.rating32
 	score:update(
@@ -180,6 +181,7 @@ score_c.PATCH = function(self)
 		"score",
 		"accuracy",
 		"max_combo",
+		"misses_count",
 		"difficulty",
 		"rating"
 	)
