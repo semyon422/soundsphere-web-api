@@ -59,7 +59,7 @@ user_communities_c.GET = function(self)
 	return {json = {
 		total = #community_users,
 		filtered = #filtered_community_users,
-		user_communities = filtered_community_users,
+		community_users = filtered_community_users,
 	}}
 end
 
