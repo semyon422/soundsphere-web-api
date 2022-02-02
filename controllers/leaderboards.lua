@@ -63,6 +63,10 @@ leaderboards_c.GET = function(self)
 	preload(leaderboards, util.get_relatives_preload(Leaderboards, params))
 	util.recursive_to_name(leaderboards)
 
+	for _, leaderboard in ipairs(leaderboards) do
+		leaderboard.joined = joined_leaderboard_ids_map[leaderboard.id]
+	end
+
 	return {json = {
 		total = tonumber(Leaderboards:count()),
 		filtered = tonumber(Leaderboards:count(clause)),
