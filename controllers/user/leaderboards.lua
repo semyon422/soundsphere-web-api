@@ -18,23 +18,23 @@ util.add_has_many_validations(Leaderboards.relations, user_leaderboards_c.valida
 user_leaderboards_c.GET = function(self)
 	local params = self.params
 
-    local user_leaderboards = Leaderboard_users:find_all({params.user_id}, "user_id")
+    local leaderboard_users = Leaderboard_users:find_all({params.user_id}, "user_id")
 
 	if params.no_data then
 		return {json = {
-			total = #user_leaderboards,
-			filtered = #user_leaderboards,
+			total = #leaderboard_users,
+			filtered = #leaderboard_users,
 		}}
 	end
 
-	preload(user_leaderboards, util.get_relatives_preload(Leaderboard_users, params))
-	util.relatives_preload_field(user_leaderboards, "leaderboard", Leaderboards, params)
-	util.recursive_to_name(user_leaderboards)
+	preload(leaderboard_users, util.get_relatives_preload(Leaderboard_users, params))
+	util.relatives_preload_field(leaderboard_users, "leaderboard", Leaderboards, params)
+	util.recursive_to_name(leaderboard_users)
 
 	return {json = {
-		total = #user_leaderboards,
-		filtered = #user_leaderboards,
-		user_leaderboards = user_leaderboards,
+		total = #leaderboard_users,
+		filtered = #leaderboard_users,
+		leaderboard_users = leaderboard_users,
 	}}
 end
 
