@@ -4,6 +4,7 @@ local Formats = require("enums.formats")
 local Storages = require("enums.storages")
 local Inputmodes = require("enums.inputmodes")
 local Filehash = require("util.filehash")
+local Joined_query = require("util.joined_query")
 local Controller = require("Controller")
 local Files = require("models.files")
 local Ranked_caches = require("models.ranked_caches")
@@ -29,15 +30,33 @@ notecharts_c.GET = function(self)
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
 
-	local paginator = Notecharts:paginated(
-		"order by id asc",
-		{
-			per_page = per_page
-		}
-	)
+	local jq = Joined_query:new(Notecharts.db)
+	jq:select("n")
+	jq:orders("n.id asc")
+	jq:fields("n.*")
+
+	local user_id = self.session.user_id
+	if user_id then
+		jq:select("left join scores s on n.id = s.notechart_id and s.user_id = ?", user_id)
+		jq:where("s.is_top = ?", true)
+		jq:fields("s.user_id")
+	end
+
+	local query, options = jq:concat()
+	options.per_page = per_page
+
+	local paginator = Notecharts:paginated(query, options)
 	local notecharts = paginator:get_page(page_num)
+
 	preload(notecharts, util.get_relatives_preload(Notecharts, params))
 	util.recursive_to_name(notecharts)
+
+	for _, notechart in ipairs(notecharts) do
+		if notechart.user_id then
+			notechart.is_played = true
+			notechart.user_id = nil
+		end
+	end
 
 	local count = tonumber(Notecharts:count())
 
