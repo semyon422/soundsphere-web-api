@@ -68,12 +68,17 @@ difftables_c.validations.POST = {
 }
 difftables_c.POST = function(self)
 	local params = self.params
+	local difftable = params.difftable
 
-	if Difftables:find({name = params.difftable.name}) then
+	if Difftables:find({name = difftable.name}) then
 		return {status = 400, json = {message = "This name is already taken"}}
 	end
 
-	local difftable = params.difftable
+	local difftables = Difftables:find_all({difftable.owner_community_id}, "owner_community_id")
+	if #difftables >= 10 then
+		return {status = 400, json = {message = "A community can have no more than 10 difftables"}}
+	end
+
 	difftable = Difftables:create({
 		name = difftable.name or "Difficulty table",
 		link = difftable.link,

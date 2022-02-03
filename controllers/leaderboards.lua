@@ -109,18 +109,23 @@ leaderboards_c.validations.POST = {
 }
 leaderboards_c.POST = function(self)
 	local params = self.params
+	local leaderboard = params.leaderboard
 
-	if Leaderboards:find({name = params.leaderboard.name}) then
+	if Leaderboards:find({name = leaderboard.name}) then
 		return {status = 400, json = {message = "This name is already taken"}}
+	end
+
+	local leaderboards = Leaderboards:find_all({leaderboard.owner_community_id}, "owner_community_id")
+	if #leaderboards >= 10 then
+		return {status = 400, json = {message = "A community can have no more than 10 leaderboards"}}
 	end
 
 	local user = self.context.session_user
 	if not user.roles.donator then
-		params.community.banner = ""
+		params.leaderboard.banner = ""
 	end
 
 	local time = os.time()
-	local leaderboard = params.leaderboard
 	leaderboard = Leaderboards:create({
 		name = leaderboard.name,
 		description = leaderboard.description,
