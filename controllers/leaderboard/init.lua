@@ -53,11 +53,11 @@ leaderboard_c.policies.PATCH = {
 	{"authed", {community_role = "creator"}},
 }
 leaderboard_c.validations.PATCH = {
-	{"leaderboard", type = "table", param_type = "body", validations = {
+	{"leaderboard", exists = true, type = "table", param_type = "body", validations = {
 		{"name", exists = true, type = "string"},
 		{"description", exists = true, type = "string"},
-		{"banner", exists = true, type = "string"},
-		{"owner_community_id", exists = true, type = "number"},
+		{"banner", exists = true, type = "string", optional = true},
+		{"owner_community_id", exists = true, type = "number", range = {1}},
 		{"difficulty_calculator", type = "string", one_of = Difficulty_calculators.list},
 		{"rating_calculator", type = "string", one_of = Rating_calculators.list},
 		{"scores_combiner", type = "string", one_of = Combiners.list},
