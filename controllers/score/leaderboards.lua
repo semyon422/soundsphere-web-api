@@ -200,7 +200,7 @@ score_leaderboards_c.get_difficulty = function(score, leaderboard)
 		if #difftable_notecharts == 0 then
 			return 0
 		end
-		return difftable_notecharts[1].difficulty * score.timerate
+		return difftable_notecharts[1].difficulty * score.modifierset.timerate
 	end
 	return 0
 end
@@ -396,6 +396,7 @@ score_leaderboards_c.PUT = function(self)
 	local leaderboards = score_leaderboards_c.get_available(self)
 	util.recursive_to_name(leaderboards)
 
+	score:get_modifierset()
 	local count = 0
 	for _, leaderboard in ipairs(leaderboards) do
 		if score_leaderboards_c.insert_score(score, leaderboard) then

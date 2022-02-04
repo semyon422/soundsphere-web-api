@@ -329,6 +329,7 @@ table_declarations.modifiersets = {
 	{"id", types.id},
 	{"encoded", "VARCHAR(255) NOT NULL"},
 	{"displayed", "VARCHAR(255) NOT NULL"},
+	{"timerate", types.float},
 	"UNIQUE KEY `encoded` (`encoded`)"
 }
 
@@ -365,7 +366,6 @@ table_declarations.scores = {
 	{"is_ranked", types.boolean},  -- is added to leaderboards
 	{"is_top", types.boolean},
 	{"created_at", types.time},
-	{"timerate", types.float},
 	{"score", types.float},
 	{"accuracy", types.float},
 	{"max_combo", types.size},

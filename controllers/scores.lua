@@ -161,7 +161,6 @@ scores_c.POST = function(self)
 		is_ranked = false,
 		is_top = false,
 		created_at = created_at,
-		timerate = 0,
 		score = 0,
 		accuracy = 0,
 		max_combo = 0,

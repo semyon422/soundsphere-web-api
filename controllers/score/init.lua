@@ -156,6 +156,7 @@ score_c.PATCH = function(self)
 	}
 	local modifierset = Modifiersets:find(new_modifierset)
 	if not modifierset then
+		new_modifierset.timerate = response_score.base.timeRate
 		modifierset = Modifiersets:create(new_modifierset)
 	end
 
@@ -165,7 +166,6 @@ score_c.PATCH = function(self)
 	score.inputmode = Inputmodes:for_db(json_response.inputMode)
 	score.is_complete = true
 	score.is_valid = true
-	score.timerate = response_score.base.timeRate
 	score.score = response_score.normalscore.scoreAdjusted
 	score.accuracy = response_score.normalscore.accuracyAdjusted
 	score.max_combo = response_score.base.maxCombo
@@ -177,7 +177,6 @@ score_c.PATCH = function(self)
 		"inputmode",
 		"is_complete",
 		"is_valid",
-		"timerate",
 		"score",
 		"accuracy",
 		"max_combo",
