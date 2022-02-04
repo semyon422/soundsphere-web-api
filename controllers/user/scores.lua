@@ -33,18 +33,22 @@ user_scores_c.GET = function(self)
 	jq:where("s.is_valid = ?", not params.is_not_valid)
 	jq:fields("s.*")
 
-	if not params.latest and not params.leaderboard_id then
-		jq:where("s.is_top = ?", true)
-	end
-	if params.leaderboard_id then
-		jq:select("inner join leaderboard_scores ls on s.user_id = ls.user_id and s.id = ls.score_id")
-		jq:where("s.is_ranked = ?", true)
-		jq:where("ls.leaderboard_id = ?", params.leaderboard_id)
-		jq:fields("ls.rating as leaderboard_rating")
-	end
-	if params.difftable_id then
-		jq:select("inner join difftable_notecharts dn on s.notechart_id = dn.notechart_id")
-		jq:where("dn.difftable_id = ?", params.difftable_id)
+	if not params.is_not_complete and not params.is_not_complete then
+		if not params.latest and not params.leaderboard_id then
+			jq:where("s.is_top = ?", true)
+		end
+		if params.leaderboard_id then
+			jq:select("inner join leaderboard_scores ls on s.user_id = ls.user_id and s.id = ls.score_id")
+			jq:where("s.is_ranked = ?", true)
+			jq:where("ls.leaderboard_id = ?", params.leaderboard_id)
+			jq:fields("ls.rating as leaderboard_rating")
+		end
+		if params.difftable_id then
+			jq:select("inner join difftable_notecharts dn on s.notechart_id = dn.notechart_id")
+			jq:where("dn.difftable_id = ?", params.difftable_id)
+		end
+	else
+		params.latest = true
 	end
 	if params.search then
 		jq:select("inner join notecharts n on s.notechart_id = n.id")
