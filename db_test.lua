@@ -86,8 +86,8 @@ db_test.create = function()
 	Community_changes:add_change(user.id, community.id, "create", difftable_quaver)
 
 	local leaderboard = Leaderboards:create({
-		name = "Leaderboard",
-		description = "Description",
+		name = "Global",
+		description = "All uploaded notecharts are ranked",
 		banner = "",
 		owner_community_id = community.id,
 		difficulty_calculator = Difficulty_calculators:for_db("enps"),
@@ -110,19 +110,89 @@ db_test.create = function()
 		message = "",
 	})
 
-	leaderboard_c.update_inputmodes(leaderboard.id, {{inputmode = "10key"}})
+	local leaderboard = Leaderboards:create({
+		name = "osu!mania and Quaver",
+		description = "Ranked and loved",
+		banner = "",
+		owner_community_id = community.id,
+		difficulty_calculator = Difficulty_calculators:for_db("enps"),
+		rating_calculator = Rating_calculators:for_db("acc_inv_erf"),
+		scores_combiner = Combiners:for_db("average"),
+		communities_combiner = Combiners:for_db("additive"),
+		difficulty_calculator_config = 0,
+		rating_calculator_config = 0,
+		scores_combiner_count = 20,
+		communities_combiner_count = 100,
+	})
+	Community_changes:add_change(user.id, community.id, "create", leaderboard)
+
+	Community_leaderboards:create({
+		community_id = community.id,
+		leaderboard_id = leaderboard.id,
+		user_id = user.id,
+		accepted = true,
+		created_at = os.time(),
+		message = "",
+	})
+
 	leaderboard_c.update_difftables(leaderboard.id, {
 		{difftable_id = difftable_osu.id},
 		{difftable_id = difftable_quaver.id},
 	})
-	leaderboard_c.update_requirements(leaderboard.id, {
-		{
-			name = "modifier",
-			rule = "required",
-			key = "Automap",
-			value = "4 to 10",
-		}
-	})
+
+
+	local inputmodes = {
+		"1key",
+		"2key",
+		"3key",
+		"4key",
+		"5key",
+		"6key",
+		"7key",
+		"8key",
+		"9key",
+		"10key",
+		"12key",
+		"14key",
+		"16key",
+		"18key",
+		"20key",
+		"5key1scratch",
+		"7key1scratch",
+		"10key2scratch",
+		"14key2scratch",
+		"24key",
+		"48key",
+		"88key",
+	}
+
+	for _, inputmode in ipairs(inputmodes) do
+		local leaderboard = Leaderboards:create({
+			name = inputmode,
+			description = "",
+			banner = "",
+			owner_community_id = community.id,
+			difficulty_calculator = Difficulty_calculators:for_db("enps"),
+			rating_calculator = Rating_calculators:for_db("acc_inv_erf"),
+			scores_combiner = Combiners:for_db("average"),
+			communities_combiner = Combiners:for_db("additive"),
+			difficulty_calculator_config = 0,
+			rating_calculator_config = 0,
+			scores_combiner_count = 20,
+			communities_combiner_count = 100,
+		})
+		Community_changes:add_change(user.id, community.id, "create", leaderboard)
+
+		Community_leaderboards:create({
+			community_id = community.id,
+			leaderboard_id = leaderboard.id,
+			user_id = user.id,
+			accepted = true,
+			created_at = os.time(),
+			message = "",
+		})
+		leaderboard_c.update_inputmodes(leaderboard.id, {{inputmode = inputmode}})
+	end
 end
 
 return db_test
