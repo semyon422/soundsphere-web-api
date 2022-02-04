@@ -16,12 +16,14 @@ local config = require("lapis.config").get()
 local notecharts_c = Controller:new()
 
 notecharts_c.path = "/notecharts"
-notecharts_c.methods = {"GET", "POST"}
+notecharts_c.methods = {"GET", "POST", "PATCH"}
 
 notecharts_c.policies.GET = {{"permit"}}
 notecharts_c.validations.GET = {
+	require("validations.no_data"),
 	require("validations.per_page"),
 	require("validations.page_num"),
+	require("validations.search"),
 	{"is_not_complete", type = "boolean", optional = true},
 	{"is_not_valid", type = "boolean", optional = true},
 }
@@ -44,9 +46,26 @@ notecharts_c.GET = function(self)
 		jq:select("left join scores s on n.id = s.notechart_id and s.user_id = ? and s.is_top = ?", user_id, true)
 		jq:fields("s.user_id")
 	end
+	if params.search then
+		jq:where(util.db_search(
+			Notecharts.db,
+			params.search,
+			"n.difficulty_creator",
+			"n.difficulty_name",
+			"n.song_artist",
+			"n.song_title"
+		))
+	end
 
 	local query, options = jq:concat()
 	options.per_page = per_page
+
+	if params.no_data then
+		return {json = {
+			total = tonumber(Notecharts:count()),
+			filtered = tonumber(util.db_count(Notecharts, query)),
+		}}
+	end
 
 	local paginator = Notecharts:paginated(query, options)
 	local notecharts = paginator:get_page(page_num)
@@ -63,11 +82,9 @@ notecharts_c.GET = function(self)
 		end
 	end
 
-	local count = tonumber(Notecharts:count())
-
 	return {json = {
-		total = count,
-		filtered = count,
+		total = tonumber(Notecharts:count()),
+		filtered = tonumber(util.db_count(Notecharts, query)),
 		notecharts = notecharts,
 	}}
 end
@@ -273,6 +290,50 @@ notecharts_c.POST = function(self)
 
 	util.redirect_to(self, self:url_for(notechart))
 	return {status = 201, json = {id = notechart.id}}
+end
+
+notecharts_c.context.PATCH = {"request_session", "session_user", "user_roles"}
+notecharts_c.policies.PATCH = {
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
+notecharts_c.validations.PATCH = {
+	{"count", exists = true, type = "number", default = "", optional = true},
+}
+notecharts_c.PATCH = function(self)
+	local notechart_c = require("controllers.notechart")
+	local params = self.params
+
+	local jq = Joined_query:new(Notecharts.db)
+	jq:select("n")
+	jq:where("n.is_complete = ?", false)
+	jq:orders("n.id asc")
+	jq:fields("n.*")
+
+	local query, options = jq:concat()
+	options.per_page = params.count or 10
+
+	local paginator = Notecharts:paginated(query, options)
+	local notecharts = paginator:get_page(1)
+
+	local complete_count = 0
+	local incomplete_count = 0
+	local incomplete_ids = {}
+	for _, notechart in ipairs(notecharts) do
+		local success, code, message = notechart_c.process_notechart(notechart)
+		if not success then
+			incomplete_count = incomplete_count + 1
+			table.insert(incomplete_ids, notechart.id)
+		else
+			complete_count = complete_count + 1
+		end
+	end
+
+	return {status = 200, json = {
+		complete_count = complete_count,
+		incomplete_count = incomplete_count,
+		incomplete_ids = incomplete_ids,
+	}}
 end
 
 return notecharts_c
