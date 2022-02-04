@@ -78,43 +78,26 @@ score_c.GET = function(self)
 	return {json = {score = score:to_name()}}
 end
 
-score_c.context.PATCH = {"score", "request_session", "session_user", "user_roles"}
-score_c.policies.PATCH = {
-	{"authed", {not_params = "force"}, "score_owner"},
-	{"authed", {role = "moderator"}},
-	{"authed", {role = "admin"}},
-	{"authed", {role = "creator"}},
-}
-score_c.validations.PATCH = {
-	{"force", type = "boolean", optional = true},
-}
-score_c.PATCH = function(self)
-	local params = self.params
-	local score = self.context.score
-
-	if score.is_complete and not params.force then
-		return {status = 204}
-	end
-
+score_c.process_score = function(score)
 	local notechart = score:get_notechart()
 	if not notechart.is_valid then
-		return {status = 400, json = {message = "not notechart.is_valid"}}
+		return false, 400, "not notechart.is_valid"
 	end
 
 	local replay_file = score:get_file()
 	if not replay_file then
 		score.is_complete = true
 		score:update("is_complete")
-		return {status = 400, json = {message = "not replay_file"}}
+		return false, 400, "not replay_file"
 	elseif not replay_file.uploaded then
-		return {status = 400, json = {message = "not replay_file.uploaded"}}
+		return false, 400, "not replay_file.uploaded"
 	end
 
 	local notechart_file = notechart:get_file()
 	if not notechart_file then
 		score.is_complete = true
 		score:update("is_complete")
-		return {status = 400, json = {message = "not replay_file"}}
+		return false, 400, "not replay_file"
 	end
 
 	local body, status_code, headers = http.simple({
@@ -134,17 +117,17 @@ score_c.PATCH = function(self)
 	})
 
 	if status_code == 502 then  -- Bad Gateway
-		return {status = 500, json = {message = "Compute server is not available"}}
+		return false, 500, "Compute server is not available"
 	end
 
 	if status_code == 500 then  -- Internal Server Error
 		score.is_complete = true
 		score:update("is_complete")
-		return {status = status_code, json = {message = "Invalid score"}}
+		return false, status_code, "Invalid score" .. body
 	end
 
 	if status_code ~= 200 then
-		return {status = status_code, body}
+		return false, status_code, body
 	end
 
 	local json_response = from_json(body)
@@ -201,6 +184,32 @@ score_c.PATCH = function(self)
 	score.notechart = nil
 	score.user = nil
 	score.modifierset = modifierset
+
+	return true
+end
+
+score_c.context.PATCH = {"score", "request_session", "session_user", "user_roles"}
+score_c.policies.PATCH = {
+	{"authed", {not_params = "force"}, "score_owner"},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
+score_c.validations.PATCH = {
+	{"force", type = "boolean", optional = true},
+}
+score_c.PATCH = function(self)
+	local params = self.params
+	local score = self.context.score
+
+	if score.is_complete and not params.force then
+		return {status = 204}
+	end
+
+	local success, code, message = score_c.process_score(score)
+	if not success then
+		return {status = code, json = {message = message}}
+	end
 
 	return {json = {score = score:to_name()}}
 end

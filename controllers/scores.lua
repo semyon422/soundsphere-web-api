@@ -5,6 +5,7 @@ local Controller = require("Controller")
 local Formats = require("enums.formats")
 local Storages = require("enums.storages")
 local Filehash = require("util.filehash")
+local Joined_query = require("util.joined_query")
 local Inputmodes = require("enums.inputmodes")
 local util = require("util")
 local preload = require("lapis.db.model").preload
@@ -14,12 +15,16 @@ local metrics = require("metrics")
 local scores_c = Controller:new()
 
 scores_c.path = "/scores"
-scores_c.methods = {"GET", "POST"}
+scores_c.methods = {"GET", "POST", "PATCH"}
 
 scores_c.policies.GET = {{"permit"}}
 scores_c.validations.GET = {
+	require("validations.no_data"),
 	require("validations.per_page"),
 	require("validations.page_num"),
+	require("validations.search"),
+	{"is_not_complete", type = "boolean", optional = true},
+	{"is_not_valid", type = "boolean", optional = true},
 }
 util.add_belongs_to_validations(Scores.relations, scores_c.validations.GET)
 util.add_has_many_validations(Scores.relations, scores_c.validations.GET)
@@ -28,22 +33,45 @@ scores_c.GET = function(self)
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
 
-	local paginator = Scores:paginated(
-		"order by id asc",
-		{
-			per_page = per_page
-		}
-	)
+	local jq = Joined_query:new(Scores.db)
+	jq:select("s")
+	jq:where("s.is_complete = ?", not params.is_not_complete)
+	jq:where("s.is_valid = ?", not params.is_not_valid)
+	jq:orders("s.id asc")
+	jq:fields("s.*")
+
+	if params.search then
+		jq:select("inner join notecharts n on s.notechart_id = n.id")
+		jq:where(util.db_search(
+			Scores.db,
+			params.search,
+			"n.difficulty_creator",
+			"n.difficulty_name",
+			"n.song_artist",
+			"n.song_title"
+		))
+	end
+
+	local query, options = jq:concat()
+	options.per_page = per_page
+
+	if params.no_data then
+		return {json = {
+			total = tonumber(Scores:count()),
+			filtered = tonumber(util.db_count(Scores, query)),
+		}}
+	end
+
+	local paginator = Scores:paginated(query, options)
 	local scores = paginator:get_page(page_num)
+
 	preload(scores, util.get_relatives_preload(Scores, params))
 	util.recursive_to_name(scores)
 
-	local count = tonumber(Scores:count())
-
 	return {
 		json = {
-			total = count,
-			filtered = count,
+			total = tonumber(Scores:count()),
+			filtered = tonumber(util.db_count(Scores, query)),
 			scores = scores,
 		}
 	}
@@ -174,6 +202,50 @@ scores_c.POST = function(self)
 
 	util.redirect_to(self, self:url_for(score))
 	return {status = 201, json = {id = score.id}}
+end
+
+scores_c.context.PATCH = {"request_session", "session_user", "user_roles"}
+scores_c.policies.PATCH = {
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
+scores_c.validations.PATCH = {
+	{"count", exists = true, type = "number", default = "", optional = true},
+}
+scores_c.PATCH = function(self)
+	local score_c = require("controllers.score")
+	local params = self.params
+
+	local jq = Joined_query:new(Scores.db)
+	jq:select("s")
+	jq:where("s.is_complete = ?", false)
+	jq:orders("s.id asc")
+	jq:fields("s.*")
+
+	local query, options = jq:concat()
+	options.per_page = params.count or 10
+
+	local paginator = Scores:paginated(query, options)
+	local scores = paginator:get_page(1)
+
+	local complete_count = 0
+	local incomplete_count = 0
+	local incomplete_ids = {}
+	for _, score in ipairs(scores) do
+		local success, code, message = score_c.process_score(score)
+		if not success then
+			incomplete_count = incomplete_count + 1
+			table.insert(incomplete_ids, score.id)
+		else
+			complete_count = complete_count + 1
+		end
+	end
+
+	return {status = 200, json = {
+		complete_count = complete_count,
+		incomplete_count = incomplete_count,
+		incomplete_ids = incomplete_ids,
+	}}
 end
 
 return scores_c
