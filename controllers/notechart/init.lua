@@ -89,31 +89,15 @@ notechart_c.set_notechart_from_metadata = function(notechart_file, response_note
 	return notechart
 end
 
-notechart_c.context.PATCH = {"notechart", "request_session", "session_user", "user_roles"}
-notechart_c.policies.PATCH = {
-	{"authed", {not_params = "force"}},
-	{"authed", {role = "moderator"}},
-	{"authed", {role = "admin"}},
-	{"authed", {role = "creator"}},
-}
-notechart_c.validations.PATCH = {
-	{"force", type = "boolean", optional = true}
-}
-notechart_c.PATCH = function(self)
-	local params = self.params
-	local notechart = self.context.notechart
-
-	if notechart.is_complete and not params.force then
-		return {status = 204}
-	end
-
+notechart_c.process_notechart = function(notechart)
 	local notechart_file = notechart:get_file()
+	notechart.file = nil
 	if not notechart_file then
 		notechart.is_complete = true
 		notechart:update("is_complete")
-		return {status = 400, json = {message = "not notechart_file"}}
+		return false, 400, "not notechart_file"
 	elseif not notechart_file.uploaded then
-		return {status = 400, json = {message = "not notechart_file.uploaded"}}
+		return false, 400, "not notechart_file.uploaded"
 	end
 
 	local body, status_code, headers = http.simple({
@@ -128,17 +112,17 @@ notechart_c.PATCH = function(self)
 	})
 
 	if status_code == 502 then  -- Bad Gateway
-		return {status = 500, json = {message = "Compute server is not available"}}
+		return false, 500, "Compute server is not available"
 	end
 
 	if status_code == 500 then  -- Internal Server Error
 		notechart.is_complete = true
 		notechart:update("is_complete")
-		return {status = status_code, json = {message = "Invalid notechart"}}
+		return false, 500, "Invalid notechart"
 	end
 
 	if status_code ~= 200 then
-		return {status = status_code, body}
+		return false, status_code, body
 	end
 
 	local json_response = from_json(body)
@@ -161,10 +145,34 @@ notechart_c.PATCH = function(self)
 	if not response_notechart then
 		notechart.is_complete = true
 		notechart:update("is_complete")
-		return {status = status_code, json = {message = "Invalid notechart"}}
+		return false, 400, "Invalid notechart"
 	end
 
-	notechart.file = nil
+	return true
+end
+
+notechart_c.context.PATCH = {"notechart", "request_session", "session_user", "user_roles"}
+notechart_c.policies.PATCH = {
+	{"authed", {not_params = "force"}},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
+notechart_c.validations.PATCH = {
+	{"force", type = "boolean", optional = true},
+}
+notechart_c.PATCH = function(self)
+	local params = self.params
+	local notechart = self.context.notechart
+
+	if notechart.is_complete and not params.force then
+		return {status = 204}
+	end
+
+	local success, code, message = notechart_c.process_notechart(notechart)
+	if not success then
+		return {status = code, json = {message = message}}
+	end
 
 	return {json = {notechart = notechart:to_name()}}
 end
