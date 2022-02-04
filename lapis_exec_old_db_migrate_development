@@ -1,0 +1,8 @@
+#!/bin/bash
+. ./setpaths  #use source or . to execute the script in the context of the calling shell
+lapis exec "require('old_db_migrate')()" development
+# lapis exec "require('lapis.db').select('* from users')" development
+# lapis exec "require('models.users'):find(1)" development
+
+# $LUAROCKS install luasql-mysql MYSQL_INCDIR=/usr/include/mysql
+# luajit old_db_migrate.lua
