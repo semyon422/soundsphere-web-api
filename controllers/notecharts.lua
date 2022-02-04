@@ -37,8 +37,7 @@ notecharts_c.GET = function(self)
 
 	local user_id = self.session.user_id
 	if user_id then
-		jq:select("left join scores s on n.id = s.notechart_id and s.user_id = ?", user_id)
-		jq:where("s.is_top = ?", true)
+		jq:select("left join scores s on n.id = s.notechart_id and s.user_id = ? and s.is_top = ?", user_id, true)
 		jq:fields("s.user_id")
 	end
 
@@ -55,6 +54,8 @@ notecharts_c.GET = function(self)
 		if notechart.user_id then
 			notechart.is_played = true
 			notechart.user_id = nil
+		else
+			notechart.is_played = false
 		end
 	end
 
