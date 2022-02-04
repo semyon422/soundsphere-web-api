@@ -164,6 +164,7 @@ scores_c.POST = function(self)
 		score = 0,
 		accuracy = 0,
 		max_combo = 0,
+		misses_count = 0,
 		difficulty = 0,
 		rating = 0,
 	})
