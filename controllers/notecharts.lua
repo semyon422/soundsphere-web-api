@@ -22,6 +22,8 @@ notecharts_c.policies.GET = {{"permit"}}
 notecharts_c.validations.GET = {
 	require("validations.per_page"),
 	require("validations.page_num"),
+	{"is_not_complete", type = "boolean", optional = true},
+	{"is_not_valid", type = "boolean", optional = true},
 }
 util.add_belongs_to_validations(Notecharts.relations, notecharts_c.validations.GET)
 util.add_has_many_validations(Notecharts.relations, notecharts_c.validations.GET)
@@ -32,6 +34,8 @@ notecharts_c.GET = function(self)
 
 	local jq = Joined_query:new(Notecharts.db)
 	jq:select("n")
+	jq:where("n.is_complete = ?", not params.is_not_complete)
+	jq:where("n.is_valid = ?", not params.is_not_valid)
 	jq:orders("n.id asc")
 	jq:fields("n.*")
 
