@@ -40,6 +40,10 @@ notechart_c.set_notechart_from_metadata = function(notechart_file, response_note
 		file_id = notechart_file.id,
 		index = response_notechart.index,
 	})
+
+	local inputmode = Inputmodes[response_notechart.inputMode] and response_notechart.inputMode or "undefined"
+	local inputmode_for_db = Inputmodes:for_db(inputmode)
+
 	if not notechart then
 		notechart = Notecharts:create({
 			file_id = notechart_file.id,
@@ -48,7 +52,7 @@ notechart_c.set_notechart_from_metadata = function(notechart_file, response_note
 			is_complete = true,
 			is_valid = true,
 			scores_count = 0,
-			inputmode = Inputmodes:for_db(response_notechart.inputMode),
+			inputmode = inputmode_for_db,
 			difficulty = response_notechart.difficulty,
 			song_title = response_notechart.title,
 			song_artist = response_notechart.artist,
@@ -63,7 +67,7 @@ notechart_c.set_notechart_from_metadata = function(notechart_file, response_note
 
 	notechart.is_complete = true
 	notechart.is_valid = true
-	notechart.inputmode = Inputmodes:for_db(response_notechart.inputMode)
+	notechart.inputmode = inputmode_for_db
 	notechart.difficulty = response_notechart.difficulty
 	notechart.song_title = response_notechart.title
 	notechart.song_artist = response_notechart.artist
@@ -106,7 +110,7 @@ notechart_c.process_notechart = function(notechart)
 		headers = {["content-type"] = "application/json"},
 		body = to_json({notechart = {
 			path = Files:get_path(notechart_file),
-			extension = Formats:get_extension(notechart_file.format),
+			extension = notechart_file.name:match("^.+%.(.-)$") or Formats:get_extension(notechart_file.format),
 			-- index = notechart.index,
 		}})
 	})

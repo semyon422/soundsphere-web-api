@@ -135,18 +135,25 @@ score_c.process_score = function(score)
 
 	local new_modifierset = {
 		encoded = json_response.modifiersEncoded,
-		displayed = json_response.modifiersString,
 	}
 	local modifierset = Modifiersets:find(new_modifierset)
 	if not modifierset then
+		new_modifierset.displayed = json_response.modifiersString
 		new_modifierset.timerate = response_score.base.timeRate
 		modifierset = Modifiersets:create(new_modifierset)
+	else
+		modifierset.displayed = json_response.modifiersString
+		modifierset.timerate = response_score.base.timeRate
+		modifierset:update("displayed", "timerate")
 	end
 
 	local is_valid = score.is_valid
 
+	local inputmode = Inputmodes[json_response.inputMode] and json_response.inputMode or "undefined"
+	local inputmode_for_db = Inputmodes:for_db(inputmode)
+
 	score.modifierset_id = modifierset.id
-	score.inputmode = Inputmodes:for_db(json_response.inputMode)
+	score.inputmode = inputmode_for_db
 	score.is_complete = true
 	score.is_valid = true
 	score.score = response_score.normalscore.scoreAdjusted
