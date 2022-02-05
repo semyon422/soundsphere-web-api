@@ -154,8 +154,8 @@ for _, score in ipairs(scores_old) do
 		score.calculated == 1 and
 		score.replay_uploaded == 1 and
 		score.replay_size > 0 and
-		score.score <= 50000 and
-		score.accuracy <= 50000 and
+		score.score <= 35000 and
+		score.accuracy <= 35000 and
 		score.score ~= 0 and
 		score.accuracy ~= 0
 	then
@@ -169,7 +169,7 @@ for _, score in ipairs(scores_old) do
 		if not notechart_file then
 			notechart_file = Files:create({
 				hash = hash_for_db,
-				name = "notechart",
+				name = "notechart." .. ext,
 				format = Formats:for_db(Formats.extensions[ext]),
 				storage = Storages:for_db("notecharts"),
 				uploaded = true,
