@@ -71,6 +71,10 @@ score_leaderboards_c.match_requirements = function(score, leaderboard)
 	local modifiers = Modifiersets:decode(modifierset.encoded)
 
 	local requirements = leaderboard.leaderboard_requirements
+	if #requirements == 0 then
+		return true
+	end
+
 	for _, requirement in ipairs(requirements) do
 		requirement:to_name()
 		if requirement.rule == "required" then
