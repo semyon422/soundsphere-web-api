@@ -133,16 +133,23 @@ score_c.process_score = function(score)
 	local json_response = from_json(body)
 	local response_score = json_response.score
 
+	local encoded = json_response.modifiersEncoded
+	local displayed = json_response.modifiersString
+	if #encoded >= 255 or #displayed >= 255 then
+		score.is_complete = true
+		score:update("is_complete")
+		return false, status_code, "Invalid modifiers"
+	end
 	local new_modifierset = {
-		encoded = json_response.modifiersEncoded,
+		encoded = encoded,
 	}
 	local modifierset = Modifiersets:find(new_modifierset)
 	if not modifierset then
-		new_modifierset.displayed = json_response.modifiersString
+		new_modifierset.displayed = displayed
 		new_modifierset.timerate = response_score.base.timeRate
 		modifierset = Modifiersets:create(new_modifierset)
 	else
-		modifierset.displayed = json_response.modifiersString
+		modifierset.displayed = displayed
 		modifierset.timerate = response_score.base.timeRate
 		modifierset:update("displayed", "timerate")
 	end
