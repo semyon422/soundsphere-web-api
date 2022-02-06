@@ -382,6 +382,12 @@ score_leaderboards_c.update_leaderboards = function(score)
 	local leaderboards = score_leaderboards_c.get_available(score)
 	util.recursive_to_name(leaderboards)
 
+
+	local leaderboard_scores = Leaderboard_scores:find_all({score.id}, "score_id")
+	for _, leaderboard_score in ipairs(leaderboard_scores) do
+		leaderboard_score:delete()
+	end
+
 	score:get_modifierset()
 	local count = 0
 	for _, leaderboard in ipairs(leaderboards) do

@@ -159,16 +159,30 @@ score_c.process_score = function(score)
 	local inputmode = Inputmodes[json_response.inputMode] and json_response.inputMode or "undefined"
 	local inputmode_for_db = Inputmodes:for_db(inputmode)
 
+	local rating = response_score.normalscore.rating32
+	local difficulty = response_score.normalscore.enps
+	local misses_count = response_score.base.missCount
+	local accuracy = response_score.normalscore.accuracyAdjusted
+	if
+		misses_count > notechart.notes_count / 2 or
+		modifierset.timerate < 0.25 or modifierset.timerate > 4 or
+		accuracy == 0 or
+		accuracy > 0.1
+	then
+		rating = 0
+		difficulty = 0
+	end
+
 	score.modifierset_id = modifierset.id
 	score.inputmode = inputmode_for_db
 	score.is_complete = true
 	score.is_valid = true
 	score.score = response_score.normalscore.scoreAdjusted
-	score.accuracy = response_score.normalscore.accuracyAdjusted
+	score.accuracy = accuracy
 	score.max_combo = response_score.base.maxCombo
-	score.misses_count = response_score.base.missCount
-	score.difficulty = response_score.normalscore.enps
-	score.rating = response_score.normalscore.rating32
+	score.misses_count = misses_count
+	score.difficulty = difficulty
+	score.rating = rating
 	score:update(
 		"modifierset_id",
 		"inputmode",
@@ -277,6 +291,7 @@ score_c.DELETE = function(self)
 	preload(leaderboard_scores, "leaderboard")
 	for _, leaderboard_score in ipairs(leaderboard_scores) do
 		score_leaderboards_c.update_user_leaderboard(user.id, leaderboard_score.leaderboard)
+		leaderboard_score:delete()
 	end
 
 	score:delete()
