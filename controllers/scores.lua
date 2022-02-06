@@ -15,7 +15,7 @@ local metrics = require("metrics")
 local scores_c = Controller:new()
 
 scores_c.path = "/scores"
-scores_c.methods = {"GET", "POST", "PATCH"}
+scores_c.methods = {"GET", "POST", "PATCH", "PUT"}
 
 scores_c.policies.GET = {{"permit"}}
 scores_c.validations.GET = {
@@ -234,6 +234,52 @@ scores_c.PATCH = function(self)
 	for _, score in ipairs(scores) do
 		local success, code, message = score_c.process_score(score)
 		if not success then
+			incomplete_count = incomplete_count + 1
+			table.insert(incomplete_ids, score.id)
+		else
+			complete_count = complete_count + 1
+		end
+	end
+
+	return {status = 200, json = {
+		complete_count = complete_count,
+		incomplete_count = incomplete_count,
+		incomplete_ids = incomplete_ids,
+	}}
+end
+
+scores_c.context.PUT = {"request_session", "session_user", "user_roles"}
+scores_c.policies.PUT = {
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
+scores_c.validations.PUT = {
+	{"count", exists = true, type = "number", default = "", optional = true},
+}
+scores_c.PUT = function(self)
+	local score_leaderboards_c = require("controllers.score.leaderboards")
+	local params = self.params
+
+	local jq = Joined_query:new(Scores.db)
+	jq:select("s")
+	jq:where("s.is_complete = ?", true)
+	jq:where("s.is_valid = ?", true)
+	jq:where("s.is_ranked = ?", false)
+	jq:orders("s.id asc")
+	jq:fields("s.*")
+
+	local query, options = jq:concat()
+	options.per_page = params.count or 10
+
+	local paginator = Scores:paginated(query, options)
+	local scores = paginator:get_page(1)
+
+	local complete_count = 0
+	local incomplete_count = 0
+	local incomplete_ids = {}
+	for _, score in ipairs(scores) do
+		local count = score_leaderboards_c.update_leaderboards(score)
+		if count == 0 then
 			incomplete_count = incomplete_count + 1
 			table.insert(incomplete_ids, score.id)
 		else

@@ -18,8 +18,7 @@ local score_leaderboards_c = Controller:new()
 score_leaderboards_c.path = "/scores/:score_id[%d]/leaderboards"
 score_leaderboards_c.methods = {"GET", "PUT"}
 
-score_leaderboards_c.get_available = function(self)
-	local score = self.context.score
+score_leaderboards_c.get_available = function(score)
     local community_users = Community_users:find_all({score.user_id}, {
 		key = "user_id",
 		where = {accepted = true},
@@ -143,7 +142,7 @@ score_leaderboards_c.GET = function(self)
 
 	local leaderboard_scores, leaderboards
 	if params.available then
-		leaderboards = score_leaderboards_c.get_available(self)
+		leaderboards = score_leaderboards_c.get_available(self.context.score)
 	else
 		leaderboard_scores = self.context.score:get_leaderboard_scores()
 		self.context.score.leaderboard_scores = nil
@@ -379,6 +378,24 @@ score_leaderboards_c.insert_score = function(score, leaderboard)
 	return true
 end
 
+score_leaderboards_c.update_leaderboards = function(score)
+	local leaderboards = score_leaderboards_c.get_available(score)
+	util.recursive_to_name(leaderboards)
+
+	score:get_modifierset()
+	local count = 0
+	for _, leaderboard in ipairs(leaderboards) do
+		if score_leaderboards_c.insert_score(score, leaderboard) then
+			count = count + 1
+		end
+	end
+
+	score.is_ranked = true
+	score:update("is_ranked")
+
+	return count
+end
+
 score_leaderboards_c.context.PUT = {"score", "request_session", "session_user", "user_roles"}
 score_leaderboards_c.policies.PUT = {
 	{"authed", {not_params = "force"}, "score_owner"},
@@ -397,19 +414,7 @@ score_leaderboards_c.PUT = function(self)
 		return {status = 204}
 	end
 
-	local leaderboards = score_leaderboards_c.get_available(self)
-	util.recursive_to_name(leaderboards)
-
-	score:get_modifierset()
-	local count = 0
-	for _, leaderboard in ipairs(leaderboards) do
-		if score_leaderboards_c.insert_score(score, leaderboard) then
-			count = count + 1
-		end
-	end
-
-	score.is_ranked = true
-	score:update("is_ranked")
+	local count = score_leaderboards_c.update_leaderboards(score)
 
 	return {json = {count = count}}
 end
