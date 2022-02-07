@@ -47,7 +47,7 @@ community_users_c.get_users = function(self)
 		jq:select("inner join leaderboard_users lu on cu.user_id = lu.user_id")
 		jq:where("lu.active = ?", true)
 		jq:where("lu.leaderboard_id = ?", params.leaderboard_id)
-		jq:fields("lu.total_rating", "lu.scores_count", "lu.latest_activity")
+		jq:fields("lu.total_rating", "lu.scores_count", "lu.latest_score_submitted_at")
 		jq:orders("lu.total_rating desc")
 	end
 	if params.staff then
@@ -72,7 +72,7 @@ community_users_c.get_users = function(self)
 
 	for i, community_user in ipairs(community_users) do
 		community_user.rank = (page_num - 1) * per_page + i
-		community_user.latest_activity = tonumber(community_user.latest_activity)
+		community_user.latest_score_submitted_at = tonumber(community_user.latest_score_submitted_at)
 	end
 
 	return community_users, query

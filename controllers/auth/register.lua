@@ -94,6 +94,7 @@ register_c.POST = function(self)
 		email = params.user.email:lower(),
 		password = bcrypt.digest(params.user.password, 10),
 		latest_activity = time,
+		latest_score_submitted_at = time,
 		created_at = time,
 		description = "",
 		scores_count = 0,

@@ -10,6 +10,7 @@ local Modifiersets = require("models.modifiersets")
 local Inputmodes = require("enums.inputmodes")
 local Controller = require("Controller")
 local util = require("util")
+local Joined_query = require("util.joined_query")
 local erfunc = require("erfunc")
 local preload = require("lapis.db.model").preload
 
@@ -333,12 +334,27 @@ score_leaderboards_c.update_user_leaderboard = function(user_id, leaderboard)
 		leaderboard_id = leaderboard.id,
 		user_id = user_id,
 	}
+
+	local jq = Joined_query:new(Leaderboard_scores.db)
+	jq:select("ls")
+	jq:select("inner join scores s on ls.score_id = s.id")
+	jq:where("ls.leaderboard_id = ?", leaderboard.id)
+	jq:where("ls.user_id = ?", user_id)
+	jq:orders("s.created_at desc limit 1")
+	jq:fields("s.created_at")
+
+	local latest_score_submitted_at = os.time()
+	local latest_leaderboard_score = Leaderboard_scores:select(jq:concat())[1]
+	if latest_leaderboard_score then
+		latest_score_submitted_at = latest_leaderboard_score.created_at
+	end
+
 	local leaderboard_user = Leaderboard_users:find(new_leaderboard_user)
 	if not leaderboard_user then
 		new_leaderboard_user.active = true
 		new_leaderboard_user.scores_count = total_count
 		new_leaderboard_user.total_rating = total_rating
-		new_leaderboard_user.latest_activity = os.time()
+		new_leaderboard_user.latest_score_submitted_at = latest_score_submitted_at
 		Leaderboard_users:create(new_leaderboard_user)
 		score_leaderboards_c.update_top_user(leaderboard)
 		score_leaderboards_c.update_community_leaderboards(user_id, leaderboard)
@@ -346,8 +362,8 @@ score_leaderboards_c.update_user_leaderboard = function(user_id, leaderboard)
 	end
 	leaderboard_user.scores_count = total_count
 	leaderboard_user.total_rating = total_rating
-	leaderboard_user.latest_activity = os.time()
-	leaderboard_user:update("scores_count", "total_rating", "latest_activity")
+	leaderboard_user.latest_score_submitted_at = latest_score_submitted_at
+	leaderboard_user:update("scores_count", "total_rating", "latest_score_submitted_at")
 
 	score_leaderboards_c.update_top_user(leaderboard)
 	score_leaderboards_c.update_community_leaderboards(user_id, leaderboard)
@@ -418,6 +434,10 @@ score_leaderboards_c.PUT = function(self)
 
 	if score.is_ranked and not params.force then
 		return {status = 204}
+	end
+
+	if not score.is_valid then
+		return {status = 400, json = {message = "Invalid score"}}
 	end
 
 	local count = score_leaderboards_c.update_leaderboards(score)

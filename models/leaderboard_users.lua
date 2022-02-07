@@ -17,7 +17,7 @@ local Leaderboard_users = Model:extend(
 local _load = Leaderboard_users.load
 function Leaderboard_users:load(row)
 	row.active = toboolean(row.active)
-	row.latest_activity = tonumber(row.latest_activity)
+	row.latest_score_submitted_at = tonumber(row.latest_score_submitted_at)
 	return _load(self, row)
 end
 

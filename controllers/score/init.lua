@@ -200,13 +200,20 @@ score_c.process_score = function(score)
 		score_c.update_stats(score)
 	end
 
-	-- if score.is_top then
-		replay_file.loaded = true
-		replay_file:update("loaded")
-	-- else
-	-- 	Files:delete_file(replay_file)
-	-- 	replay_file:delete()
-	-- end
+	replay_file.loaded = true
+	replay_file:update("loaded")
+
+	local latest_score = Scores:select(
+		"where user_id = ? and is_ranked = ? order by created_at desc limit 1",
+		score.user_id,
+		true
+	)[1]
+	if latest_score then
+		local user = score:get_user()
+		user.latest_score_submitted_at = latest_score.created_at
+		user.latest_activity = math.max(user.latest_activity, user.latest_score_submitted_at)
+		user:update("latest_score_submitted_at", "latest_activity")
+	end
 
 	score.file = nil
 	score.notechart = nil

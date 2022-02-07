@@ -40,6 +40,7 @@ for _, user in ipairs(users_old) do
 				email = user.email,
 				password = user.password,
 				latest_activity = to_unit_time(user.latest_activity),
+				latest_score_submitted_at = to_unit_time(user.latest_score_submitted_at),
 				created_at = created_at,
 				is_banned = false,
 				description = "",

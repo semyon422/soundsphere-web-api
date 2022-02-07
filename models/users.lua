@@ -37,6 +37,7 @@ local _load = Users.load
 function Users:load(row)
 	row.is_banned = toboolean(row.is_banned)
 	row.latest_activity = tonumber(row.latest_activity)
+	row.latest_score_submitted_at = tonumber(row.latest_score_submitted_at)
 	row.created_at = tonumber(row.created_at)
 	row.to_name = to_name
 	row.for_db = for_db

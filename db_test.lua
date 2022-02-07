@@ -34,6 +34,7 @@ db_test.create = function()
 		email = admin.email,
 		password = bcrypt.digest(admin.password, 10),
 		latest_activity = 0,
+		latest_score_submitted_at = 0,
 		created_at = 0,
 		description = "",
 		scores_count = 0,

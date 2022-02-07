@@ -54,6 +54,7 @@ local types = {
 	-- ip = "VARCHAR(15) NOT NULL",
 	ip = _types.integer({null = false, unsigned = true, default = 0}),
 }
+db.types = types
 
 local options = {
 	engine = "InnoDB",
@@ -79,12 +80,12 @@ table_declarations.leaderboard_users = {
 	{"active", types.boolean},
 	{"scores_count", types.size},
 	{"total_rating", types.float},
-	{"latest_activity", types.time},
+	{"latest_score_submitted_at", types.time},
 	"UNIQUE KEY `leaderboard_users` (`leaderboard_id`,`user_id`)",
 	"KEY `active` (`active`)",
 	"KEY `scores_count` (`scores_count`)",
 	"KEY `total_rating` (`total_rating`)",
-	"KEY `latest_activity` (`latest_activity`)",
+	"KEY `latest_score_submitted_at` (`latest_score_submitted_at`)",
 }
 
 table_declarations.leaderboard_scores = {
@@ -192,6 +193,7 @@ table_declarations.users = {
 	{"email", "VARCHAR(100) NOT NULL"},
 	{"password", types.varchar},
 	{"latest_activity", types.time},
+	{"latest_score_submitted_at", types.time},
 	{"created_at", types.time},
 	{"is_banned", types.boolean},
 	{"description", types.varchar},
@@ -210,6 +212,7 @@ table_declarations.users = {
 	"UNIQUE KEY `name` (`name`)",
 	"UNIQUE KEY `email` (`email`)",
 	"KEY `latest_activity` (`latest_activity`)",
+	"KEY `latest_score_submitted_at` (`latest_score_submitted_at`)",
 	"KEY `created_at` (`created_at`)",
 	"KEY `scores_count` (`scores_count`)",
 	"KEY `notecharts_count` (`notecharts_count`)",
