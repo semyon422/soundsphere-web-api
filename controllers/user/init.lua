@@ -17,6 +17,10 @@ local user_c = Controller:new()
 user_c.path = "/users/:user_id[%d]"
 user_c.methods = {"GET", "PATCH", "PUT", "DELETE"}
 
+user_c.update_inputmodes = function(user_id, inputmodes)
+	return additions.inputmodes.update_inputmodes(user_id, inputmodes)
+end
+
 user_c.context.GET = {"user"}
 user_c.policies.GET = {{"permit"}}
 user_c.validations.GET = {}
@@ -76,6 +80,11 @@ user_c.PATCH = function(self)
 		"twitter",
 		"custom_link",
 	})
+
+	user_c.update_inputmodes(user.id, params.user.user_inputmodes)
+	if params.user.user_inputmodes then
+		user:get_user_inputmodes()
+	end
 
 	return {json = {user = user:to_name()}}
 end
