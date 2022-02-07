@@ -96,6 +96,11 @@ leaderboard_c.PATCH = function(self)
 		return
 	end
 
+	local user = self.context.session_user
+	if not user.roles.donator then
+		params.leaderboard.banner = ""
+	end
+
 	Leaderboards:for_db(params.leaderboard)
 	util.patch(leaderboard, params.leaderboard, {
 		"name",
