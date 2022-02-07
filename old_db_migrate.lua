@@ -185,18 +185,38 @@ for _, score in ipairs(scores_old) do
 			index = score.index,
 		})
 		if not notechart then
-			notechart = Notecharts:create({
-				file_id = notechart_file.id,
-				index = score.index,
-				created_at = score.nct,
-				scores_count = 0,
-				inputmode = Inputmodes:for_db(notechart_inputmode),
-				difficulty = 0,
-				song_title = "",
-				song_artist = "",
-				difficulty_name = "",
-				difficulty_creator = "",
-			})
+			if ext ~= "ojn" then
+				notechart = Notecharts:create({
+					file_id = notechart_file.id,
+					index = score.index,
+					created_at = score.nct,
+					scores_count = 0,
+					inputmode = Inputmodes:for_db(notechart_inputmode),
+					difficulty = 0,
+					song_title = "",
+					song_artist = "",
+					difficulty_name = "",
+					difficulty_creator = "",
+				})
+			else
+				for i = 1, 3 do
+					local new_notechart = Notecharts:create({
+						file_id = notechart_file.id,
+						index = i,
+						created_at = score.nct,
+						scores_count = 0,
+						inputmode = Inputmodes:for_db(notechart_inputmode),
+						difficulty = 0,
+						song_title = "",
+						song_artist = "",
+						difficulty_name = "",
+						difficulty_creator = "",
+					})
+					if i == score.index then
+						notechart = new_notechart
+					end
+				end
+			end
 		end
 
 		local replay_file = Files:find({
