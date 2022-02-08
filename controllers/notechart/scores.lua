@@ -86,6 +86,7 @@ notechart_scores_c.validations.GET = {
 	{"rivals", type = "boolean", optional = true},
 	{"friends", type = "boolean", optional = true},
 	{"leaderboard_id", exists = true, type = "number", optional = true, default = ""},
+	{"user_id", exists = true, type = "number", optional = true, default = ""},
 }
 util.add_belongs_to_validations(Scores.relations, notechart_scores_c.validations.GET)
 notechart_scores_c.GET = function(self)
@@ -99,6 +100,8 @@ notechart_scores_c.GET = function(self)
 		user_ids = notechart_scores_c.get_relations(user_id, "rival")
 	elseif params.friends then
 		user_ids = notechart_scores_c.get_relations(user_id, "friend", true)
+	elseif params.user_id then
+		user_ids = {params.user_id}
 	end
 	scores, clause = notechart_scores_c.get_scores(self, user_ids)
 

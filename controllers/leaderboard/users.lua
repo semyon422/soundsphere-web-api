@@ -24,6 +24,9 @@ leaderboard_users_c.get_users = function(self)
 		jq:where("cu.accepted = ?", true)
 		jq:where("cu.community_id = ?", params.community_id)
 	end
+	if params.user_id then
+		jq:where("lu.user_id = ?", params.user_id)
+	end
 	jq:select("inner join users u on lu.user_id = u.id")
 	jq:where("not u.is_banned")
 	if params.search then
@@ -56,6 +59,7 @@ leaderboard_users_c.validations.GET = {
 	require("validations.page_num"),
 	require("validations.search"),
 	{"community_id", exists = true, type = "number", optional = true, default = ""},
+	{"user_id", exists = true, type = "number", optional = true, default = ""},
 }
 util.add_belongs_to_validations(Leaderboard_users.relations, leaderboard_users_c.validations.GET)
 leaderboard_users_c.GET = function(self)

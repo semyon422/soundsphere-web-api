@@ -50,6 +50,9 @@ community_users_c.get_users = function(self)
 		jq:fields("lu.total_rating", "lu.scores_count", "lu.latest_score_submitted_at")
 		jq:orders("lu.total_rating desc")
 	end
+	if params.user_id then
+		jq:where("cu.user_id = ?", params.user_id)
+	end
 	if params.staff then
 		jq:where({role = db.list(Roles.staff_roles)})
 	end
@@ -122,6 +125,7 @@ community_users_c.validations.GET = {
 	{"requests", type = "boolean", optional = true},
 	{"staff", type = "boolean", optional = true},
 	{"leaderboard_id", exists = true, type = "number", optional = true, default = ""},
+	{"user_id", exists = true, type = "number", optional = true, default = ""},
 }
 util.add_belongs_to_validations(Community_users.relations, community_users_c.validations.GET)
 community_users_c.GET = function(self)
