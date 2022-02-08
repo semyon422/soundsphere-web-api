@@ -36,7 +36,7 @@ notechart_scores_c.get_scores = function(self, user_ids)
 	jq:where("s.is_complete = ?", true)
 	jq:where("s.is_valid = ?", true)
 	jq:where("s.is_top = ?", true)
-	jq:fields("s.*", "row_number() over(order by s.rating) row_num")
+	jq:fields("s.*")
 
 	if user_ids then
 		jq:where({user_id = db.list(user_ids)})
@@ -65,7 +65,11 @@ notechart_scores_c.get_scores = function(self, user_ids)
 	local paginator = Scores:paginated(query, options)
 	local scores = paginator:get_page(page_num)
 
-	return scores, query, options.fields
+	for i, score in ipairs(scores) do
+		score.rank = (page_num - 1) * per_page + i
+	end
+
+	return scores, query
 end
 
 notechart_scores_c.context.GET = {"request_session", "session_user", "user_roles"}
@@ -88,34 +92,15 @@ notechart_scores_c.GET = function(self)
 	local params = self.params
 	local scores
 
-	local user_id = self.context.session_user.id
+	local user_id = self.session.user_id
 	local user_ids
-	local clause, fields
+	local clause
 	if params.rivals then
 		user_ids = notechart_scores_c.get_relations(user_id, "rival")
 	elseif params.friends then
 		user_ids = notechart_scores_c.get_relations(user_id, "friend", true)
 	end
-	scores, clause, fields = notechart_scores_c.get_scores(self, user_ids)
-
-	--[[
-		SELECT COUNT(1) as c from `scores` s
-		inner join leaderboard_users lu on s.user_id = lu.user_id
-		where (s.notechart_id = 1) and (s.is_valid = TRUE) and (s.is_complete = TRUE) and (s.is_top = TRUE) and (lu.active = true) and (lu.leaderboard_id = 1)
-		order by s.rating desc
-	]]
-	local per_page = params.per_page or 10
-	local user_id = self.session.user_id
-	local row_num, row_page_num
-	if user_id and clause then
-		local score = Scores.db.select(
-			fields .. " from scores " .. clause .. " limit 1"
-		)[1]
-		if score then
-			row_num = tonumber(score.row_num)
-			row_page_num = math.floor(row_num / per_page) + 1
-		end
-	end
+	scores, clause = notechart_scores_c.get_scores(self, user_ids)
 
 	local total_clause = Scores.db.encode_clause({
 		notechart_id = params.notechart_id,
@@ -125,8 +110,6 @@ notechart_scores_c.GET = function(self)
 
 	if params.no_data then
 		return {json = {
-			row_num = row_num,
-			row_page_num = row_page_num,
 			total = tonumber(Scores:count(total_clause)),
 			filtered = not clause and #scores or tonumber(util.db_count(Scores, clause)),
 		}}
@@ -136,8 +119,6 @@ notechart_scores_c.GET = function(self)
 	util.recursive_to_name(scores)
 
 	return {json = {
-		row_num = row_num,
-		row_page_num = row_page_num,
 		total = tonumber(Scores:count(total_clause)),
 		filtered = not clause and #scores or tonumber(util.db_count(Scores, clause)),
 		scores = scores,

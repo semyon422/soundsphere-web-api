@@ -39,7 +39,6 @@ function Scores:load(row)
 	row.is_top = toboolean(row.is_top)
 	row.replay_uploaded = toboolean(row.replay_uploaded)
 	row.created_at = tonumber(row.created_at)
-	row.row_num = tonumber(row.row_num)
 	row.to_name = to_name
 	row.for_db = for_db
 	return _load(self, row)
