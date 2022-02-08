@@ -43,8 +43,7 @@ user_c.display_policies.PATCH = {
 	{"authed", {role = "creator"}},
 }
 user_c.policies.PATCH = {
-	{"authed", "user_profile", "user_profile_patch"},
-	{"authed", "user_profile", {role = "donator"}},
+	{"authed", "user_profile"},
 	{"authed", {role = "moderator"}},
 	{"authed", {role = "admin"}},
 	{"authed", {role = "creator"}},
@@ -68,6 +67,13 @@ user_c.PATCH = function(self)
 	local found_user = Users:find({name = params.user.name})
 	if found_user and found_user.id ~= user.id then
 		return {status = 400, json = {message = "This name is already taken"}}
+	end
+
+	if not user.roles.donator then
+		params.user.name = user.name
+		params.user.banner = user.banner
+		params.user.color_left = user.color_left
+		params.user.color_right = user.color_right
 	end
 
 	util.patch(user, params.user, {
