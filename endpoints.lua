@@ -61,6 +61,7 @@ return {
 	"notechart",
 	"notechart.scores",
 	"notechart.difftables",
+	"notechart.leaderboards",
 	"scores",
 	"score",
 	"score.leaderboards",

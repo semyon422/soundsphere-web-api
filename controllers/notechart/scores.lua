@@ -39,14 +39,14 @@ notechart_scores_c.get_scores = function(self, user_ids)
 	jq:fields("s.*")
 
 	if user_ids then
-		jq:where({user_id = db.list(user_ids)})
+		jq:where({[db.raw("s.user_id")] = db.list(user_ids)})
 	end
 
 	if params.leaderboard_id then
-		jq:select("inner join leaderboard_users lu on s.user_id = lu.user_id")
+		jq:select("inner join leaderboard_scores ls on s.user_id = ls.user_id and s.id = ls.score_id")
 		jq:where("s.is_ranked = ?", true)
-		jq:where("lu.active = ?", true)
-		jq:where("lu.leaderboard_id = ?", params.leaderboard_id)
+		jq:where("ls.leaderboard_id = ?", params.leaderboard_id)
+		jq:fields("ls.rating as leaderboard_rating")
 	end
 	jq:select("inner join users u on s.user_id = u.id")
 	jq:where("not u.is_banned")
@@ -54,7 +54,11 @@ notechart_scores_c.get_scores = function(self, user_ids)
 		jq:where(util.db_search(db, params.search, "u.name"))
 	end
 
-	jq:orders("s.rating desc")
+	if params.leaderboard_id then
+		jq:orders("ls.rating desc")
+	else
+		jq:orders("s.rating desc")
+	end
 
 	local per_page = params.per_page or 10
 	local page_num = params.page_num or 1
@@ -67,6 +71,10 @@ notechart_scores_c.get_scores = function(self, user_ids)
 
 	for i, score in ipairs(scores) do
 		score.rank = (page_num - 1) * per_page + i
+		if score.leaderboard_rating then
+			score.rating = score.leaderboard_rating
+			score.leaderboard_rating = nil
+		end
 	end
 
 	return scores, query
