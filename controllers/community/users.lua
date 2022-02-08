@@ -1,4 +1,5 @@
 local Community_users = require("models.community_users")
+local Users = require("models.users")
 local Joined_query = require("util.joined_query")
 local Roles = require("enums.roles")
 local Controller = require("Controller")
@@ -128,6 +129,7 @@ community_users_c.validations.GET = {
 	{"user_id", exists = true, type = "number", optional = true, default = ""},
 }
 util.add_belongs_to_validations(Community_users.relations, community_users_c.validations.GET)
+util.add_has_many_validations(Users.relations, community_users_c.validations.GET)
 community_users_c.GET = function(self)
 	local params = self.params
 
@@ -154,6 +156,7 @@ community_users_c.GET = function(self)
 	end
 
 	preload(community_users, util.get_relatives_preload(Community_users, params))
+	util.relatives_preload_field(community_users, "user", Users, params)
 	util.recursive_to_name(community_users)
 
 	return {json = {
