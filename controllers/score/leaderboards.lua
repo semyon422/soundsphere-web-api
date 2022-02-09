@@ -349,12 +349,19 @@ score_leaderboards_c.update_user_leaderboard = function(user_id, leaderboard)
 		latest_score_submitted_at = latest_leaderboard_score.created_at
 	end
 
+	local rank = util.db_count(
+		Leaderboard_users,
+		"leaderboard_id = ? and active = ? and user_id != ? and total_rating > ? order by total_rating desc",
+		leaderboard.id, true, user_id, total_rating
+	) + 1
+
 	local leaderboard_user = Leaderboard_users:find(new_leaderboard_user)
 	if not leaderboard_user then
 		new_leaderboard_user.active = true
 		new_leaderboard_user.scores_count = total_count
 		new_leaderboard_user.total_rating = total_rating
 		new_leaderboard_user.latest_score_submitted_at = latest_score_submitted_at
+		new_leaderboard_user.rank = rank
 		Leaderboard_users:create(new_leaderboard_user)
 		score_leaderboards_c.update_top_user(leaderboard)
 		score_leaderboards_c.update_community_leaderboards(user_id, leaderboard)
@@ -362,8 +369,9 @@ score_leaderboards_c.update_user_leaderboard = function(user_id, leaderboard)
 	end
 	leaderboard_user.scores_count = total_count
 	leaderboard_user.total_rating = total_rating
+	leaderboard_user.rank = rank
 	leaderboard_user.latest_score_submitted_at = latest_score_submitted_at
-	leaderboard_user:update("scores_count", "total_rating", "latest_score_submitted_at")
+	leaderboard_user:update("scores_count", "total_rating", "rank", "latest_score_submitted_at")
 
 	score_leaderboards_c.update_top_user(leaderboard)
 	score_leaderboards_c.update_community_leaderboards(user_id, leaderboard)

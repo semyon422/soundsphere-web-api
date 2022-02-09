@@ -80,6 +80,7 @@ table_declarations.leaderboard_users = {
 	{"active", types.boolean},
 	{"scores_count", types.size},
 	{"total_rating", types.float},
+	{"rank", types.size},
 	{"latest_score_submitted_at", types.time},
 	"UNIQUE KEY `leaderboard_users` (`leaderboard_id`,`user_id`)",
 	"KEY `active` (`active`)",
