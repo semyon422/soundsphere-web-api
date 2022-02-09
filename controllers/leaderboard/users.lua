@@ -1,4 +1,5 @@
 local Leaderboard_users = require("models.leaderboard_users")
+local Users = require("models.users")
 local Joined_query = require("util.joined_query")
 local preload = require("lapis.db.model").preload
 local Controller = require("Controller")
@@ -62,6 +63,10 @@ leaderboard_users_c.validations.GET = {
 	{"user_id", exists = true, type = "number", optional = true, default = ""},
 }
 util.add_belongs_to_validations(Leaderboard_users.relations, leaderboard_users_c.validations.GET)
+util.add_has_many_validations(Users.relations, leaderboard_users_c.validations.GET)
+table.insert(leaderboard_users_c.validations.GET, {
+	"community_users_community", type = "boolean", optional = true
+})
 leaderboard_users_c.GET = function(self)
 	local params = self.params
 
@@ -81,6 +86,7 @@ leaderboard_users_c.GET = function(self)
 	end
 
 	preload(leaderboard_users, util.get_relatives_preload(Leaderboard_users, params))
+	util.relatives_preload_field(leaderboard_users, "user", Users, params)
 	util.recursive_to_name(leaderboard_users)
 
 	return {json = {
