@@ -27,6 +27,10 @@ leaderboard_communities_c.GET = function(self)
 	preload(leaderboard_communities, util.get_relatives_preload(Community_leaderboards, params))
 	util.recursive_to_name(leaderboard_communities)
 
+	for i, leaderboard_community in ipairs(leaderboard_communities) do
+		leaderboard_community.rank = i
+	end
+
 	return {json = {
 		total = #leaderboard_communities,
 		filtered = #leaderboard_communities,

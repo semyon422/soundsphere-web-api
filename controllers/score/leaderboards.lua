@@ -322,9 +322,15 @@ score_leaderboards_c.update_community_leaderboards = function(user_id, leaderboa
 			{fields = "total_rating"}
 		)
 		local total_rating = score_leaderboards_c.get_community_total_rating(leaderboard_users, leaderboard)
+		local rank = util.db_count(
+			Community_leaderboards,
+			"leaderboard_id = ? and accepted = ? and community_id != ? and total_rating > ? order by total_rating desc",
+			leaderboard.id, true, community_id, total_rating
+		) + 1
 		local community_leaderboard = community_leaderboards_map[community_id]
 		community_leaderboard.total_rating = total_rating
-		community_leaderboard:update("total_rating")
+		community_leaderboard.rank = rank
+		community_leaderboard:update("total_rating", "rank")
 	end
 end
 

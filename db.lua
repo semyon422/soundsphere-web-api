@@ -261,6 +261,7 @@ table_declarations.community_leaderboards = {
 	{"accepted", types.boolean},
 	{"created_at", types.time},
 	{"total_rating", types.float},
+	{"rank", types.size},
 	{"message", types.varchar},
 	"UNIQUE KEY `community_leaderboards` (`community_id`,`leaderboard_id`)",
 	"KEY `user_id` (`user_id`)",
