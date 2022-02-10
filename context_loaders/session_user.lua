@@ -1,10 +1,9 @@
 local Users = require("models.users")
+local new_context_loader = require("util.new_context_loader")
 
-return function(self)
-	if self.context.session_user then return true end
+return new_context_loader("session_user", function(self)
 	local user_id = self.session.user_id
 	if user_id then
-		self.context.session_user = Users:find(user_id)
+		return Users:find(user_id)
 	end
-	return self.context.session_user
-end
+end)

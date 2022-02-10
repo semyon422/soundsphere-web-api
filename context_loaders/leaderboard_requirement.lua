@@ -1,10 +1,9 @@
 local Leaderboard_requirements = require("models.leaderboard_requirements")
+local new_context_loader = require("util.new_context_loader")
 
-return function(self)
-	if self.context.leaderboard_requirement then return true end
+return new_context_loader("leaderboard_requirement", function(self)
 	local requirement_id = self.params.requirement_id
 	if requirement_id then
-		self.context.leaderboard_requirement = Leaderboard_requirements:find(requirement_id)
+		return Leaderboard_requirements:find(requirement_id)
 	end
-	return self.context.leaderboard_requirement
-end
+end)

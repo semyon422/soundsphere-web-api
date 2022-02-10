@@ -1,10 +1,9 @@
 local Score = require("models.scores")
+local new_context_loader = require("util.new_context_loader")
 
-return function(self)
-	if self.context.score then return true end
+return new_context_loader("score", function(self)
 	local score_id = self.params.score_id
 	if score_id then
-		self.context.score = Score:find(score_id)
+		return Score:find(score_id)
 	end
-	return self.context.score
-end
+end)

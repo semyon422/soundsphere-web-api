@@ -1,10 +1,9 @@
 local Bypass_keys = require("models.bypass_keys")
+local new_context_loader = require("util.new_context_loader")
 
-return function(self)
-	if self.context.bypass_key then return true end
+return new_context_loader("bypass_key", function(self)
 	local key_id = self.params.key_id
 	if key_id then
-		self.context.bypass_key = Bypass_keys:find(key_id)
+		return Bypass_keys:find(key_id)
 	end
-	return self.context.bypass_key
-end
+end)

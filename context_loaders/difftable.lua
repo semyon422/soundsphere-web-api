@@ -1,10 +1,9 @@
 local Difftables = require("models.difftables")
+local new_context_loader = require("util.new_context_loader")
 
-return function(self)
-	if self.context.difftable then return true end
+return new_context_loader("difftable", function(self)
 	local difftable_id = self.params.difftable_id
 	if difftable_id then
-		self.context.difftable = Difftables:find(difftable_id)
+		return Difftables:find(difftable_id)
 	end
-	return self.context.difftable
-end
+end)

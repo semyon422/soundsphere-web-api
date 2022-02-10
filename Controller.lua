@@ -53,9 +53,11 @@ Controller.load_context = function(self, request, method)
 			end
 		end
 		loaded = loaded and result
+		if not loaded then
+			break
+		end
 	end
 	request.context.loaded[method] = not not loaded
-	return loaded
 end
 
 local get_default_value = function(validation)

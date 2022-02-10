@@ -1,10 +1,9 @@
 local Communities = require("models.communities")
+local new_context_loader = require("util.new_context_loader")
 
-return function(self)
-	if self.context.community then return true end
+return new_context_loader("community", function(self)
 	local community_id = self.params.community_id
 	if community_id then
-		self.context.community = Communities:find(community_id)
+		return Communities:find(community_id)
 	end
-	return self.context.community
-end
+end)

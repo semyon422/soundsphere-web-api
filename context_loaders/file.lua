@@ -1,10 +1,9 @@
 local Files = require("models.files")
+local new_context_loader = require("util.new_context_loader")
 
-return function(self)
-	if self.context.file then return true end
+return new_context_loader("file", function(self)
 	local file_id = self.params.file_id
 	if file_id then
-		self.context.file = Files:find(file_id)
+		return Files:find(file_id)
 	end
-	return self.context.file
-end
+end)

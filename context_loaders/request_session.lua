@@ -1,10 +1,9 @@
 local Sessions = require("models.sessions")
+local new_context_loader = require("util.new_context_loader")
 
-return function(self)
-	if self.context.request_session then return true end
+return new_context_loader("request_session", function(self)
 	local session_id = self.session.id
 	if session_id then
-		self.context.request_session = Sessions:find(session_id)
+		return Sessions:find(session_id)
 	end
-	return self.context.request_session
-end
+end)
