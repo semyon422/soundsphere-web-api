@@ -75,7 +75,7 @@ local function fix_types(object, validations)
 		local value = object[key]
 		local vtype = validation.type
 		if vtype == "string" then
-			object[key] = value ~= nil and tostring(value) or ""
+			-- object[key] = value ~= nil and tostring(value) or ""
 		elseif vtype == "number" then
 			object[key] = fix_number(value)
 		elseif vtype == "boolean" then
@@ -86,9 +86,6 @@ local function fix_types(object, validations)
 			else
 				object[key] = nil
 			end
-		end
-		if validation.exists and object[key] == "" then
-			object[key] = nil
 		end
 	end
 end

@@ -12,9 +12,9 @@ password_c.methods = {"POST", "PUT"}
 password_c.context.POST = {"request_session", "session_user"}
 password_c.policies.POST = {{"authed"}}
 password_c.validations.POST = {
-	{"old_password", exists = true, type = "string", param_type = "body"},
-	{"password", exists = true, type = "string", param_type = "body"},
-	{"confirm_password", exists = true, type = "string", param_type = "body"},
+	{"old_password", type = "string", param_type = "body"},
+	{"password", type = "string", param_type = "body"},
+	{"confirm_password", type = "string", param_type = "body"},
 }
 password_c.POST = function(self)
 	local params = self.params
@@ -36,9 +36,9 @@ end
 
 password_c.policies.PUT = {{"permit"}}
 password_c.validations.PUT = {
-	{"password", exists = true, type = "string", param_type = "body"},
-	{"confirm_password", exists = true, type = "string", param_type = "body"},
-	{"bypass_key", exists = true, type = "string", param_type = "body"},
+	{"password", type = "string", param_type = "body"},
+	{"confirm_password", type = "string", param_type = "body"},
+	{"bypass_key", type = "string", param_type = "body"},
 }
 password_c.PUT = function(self)
 	local params = self.params

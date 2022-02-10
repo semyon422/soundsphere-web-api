@@ -125,8 +125,8 @@ community_users_c.validations.GET = {
 	{"invitations", type = "boolean", optional = true},
 	{"requests", type = "boolean", optional = true},
 	{"staff", type = "boolean", optional = true},
-	{"leaderboard_id", exists = true, type = "number", optional = true, default = ""},
-	{"user_id", exists = true, type = "number", optional = true, default = ""},
+	{"leaderboard_id", type = "number", optional = true, default = ""},
+	{"user_id", type = "number", optional = true, default = ""},
 }
 util.add_belongs_to_validations(Community_users.relations, community_users_c.validations.GET)
 util.add_has_many_validations(Users.relations, community_users_c.validations.GET)
@@ -172,7 +172,7 @@ community_users_c.policies.PATCH = {
 	{"authed", {community_role = "admin"}},
 }
 community_users_c.validations.PATCH = {
-	{"community_users", exists = true, type = "table", param_type = "body"}
+	{"community_users", type = "table", param_type = "body"}
 }
 community_users_c.PATCH = function(self)
 	local params = self.params

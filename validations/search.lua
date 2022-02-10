@@ -1,1 +1,1 @@
-return {"search", exists = true, type = "string", optional = true}
+return {"search", type = "string", optional = true}

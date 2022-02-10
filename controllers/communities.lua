@@ -76,13 +76,13 @@ communities_c.policies.POST = {
 	{"authed"},
 }
 communities_c.validations.POST = {
-	{"community", exists = true, type = "table", param_type = "body", validations = {
-		{"name", exists = true, type = "string"},
-		{"alias", exists = true, type = "string"},
-		{"link", exists = true, type = "string", optional = true},
-		{"short_description", exists = true, type = "string", optional = true},
-		{"description", exists = true, type = "string", optional = true},
-		{"banner", exists = true, type = "string", optional = true},
+	{"community", type = "table", param_type = "body", validations = {
+		{"name", type = "string"},
+		{"alias", type = "string"},
+		{"link", type = "string", optional = true},
+		{"short_description", type = "string", optional = true},
+		{"description", type = "string", optional = true},
+		{"banner", type = "string", optional = true},
 		{"is_public", type = "boolean"},
 	}}
 }

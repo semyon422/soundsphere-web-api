@@ -50,12 +50,12 @@ difftable_c.policies.PATCH = {
 	{"authed", {community_role = "creator"}},
 }
 difftable_c.validations.PATCH = {
-	{"difftable", exists = true, type = "table", param_type = "body", validations = {
-		{"name", exists = true, type = "string"},
-		{"link", exists = true, type = "string"},
-		{"description", exists = true, type = "string"},
-		{"symbol", exists = true, type = "string"},
-		{"owner_community_id", exists = true, type = "number"},
+	{"difftable", type = "table", param_type = "body", validations = {
+		{"name", type = "string"},
+		{"link", type = "string"},
+		{"description", type = "string"},
+		{"symbol", type = "string"},
+		{"owner_community_id", type = "number"},
 	}},
 	{"transfer_ownership", type = "boolean", optional = true},
 }

@@ -58,12 +58,12 @@ difftables_c.policies.POST = {
 	{"authed", {community_role = "admin"}},
 }
 difftables_c.validations.POST = {
-	{"difftable", exists = true, type = "table", param_type = "body", validations = {
-		{"name", exists = true, type = "string"},
-		{"link", exists = true, type = "string"},
-		{"description", exists = true, type = "string"},
-		{"symbol", exists = true, type = "string"},
-		{"owner_community_id", exists = true, type = "number"},
+	{"difftable", type = "table", param_type = "body", validations = {
+		{"name", type = "string"},
+		{"link", type = "string"},
+		{"description", type = "string"},
+		{"symbol", type = "string"},
+		{"owner_community_id", type = "number"},
 	}}
 }
 difftables_c.POST = function(self)

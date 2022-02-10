@@ -42,15 +42,15 @@ community_c.policies.PATCH = {
 	{"authed", {community_role = "creator"}},
 }
 community_c.validations.PATCH = {
-	{"community", exists = true, type = "table", param_type = "body", validations = {
-		{"name", exists = true, type = "string"},
-		{"alias", exists = true, type = "string"},
-		{"link", exists = true, type = "string", optional = true},
-		{"short_description", exists = true, type = "string", optional = true},
-		{"description", exists = true, type = "string", optional = true},
-		{"banner", exists = true, type = "string", optional = true},
+	{"community", type = "table", param_type = "body", validations = {
+		{"name", type = "string"},
+		{"alias", type = "string"},
+		{"link", type = "string", optional = true},
+		{"short_description", type = "string", optional = true},
+		{"description", type = "string", optional = true},
+		{"banner", type = "string", optional = true},
 		{"is_public", type = "boolean"},
-		{"default_leaderboard_id", exists = true, type = "number"},
+		{"default_leaderboard_id", type = "number"},
 	}},
 }
 community_c.PATCH = function(self)

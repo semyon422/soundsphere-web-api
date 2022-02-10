@@ -16,7 +16,7 @@ keys_c.policies.GET = {
 	{"authed", {role = "creator"}},
 }
 keys_c.validations.GET = {
-	{"action", exists = true, type = "string", one_of = Bypass_actions.list, optional = true},
+	{"action", type = "string", one_of = Bypass_actions.list, optional = true},
 	{"all_actions", type = "boolean", optional = true},
 	{"all_creators", type = "boolean", optional = true},
 	{"show_key", type = "boolean", optional = true},
@@ -58,9 +58,9 @@ keys_c.policies.POST = {
 	{"authed", {role = "creator"}},
 }
 keys_c.validations.POST = {
-	{"action", exists = true, type = "string", one_of = Bypass_actions.list},
-	{"target_user_id", exists = true, type = "number"},
-	{"expires_at", exists = true, type = "number"},
+	{"action", type = "string", one_of = Bypass_actions.list},
+	{"target_user_id", type = "number"},
+	{"expires_at", type = "number"},
 }
 keys_c.POST = function(self)
 	local params = self.params

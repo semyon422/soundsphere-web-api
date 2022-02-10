@@ -227,10 +227,10 @@ notecharts_c.policies.POST = {
 }
 notecharts_c.validations.POST = {
 	{"trusted", type = "boolean", optional = true},
-	{"notechart_hash", exists = true, type = "string", param_type = "body"},
-	{"notechart_index", exists = true, type = "number", param_type = "body"},
-	{"notechart_filename", exists = true, type = "string", param_type = "body"},
-	{"notechart_filesize", exists = true, type = "number", param_type = "body"},
+	{"notechart_hash", type = "string", param_type = "body"},
+	{"notechart_index", type = "number", param_type = "body"},
+	{"notechart_filename", type = "string", param_type = "body"},
+	{"notechart_filesize", type = "number", param_type = "body"},
 }
 notecharts_c.POST = function(self)
 	local params = self.params
@@ -298,7 +298,7 @@ notecharts_c.policies.PATCH = {
 	{"authed", {role = "creator"}},
 }
 notecharts_c.validations.PATCH = {
-	{"count", exists = true, type = "number", default = "", optional = true},
+	{"count", type = "number", default = "", optional = true},
 }
 notecharts_c.PATCH = function(self)
 	local notechart_c = require("controllers.notechart")

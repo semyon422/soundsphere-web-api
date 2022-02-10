@@ -86,10 +86,10 @@ scores_c.policies.POST = {
 }
 scores_c.validations.POST = {
 	{"trusted", type = "boolean", optional = true},
-	{"replay_hash", exists = true, type = "string", param_type = "body"},
-	{"notechart_hash", exists = true, type = "string", param_type = "body"},
-	{"notechart_index", exists = true, type = "number", param_type = "body"},
-	{"notechart_filename", exists = true, type = "string", param_type = "body"},
+	{"replay_hash", type = "string", param_type = "body"},
+	{"notechart_hash", type = "string", param_type = "body"},
+	{"notechart_index", type = "number", param_type = "body"},
+	{"notechart_filename", type = "string", param_type = "body"},
 }
 scores_c.POST = function(self)
 	local params = self.params
@@ -210,7 +210,7 @@ scores_c.policies.PATCH = {
 	{"authed", {role = "creator"}},
 }
 scores_c.validations.PATCH = {
-	{"count", exists = true, type = "number", default = "", optional = true},
+	{"count", type = "number", default = "", optional = true},
 }
 scores_c.PATCH = function(self)
 	local score_c = require("controllers.score")
@@ -254,7 +254,7 @@ scores_c.policies.PUT = {
 	{"authed", {role = "creator"}},
 }
 scores_c.validations.PUT = {
-	{"count", exists = true, type = "number", default = "", optional = true},
+	{"count", type = "number", default = "", optional = true},
 }
 scores_c.PUT = function(self)
 	local score_leaderboards_c = require("controllers.score.leaderboards")

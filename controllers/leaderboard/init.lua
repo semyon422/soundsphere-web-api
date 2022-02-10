@@ -53,19 +53,19 @@ leaderboard_c.policies.PATCH = {
 	{"authed", {community_role = "creator"}},
 }
 leaderboard_c.validations.PATCH = {
-	{"leaderboard", exists = true, type = "table", param_type = "body", validations = {
-		{"name", exists = true, type = "string"},
-		{"description", exists = true, type = "string"},
-		{"banner", exists = true, type = "string", optional = true},
-		{"owner_community_id", exists = true, type = "number", range = {1}},
+	{"leaderboard", type = "table", param_type = "body", validations = {
+		{"name", type = "string"},
+		{"description", type = "string"},
+		{"banner", type = "string", optional = true},
+		{"owner_community_id", type = "number", range = {1}},
 		{"difficulty_calculator", type = "string", one_of = Difficulty_calculators.list},
 		{"rating_calculator", type = "string", one_of = Rating_calculators.list},
 		{"scores_combiner", type = "string", one_of = Combiners.list},
 		{"communities_combiner", type = "string", one_of = Combiners.list},
-		{"difficulty_calculator_config", exists = true, type = "number", default = 0},
-		{"rating_calculator_config", exists = true, type = "number", default = 0},
-		{"scores_combiner_count", exists = true, type = "number", default = 20},
-		{"communities_combiner_count", exists = true, type = "number", default = 100},
+		{"difficulty_calculator_config", type = "number", default = 0},
+		{"rating_calculator_config", type = "number", default = 0},
+		{"scores_combiner_count", type = "number", default = 20},
+		{"communities_combiner_count", type = "number", default = 100},
 	}},
 	{"transfer_ownership", type = "boolean", optional = true},
 }

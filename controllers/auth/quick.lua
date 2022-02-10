@@ -21,7 +21,7 @@ messages.success = "Success"
 
 quick_c.policies.GET = {{"permit"}}
 quick_c.validations.GET = {
-	{"key", exists = true, type = "string", optional = true},
+	{"key", type = "string", optional = true},
 }
 quick_c.GET = function(self)
 	local params = self.params
@@ -77,7 +77,7 @@ end
 quick_c.context.POST = {"request_session"}
 quick_c.policies.POST = {{"authed"}}
 quick_c.validations.POST = {
-	{"key", exists = true, type = "string"},
+	{"key", type = "string"},
 }
 quick_c.POST = function(self)
 	local key = self.params.key

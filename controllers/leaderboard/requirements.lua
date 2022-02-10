@@ -105,7 +105,7 @@ leaderboard_requirements_c.policies.PATCH = {
 	{"authed", {community_role = "creator"}},
 }
 leaderboard_requirements_c.validations.PATCH = {
-	{"leaderboard_requirements", exists = true, type = "table", param_type = "body"},
+	{"leaderboard_requirements", type = "table", param_type = "body"},
 }
 leaderboard_requirements_c.PATCH = function(self)
 	local params = self.params
@@ -124,11 +124,11 @@ end
 leaderboard_requirements_c.context.POST = leaderboard_requirements_c.context.PATCH
 leaderboard_requirements_c.policies.POST = leaderboard_requirements_c.policies.PATCH
 leaderboard_requirements_c.validations.POST = {
-	{"requirement", exists = true, type = "table", param_type = "body", validations = {
-		{"name", exists = true, type = "string", one_of = Requirements.list},
-		{"rule", exists = true, type = "string", one_of = Rules.list},
-		{"key", exists = true, type = "string"},
-		{"value", exists = true, type = "string"},
+	{"requirement", type = "table", param_type = "body", validations = {
+		{"name", type = "string", one_of = Requirements.list},
+		{"rule", type = "string", one_of = Rules.list},
+		{"key", type = "string"},
+		{"value", type = "string"},
 	}}
 }
 leaderboard_requirements_c.POST = function(self)

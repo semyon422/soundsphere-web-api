@@ -28,7 +28,7 @@ user_role_c.context.PUT = {
 }
 user_role_c.policies.PUT = {{"authed", "change_staff_role", "change_role"}}
 user_role_c.validations.PUT = {
-	{"duration", exists = true, type = "number"},
+	{"duration", type = "number"},
 }
 user_role_c.PUT = function(self)
 	local params = self.params
@@ -53,7 +53,7 @@ user_role_c.context.PATCH = {
 }
 user_role_c.policies.PATCH = {{"authed", "change_staff_role", "change_role"}}
 user_role_c.validations.PATCH = {
-	{"duration", exists = true, type = "number"},
+	{"duration", type = "number"},
 }
 user_role_c.PATCH = function(self)
 	local params = self.params

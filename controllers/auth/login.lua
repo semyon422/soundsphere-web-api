@@ -74,10 +74,10 @@ end
 
 login_c.policies.POST = {{"permit"}}
 login_c.validations.POST = {
-	{"email", exists = true, type = "string", param_type = "body"},
-	{"password", exists = true, type = "string", param_type = "body"},
-	{"recaptcha_token", exists = true, type = "string", param_type = "body", captcha = "login", optional = true},
-	{"bypass_key", exists = true, type = "string", param_type = "body", optional = true},
+	{"email", type = "string", param_type = "body"},
+	{"password", type = "string", param_type = "body"},
+	{"recaptcha_token", type = "string", param_type = "body", captcha = "login", optional = true},
+	{"bypass_key", type = "string", param_type = "body", optional = true},
 }
 login_c.POST = function(self)
 	local params = self.params

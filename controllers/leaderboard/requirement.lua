@@ -25,11 +25,11 @@ leaderboard_requirement_c.policies.PATCH = {
 	{"authed", {community_role = "creator"}},
 }
 leaderboard_requirement_c.validations.PATCH = {
-	{"leaderboard_requirement", exists = true, type = "table", param_type = "body", validations = {
-		{"name", exists = true, type = "string", one_of = Requirements.list},
-		{"rule", exists = true, type = "string", one_of = Rules.list},
-		{"key", exists = true, type = "string"},
-		{"value", exists = true, type = "string"},
+	{"leaderboard_requirement", type = "table", param_type = "body", validations = {
+		{"name", type = "string", one_of = Requirements.list},
+		{"rule", type = "string", one_of = Rules.list},
+		{"key", type = "string"},
+		{"value", type = "string"},
 	}}
 }
 leaderboard_requirement_c.PATCH = function(self)

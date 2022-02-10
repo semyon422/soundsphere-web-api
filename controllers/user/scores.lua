@@ -18,8 +18,8 @@ user_scores_c.validations.GET = {
 	{"is_not_complete", type = "boolean", optional = true},
 	{"is_not_valid", type = "boolean", optional = true},
 	{"latest", type = "boolean", optional = true},
-	{"leaderboard_id", exists = true, type = "number", optional = true, default = ""},
-	{"difftable_id", exists = true, type = "number", optional = true, default = ""},
+	{"leaderboard_id", type = "number", optional = true, default = ""},
+	{"difftable_id", type = "number", optional = true, default = ""},
 }
 util.add_belongs_to_validations(Scores.relations, user_scores_c.validations.GET )
 user_scores_c.GET = function(self)

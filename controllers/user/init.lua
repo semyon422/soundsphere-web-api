@@ -50,14 +50,14 @@ user_c.policies.PATCH = {
 }
 user_c.validations.PATCH = {
 	{"user", type = "table", param_type = "body", validations = {
-		{"name", exists = true, type = "string"},
-		{"description", exists = true, type = "string", optional = true},
-		{"color_left", exists = true, type = "number", range = {0, 16777215}, optional = true},
-		{"color_right", exists = true, type = "number", range = {0, 16777215}, optional = true},
-		{"banner", exists = true, type = "string", optional = true},
-		{"discord", exists = true, type = "string", optional = true},
-		{"twitter", exists = true, type = "string", optional = true},
-		{"custom_link", exists = true, type = "string", optional = true},
+		{"name", type = "string", optional = true},
+		{"description", type = "string", optional = true},
+		{"color_left", type = "number", range = {0, 16777215}, optional = true, policies = donator_policies},
+		{"color_right", type = "number", range = {0, 16777215}, optional = true, policies = donator_policies},
+		{"banner", type = "string", optional = true, policies = donator_policies},
+		{"discord", type = "string", optional = true},
+		{"twitter", type = "string", optional = true},
+		{"custom_link", type = "string", optional = true},
 	}},
 }
 user_c.PATCH = function(self)

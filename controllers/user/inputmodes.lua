@@ -57,7 +57,7 @@ end
 user_inputmodes_c.context.PUT = {"request_session", "user", "session_user"}
 user_inputmodes_c.policies.PUT = {{"authed", "user_profile"}}
 user_inputmodes_c.validations.PATCH = {
-	{"user_inputmodes", exists = true, type = "table", param_type = "body"}
+	{"user_inputmodes", type = "table", param_type = "body"}
 }
 user_inputmodes_c.PATCH = function(self)
 	local params = self.params

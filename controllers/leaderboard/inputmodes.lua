@@ -68,7 +68,7 @@ leaderboard_inputmodes_c.policies.PATCH = {
 	{"authed", {community_role = "creator"}},
 }
 leaderboard_inputmodes_c.validations.PATCH = {
-	{"leaderboard_inputmodes", exists = true, type = "table", param_type = "body"}
+	{"leaderboard_inputmodes", type = "table", param_type = "body"}
 }
 leaderboard_inputmodes_c.PATCH = function(self)
 	local params = self.params

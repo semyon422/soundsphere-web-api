@@ -49,8 +49,8 @@ ranked_caches_c.policies.POST = {
 }
 ranked_caches_c.validations.POST = {
 	{"file", is_file = true, param_type = "body", optional = true},
-	{"hash", exists = true, type = "string", param_type = "body", optional = true},
-	{"format", exists = true, type = "string", param_type = "body", optional = true, one_of = Formats.list},
+	{"hash", type = "string", param_type = "body", optional = true},
+	{"format", type = "string", param_type = "body", optional = true, one_of = Formats.list},
 }
 ranked_caches_c.POST = function(self)
 	local params = self.params

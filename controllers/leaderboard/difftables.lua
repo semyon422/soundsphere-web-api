@@ -71,7 +71,7 @@ leaderboard_difftables_c.policies.PATCH = {
 	{"authed", {community_role = "creator"}},
 }
 leaderboard_difftables_c.validations.PATCH = {
-	{"leaderboard_difftables", exists = true, type = "table", param_type = "body"}
+	{"leaderboard_difftables", type = "table", param_type = "body"}
 }
 leaderboard_difftables_c.PATCH = function(self)
 	local params = self.params

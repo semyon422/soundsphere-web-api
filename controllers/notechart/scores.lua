@@ -93,8 +93,8 @@ notechart_scores_c.validations.GET = {
 	require("validations.search"),
 	{"rivals", type = "boolean", optional = true},
 	{"friends", type = "boolean", optional = true},
-	{"leaderboard_id", exists = true, type = "number", optional = true, default = ""},
-	{"user_id", exists = true, type = "number", optional = true, default = ""},
+	{"leaderboard_id", type = "number", optional = true, default = ""},
+	{"user_id", type = "number", optional = true, default = ""},
 }
 util.add_belongs_to_validations(Scores.relations, notechart_scores_c.validations.GET)
 notechart_scores_c.GET = function(self)

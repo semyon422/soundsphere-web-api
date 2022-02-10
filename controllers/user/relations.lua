@@ -19,7 +19,7 @@ user_relations_c.policies.GET = {
 }
 user_relations_c.validations.GET = {
 	require("validations.no_data"),
-	{"type", exists = true, type = "string", one_of = {"friend", "rival"}, optional = true},
+	{"type", type = "string", one_of = {"friend", "rival"}, optional = true},
 	{"all_types", type = "boolean", optional = true},
 	{"who_added_me", type = "boolean", optional = true},
 }
@@ -66,8 +66,8 @@ user_relations_c.context.POST = {"request_session", "session_user", "user_relati
 user_relations_c.display_policies.POST = {{"authed", "user_profile"}}
 user_relations_c.policies.POST = {{"authed", "user_profile", "relations_limit"}}
 user_relations_c.validations.POST = {
-	{"type", exists = true, type = "string", one_of = {"friend", "rival"}},
-	{"relative_user_id", exists = true, type = "number"},
+	{"type", type = "string", one_of = {"friend", "rival"}},
+	{"relative_user_id", type = "number"},
 }
 user_relations_c.POST = function(self)
 	local params = self.params

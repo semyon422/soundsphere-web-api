@@ -49,10 +49,10 @@ files_c.policies.POST = {
 	{"authed", {role = "creator"}},
 }
 files_c.validations.POST = {
-	{"storage", exists = true, type = "string", one_of = Storages.list, default = Storages.list[1]},
+	{"storage", type = "string", one_of = Storages.list, default = Storages.list[1]},
 	{"file", is_file = true, param_type = "body", optional = true},
-	{"hash", exists = true, type = "string", param_type = "body", optional = true},
-	{"size", exists = true, type = "number", param_type = "body", optional = true},
+	{"hash", type = "string", param_type = "body", optional = true},
+	{"size", type = "number", param_type = "body", optional = true},
 }
 files_c.POST = function(self)
 	local params = self.params

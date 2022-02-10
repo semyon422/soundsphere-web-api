@@ -22,7 +22,7 @@ community_user_c.policies.PUT = {
 	{"authed", "not_user_profile", "community_user_invitation"},
 }
 community_user_c.validations.PUT = {
-	{"message", exists = true, type = "string", optional = true},
+	{"message", type = "string", optional = true},
 }
 community_user_c.PUT = function(self)
 	local params = self.params
@@ -101,7 +101,7 @@ community_user_c.policies.PATCH = {
 	{"authed", "not_user_profile", "community_user_change_role", {community_role = "creator"}},
 }
 community_user_c.validations.PATCH = {
-	{"role", exists = true, type = "string", one_of = Roles.list},
+	{"role", type = "string", one_of = Roles.list},
 	{"transfer_ownership", type = "boolean"},
 }
 community_user_c.PATCH = function(self)

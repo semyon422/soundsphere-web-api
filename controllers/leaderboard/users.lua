@@ -59,8 +59,8 @@ leaderboard_users_c.validations.GET = {
 	require("validations.per_page"),
 	require("validations.page_num"),
 	require("validations.search"),
-	{"community_id", exists = true, type = "number", optional = true, default = ""},
-	{"user_id", exists = true, type = "number", optional = true, default = ""},
+	{"community_id", type = "number", optional = true, default = ""},
+	{"user_id", type = "number", optional = true, default = ""},
 }
 util.add_belongs_to_validations(Leaderboard_users.relations, leaderboard_users_c.validations.GET)
 util.add_has_many_validations(Users.relations, leaderboard_users_c.validations.GET)

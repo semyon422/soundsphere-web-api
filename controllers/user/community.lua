@@ -22,7 +22,7 @@ user_community_c.policies.PUT = {
 	{"authed", "user_profile", "community_user_request"},
 }
 user_community_c.validations.PUT = {
-	{"message", exists = true, type = "string", optional = true},
+	{"message", type = "string", optional = true},
 }
 user_community_c.PUT = function(self)
 	local params = self.params

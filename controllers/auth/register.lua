@@ -20,14 +20,14 @@ register_c.captcha = true
 
 register_c.policies.POST = {{"permit"}}
 register_c.validations.POST = {
-	{"user", exists = true, type = "table", param_type = "body", validations = {
-		{"name", exists = true, type = "string"},
-		{"email", exists = true, type = "string"},
-		{"password", exists = true, type = "string"},
+	{"user", type = "table", param_type = "body", validations = {
+		{"name", type = "string"},
+		{"email", type = "string"},
+		{"password", type = "string"},
 	}},
-	{"game_name", exists = true, type = "string", param_type = "body", optional = true},
-	{"recaptcha_token", exists = true, type = "string", param_type = "body", captcha = "register", optional = true},
-	{"bypass_key", exists = true, type = "string", param_type = "body", optional = true},
+	{"game_name", type = "string", param_type = "body", optional = true},
+	{"recaptcha_token", type = "string", param_type = "body", captcha = "register", optional = true},
+	{"bypass_key", type = "string", param_type = "body", optional = true},
 }
 register_c.POST = function(self)
 	local params = self.params
