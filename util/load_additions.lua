@@ -16,7 +16,7 @@ return function(self, object, additions)
 		local value = params[param]
 		if value ~= nil then
 			local new_params = {no_data = value == false}
-			for _, path_param in ipairs(controller:get_params_list("path")) do
+			for _, path_param in ipairs(controller:get_params_list()) do
 				new_params[path_param] = params[path_param]
 			end
 			self.params = new_params

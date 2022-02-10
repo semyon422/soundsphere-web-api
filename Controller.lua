@@ -82,6 +82,9 @@ local get_default_value = function(validation)
 	end
 	return ""
 end
+Controller.get_default_value = function(self, validation)
+	return get_default_value(validation)
+end
 
 local fill_params
 fill_params = function(validations, object)
@@ -97,50 +100,16 @@ fill_params = function(validations, object)
 	end
 end
 
-Controller.get_params_list = function(self, params_type, method)
+Controller.get_params_list = function(self)
 	local params = {}
-	if params_type == "path" then
-		for key in self.path:gmatch(":([^/^%[]+)") do
-			table.insert(params, key)
-		end
-		return params
-	end
-	local validations = self.validations[method]
-	if not validations then
-		return params
-	end
-	if params_type == "body" then
-		for _, validation in ipairs(validations) do
-			if validation.param_type == "body" and not validation.is_file then
-				table.insert(params, validation[1])
-			end
-		end
-	elseif params_type == "query" then
-		for _, validation in ipairs(validations) do
-			if validation.param_type == "query" or not validation.param_type then
-				table.insert(params, validation[1])
-			end
-		end
+	for key in self.path:gmatch(":([^/^%[]+)") do
+		table.insert(params, key)
 	end
 	return params
 end
 
 Controller.get_params_struct = function(self, params_type, method)
 	local params = {}
-	if params_type == "path" then
-		local validations = self.validations.path
-		local path_validations = {}
-		for _, validation in ipairs(validations or {}) do
-			if validation.param_type == "path" then
-				local value = get_default_value(validation)
-				path_validations[validation[1]] = value
-			end
-		end
-		for key in self.path:gmatch(":([^/^%[]+)") do
-			params[key] = path_validations[key] or ""
-		end
-		return params
-	end
 	local validations = self.validations[method]
 	if not validations then
 		return params
@@ -166,12 +135,8 @@ Controller.get_params_struct = function(self, params_type, method)
 end
 
 Controller.get_missing_params = function(self, params)
-	local path_params = {}
-	for key in self.path:gmatch(":([^/^%[]+)") do
-		path_params[key] = true
-	end
 	local missing_params = {}
-	for key in pairs(path_params) do
+	for key in self.path:gmatch(":([^/^%[]+)") do
 		if not params[key] then
 			table.insert(missing_params, key)
 		end
