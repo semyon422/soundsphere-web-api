@@ -16,16 +16,33 @@ Controller.new = function(self)
 	}, {__index = self})
 end
 
+Controller.check_policies = function(self, request, policies)
+	request.policies = request.policies or {}
+	if not policies then
+		return
+	end
+	local check_policies = request.policies[policies]
+	if check_policies ~= nil then
+		return check_policies
+	end
+	check_policies = pep:check(request, policies)
+	request.policies[policies] = check_policies
+	return check_policies
+end
+
 Controller.check_access = function(self, request, method, display)
+	request.policies = request.policies or {}
+
 	method = method or request.req.method
 	if not self[method] or not request.context.loaded[method] then
 		return
 	end
 	local methods = self.permited_methods
+
 	methods[method] =
 		methods[method] or
-		(display and pep:check(request, self.display_policies[method])) or
-		pep:check(request, self.policies[method])
+		(display and self:check_policies(request, self.display_policies[method])) or
+		self:check_policies(request, self.policies[method])
 
 	return methods[method]
 end
@@ -87,15 +104,22 @@ Controller.get_default_value = function(self, validation)
 end
 
 local fill_params
-fill_params = function(validations, object)
+fill_params = function(request, validations, params, disabled, body)
 	if not validations then
 		return
 	end
 	for _, validation in ipairs(validations) do
-		local value = get_default_value(validation)
-		object[validation[1]] = value
-		if validation.type == "table" then
-			fill_params(validation.validations, value)
+		if (body or validation.param_type == "body") and not validation.is_file then
+			local value
+			if not disabled or validation.type == "table" then
+				value = get_default_value(validation)
+			elseif validation.policies and not Controller:check_policies(request, validation.policies) then
+				value = true
+			end
+			params[validation[1]] = value
+			if validation.type == "table" then
+				fill_params(request, validation.validations, value, disabled, true)
+			end
 		end
 	end
 end
@@ -108,26 +132,26 @@ Controller.get_params_list = function(self)
 	return params
 end
 
-Controller.get_params_struct = function(self, params_type, method)
+Controller.get_params_struct = function(self, request, params_type, method, disabled)
 	local params = {}
 	local validations = self.validations[method]
 	if not validations then
 		return params
 	end
-	if params_type == "body" then
-		for _, validation in ipairs(validations) do
-			if validation.param_type == "body" and not validation.is_file then
-				local value = get_default_value(validation)
-				params[validation[1]] = value
-				if validation.type == "table" then
-					fill_params(validation.validations, value)
-				end
-			end
-		end
+	if params_type == "all" then
+		fill_params(request, validations, params, disabled, true)
+	elseif params_type == "body" then
+		fill_params(request, validations, params, disabled)
 	elseif params_type == "query" then
 		for _, validation in ipairs(validations) do
 			if validation.param_type == "query" or not validation.param_type then
-				params[validation[1]] = get_default_value(validation)
+				local value
+				if not disabled then
+					value = get_default_value(validation)
+				elseif validation.policies and not Controller:check_policies(request, validation.policies) then
+					value = true
+				end
+				params[validation[1]] = value
 			end
 		end
 	end

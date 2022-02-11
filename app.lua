@@ -30,6 +30,7 @@ validate.validate_functions.no_value = function(input, validations) return true,
 validate.validate_functions.validations = function(input, validations) return true, "" end
 validate.validate_functions.default = function(input, validations) return true, "" end
 validate.validate_functions.captcha = function(input, validations) return true, "" end
+validate.validate_functions.policies = function(input, validations) return true, "" end
 
 validate.validate_functions.range = function(v, ...)
 	local range = {...}
@@ -172,7 +173,7 @@ local function get_data_name(response)
 	end
 	local names = {}
 	for key, value in pairs(response) do
-		if type(value) == "table" and key ~= "methods" then
+		if type(value) == "table" and not key:find("^__") then
 			table.insert(names, key)
 		end
 	end
@@ -211,6 +212,7 @@ local function route_api(controller, html)
 	local prefix = not html and "/api" or "/api/html"
 	local name_prefix = not html and "" or "html."
 	json_respond_to_name(name_prefix .. controller.name, prefix .. controller.path, function(self)
+		self.self = self
 		local method = self.req.method
 		tonumber_params(self, controller)
 		local errors
@@ -236,7 +238,11 @@ local function route_api(controller, html)
 			methods = get_permited_methods(self, controller)
 		end
 		if json_response and self.params.methods then
-			json_response.methods = methods
+			json_response.__methods = methods
+			json_response.__disabled = {}
+			for _, method in ipairs(methods) do
+				json_response.__disabled[method] = controller:get_params_struct(self, "all", method, true)
+			end
 		end
 		if response.status == 405 then
 			self.res.headers["Allow"] = table.concat(controller.methods, ", ")
@@ -262,7 +268,14 @@ local function route_api(controller, html)
 	json_respond_to("/ac" .. controller.path, function(self)
 		tonumber_params(self, controller)
 		get_context(self, controller, true)
-		return {json = {methods = get_permited_methods(self, controller)}, status = 200}
+		local methods = get_permited_methods(self, controller)
+		local json_response = {}
+		json_response.__methods = methods
+		json_response.__disabled = {}
+		for _, method in ipairs(methods) do
+			json_response.__disabled[method] = controller:get_params_struct(self, "all", method, true)
+		end
+		return {status = 200, json = json_response}
 	end)
 end
 

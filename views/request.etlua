@@ -12,17 +12,32 @@ function requestBlock() {return {
 	isCodeMode: false,
 	doingRequest: false,
 	params: {
-		<% local to_json = require("lapis.util").to_json %>
 		query: {
 			<% for _, method in ipairs(controller.methods) do %>
-				<% local query_struct = controller:get_params_struct("query", method) %>
+				<% local query_struct = controller:get_params_struct(self, "query", method) %>
 				<%= method %>: <%- to_json(query_struct) %>,
 				<%= method %>_have: <%= next(query_struct) ~= nil %>,
 			<% end %>
 		},
 		body: {
 			<% for _, method in ipairs(controller.methods) do %>
-				<% local body_struct = controller:get_params_struct("body", method) %>
+				<% local body_struct = controller:get_params_struct(self, "body", method) %>
+				<%= method %>: <%- to_json(body_struct) %>,
+				<%= method %>_have: <%= next(body_struct) ~= nil %>,
+			<% end %>
+		},
+	},
+	disabled: {
+		query: {
+			<% for _, method in ipairs(controller.methods) do %>
+				<% local query_struct = controller:get_params_struct(self, "query", method, true) %>
+				<%= method %>: <%- to_json(query_struct) %>,
+				<%= method %>_have: <%= next(query_struct) ~= nil %>,
+			<% end %>
+		},
+		body: {
+			<% for _, method in ipairs(controller.methods) do %>
+				<% local body_struct = controller:get_params_struct(self, "body", method, true) %>
 				<%= method %>: <%- to_json(body_struct) %>,
 				<%= method %>_have: <%= next(body_struct) ~= nil %>,
 			<% end %>
@@ -147,7 +162,11 @@ function requestBlock() {return {
 	</div>
 	<% for _, method in ipairs(controller.methods) do %>
 		<div class="field" x-show="method == '<%= method %>' && !isCodeMode">
-			<% render("views.form", {validations = controller:get_validations("query", method), model = "params.query." .. method}) %>
+			<% render("views.form", {
+				validations = controller:get_validations("query", method),
+				model = "params.query." .. method,
+				disabled = "disabled.query." .. method,
+			}) %>
 		</div>
 	<% end %>
 	<div class="field" x-show="isCodeMode && params.query[method + '_have'] > 0">
@@ -160,7 +179,11 @@ function requestBlock() {return {
 	</div>
 	<% for _, method in ipairs(controller.methods) do %>
 		<div class="field" x-show="method == '<%= method %>' && method != 'GET' && !isCodeMode">
-			<% render("views.form", {validations = controller:get_validations("body", method), model = "params.body." .. method}) %>
+			<% render("views.form", {
+				validations = controller:get_validations("body", method),
+				model = "params.body." .. method,
+				disabled = "disabled.body." .. method,
+			}) %>
 		</div>
 	<% end %>
 	<div class="field" x-show="method != 'GET' && isCodeMode && params.body[method + '_have'] > 0">

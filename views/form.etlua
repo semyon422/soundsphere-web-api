@@ -1,10 +1,12 @@
 <% for _, validation in ipairs(validations) do %>
+	<% local model_value = model .. "." .. validation[1] %>
+	<% local disabled_value = disabled .. "." .. validation[1] .. " === true" %>
 	<div class="field">
 		<% if validation.one_of then %>
 			<label class="label"><%= validation[1] %></label>
 			<div class="control is-expanded">
 				<div class="select is-fullwidth">
-					<select x-model="<%= model .. "." .. validation[1] %>">
+					<select x-model="<%= model_value %>" :disabled="<%= disabled_value %>">
 						<% for _, value in ipairs(validation.one_of) do %>
 							<option><%= value %></option>
 						<% end %>
@@ -16,7 +18,8 @@
 			<div class="file has-name is-fullwidth" x-data="{files: null}">
 				<label class="file-label">
 					<input class="file-input" type="file"
-						x-on:change="files = $event.target.files; bodyFiles['<%= validation[1] %>'] = files[0];"
+						@change="files = $event.target.files; bodyFiles['<%= validation[1] %>'] = files[0];"
+						:disabled="<%= disabled_value %>"
 					>
 					<span class="file-cta">
 						<span class="file-label">
@@ -33,13 +36,13 @@
 			<label class="label"><%= validation[1] %>/<%= validation.captcha %></label>
 			<div class="field has-addons">
 				<div class="control is-expanded">
-					<input id="<%= validation[1] %>" class="input" type="text" placeholder="<%= validation[1] %>" x-model="<%= model .. "." .. validation[1] %>">
+					<input id="<%= validation[1] %>" class="input" type="text" placeholder="<%= validation[1] %>" x-model="<%= model_value %>">
 				</div>
 				<div class="control">
 					<a class="button is-info" :class="doingRequest ? 'is-loading' : ''" @click="
 						grecaptcha.ready(function() {
 							grecaptcha.execute('<%= recaptcha_site_key %>', {action: '<%= validation.captcha %>'}).then(function(token) {
-								<%= model .. "." .. validation[1] %> = token
+								<%= model_value %> = token
 							})
 						})
 					">
@@ -50,17 +53,17 @@
 		<% elseif not validation.type or validation.type == "string" then %>
 			<label class="label"><%= validation[1] %></label>
 			<div class="control">
-				<input class="input" type="text" placeholder="<%= validation[1] %>" x-model="<%= model .. "." .. validation[1] %>">
+				<input class="input" type="text" placeholder="<%= validation[1] %>" x-model="<%= model_value %>" :disabled="<%= disabled_value %>">
 			</div>
 		<% elseif validation.type == "number" then %>
 			<label class="label"><%= validation[1] %></label>
 			<div class="control">
-				<input class="input" type="number" placeholder="<%= validation[1] %>" x-model="<%= model .. "." .. validation[1] %>">
+				<input class="input" type="number" placeholder="<%= validation[1] %>" x-model="<%= model_value %>" :disabled="<%= disabled_value %>">
 			</div>
 		<% elseif validation.type == "boolean" then %>
 			<div class="control">
 				<label class="checkbox">
-					<input type="checkbox" x-model="<%= model .. "." .. validation[1] %>">
+					<input type="checkbox" x-model="<%= model_value %>" :disabled="<%= disabled_value %>">
 					<%= validation[1] %>
 				</label>
 			</div>
@@ -70,6 +73,7 @@
 				<% render("views.form", {
 					validations = validation.validations,
 					model = model .. "." .. validation[1],
+					disabled = disabled .. "." .. validation[1],
 					name_prefix = validation[1] .. "."
 				}) %>
 			</div>
