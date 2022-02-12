@@ -74,6 +74,10 @@ local function fix_types(object, validations)
 	for _, validation in ipairs(validations) do
 		local key = validation[1]
 		local value = object[key]
+		if value == nil and validation.default then
+			object[key] = validation.default
+			value = object[key]
+		end
 		local vtype = validation.type
 		if vtype == "string" then
 			-- object[key] = value ~= nil and tostring(value) or ""
