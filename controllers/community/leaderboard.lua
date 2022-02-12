@@ -21,7 +21,7 @@ end
 community_leaderboard_c.context.PUT = {{"community_leaderboard", missing = true}, "leaderboard", "request_session"}
 community_leaderboard_c.policies.PUT = {{"authed"}}
 community_leaderboard_c.validations.PUT = {
-	{"message", type = "string"},
+	{"message", type = "string", optional = true},
 }
 community_leaderboard_c.PUT = function(self)
 	local params = self.params

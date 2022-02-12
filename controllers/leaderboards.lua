@@ -95,12 +95,12 @@ leaderboards_c.validations.POST = {
 	{"leaderboard", type = "table", param_type = "body", validations = {
 		{"name", type = "string"},
 		{"description", type = "string"},
-		{"banner", type = "string", optional = true},
+		{"banner", type = "string", optional = true, policies = "donator_policies"},
 		{"owner_community_id", type = "number", range = {1}},
-		{"difficulty_calculator", type = "string", one_of = Difficulty_calculators.list},
-		{"rating_calculator", type = "string", one_of = Rating_calculators.list},
-		{"scores_combiner", type = "string", one_of = Combiners.list},
-		{"communities_combiner", type = "string", one_of = Combiners.list},
+		{"difficulty_calculator", type = "string", one_of = Difficulty_calculators.list, default = Difficulty_calculators.list[1]},
+		{"rating_calculator", type = "string", one_of = Rating_calculators.list, default = Rating_calculators.list[1]},
+		{"scores_combiner", type = "string", one_of = Combiners.list, default = Combiners.list[1]},
+		{"communities_combiner", type = "string", one_of = Combiners.list, default = Combiners.list[1]},
 		{"difficulty_calculator_config", type = "number", default = 0},
 		{"rating_calculator_config", type = "number", default = 0},
 		{"scores_combiner_count", type = "number", default = 20},
@@ -120,9 +120,8 @@ leaderboards_c.POST = function(self)
 		return {status = 400, json = {message = "A community can have no more than 10 leaderboards"}}
 	end
 
-	local user = self.context.session_user
-	if not user.roles.donator then
-		params.leaderboard.banner = ""
+	if not leaderboards_c:check_policies(self, "donator_policies") then
+		leaderboard.banner = ""
 	end
 
 	local time = os.time()
@@ -149,6 +148,7 @@ leaderboards_c.POST = function(self)
 		accepted = true,
 		created_at = time,
 		message = "",
+		rank = 0,
 	})
 
 	Community_changes:add_change(

@@ -82,8 +82,8 @@ communities_c.validations.POST = {
 		{"link", type = "string", optional = true},
 		{"short_description", type = "string", optional = true},
 		{"description", type = "string", optional = true},
-		{"banner", type = "string", optional = true},
-		{"is_public", type = "boolean"},
+		{"banner", type = "string", optional = true, policies = "donator_policies"},
+		{"is_public", type = "boolean", default = true, policies = "donator_policies"},
 	}}
 }
 communities_c.POST = function(self)
@@ -92,9 +92,7 @@ communities_c.POST = function(self)
 
 	local user = self.context.session_user
 	local is_public = params.community.is_public
-	if not user.roles.donator and not is_public then
-		return {status = 400, json = {message = "Creation of private communities is available only to donators"}}
-	end
+
 	if #user.communities:select({role = "creator", is_public = is_public}) >= 1 then
 		return {status = 400, json = {message = "You can create only one community of this type (public or private)"}}
 	end
@@ -104,9 +102,9 @@ communities_c.POST = function(self)
 	if Communities:find({alias = params.community.alias}) then
 		return {status = 400, json = {message = "This alias is already taken"}}
 	end
-
-	if not user.roles.donator then
+	if not communities_c:check_policies(self, "donator_policies") then
 		params.community.banner = ""
+		params.community.is_public = true
 	end
 
 	local time = os.time()

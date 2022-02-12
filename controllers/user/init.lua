@@ -42,19 +42,13 @@ user_c.policies.PATCH = {
 	{"authed", {role = "admin"}},
 	{"authed", {role = "creator"}},
 }
-local donator_policies = {
-	{"authed", {role = "donator"}},
-	{"authed", {role = "moderator"}},
-	{"authed", {role = "admin"}},
-	{"authed", {role = "creator"}},
-}
 user_c.validations.PATCH = {
 	{"user", type = "table", param_type = "body", validations = {
-		{"name", type = "string", optional = true, policies = donator_policies},
+		{"name", type = "string", optional = true, policies = "donator_policies"},
 		{"description", type = "string", optional = true},
-		{"color_left", type = "number", range = {0, 16777215}, optional = true, policies = donator_policies},
-		{"color_right", type = "number", range = {0, 16777215}, optional = true, policies = donator_policies},
-		{"banner", type = "string", optional = true, policies = donator_policies},
+		{"color_left", type = "number", range = {0, 16777215}, optional = true, policies = "donator_policies"},
+		{"color_right", type = "number", range = {0, 16777215}, optional = true, policies = "donator_policies"},
+		{"banner", type = "string", optional = true, policies = "donator_policies"},
 		{"discord", type = "string", optional = true},
 		{"twitter", type = "string", optional = true},
 		{"custom_link", type = "string", optional = true},
@@ -69,7 +63,7 @@ user_c.PATCH = function(self)
 		return {status = 400, json = {message = "This name is already taken"}}
 	end
 
-	if not user_c:check_policies(self, donator_policies) then
+	if not user_c:check_policies(self, "donator_policies") then
 		params.user.name = user.name
 		params.user.banner = user.banner
 		params.user.color_left = user.color_left

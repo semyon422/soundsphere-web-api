@@ -56,7 +56,7 @@ leaderboard_c.validations.PATCH = {
 	{"leaderboard", type = "table", param_type = "body", validations = {
 		{"name", type = "string"},
 		{"description", type = "string"},
-		{"banner", type = "string", optional = true},
+		{"banner", type = "string", optional = true, policies = "donator_policies"},
 		{"owner_community_id", type = "number", range = {1}},
 		{"difficulty_calculator", type = "string", one_of = Difficulty_calculators.list},
 		{"rating_calculator", type = "string", one_of = Rating_calculators.list},
@@ -96,9 +96,8 @@ leaderboard_c.PATCH = function(self)
 		return
 	end
 
-	local user = self.context.session_user
-	if not user.roles.donator then
-		params.leaderboard.banner = ""
+	if not leaderboard_c:check_policies(self, "donator_policies") then
+		leaderboard.banner = ""
 	end
 
 	Leaderboards:for_db(params.leaderboard)
