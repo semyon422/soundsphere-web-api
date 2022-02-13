@@ -48,8 +48,8 @@ community_c.validations.PATCH = {
 		{"link", type = "string", optional = true},
 		{"short_description", type = "string", optional = true},
 		{"description", type = "string", optional = true},
-		{"banner", type = "string", optional = true},
-		{"is_public", type = "boolean"},
+		{"banner", type = "string", optional = true, policies = "donator_policies"},
+		{"is_public", type = "boolean", policies = "donator_policies"},
 		{"default_leaderboard_id", type = "number"},
 	}},
 }
@@ -57,21 +57,22 @@ community_c.PATCH = function(self)
 	local params = self.params
 	local community = self.context.community
 
+	local user = self.context.session_user
+	local is_public = params.community.is_public
+
+	local found_community = user.communities:select({role = "creator", is_public = is_public})[1]
+	if found_community and found_community.community_id ~= community.id then
+		return {status = 400, json = {message = "You can have only one community of this type (public or private)"}}
+	end
 	local found_community =
 		Communities:find({name = params.community.name}) or
 		Communities:find({alias = params.community.alias})
 	if found_community and found_community.id ~= community.id then
 		return {status = 400, json = {message = "This name or alias is already taken"}}
 	end
-
-	local user = self.context.session_user
-	local is_public = params.community.is_public
-	if not user.roles.donator and not is_public then
-		return {status = 400, json = {message = "Creation of private communities is available only to donators"}}
-	end
-
-	if not user.roles.donator then
+	if not community_c:check_policies(self, "donator_policies") then
 		params.community.banner = ""
+		params.community.is_public = true
 	end
 
 	util.patch(community, params.community, {
