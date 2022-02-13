@@ -3,69 +3,50 @@ local Leaderboards = require("models.leaderboards")
 local Controller = require("Controller")
 local preload = require("lapis.db.model").preload
 local util = require("util")
+local Joined_query = require("util.joined_query")
 
 local community_leaderboards_c = Controller:new()
 
 community_leaderboards_c.path = "/communities/:community_id[%d]/leaderboards"
 community_leaderboards_c.methods = {"GET"}
 
-community_leaderboards_c.get_joined = function(self)
+community_leaderboards_c.get_leaderboards = function(self)
 	local params = self.params
+	local community_id = params.community_id
 
-	local where = {
-		community_id = params.community_id,
-		accepted = true,
-	}
+	local db = Community_leaderboards.db
 
-	local clause = Community_leaderboards.db.encode_clause(where)
-    local community_leaderboards = Community_leaderboards:select("where " .. clause .. " order by id asc")
+	local jq = Joined_query:new(db)
+	jq:select("cl")
+	if params.owned then
+		jq:select("inner join leaderboards l on cl.leaderboard_id = l.id and cl.community_id = l.owner_community_id")
+		jq:where("cl.accepted = ?", true)
+		jq:where("cl.community_id = ?", community_id)
+	elseif params.outgoing or params.incoming then
+		jq:select("inner join leaderboards l on cl.leaderboard_id = l.id")
+		jq:where("cl.accepted = ?", false)
+		if params.outgoing and params.incoming then
+			jq:where(
+				"(cl.community_id = ? and l.owner_community_id != ?) or (cl.community_id != ? and l.owner_community_id = ?)",
+				community_id, community_id, community_id, community_id
+			)
+		elseif params.outgoing and not params.incoming then
+			jq:where("cl.community_id = ?", community_id)
+			jq:where("l.owner_community_id != ?", community_id)
+		elseif not params.outgoing and params.incoming then
+			jq:where("cl.community_id != ?", community_id)
+			jq:where("l.owner_community_id = ?", community_id)
+		end
+	else
+		jq:where("cl.community_id = ?", community_id)
+		jq:where("cl.accepted = ?", true)
+	end
+	jq:fields("cl.*")
+	jq:orders("cl.id desc")
 
-	return community_leaderboards
-end
-
-community_leaderboards_c.get_owned = function(self)
-	local params = self.params
-
-    local community_leaderboards = Community_leaderboards:select(
-		"cl " ..
-		"inner join leaderboards l on cl.leaderboard_id = l.id and cl.community_id = l.owner_community_id " ..
-		"where cl.community_id = ? and cl.accepted = ? " ..
-		"order by id asc",
-		params.community_id, true,
-		{fields = "cl.*"}
-	)
-
-	return community_leaderboards
-end
-
-community_leaderboards_c.get_incoming = function(self)
-	local params = self.params
-
-    local community_leaderboards = Community_leaderboards:select(
-		"cl " ..
-		"inner join leaderboards l on cl.leaderboard_id = l.id and cl.community_id = l.owner_community_id " ..
-		"where cl.community_id != ? and cl.accepted = ? " ..
-		"order by id asc",
-		params.community_id, false,
-		{fields = "cl.*"}
-	)
-
-	return community_leaderboards
-end
-
-community_leaderboards_c.get_outgoing = function(self)
-	local params = self.params
-
-    local community_leaderboards = Community_leaderboards:select(
-		"cl " ..
-		"inner join leaderboards l on cl.leaderboard_id = l.id and cl.community_id != l.owner_community_id " ..
-		"where cl.community_id = ? and cl.accepted = ? " ..
-		"order by id asc",
-		params.community_id, false,
-		{fields = "cl.*"}
-	)
-
-	return community_leaderboards
+	local query, options = jq:concat()
+    local community_leaderboards = Community_leaderboards:select(query, options)
+	return community_leaderboards, query
 end
 
 community_leaderboards_c.policies.GET = {{"permit"}}
@@ -80,16 +61,7 @@ util.add_has_many_validations(Leaderboards.relations, community_leaderboards_c.v
 community_leaderboards_c.GET = function(self)
 	local params = self.params
 
-	local community_leaderboards
-	if params.incoming then
-		community_leaderboards = community_leaderboards_c.get_incoming(self)
-	elseif params.outgoing then
-		community_leaderboards = community_leaderboards_c.get_outgoing(self)
-	elseif params.owned then
-		community_leaderboards = community_leaderboards_c.get_owned(self)
-	else
-		community_leaderboards = community_leaderboards_c.get_joined(self)
-	end
+	local community_leaderboards = community_leaderboards_c.get_leaderboards(self)
 
 	if params.no_data then
 		return {json = {
