@@ -12,15 +12,31 @@ local community_users_c = Controller:new()
 community_users_c.path = "/communities/:community_id[%d]/users"
 community_users_c.methods = {"GET", "PATCH"}
 
-community_users_c.get_invitations = function(self, invitation)
+community_users_c.get_invitations = function(self)
 	local params = self.params
+
+	local accepted = true
+	local invitation = true
+	if params.invitations then
+		invitation = true
+		accepted = false
+	elseif params.requests then
+		invitation = false
+		accepted = false
+	end
+	if params.invitations and params.requests then
+		invitation = nil
+	end
+
 	local db = Community_users.db
 
 	local jq = Joined_query:new(db)
 	jq:select("cu")
 	jq:select("inner join users u on cu.user_id = u.id")
-	jq:where("cu.accepted = ?", false)
-	jq:where("cu.invitation = ?", invitation)
+	jq:where("cu.accepted = ?", accepted)
+	if invitation ~= nil then
+		jq:where("cu.invitation = ?", invitation)
+	end
 	jq:where("cu.community_id = ?", params.community_id)
 	jq:where("not u.is_banned")
 	jq:fields("cu.*")
@@ -134,10 +150,8 @@ community_users_c.GET = function(self)
 	local params = self.params
 
 	local community_users, filtered_clause
-	if params.invitations then
-		community_users, filtered_clause = community_users_c.get_invitations(self, true)
-	elseif params.requests then
-		community_users, filtered_clause = community_users_c.get_invitations(self, false)
+	if params.invitations or params.requests then
+		community_users, filtered_clause = community_users_c.get_invitations(self)
 	else
 		community_users, filtered_clause = community_users_c.get_users(self)
 	end
