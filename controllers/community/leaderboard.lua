@@ -18,8 +18,17 @@ community_leaderboard_c.GET = function(self)
 	return {json = {community_leaderboard = community_leaderboard}}
 end
 
-community_leaderboard_c.context.PUT = {{"community_leaderboard", missing = true}, "leaderboard", "request_session"}
-community_leaderboard_c.policies.PUT = {{"authed"}}
+community_leaderboard_c.context.PUT = {
+	{"community_leaderboard", missing = true},
+	"leaderboard",
+	"request_session",
+	"session_user",
+	"user_communities",
+}
+community_leaderboard_c.policies.PUT = {
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
+}
 community_leaderboard_c.validations.PUT = {
 	{"message", type = "string", optional = true},
 }
@@ -39,8 +48,19 @@ community_leaderboard_c.PUT = function(self)
 	return {status = 201, redirect_to = self:url_for(community_leaderboard)}
 end
 
-community_leaderboard_c.context.DELETE = {"community_leaderboard", "request_session"}
-community_leaderboard_c.policies.DELETE = {{"authed"}}
+community_leaderboard_c.context.DELETE = {
+	"community_leaderboard",
+	"leaderboard",
+	"request_session",
+	"session_user",
+	"user_communities",
+}
+community_leaderboard_c.policies.DELETE = {
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
+	{"authed", {leaderboard_role = "admin"}},
+	{"authed", {leaderboard_role = "creator"}},
+}
 community_leaderboard_c.DELETE = function(self)
 	local community_leaderboard = self.context.community_leaderboard
     community_leaderboard:delete()
@@ -48,8 +68,17 @@ community_leaderboard_c.DELETE = function(self)
 	return {status = 204}
 end
 
-community_leaderboard_c.context.PATCH = {"community_leaderboard", "request_session"}
-community_leaderboard_c.policies.PATCH = {{"authed"}}
+community_leaderboard_c.context.PATCH = {
+	"community_leaderboard",
+	"leaderboard",
+	"request_session",
+	"session_user",
+	"user_communities",
+}
+community_leaderboard_c.policies.PATCH = {
+	{"authed", {leaderboard_role = "admin"}},
+	{"authed", {leaderboard_role = "creator"}},
+}
 community_leaderboard_c.PATCH = function(self)
 	local community_leaderboard = self.context.community_leaderboard
 
