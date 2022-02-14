@@ -9,7 +9,12 @@ local community_changes_c = Controller:new()
 community_changes_c.path = "/communities/:community_id[%d]/changes"
 community_changes_c.methods = {"GET"}
 
-community_changes_c.policies.GET = {{"permit"}}
+community_changes_c.context.GET = {"request_session", "session_user", "user_communities"}
+community_changes_c.policies.GET = {
+	{"authed", {community_role = "moderator"}},
+	{"authed", {community_role = "admin"}},
+	{"authed", {community_role = "creator"}},
+}
 community_changes_c.validations.GET = {
 	require("validations.no_data"),
 	require("validations.per_page"),

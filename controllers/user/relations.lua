@@ -13,9 +13,9 @@ user_relations_c.context.GET = {"user", "request_session", "session_user", "user
 user_relations_c.policies.GET = {
 	{"authed", "user_profile", {not_params = "who_added_me"}},
 	{"authed", "user_profile", {role = "donator"}},
-	{"authed", "user_profile", {role = "moderator"}},
-	{"authed", "user_profile", {role = "admin"}},
-	{"authed", "user_profile", {role = "creator"}},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
 }
 user_relations_c.validations.GET = {
 	require("validations.no_data"),

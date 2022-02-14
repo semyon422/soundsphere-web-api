@@ -7,7 +7,7 @@ user_relation_c.path = "/users/:user_id[%d]/relations/:user_relation_id[%d]"
 user_relation_c.methods = {"GET", "DELETE"}
 
 user_relation_c.context.GET = {"user_relation", "request_session"}
-user_relation_c.policies.GET = {{"authed"}}
+user_relation_c.policies.GET = {{"authed", "user_profile"}}
 user_relation_c.GET = function(self)
 	return {json = {user_relation = self.context.user_relation:to_name()}}
 end

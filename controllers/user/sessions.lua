@@ -8,8 +8,13 @@ local user_sessions_c = Controller:new()
 user_sessions_c.path = "/users/:user_id[%d]/sessions"
 user_sessions_c.methods = {"GET"}
 
-user_sessions_c.context.GET = {"request_session"}
-user_sessions_c.policies.GET = {{"authed"}}
+user_sessions_c.context.GET = {"user", "request_session", "session_user", "user_roles"}
+user_sessions_c.policies.GET = {
+	{"authed", "user_profile"},
+	{"authed", {role = "moderator"}},
+	{"authed", {role = "admin"}},
+	{"authed", {role = "creator"}},
+}
 user_sessions_c.validations.GET = {
 	require("validations.no_data"),
 	{"show_ip", type = "boolean", optional = true},
