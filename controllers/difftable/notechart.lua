@@ -8,11 +8,6 @@ local difftable_notechart_c = Controller:new()
 difftable_notechart_c.path = "/difftables/:difftable_id[%d]/notecharts/:notechart_id[%d]"
 difftable_notechart_c.methods = {"GET", "PUT", "PATCH", "DELETE"}
 
-local set_community_id = function(self)
-	self.params.community_id = self.context.difftable.owner_community_id
-	return true
-end
-
 difftable_notechart_c.context.GET = {"difftable_notechart"}
 difftable_notechart_c.policies.GET = {{"permit"}}
 difftable_notechart_c.validations.GET = util.add_belongs_to_validations(Difftable_notecharts.relations)
@@ -58,12 +53,11 @@ difftable_notechart_c.context.PUT = {
 	"request_session",
 	"session_user",
 	"user_communities",
-	set_community_id,
 }
 difftable_notechart_c.policies.PUT = {
-	{"authed", {community_role = "moderator"}},
-	{"authed", {community_role = "admin"}},
-	{"authed", {community_role = "creator"}},
+	{"authed", {difftable_role = "moderator"}},
+	{"authed", {difftable_role = "admin"}},
+	{"authed", {difftable_role = "creator"}},
 }
 difftable_notechart_c.validations.PUT = {
 	{"difficulty", type = "number", optional = true},
@@ -79,11 +73,18 @@ difftable_notechart_c.PUT = function(self)
 	return {json = {difftable_notechart = difftable_notechart}}
 end
 
-difftable_notechart_c.context.PATCH = {"difftable", "notechart", "difftable_notechart", "request_session", "session_user", "user_communities", set_community_id}
+difftable_notechart_c.context.PATCH = {
+	"difftable",
+	"notechart",
+	"difftable_notechart",
+	"request_session",
+	"session_user",
+	"user_communities",
+}
 difftable_notechart_c.policies.PATCH = {
-	{"authed", {community_role = "moderator"}},
-	{"authed", {community_role = "admin"}},
-	{"authed", {community_role = "creator"}},
+	{"authed", {difftable_role = "moderator"}},
+	{"authed", {difftable_role = "admin"}},
+	{"authed", {difftable_role = "creator"}},
 }
 difftable_notechart_c.validations.PATCH = {
 	{"difficulty", type = "number"},
@@ -98,11 +99,18 @@ difftable_notechart_c.PATCH = function(self)
 	return {json = {difftable_notechart = difftable_notechart}}
 end
 
-difftable_notechart_c.context.DELETE = {"difftable", "notechart", "difftable_notechart", "request_session", "session_user", "user_communities", set_community_id}
+difftable_notechart_c.context.DELETE = {
+	"difftable",
+	"notechart",
+	"difftable_notechart",
+	"request_session",
+	"session_user",
+	"user_communities",
+}
 difftable_notechart_c.policies.DELETE = {
-	{"authed", {community_role = "moderator"}},
-	{"authed", {community_role = "admin"}},
-	{"authed", {community_role = "creator"}},
+	{"authed", {difftable_role = "moderator"}},
+	{"authed", {difftable_role = "admin"}},
+	{"authed", {difftable_role = "creator"}},
 }
 difftable_notechart_c.DELETE = function(self)
 	local params = self.params

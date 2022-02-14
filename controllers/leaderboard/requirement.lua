@@ -17,12 +17,17 @@ leaderboard_requirement_c.GET = function(self)
 	return {json = {leaderboard_requirement = leaderboard_requirement:to_name()}}
 end
 
-leaderboard_requirement_c.context.PATCH = {"leaderboard_requirement"}
-util.add_owner_context("leaderboard", "context", leaderboard_requirement_c.context.PATCH)
+leaderboard_requirement_c.context.PATCH = {
+	"leaderboard_requirement",
+	"leaderboard",
+	"request_session",
+	"session_user",
+	"user_communities"
+}
 leaderboard_requirement_c.policies.PATCH = {
-	{"authed", {community_role = "moderator"}},
-	{"authed", {community_role = "admin"}},
-	{"authed", {community_role = "creator"}},
+	{"authed", {leaderboard_role = "moderator"}},
+	{"authed", {leaderboard_role = "admin"}},
+	{"authed", {leaderboard_role = "creator"}},
 }
 leaderboard_requirement_c.validations.PATCH = {
 	{"leaderboard_requirement", type = "table", param_type = "body", validations = {

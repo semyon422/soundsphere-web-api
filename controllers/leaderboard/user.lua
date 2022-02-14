@@ -16,12 +16,17 @@ leaderboard_user_c.GET = function(self)
 	return {json = {leaderboard_user = leaderboard_user}}
 end
 
-leaderboard_user_c.context.PATCH = {"leaderboard_user"}
-util.add_owner_context("leaderboard", "context", leaderboard_user_c.context.PATCH)
+leaderboard_user_c.context.PATCH = {
+	"leaderboard_user",
+	"leaderboard",
+	"request_session",
+	"session_user",
+	"user_communities"
+}
 leaderboard_user_c.policies.PATCH = {
-	{"authed", {community_role = "moderator"}},
-	{"authed", {community_role = "admin"}},
-	{"authed", {community_role = "creator"}},
+	{"authed", {leaderboard_role = "moderator"}},
+	{"authed", {leaderboard_role = "admin"}},
+	{"authed", {leaderboard_role = "creator"}},
 }
 leaderboard_user_c.validations.PATCH = {
 	{"active", type = "boolean", optional = true},

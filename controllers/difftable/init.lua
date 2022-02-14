@@ -24,11 +24,6 @@ local difftable_c = Controller:new()
 difftable_c.path = "/difftables/:difftable_id[%d]"
 difftable_c.methods = {"GET", "PATCH", "PUT", "DELETE"}
 
-local set_community_id = function(self)
-	self.params.community_id = self.context.difftable.owner_community_id
-	return true
-end
-
 difftable_c.context.GET = {"difftable"}
 difftable_c.policies.GET = {{"permit"}}
 difftable_c.validations.GET = {}
@@ -44,10 +39,10 @@ difftable_c.GET = function(self)
 	return {json = {difftable = difftable}}
 end
 
-difftable_c.context.PATCH = {"difftable", "request_session", "session_user", "user_communities", set_community_id}
+difftable_c.context.PATCH = {"difftable", "request_session", "session_user", "user_communities"}
 difftable_c.policies.PATCH = {
-	{"authed", {community_role = "admin"}, {not_params = "transfer_ownership"}},
-	{"authed", {community_role = "creator"}},
+	{"authed", {difftable_role = "admin"}, {not_params = "transfer_ownership"}},
+	{"authed", {difftable_role = "creator"}},
 }
 difftable_c.validations.PATCH = {
 	{"difftable", type = "table", param_type = "body", validations = {
@@ -180,10 +175,10 @@ difftable_c.PUT = function(self)
 	return {status = 204}
 end
 
-difftable_c.context.DELETE = {"difftable", "request_session", "session_user", "user_communities", set_community_id}
+difftable_c.context.DELETE = {"difftable", "request_session", "session_user", "user_communities"}
 difftable_c.policies.DELETE = {
-	{"authed", {community_role = "admin"}, {delete_delay = "difftable"}},
-	{"authed", {community_role = "creator"}, {delete_delay = "difftable"}},
+	{"authed", {difftable_role = "admin"}, {delete_delay = "difftable"}},
+	{"authed", {difftable_role = "creator"}, {delete_delay = "difftable"}},
 }
 difftable_c.DELETE = function(self)
 	local difftable = self.context.difftable

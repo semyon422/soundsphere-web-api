@@ -61,11 +61,16 @@ leaderboard_inputmodes_c.GET = function(self)
 	}}
 end
 
-leaderboard_inputmodes_c.context.PATCH = util.add_owner_context("leaderboard", "context")
+leaderboard_inputmodes_c.context.PATCH = {
+	"leaderboard",
+	"request_session",
+	"session_user",
+	"user_communities"
+}
 leaderboard_inputmodes_c.policies.PATCH = {
-	{"authed", {community_role = "moderator"}},
-	{"authed", {community_role = "admin"}},
-	{"authed", {community_role = "creator"}},
+	{"authed", {leaderboard_role = "moderator"}},
+	{"authed", {leaderboard_role = "admin"}},
+	{"authed", {leaderboard_role = "creator"}},
 }
 leaderboard_inputmodes_c.validations.PATCH = {
 	{"leaderboard_inputmodes", type = "table", param_type = "body"}

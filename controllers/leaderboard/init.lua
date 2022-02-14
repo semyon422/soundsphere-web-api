@@ -47,10 +47,15 @@ leaderboard_c.GET = function(self)
 	return {json = {leaderboard = leaderboard:to_name()}}
 end
 
-leaderboard_c.context.PATCH = util.add_owner_context("leaderboard", "context")
+leaderboard_c.context.PATCH = {
+	"leaderboard",
+	"request_session",
+	"session_user",
+	"user_communities"
+}
 leaderboard_c.policies.PATCH = {
-	{"authed", {community_role = "admin"}, {not_params = "transfer_ownership"}},
-	{"authed", {community_role = "creator"}},
+	{"authed", {leaderboard_role = "admin"}, {not_params = "transfer_ownership"}},
+	{"authed", {leaderboard_role = "creator"}},
 }
 leaderboard_c.validations.PATCH = {
 	{"leaderboard", type = "table", param_type = "body", validations = {
@@ -133,10 +138,15 @@ leaderboard_c.PATCH = function(self)
 	return {json = {leaderboard = leaderboard}}
 end
 
-leaderboard_c.context.DELETE = util.add_owner_context("leaderboard", "context")
+leaderboard_c.context.DELETE = {
+	"leaderboard",
+	"request_session",
+	"session_user",
+	"user_communities"
+}
 leaderboard_c.policies.DELETE = {
-	{"authed", {community_role = "admin"}, {delete_delay = "leaderboard"}},
-	{"authed", {community_role = "creator"}, {delete_delay = "leaderboard"}},
+	{"authed", {leaderboard_role = "admin"}, {delete_delay = "leaderboard"}},
+	{"authed", {leaderboard_role = "creator"}, {delete_delay = "leaderboard"}},
 }
 leaderboard_c.DELETE = function(self)
 	local leaderboard = self.context.leaderboard
