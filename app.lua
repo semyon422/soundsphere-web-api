@@ -126,7 +126,7 @@ local function get_context(self, controller, all_methods)
 			controller:load_context(self, method)
 		end
 	else
-		controller:load_context(self)
+		controller:load_context(self, self.req.method)
 	end
 
 	local session_user = self.context.session_user
@@ -161,12 +161,9 @@ end
 local function get_permited_methods(self, controller)
 	local methods = {}
 	for _, method in ipairs(controller.methods) do
-		local req_method = self.req.method
-		self.req.method = method
 		if controller:check_access(self, method, true) then
 			table.insert(methods, method)
 		end
-		self.req.method = req_method
 	end
 	return methods
 end
@@ -238,7 +235,6 @@ local function route_api(controller, html)
 		local methods
 		local json_response = response.json
 		if self.params.methods or html then
-			get_context(self, controller, true)
 			methods = get_permited_methods(self, controller)
 		end
 		if json_response and self.params.methods then

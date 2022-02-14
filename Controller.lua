@@ -11,8 +11,6 @@ Controller.new = function(self)
 		policies = {},
 		display_policies = {},
 		validations = {},
-		params = {},
-		permited_methods = {},
 	}, {__index = self})
 end
 
@@ -32,12 +30,12 @@ end
 
 Controller.check_access = function(self, request, method, display)
 	request.policies = request.policies or {}
+	request.permited_methods = request.permited_methods or {}
 
-	method = method or request.req.method
 	if not self[method] or not request.context.loaded[method] then
 		return
 	end
-	local methods = self.permited_methods
+	local methods = request.permited_methods
 
 	methods[method] =
 		methods[method] or
@@ -48,7 +46,6 @@ Controller.check_access = function(self, request, method, display)
 end
 
 Controller.load_context = function(self, request, method)
-	method = method or request.req.method
 	if not self[method] or not self.context[method] then
 		request.context.loaded[method] = true
 		return
