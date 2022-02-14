@@ -74,6 +74,17 @@ community_leaderboards_c.GET = function(self)
 	util.relatives_preload_field(community_leaderboards, "leaderboard", Leaderboards, params)
 	util.recursive_to_name(community_leaderboards)
 
+	util.get_methods_for_objects(
+		self,
+		community_leaderboards,
+		require("controllers.leaderboard"),
+		"leaderboard",
+		nil,
+		function(community_leaderboard)
+			return community_leaderboard.leaderboard
+		end
+	)
+
 	return {json = {
 		total = #community_leaderboards,
 		filtered = #community_leaderboards,

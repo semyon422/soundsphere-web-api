@@ -173,6 +173,16 @@ community_users_c.GET = function(self)
 	util.relatives_preload_field(community_users, "user", Users, params)
 	util.recursive_to_name(community_users)
 
+	util.get_methods_for_objects(
+		self,
+		community_users,
+		require("controllers.community.user"),
+		"community_user",
+		function(params, community_user)
+			params.user_id = community_user.user_id
+		end
+	)
+
 	return {json = {
 		total = tonumber(Community_users:count(total_clause)),
 		filtered = tonumber(util.db_count(Community_users, filtered_clause)),

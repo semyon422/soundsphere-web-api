@@ -15,26 +15,39 @@ leaderboard_communities_c.validations.GET = {
 leaderboard_communities_c.validations.GET = util.add_belongs_to_validations(Community_leaderboards.relations)
 leaderboard_communities_c.GET = function(self)
 	local params = self.params
-    local leaderboard_communities = Community_leaderboards:find_all({params.leaderboard_id}, "leaderboard_id")
+    local community_leaderboards = Community_leaderboards:find_all({params.leaderboard_id}, {
+		key = "leaderboard_id",
+		where = {accepted = true},
+	})
 
 	if params.no_data then
 		return {json = {
-			total = #leaderboard_communities,
-			filtered = #leaderboard_communities,
+			total = #community_leaderboards,
+			filtered = #community_leaderboards,
 		}}
 	end
 
-	preload(leaderboard_communities, util.get_relatives_preload(Community_leaderboards, params))
-	util.recursive_to_name(leaderboard_communities)
+	preload(community_leaderboards, util.get_relatives_preload(Community_leaderboards, params))
+	util.recursive_to_name(community_leaderboards)
 
-	for i, leaderboard_community in ipairs(leaderboard_communities) do
+	for i, leaderboard_community in ipairs(community_leaderboards) do
 		leaderboard_community.rank = i
 	end
 
+	util.get_methods_for_objects(
+		self,
+		community_leaderboards,
+		require("controllers.community.leaderboard"),
+		"community_leaderboard",
+		function(params, community_leaderboard)
+			params.community_id = community_leaderboard.community_id
+		end
+	)
+
 	return {json = {
-		total = #leaderboard_communities,
-		filtered = #leaderboard_communities,
-		leaderboard_communities = leaderboard_communities,
+		total = #community_leaderboards,
+		filtered = #community_leaderboards,
+		community_leaderboards = community_leaderboards,
 	}}
 end
 

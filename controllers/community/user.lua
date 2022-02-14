@@ -12,7 +12,6 @@ community_user_c.methods = {"GET", "PUT", "DELETE", "PATCH"}
 
 community_user_c.context.PUT = {
 	{"community_user", optional = true},
-	"user",
 	"community",
 	"request_session",
 	"session_user",
@@ -45,7 +44,7 @@ community_user_c.PUT = function(self)
 			staff_user_id,
 			params.community_id,
 			"invite",
-			self.context.user
+			community_user:get_user()
 		)
 		return {status = 201, redirect_to = self:url_for(community_user)}
 	elseif not community_user.accepted and not community_user.invitation then
@@ -56,7 +55,7 @@ community_user_c.PUT = function(self)
 			community_user.staff_user_id,
 			params.community_id,
 			"accept",
-			self.context.user
+			community_user:get_user()
 		)
 		return {status = 201, redirect_to = self:url_for(community_user)}
 	end
@@ -64,7 +63,7 @@ community_user_c.PUT = function(self)
 	return {status = 204}
 end
 
-community_user_c.context.DELETE = {"community_user", "user", "request_session", "session_user", "user", "user_communities"}
+community_user_c.context.DELETE = {"community_user", "request_session", "session_user", "user_communities"}
 community_user_c.policies.DELETE = {
 	{"authed", "user_profile", "community_user_leave"},
 	{"authed", "not_user_profile", "community_user_kick"},
@@ -95,7 +94,7 @@ community_user_c.GET = function(self)
 	return {json = {community_user = community_user:to_name()}}
 end
 
-community_user_c.context.PATCH = {"community_user", "user", "request_session", "session_user", "user_communities"}
+community_user_c.context.PATCH = {"community_user", "request_session", "session_user", "user_communities"}
 community_user_c.policies.PATCH = {
 	{"authed", "not_user_profile", "community_user_change_role", {not_params = "transfer_ownership"}},
 	{"authed", "not_user_profile", "community_user_change_role", {community_role = "creator"}},
@@ -115,7 +114,7 @@ community_user_c.PATCH = function(self)
 			self.context.session_user.id,
 			params.community_id,
 			"transfer_ownership",
-			self.context.user
+			community_user:get_user()
 		)
 		return {json = {message = "Success"}}
 	end
@@ -125,7 +124,7 @@ community_user_c.PATCH = function(self)
 		self.context.session_user.id,
 		params.community_id,
 		"update",
-		self.context.user
+		community_user:get_user()
 	)
 
 	return {json = {community_user = community_user:to_name()}}

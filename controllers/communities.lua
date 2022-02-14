@@ -5,6 +5,7 @@ local Roles = require("enums.roles")
 local util = require("util")
 local preload = require("lapis.db.model").preload
 local Controller = require("Controller")
+local community_c = require("controllers.community")
 
 local communities_c = Controller:new()
 
@@ -62,6 +63,13 @@ communities_c.GET = function(self)
 	for _, community in ipairs(communities) do
 		community.joined = joined_community_ids_map[community.id]
 	end
+
+	util.get_methods_for_objects(
+		self,
+		communities,
+		community_c,
+		"community"
+	)
 
 	return {json = {
 		total = tonumber(Communities:count()),
