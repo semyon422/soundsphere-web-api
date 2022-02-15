@@ -160,6 +160,9 @@ difftable_c.PUT = function(self)
 
 	if params.rank_from_bms then
 		local header, data = util.get_bms_difftable(difftable.link)
+		if not header then
+			return {status = 500, json = {message = data}}
+		end
 		difftable.name = header.name
 		difftable.symbol = header.symbol
 		difftable:update("name", "symbol")
