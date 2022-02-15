@@ -11,6 +11,7 @@ local util = require("util")
 local preload = require("lapis.db.model").preload
 local notecharts_c = require("controllers.notecharts")
 local metrics = require("metrics")
+local config = require("lapis.config").get()
 
 local scores_c = Controller:new()
 
@@ -93,6 +94,10 @@ scores_c.validations.POST = {
 }
 scores_c.POST = function(self)
 	local params = self.params
+
+	if not config.is_score_submit_enabled then
+		return {status = 403, json = {message = "Score submission is disabled"}}
+	end
 
 	local created_at = os.time()
 	local hash_for_db = Filehash:for_db(params.notechart_hash)
