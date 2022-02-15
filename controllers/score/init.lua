@@ -266,7 +266,7 @@ score_c.DELETE = function(self)
 	end
 
 	local notechart = score:get_notechart()
-	notechart.scores_count = notechart.scores_count - 1
+	notechart.scores_count = math.max(notechart.scores_count - 1, 0)
 	notechart:update("scores_count")
 
 	local user = score:get_user()
@@ -281,13 +281,13 @@ score_c.DELETE = function(self)
 			not_top_score.is_top = true
 			not_top_score:update("is_top")
 		else
-			user.notecharts_count = user.notecharts_count - 1
+			user.notecharts_count = math.max(user.notecharts_count - 1, 0)
 			user:update("notecharts_count")
 		end
 	end
-	user.notes_count = user.notes_count - notechart.notes_count
-	user.play_time = user.play_time - notechart.length
-	user.scores_count = user.scores_count - 1
+	user.notes_count = math.max(user.notes_count - notechart.notes_count, 0)
+	user.play_time = math.max(user.play_time - notechart.length, 0)
+	user.scores_count = math.max(user.scores_count - 1, 0)
 	user:update(
 		"scores_count",
 		"notes_count",
