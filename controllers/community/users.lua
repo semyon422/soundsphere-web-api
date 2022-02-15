@@ -173,6 +173,7 @@ community_users_c.GET = function(self)
 	util.relatives_preload_field(community_users, "user", Users, params)
 	util.recursive_to_name(community_users)
 
+	-- don't set user for PUT method, first user will be used
 	util.get_methods_for_objects(
 		self,
 		community_users,

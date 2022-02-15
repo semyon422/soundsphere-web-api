@@ -12,6 +12,7 @@ community_user_c.methods = {"GET", "PUT", "DELETE", "PATCH"}
 
 community_user_c.context.PUT = {
 	{"community_user", optional = true},
+	"user",
 	"community",
 	"request_session",
 	"session_user",
@@ -44,7 +45,7 @@ community_user_c.PUT = function(self)
 			staff_user_id,
 			params.community_id,
 			"invite",
-			community_user:get_user()
+			self.context.user
 		)
 		return {status = 201, redirect_to = self:url_for(community_user)}
 	elseif not community_user.accepted and not community_user.invitation then
@@ -55,7 +56,7 @@ community_user_c.PUT = function(self)
 			community_user.staff_user_id,
 			params.community_id,
 			"accept",
-			community_user:get_user()
+			self.context.user
 		)
 		return {status = 201, redirect_to = self:url_for(community_user)}
 	end
@@ -77,7 +78,7 @@ community_user_c.DELETE = function(self)
 		self.context.session_user.id,
 		self.params.community_id,
 		"kick",
-		self.context.user
+		community_user:get_user()
 	)
 
 	return {status = 204}
