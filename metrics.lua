@@ -67,6 +67,9 @@ end
 
 function metrics.lapis()
 	local performance = ngx.ctx.performance
+	if not performance then
+		return
+	end
 	metrics.lapis_view_time:observe(tonumber(performance.view_time))
 	metrics.lapis_layout_time:observe(tonumber(performance.layout_time))
 	metrics.lapis_db_time:observe(tonumber(performance.db_time))
