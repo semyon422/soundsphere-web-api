@@ -20,13 +20,11 @@ register_c.captcha = true
 
 register_c.policies.POST = {{"permit"}}
 register_c.validations.POST = {
-	{"user", type = "table", param_type = "body", validations = {
-		{"name", type = "string"},
-		{"email", type = "string"},
-		{"password", type = "string"},
-	}},
-	{"game_name", type = "string", param_type = "body", optional = true},
-	{"recaptcha_token", type = "string", param_type = "body", captcha = "register", optional = true},
+	{"name", type = "string", param_type = "body"},
+	{"email", type = "string", param_type = "body"},
+	{"password", type = "string", param_type = "body"},
+	{"game_name", type = "string", param_type = "body"},
+	{"recaptcha_token", type = "string", param_type = "body", captcha = "register"},
 	{"bypass_key", type = "string", param_type = "body", optional = true},
 }
 register_c.POST = function(self)
@@ -75,11 +73,11 @@ register_c.POST = function(self)
 		end
 	end
 
-	local user = Users:find({email = params.user.email:lower()})
+	local user = Users:find({email = params.email:lower()})
 	if user then
 		return {status = 400, json = {message = "This email is already registered"}}
 	end
-	user = Users:find({name = params.user.name})
+	user = Users:find({name = params.name})
 	if user then
 		return {status = 400, json = {message = "This name is already taken"}}
 	end
@@ -90,9 +88,9 @@ register_c.POST = function(self)
 
 	local time = os.time()
 	user = Users:create({
-		name = params.user.name,
-		email = params.user.email:lower(),
-		password = bcrypt.digest(params.user.password, 10),
+		name = params.name,
+		email = params.email:lower(),
+		password = bcrypt.digest(params.password, 10),
 		latest_activity = time,
 		latest_score_submitted_at = time,
 		created_at = time,
