@@ -6,6 +6,7 @@ function rule:condition(request)
 	local cs = request.context.request_session
 	local rs = request.session
 	return
+		cs and
 		cs.active and
 		cs.id == rs.id and
 		cs.user_id == rs.user_id and

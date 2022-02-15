@@ -80,7 +80,11 @@ notechart_scores_c.get_scores = function(self, user_ids)
 	return scores, query
 end
 
-notechart_scores_c.context.GET = {"request_session", "session_user", "user_roles"}
+notechart_scores_c.context.GET = {
+	{"request_session", optional = true},
+	{"session_user", optional = true},
+	{"user_roles", optional = true}
+}
 notechart_scores_c.policies.GET = {
 	{{not_params = "rivals"}, {not_params = "friends"}},
 	{"authed", {not_params = "friends"}},
