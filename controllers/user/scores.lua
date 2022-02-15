@@ -103,6 +103,13 @@ user_scores_c.GET = function(self)
 	preload(scores, util.get_relatives_preload(Scores, params))
 	util.recursive_to_name(scores)
 
+	util.get_methods_for_objects(
+		self,
+		scores,
+		require("controllers.score"),
+		"score"
+	)
+
 	return {json = {
 		total = tonumber(Scores:count(total_clause)),
 		filtered = tonumber(util.db_count(Scores, query)),

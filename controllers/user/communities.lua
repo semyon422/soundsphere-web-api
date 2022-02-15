@@ -56,6 +56,27 @@ user_communities_c.GET = function(self)
 		end
 	end
 
+	util.get_methods_for_objects(
+		self,
+		filtered_community_users,
+		require("controllers.community.user"),
+		"community_user",
+		function(params, community_user)
+			params.community_id = community_user.community_id
+		end
+	)
+
+	util.get_methods_for_objects(
+		self,
+		filtered_community_users,
+		require("controllers.community"),
+		"community",
+		nil,
+		function(community_user)
+			return community_user.community
+		end
+	)
+
 	return {json = {
 		total = #community_users,
 		filtered = #filtered_community_users,
