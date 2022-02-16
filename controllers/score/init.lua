@@ -133,12 +133,18 @@ score_c.process_score = function(score)
 	local json_response = from_json(body)
 	local response_score = json_response.score
 
+	if response_score.base.progress < 0.99 then
+		score.is_complete = true
+		score:update("is_complete")
+		return false, 400, "Incomplete score"
+	end
+
 	local encoded = json_response.modifiersEncoded
 	local displayed = json_response.modifiersString
 	if #encoded >= 255 or #displayed >= 255 then
 		score.is_complete = true
 		score:update("is_complete")
-		return false, status_code, "Invalid modifiers"
+		return false, 400, "Invalid modifiers"
 	end
 	local new_modifierset = {
 		encoded = encoded,
