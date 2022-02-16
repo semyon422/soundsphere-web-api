@@ -220,6 +220,9 @@ for _, score in ipairs(scores_old) do
 			end
 		end
 
+		notechart.scores_count = notechart.scores_count + 1
+		notechart:update("scores_count")
+
 		local replay_file = Files:find({
 			hash = replay_hash_for_db
 		})
