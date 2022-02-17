@@ -77,7 +77,7 @@ login_c.validations.POST = {
 	{"email", type = "string", param_type = "body"},
 	{"password", type = "string", param_type = "body"},
 	{"recaptcha_token", type = "string", param_type = "body", captcha = "login", optional = true},
-	{"bypass_key", type = "string", param_type = "body", optional = true},
+	{"bypass_key", type = "string", param_type = "body", optional = true, nil_if = ""},
 }
 login_c.POST = function(self)
 	local params = self.params

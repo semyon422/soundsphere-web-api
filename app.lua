@@ -31,6 +31,7 @@ validate.validate_functions.validations = function(input, validations) return tr
 validate.validate_functions.default = function(input, validations) return true, "" end
 validate.validate_functions.captcha = function(input, validations) return true, "" end
 validate.validate_functions.policies = function(input, validations) return true, "" end
+validate.validate_functions.nil_if = function(input, validations) return true, "" end
 
 validate.validate_functions.range = function(v, ...)
 	local range = {...}
@@ -91,6 +92,9 @@ local function fix_types(object, validations)
 			else
 				object[key] = nil
 			end
+		end
+		if validation.nil_if and validation.nil_if == object[key] then
+			object[key] = nil
 		end
 	end
 end

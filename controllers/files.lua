@@ -52,7 +52,7 @@ files_c.policies.POST = {
 files_c.validations.POST = {
 	{"storage", type = "string", one_of = Storages.list, default = Storages.list[1]},
 	{"file", is_file = true, param_type = "body", optional = true},
-	{"hash", type = "string", param_type = "body", optional = true},
+	{"hash", type = "string", param_type = "body", optional = true, nil_if = "", min_length = 32, max_length = 32},
 	{"size", type = "number", param_type = "body", optional = true},
 }
 files_c.POST = function(self)

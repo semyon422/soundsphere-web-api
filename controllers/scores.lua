@@ -88,8 +88,8 @@ scores_c.policies.POST = {
 }
 scores_c.validations.POST = {
 	{"trusted", type = "boolean", optional = true},
-	{"replay_hash", type = "string", param_type = "body"},
-	{"notechart_hash", type = "string", param_type = "body"},
+	{"replay_hash", type = "string", param_type = "body", min_length = 32, max_length = 32},
+	{"notechart_hash", type = "string", param_type = "body", min_length = 32, max_length = 32},
 	{"notechart_index", type = "number", param_type = "body"},
 	{"notechart_filename", type = "string", param_type = "body"},
 }

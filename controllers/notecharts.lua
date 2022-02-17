@@ -26,6 +26,7 @@ notecharts_c.validations.GET = {
 	require("validations.search"),
 	{"is_not_complete", type = "boolean", optional = true},
 	{"is_not_valid", type = "boolean", optional = true},
+	{"hash", type = "string", optional = true, nil_if = "", min_length = 32, max_length = 32},
 }
 util.add_belongs_to_validations(Notecharts.relations, notecharts_c.validations.GET)
 util.add_has_many_validations(Notecharts.relations, notecharts_c.validations.GET)
@@ -45,6 +46,10 @@ notecharts_c.GET = function(self)
 	if user_id then
 		jq:select("left join scores s on n.id = s.notechart_id and s.user_id = ? and s.is_top = ?", user_id, true)
 		jq:fields("s.user_id")
+	end
+	if params.hash then
+		jq:select("left join files f on n.file_id = f.id")
+		jq:where("f.hash = ?", Filehash:for_db(params.hash))
 	end
 	if params.search then
 		jq:where(util.db_search(

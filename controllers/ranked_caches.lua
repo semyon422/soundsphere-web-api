@@ -50,7 +50,7 @@ ranked_caches_c.policies.POST = {
 }
 ranked_caches_c.validations.POST = {
 	{"file", is_file = true, param_type = "body", optional = true},
-	{"hash", type = "string", param_type = "body", optional = true},
+	{"hash", type = "string", param_type = "body", optional = true, nil_if = "", min_length = 32, max_length = 32},
 	{"format", type = "string", param_type = "body", optional = true, one_of = Formats.list},
 }
 ranked_caches_c.POST = function(self)

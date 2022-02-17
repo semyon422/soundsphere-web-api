@@ -25,7 +25,7 @@ register_c.validations.POST = {
 	{"password", type = "string", param_type = "body"},
 	{"game_name", type = "string", param_type = "body"},
 	{"recaptcha_token", type = "string", param_type = "body", captcha = "register"},
-	{"bypass_key", type = "string", param_type = "body", optional = true},
+	{"bypass_key", type = "string", param_type = "body", optional = true, nil_if = ""},
 }
 register_c.POST = function(self)
 	local params = self.params

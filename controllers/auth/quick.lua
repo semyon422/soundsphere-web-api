@@ -16,11 +16,11 @@ end
 
 quick_c.policies.GET = {{"permit"}}
 quick_c.validations.GET = {
-	{"key", type = "string", optional = true},
+	{"key", type = "string", optional = true, nil_if = ""},
 }
 quick_c.GET = function(self)
 	local key = self.params.key
-	if key and #key > 0 then
+	if key then
 		return {json = {
 			message = "Key passed, no new key generated",
 			key = key,
