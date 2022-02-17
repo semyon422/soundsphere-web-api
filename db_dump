@@ -1,0 +1,2 @@
+#!/bin/bash
+mysqldump --defaults-file=my.cnf --single-transaction --routines --add-drop-table --disable-keys --extended-insert --protocol=tcp --result-file="backups/dump $(date -u --rfc-2822).sql" --hex-blob backend

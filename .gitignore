@@ -9,5 +9,8 @@ storages/replays/*
 !storages/replays/.keep
 share/*
 temp/*
+backups/*
 !share/.keep
 !temp/.keep
+!backups/.keep
+my.cnf
