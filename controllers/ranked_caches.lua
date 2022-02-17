@@ -43,6 +43,7 @@ end
 
 ranked_caches_c.context.POST = {"request_session", "session_user", "user_roles"}
 ranked_caches_c.policies.POST = {
+	{"authed", "session_user_is_banned_deny"},
 	{"authed", {role = "moderator"}},
 	{"authed", {role = "admin"}},
 	{"authed", {role = "creator"}},

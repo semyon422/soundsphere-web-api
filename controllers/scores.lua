@@ -80,6 +80,7 @@ end
 
 scores_c.context.POST = {"request_session", "session_user", "user_roles", "user_latest_score"}
 scores_c.policies.POST = {
+	{"authed", "session_user_is_banned_deny"},
 	{"authed", {not_params = "trusted"}, "score_submit_limit"},
 	{"authed", {role = "moderator"}, "score_submit_limit"},
 	{"authed", {role = "admin"}, "score_submit_limit"},

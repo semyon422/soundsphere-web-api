@@ -220,17 +220,16 @@ end
 
 notecharts_c.context.POST = {"request_session", "session_user", "user_roles"}
 notecharts_c.policies.POST = {
-	-- {"authed", {not_params = "trusted"}},
+	{"authed", "session_user_is_banned_deny"},
 	{"authed", {role = "moderator"}},
 	{"authed", {role = "admin"}},
 	{"authed", {role = "creator"}},
 }
 notecharts_c.validations.POST = {
 	{"trusted", type = "boolean", optional = true},
-	{"notechart_hash", type = "string", param_type = "body"},
+	{"notechart_hash", type = "string", param_type = "body", min_length = 32, max_length = 32},
 	{"notechart_index", type = "number", param_type = "body"},
-	{"notechart_filename", type = "string", param_type = "body"},
-	{"notechart_filesize", type = "number", param_type = "body"},
+	{"notechart_filename", type = "string", param_type = "body", min_length = 1, max_length = 255},
 }
 notecharts_c.POST = function(self)
 	local params = self.params
@@ -258,7 +257,7 @@ notecharts_c.POST = function(self)
 			format = format_for_db,
 			storage = Storages:for_db("notecharts"),
 			uploaded = false,
-			size = params.notechart_filesize,
+			size = 0,
 			loaded = false,
 			created_at = created_at,
 		})
