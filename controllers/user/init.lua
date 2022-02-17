@@ -1,6 +1,7 @@
 local Users = require("models.users")
 local Controller = require("Controller")
 local util = require("util")
+local login_c = require("controllers.auth.login")
 
 local additions = {
 	communities = require("controllers.user.communities"),
@@ -91,17 +92,19 @@ end
 
 user_c.context.PUT = {"user", "request_session", "session_user", "user_roles"}
 user_c.policies.PUT = {
-	{"authed", {role = "moderator"}, "change_staff_role"},
-	{"authed", {role = "admin"}, "change_staff_role"},
+	{"authed", {role = "moderator"}, {not_params = "login_as"}, "change_staff_role"},
+	{"authed", {role = "admin"}, {not_params = "login_as"}, "change_staff_role"},
 	{"authed", {role = "creator"}, "change_staff_role"},
 }
 user_c.validations.PUT = {
 	{"ban", type = "boolean", optional = true},
 	{"unban", type = "boolean", optional = true},
+	{"login_as", type = "boolean", optional = true},
 }
 user_c.PUT = function(self)
 	local params = self.params
 	local user = self.context.user
+	local session = self.context.request_session
 
 	if params.ban then
 		user.is_banned = true
@@ -109,6 +112,11 @@ user_c.PUT = function(self)
 	elseif params.unban then
 		user.is_banned = false
 		user:update("is_banned")
+	elseif params.login_as then
+		session.active = false
+		session:update("active")
+		local token, payload = login_c.new_token(user, self.context.ip)
+		login_c.copy_session(payload, self.session)
 	end
 
 	return {json = {user = user:to_name()}}
