@@ -144,7 +144,7 @@ Controller.get_params_struct = function(self, request, params_type, method, disa
 			if validation.param_type == "query" or not validation.param_type then
 				local value
 				if not disabled then
-					value = get_default_value(validation)
+					value = request.params[validation[1]] or get_default_value(validation)
 				elseif validation.policies and not Controller:check_policies(request, validation.policies) then
 					value = true
 				end

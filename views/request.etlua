@@ -1,8 +1,9 @@
 <% local to_json = require("lapis.util").to_json %>
+<% local html_method = params.method or controller.methods[1] %>
 <script>
 function requestBlock() {return {
 	url: '<%= url_for(controller.name, params) %>',
-	method: '<%= controller.methods[1] %>',
+	method: '<%= html_method %>',
 	responseJson: <%- response.json and to_json(response.json) or "null" %>,
 	responseStatus: '<%= response.status %>',
 	responseStatusText: '',
