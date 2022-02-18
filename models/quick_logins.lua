@@ -13,7 +13,7 @@ local Quick_logins = Model:extend(
 local _load = Quick_logins.load
 function Quick_logins:load(row)
 	row.complete = toboolean(row.complete)
-	row.next_update_time = tonumber(row.next_update_time)
+	row.expires_at = tonumber(row.expires_at)
 	return _load(self, row)
 end
 

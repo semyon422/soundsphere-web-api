@@ -406,7 +406,7 @@ table_declarations.quick_logins = {
 	{"id", types.id},
 	{"ip", types.ip},
 	{"key", types.md5_hash},
-	{"next_update_time", types.time},
+	{"expires_at", types.time},
 	{"user_id", types.fk_id},
 	{"complete", types.boolean},
 	"KEY `ip` (`ip`)",

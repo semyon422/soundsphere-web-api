@@ -36,14 +36,14 @@ quick_c.GET = function(self)
 		Quick_logins:create({
 			ip = Ip:for_db(ip),
 			key = key,
-			next_update_time = time + 5 * 60,
+			expires_at = time + 5 * 60,
 		})
 	else
 		key = new_key()
 		quick_login.key = key
-		quick_login.next_update_time = time + 5 * 60
+		quick_login.expires_at = time + 5 * 60
 		quick_login.complete = false
-		quick_login:update("key", "next_update_time", "complete")
+		quick_login:update("key", "expires_at", "complete")
 	end
 
 	return {json = {key = Filehash:to_name(key)}}
@@ -55,17 +55,16 @@ quick_c.validations.PUT = {
 }
 quick_c.PUT = function(self)
 	local ip = self.context.ip
-	local quick_login = Quick_logins:find({ip = Ip:for_db(ip)})
+	local key = Filehash:for_db(self.params.key)
+	local quick_login = Quick_logins:find({
+		ip = Ip:for_db(ip),
+		key = key,
+	})
 
 	if not quick_login then
 		return {status = 404, json = {message = "Quick login not found"}}
-	elseif quick_login.next_update_time < os.time() then
+	elseif quick_login.expires_at < os.time() then
 		return {status = 400, json = {message = "Quick login expired"}}
-	end
-
-	local key = Filehash:for_db(self.params.key)
-	if quick_login.key ~= key then
-		return {status = 401, json = {message = "Wrong key"}}
 	elseif not quick_login.complete then
 		return {status = 403, json = {message = "Not complete"}}
 	end
@@ -87,16 +86,17 @@ quick_c.validations.POST = {
 	{"key", type = "string"},
 }
 quick_c.POST = function(self)
-	local key = self.params.key
-
-	key = Filehash:for_db(key)
+	local ip = self.context.ip
+	local key = Filehash:for_db(self.params.key)
 	local quick_login = Quick_logins:find({
-		ip = Ip:for_db(self.context.ip),
-		key = key
+		ip = Ip:for_db(ip),
+		key = key,
 	})
 
 	if not quick_login then
 		return {status = 404, json = {message = "Quick login not found"}}
+	elseif quick_login.expires_at < os.time() then
+		return {status = 400, json = {message = "Quick login expired"}}
 	elseif quick_login.complete then
 		return {status = 403, json = {message = "Complete"}}
 	end
