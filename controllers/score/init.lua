@@ -133,7 +133,7 @@ score_c.process_score = function(score)
 	local json_response = from_json(body)
 	local response_score = json_response.score
 
-	if response_score.base.progress < 0.99 then
+	if response_score.base.progress < 0.75 then
 		score.is_complete = true
 		score:update("is_complete")
 		return false, 400, "Incomplete score"
