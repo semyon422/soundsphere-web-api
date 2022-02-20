@@ -216,7 +216,7 @@ scores_c.policies.PATCH = {
 	{"authed", {role = "creator"}},
 }
 scores_c.validations.PATCH = {
-	require("validations.per_page"),
+	{"per_page", type = "number", is_integer = true, default = 10, range = {0}, optional = true},
 	require("validations.page_num"),
 	{"force", type = "boolean", optional = true},
 }
@@ -267,7 +267,7 @@ scores_c.policies.PUT = {
 	{"authed", {role = "creator"}},
 }
 scores_c.validations.PUT = {
-	require("validations.per_page"),
+	{"per_page", type = "number", is_integer = true, default = 10, range = {0}, optional = true},
 	require("validations.page_num"),
 	{"force", type = "boolean", optional = true},
 }
