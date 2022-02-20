@@ -390,14 +390,14 @@ score_leaderboards_c.insert_score = function(score, leaderboard)
 		user_id = score.user_id,
 	}
 	local leaderboard_score = Leaderboard_scores:find(new_leaderboard_score)
+	local rating = score_leaderboards_c.get_rating(score, leaderboard)
 	if not leaderboard_score then
 		new_leaderboard_score.score_id = score.id
-		new_leaderboard_score.rating = score_leaderboards_c.get_rating(score, leaderboard)
+		new_leaderboard_score.rating = rating
 		Leaderboard_scores:create(new_leaderboard_score)
 		score_leaderboards_c.update_user_leaderboard(score.user_id, leaderboard)
 		return true
 	end
-	local rating = score_leaderboards_c.get_rating(score, leaderboard)
 	if rating <= leaderboard_score.rating then
 		return
 	end
@@ -411,7 +411,6 @@ end
 score_leaderboards_c.update_leaderboards = function(score)
 	local leaderboards = score_leaderboards_c.get_available(score)
 	util.recursive_to_name(leaderboards)
-
 
 	local leaderboard_scores = Leaderboard_scores:find_all({score.id}, "score_id")
 	for _, leaderboard_score in ipairs(leaderboard_scores) do

@@ -23,18 +23,57 @@ local score_c = Controller:new()
 score_c.path = "/scores/:score_id[%d]"
 score_c.methods = {"GET", "PATCH", "DELETE"}
 
-score_c.update_stats = function(score)
+score_c.update_stats = function(score, is_valid)
+	if not is_valid == not score.is_valid then
+		return
+	end
+
+	local sign = 0
+	if not is_valid and score.is_valid then
+		score_c.make_is_top(score)
+		sign = 1
+	elseif is_valid and not score.is_valid then
+		score_c.make_is_not_top(score)
+		sign = -1
+	end
+
 	local notechart = score:get_notechart()
 	local user = score:get_user()
 
-	local new_top_score = {
+	user.notes_count = math.max(user.notes_count + notechart.notes_count * sign, 0)
+	user.play_time = math.max(user.play_time + notechart.length * sign, 0)
+	user.scores_count = math.max(user.scores_count + sign, 0)
+	user:update(
+		"scores_count",
+		"notes_count",
+		"play_time"
+	)
+
+	-- can be bugged because of changed difftable_notecharts
+	local difftable_notecharts = notechart:get_difftable_notecharts()
+	preload(difftable_notecharts, "difftable")
+	for _, difftable_notechart in ipairs(difftable_notecharts) do
+		local difftable = difftable_notechart.difftable
+		difftable.scores_count = math.max(difftable.scores_count + sign, 0)
+		difftable:update("scores_count")
+	end
+end
+
+score_c.make_is_top = function(score)
+	if score.is_top then
+		return
+	end
+
+	local top_score = Scores:find({
 		notechart_id = score.notechart_id,
 		user_id = score.user_id,
 		is_top = true,
-	}
-	local top_score = Scores:find(new_top_score)
+	})
+
 	if not top_score then
+		local user = score:get_user()
 		user.notecharts_count = user.notecharts_count + 1
+		user:update("notecharts_count")
 	end
 	if not top_score or score.rating > top_score.rating then
 		score.is_top = true
@@ -44,24 +83,29 @@ score_c.update_stats = function(score)
 		top_score.is_top = false
 		top_score:update("is_top")
 	end
+end
 
-	user.notes_count = user.notes_count + notechart.notes_count
-	user.play_time = user.play_time + notechart.length
-	user.scores_count = user.scores_count + 1
-	user:update(
-		"scores_count",
-		"notecharts_count",
-		"notes_count",
-		"play_time"
-	)
-
-	local difftable_notecharts = notechart:get_difftable_notecharts()
-	preload(difftable_notecharts, "difftable")
-	for _, difftable_notechart in ipairs(difftable_notecharts) do
-		local difftable = difftable_notechart.difftable
-		difftable.scores_count = difftable.scores_count + 1
-		difftable:update("scores_count")
+score_c.make_is_not_top = function(score)
+	if not score.is_top then
+		return
 	end
+
+	score.is_top = false
+	score:update("is_top")
+
+	local top_score = Scores:select(
+		"where id != ? and notechart_id = ? and user_id = ? order by rating desc limit 1",
+		score.id, score.notechart_id, score.user_id
+	)[1]
+	if top_score then
+		top_score.is_top = true
+		top_score:update("is_top")
+		return
+	end
+
+	local user = score:get_user()
+	user.notecharts_count = math.max(user.notecharts_count - 1, 0)
+	user:update("notecharts_count")
 end
 
 score_c.context.GET = {"score"}
@@ -87,7 +131,8 @@ score_c.process_score = function(score)
 	local replay_file = score:get_file()
 	if not replay_file then
 		score.is_complete = true
-		score:update("is_complete")
+		score.is_valid = false
+		score:update("is_complete", "is_valid")
 		return false, 400, "not replay_file"
 	elseif not replay_file.uploaded then
 		return false, 400, "not replay_file.uploaded"
@@ -96,7 +141,8 @@ score_c.process_score = function(score)
 	local notechart_file = notechart:get_file()
 	if not notechart_file then
 		score.is_complete = true
-		score:update("is_complete")
+		score.is_valid = false
+		score:update("is_complete", "is_valid")
 		return false, 400, "not replay_file"
 	end
 
@@ -122,7 +168,8 @@ score_c.process_score = function(score)
 
 	if status_code == 500 then  -- Internal Server Error
 		score.is_complete = true
-		score:update("is_complete")
+		score.is_valid = false
+		score:update("is_complete", "is_valid")
 		return false, status_code, "Invalid score" .. body
 	end
 
@@ -135,7 +182,8 @@ score_c.process_score = function(score)
 
 	if response_score.base.progress < 0.99 then
 		score.is_complete = true
-		score:update("is_complete")
+		score.is_valid = false
+		score:update("is_complete", "is_valid")
 		return false, 400, "Incomplete score"
 	end
 
@@ -143,7 +191,8 @@ score_c.process_score = function(score)
 	local displayed = json_response.modifiersString
 	if #encoded >= 255 or #displayed >= 255 then
 		score.is_complete = true
-		score:update("is_complete")
+		score.is_valid = false
+		score:update("is_complete", "is_valid")
 		return false, 400, "Invalid modifiers"
 	end
 	local new_modifierset = {
@@ -159,8 +208,6 @@ score_c.process_score = function(score)
 		modifierset.timerate = response_score.base.timeRate
 		modifierset:update("displayed", "timerate")
 	end
-
-	local is_valid = score.is_valid
 
 	local inputmode = Inputmodes[json_response.inputMode] and json_response.inputMode or "undefined"
 	local inputmode_for_db = Inputmodes:for_db(inputmode)
@@ -201,10 +248,6 @@ score_c.process_score = function(score)
 		"difficulty",
 		"rating"
 	)
-
-	if not is_valid and score.is_valid then
-		score_c.update_stats(score)
-	end
 
 	replay_file.loaded = true
 	replay_file:update("loaded")
@@ -247,7 +290,9 @@ score_c.PATCH = function(self)
 		return {status = 204}
 	end
 
+	local is_valid = score.is_valid
 	local success, code, message = score_c.process_score(score)
+	score_c.update_stats(score, is_valid)
 	if not success then
 		return {status = code, json = {message = message}}
 	end

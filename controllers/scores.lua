@@ -245,7 +245,9 @@ scores_c.PATCH = function(self)
 	local incomplete_count = 0
 	local incomplete_ids = {}
 	for _, score in ipairs(scores) do
+		local is_valid = score.is_valid
 		local success, code, message = score_c.process_score(score)
+		score_c.update_stats(score, is_valid)
 		if not success then
 			incomplete_count = incomplete_count + 1
 			table.insert(incomplete_ids, score.id)
