@@ -216,7 +216,9 @@ scores_c.policies.PATCH = {
 	{"authed", {role = "creator"}},
 }
 scores_c.validations.PATCH = {
-	{"count", type = "number", default = "", optional = true},
+	require("validations.per_page"),
+	require("validations.page_num"),
+	{"force", type = "boolean", optional = true},
 }
 scores_c.PATCH = function(self)
 	local score_c = require("controllers.score")
@@ -224,15 +226,20 @@ scores_c.PATCH = function(self)
 
 	local jq = Joined_query:new(Scores.db)
 	jq:select("s")
-	jq:where("s.is_complete = ?", false)
+	if not params.force then
+		jq:where("s.is_complete = ?", false)
+	end
 	jq:orders("s.id asc")
 	jq:fields("s.*")
 
+	local per_page = params.per_page or 10
+	local page_num = params.page_num or 1
+
 	local query, options = jq:concat()
-	options.per_page = params.count or 10
+	options.per_page = per_page or 10
 
 	local paginator = Scores:paginated(query, options)
-	local scores = paginator:get_page(1)
+	local scores = paginator:get_page(page_num)
 
 	local complete_count = 0
 	local incomplete_count = 0
@@ -260,7 +267,9 @@ scores_c.policies.PUT = {
 	{"authed", {role = "creator"}},
 }
 scores_c.validations.PUT = {
-	{"count", type = "number", default = "", optional = true},
+	require("validations.per_page"),
+	require("validations.page_num"),
+	{"force", type = "boolean", optional = true},
 }
 scores_c.PUT = function(self)
 	local score_leaderboards_c = require("controllers.score.leaderboards")
@@ -270,15 +279,20 @@ scores_c.PUT = function(self)
 	jq:select("s")
 	jq:where("s.is_complete = ?", true)
 	jq:where("s.is_valid = ?", true)
-	jq:where("s.is_ranked = ?", false)
+	if not params.force then
+		jq:where("s.is_ranked = ?", false)
+	end
 	jq:orders("s.id asc")
 	jq:fields("s.*")
 
+	local per_page = params.per_page or 10
+	local page_num = params.page_num or 1
+
 	local query, options = jq:concat()
-	options.per_page = params.count or 10
+	options.per_page = per_page or 10
 
 	local paginator = Scores:paginated(query, options)
-	local scores = paginator:get_page(1)
+	local scores = paginator:get_page(page_num)
 
 	local complete_count = 0
 	local incomplete_count = 0
