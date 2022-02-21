@@ -267,9 +267,6 @@ score_c.process_score = function(score)
 		user:update("latest_score_submitted_at", "latest_activity")
 	end
 
-	score.file = nil
-	score.notechart = nil
-	score.user = nil
 	score.modifierset = modifierset
 
 	return true
@@ -299,6 +296,9 @@ score_c.PATCH = function(self)
 	if not success then
 		return {status = code, json = {message = message}}
 	end
+	score.file = nil
+	score.notechart = nil
+	score.user = nil
 
 	return {json = {score = score:to_name()}}
 end
