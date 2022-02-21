@@ -1,5 +1,4 @@
 local Difftables = require("models.difftables")
-local Difftable_notecharts = require("models.difftable_notecharts")
 local Files = require("models.files")
 local Community_changes = require("models.community_changes")
 local Notecharts = require("models.notecharts")
@@ -10,6 +9,7 @@ local Controller = require("Controller")
 local Formats = require("enums.formats")
 local Filehash = require("util.filehash")
 local util = require("util")
+local lapis_util = require("lapis.util")
 local difftable_notechart_c = require("controllers.difftable.notechart")
 
 local additions = {
@@ -91,20 +91,20 @@ difftable_c.PATCH = function(self)
 	return {json = {difftable = difftable}}
 end
 
-difftable_c.add_bms_notechart = function(self, difftable_id, bms_notechart)
+difftable_c.add_notechart = function(user_id, difftable_id, format, hash, index, difficulty)
 	local created_at = os.time()
-	local hash_for_db = Filehash:for_db(bms_notechart.md5)
-	local format_for_db = Formats:for_db("bms")
-	local difficulty = tonumber(bms_notechart.level) or 0
+	local hash_for_db = Filehash:for_db(hash)
+	local format_for_db = Formats:for_db(format)
+	difficulty = tonumber(difficulty) or 0
 
 	local file = Files:find({hash = hash_for_db})
 	if file then
-		local notechart = Notecharts:find({file_id = file.id, index = 1})
+		local notechart = Notecharts:find({file_id = file.id, index = index})
 		if notechart then
 			difftable_notechart_c.set_difftable_notechart(
 				difftable_id,
 				notechart,
-				tonumber(bms_notechart.level)
+				difficulty
 			)
 		end
 		return
@@ -119,7 +119,7 @@ difftable_c.add_bms_notechart = function(self, difftable_id, bms_notechart)
 			ranked = true,
 			created_at = created_at,
 			expires_at = 0,
-			user_id = self.session.user_id,
+			user_id = user_id,
 		})
 	end
 	local ranked_cache_difftable = Ranked_cache_difftables:find({
@@ -130,7 +130,7 @@ difftable_c.add_bms_notechart = function(self, difftable_id, bms_notechart)
 		ranked_cache_difftable = Ranked_cache_difftables:create({
 			ranked_cache_id = ranked_cache.id,
 			difftable_id = difftable_id,
-			index = 1,
+			index = index,
 			difficulty = difficulty,
 		})
 	end
@@ -143,7 +143,9 @@ difftable_c.policies.PUT = {
 	{"authed", {role = "creator"}},
 }
 difftable_c.validations.PUT = {
-	{"rank_from_bms", type = "boolean"},
+	{"rank_from_bms", type = "boolean", optional = true},
+	{"rank_from_file", type = "boolean", optional = true},
+	{"file", is_file = true, param_type = "body", optional = true},
 }
 difftable_c.PUT = function(self)
 	local params = self.params
@@ -158,11 +160,33 @@ difftable_c.PUT = function(self)
 		difftable.symbol = header.symbol
 		difftable:update("name", "symbol")
 		for _, notechart in ipairs(data) do
-			difftable_c.add_bms_notechart(self, difftable.id, notechart)
+			difftable_c.add_notechart(
+				self.session.user_id,
+				difftable.id,
+				"bms",
+				notechart.md5,
+				1,
+				notechart.level
+			)
 		end
 		return {status = 201, json = {
 			header = header,
 			count = #data
+		}}
+	elseif params.rank_from_file and params.file then
+		local list = lapis_util.from_json(params.file.content)
+		for _, notechart in ipairs(list) do
+			difftable_c.add_notechart(
+				self.session.user_id,
+				difftable.id,
+				"undefined",
+				notechart.hash,
+				notechart.index,
+				notechart.difficulty
+			)
+		end
+		return {status = 201, json = {
+			count = #list
 		}}
 	end
 
