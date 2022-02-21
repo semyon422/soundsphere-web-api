@@ -120,7 +120,7 @@ community_users_c.update_users = function(self, community_users)
 	community_users = Community_users:find_all(community_user_ids)
 	for _, community_user in ipairs(community_users) do
 		self.context.community_user = community_user
-		if community_user_c:check_access(self, "PATCH") then
+		if util.check_access(self, community_user_c, "PATCH") then
 			local new_community_user = community_users_map[community_user.id]
 			if community_user.role ~= new_community_user.role then
 				community_user.role = new_community_user.role
