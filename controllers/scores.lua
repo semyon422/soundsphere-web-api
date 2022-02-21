@@ -158,6 +158,16 @@ scores_c.POST = function(self)
 			difficulty_name = "",
 			difficulty_creator = "",
 		})
+	elseif
+		notechart.is_complete and
+		not notechart.is_valid and
+		notechart_file.name ~= params.notechart_filename
+	then
+		notechart_file.name = params.notechart_filename
+		notechart_file.format = Formats:get_format_for_db(params.notechart_filename)
+		notechart_file:update("name", "format")
+		notechart.is_complete = false
+		notechart:update("is_complete")
 	end
 
 	local replay_file = Files:find({
