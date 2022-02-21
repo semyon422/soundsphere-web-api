@@ -1,4 +1,5 @@
 local Ranked_caches = require("models.ranked_caches")
+local Files = require("models.files")
 local Formats = require("enums.formats")
 local Filehash = require("util.filehash")
 local Controller = require("Controller")
@@ -56,7 +57,7 @@ ranked_caches_c.validations.POST = {
 ranked_caches_c.POST = function(self)
 	local params = self.params
 
-	local hash = params.hash and Filehash:sum_for_db(params.hash)
+	local hash = params.hash and Filehash:for_db(params.hash)
 	local format = params.format and Formats:for_db(params.format)
 	if params.file then
 		hash = Filehash:sum_for_db(params.file.content)
@@ -65,6 +66,11 @@ ranked_caches_c.POST = function(self)
 
 	if not hash then
 		return {status = 200, json = {message = "Missing file or hash"}}
+	end
+
+	local file = Files:find({hash = hash})
+	if file then
+		return {status = 200, json = {message = "File exists"}}
 	end
 
 	local ranked_cache = Ranked_caches:find({hash = hash})

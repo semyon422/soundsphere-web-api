@@ -197,7 +197,7 @@ notecharts_c.process_ranked_cache = function(file)
 		local index = ranked_cache_difftable.index
 		if index == 0 then
 			for _, notechart in ipairs(notecharts) do
-				difftable_notechart_c.add_difftable_notechart(
+				difftable_notechart_c.set_difftable_notechart(
 					ranked_cache_difftable.difftable_id,
 					notechart,
 					ranked_cache_difftable.difficulty
@@ -208,7 +208,7 @@ notecharts_c.process_ranked_cache = function(file)
 		else
 			local notechart = notechart_by_index[index]
 			if notechart then
-				difftable_notechart_c.add_difftable_notechart(
+				difftable_notechart_c.set_difftable_notechart(
 					ranked_cache_difftable.difftable_id,
 					notechart,
 					ranked_cache_difftable.difficulty

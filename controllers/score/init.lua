@@ -13,6 +13,7 @@ local to_json = lapis_util.to_json
 local from_json = lapis_util.from_json
 local preload = require("lapis.db.model").preload
 local score_leaderboards_c = require("controllers.score.leaderboards")
+local notecharts_c = require("controllers.notecharts")
 
 local additions = {
 	leaderboards = score_leaderboards_c,
@@ -143,8 +144,10 @@ score_c.process_score = function(score)
 		score.is_complete = true
 		score.is_valid = false
 		score:update("is_complete", "is_valid")
-		return false, 400, "not replay_file"
+		return false, 400, "not notechart_file"
 	end
+
+	notecharts_c.process_ranked_cache(notechart_file)
 
 	local body, status_code, headers = http.simple({
 		url = ("http://127.0.0.1:%d/replay"):format(config.game_server_port),

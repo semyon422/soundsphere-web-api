@@ -19,6 +19,22 @@ difftable_notechart_c.GET = function(self)
 	return {json = {difftable_notechart = difftable_notechart}}
 end
 
+difftable_notechart_c.set_difftable_notechart = function(difftable_id, notechart, difficulty)
+	local difftable_notechart = Difftable_notecharts:find({
+		difftable_id = difftable_id,
+		notechart_id = notechart.id,
+	})
+	if difftable_notechart then
+		if difftable_notechart.difficulty ~= difficulty then
+			difftable_notechart.difficulty = difficulty
+			difftable_notechart:update("difficulty")
+		end
+		return
+	end
+
+	return difftable_notechart_c.add_difftable_notechart(difftable_id, notechart, difficulty)
+end
+
 difftable_notechart_c.add_difftable_notechart = function(difftable_id, notechart, difficulty)
 	local difftable_notechart = Difftable_notecharts:create({
 		difftable_id = difftable_id,

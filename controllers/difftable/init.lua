@@ -101,20 +101,11 @@ difftable_c.add_bms_notechart = function(self, difftable_id, bms_notechart)
 	if file then
 		local notechart = Notecharts:find({file_id = file.id, index = 1})
 		if notechart then
-			local difftable_notechart = Difftable_notecharts:find({
-				difftable_id = difftable_id,
-				notechart_id = notechart.id,
-			})
-			if not difftable_notechart then
-				difftable_notechart = difftable_notechart_c.add_difftable_notechart(
-					difftable_id,
-					notechart,
-					tonumber(bms_notechart.level)
-				)
-			elseif difftable_notechart.difficulty ~= difficulty then
-				difftable_notechart.difficulty = difficulty
-				difftable_notechart:update("difficulty")
-			end
+			difftable_notechart_c.set_difftable_notechart(
+				difftable_id,
+				notechart,
+				tonumber(bms_notechart.level)
+			)
 		end
 		return
 	end

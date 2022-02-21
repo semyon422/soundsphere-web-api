@@ -145,8 +145,6 @@ notechart_c.process_notechart = function(notechart)
 	notechart_file.loaded = true
 	notechart_file:update("loaded")
 
-	notecharts_c.process_ranked_cache(notechart_file)
-
 	if not response_notechart then
 		notechart.is_complete = true
 		notechart:update("is_complete")
