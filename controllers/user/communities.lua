@@ -9,6 +9,7 @@ local user_communities_c = Controller:new()
 user_communities_c.path = "/users/:user_id[%d]/communities"
 user_communities_c.methods = {"GET"}
 
+user_communities_c.context.GET = {{"request_session", optional = true}}
 user_communities_c.policies.GET = {{"permit"}}
 user_communities_c.validations.GET = {
 	require("validations.no_data"),
@@ -20,6 +21,14 @@ util.add_belongs_to_validations(Community_users.relations, user_communities_c.va
 util.add_has_many_validations(Communities.relations, user_communities_c.validations.GET)
 user_communities_c.GET = function(self)
 	local params = self.params
+
+	if
+		(params.invitations or params.requests) and
+		not user_communities_c:check_policies(self, {{"user_profile"}})
+	then
+		return {status = 403}
+	end
+
 	local where = {accepted = true}
 	if params.invitations then
 		where.invitation = true
