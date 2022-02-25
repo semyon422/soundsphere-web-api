@@ -38,16 +38,6 @@ Formats.extensions = {
 	sm = "stepmania",
 }
 
-Formats.get_extension = function(self, format)
-	format = Formats:to_name(format)
-	for extension, current_format in pairs(Formats.extensions) do
-		if current_format == format then
-			return extension
-		end
-	end
-	return ""
-end
-
 Formats.get_format = function(self, filename)
 	return Formats.extensions[filename:match("^.+%.(.-)$")] or "undefined"
 end

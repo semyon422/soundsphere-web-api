@@ -111,7 +111,7 @@ notechart_c.process_notechart = function(notechart)
 		headers = {["content-type"] = "application/json"},
 		body = to_json({notechart = {
 			path = Files:get_path(notechart_file),
-			extension = notechart_file.name:match("^.+%.(.-)$") or Formats:get_extension(notechart_file.format),
+			extension = notechart_file.name:match("^.+%.(.-)$"),
 			-- index = notechart.index,
 		}})
 	})

@@ -156,7 +156,7 @@ score_c.process_score = function(score)
 		body = to_json({
 			notechart = {
 				path = Files:get_path(notechart_file),
-				extension = Formats:get_extension(notechart_file.format),
+				extension = notechart_file.name:match("^.+%.(.-)$"),
 				index = notechart.index,
 			},
 			replay = {
