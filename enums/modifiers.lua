@@ -24,6 +24,7 @@ local Modifiers = enum({
 	MinLnLength = 20,
 	ToOsu = 21,
 	Alternate2 = 22,
+	NoChords = 23,
 })
 
 return Modifiers
