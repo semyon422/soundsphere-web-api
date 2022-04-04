@@ -163,6 +163,7 @@ db_test.create = function()
 		"10key2scratch",
 		"14key2scratch",
 		"24key",
+		"26key",
 		"48key",
 		"88key",
 	}
