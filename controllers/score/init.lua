@@ -14,6 +14,7 @@ local from_json = lapis_util.from_json
 local preload = require("lapis.db.model").preload
 local score_leaderboards_c = require("controllers.score.leaderboards")
 local notecharts_c = require("controllers.notecharts")
+local erfunc = require("erfunc")
 
 local additions = {
 	leaderboards = score_leaderboards_c,
@@ -215,10 +216,13 @@ score_c.process_score = function(score)
 	local inputmode = Inputmodes[json_response.inputMode] and json_response.inputMode or "undefined"
 	local inputmode_for_db = Inputmodes:for_db(inputmode)
 
-	local rating = response_score.normalscore.rating32
 	local difficulty = response_score.normalscore.enps
-	local misses_count = response_score.base.missCount
 	local accuracy = response_score.normalscore.accuracyAdjusted
+	local s = erfunc.erf(0.032 / (accuracy * math.sqrt(2)))
+
+	local score_value = s * 10000
+	local rating = difficulty * s
+	local misses_count = response_score.base.missCount
 	if
 		misses_count > notechart.notes_count / 2 or
 		modifierset.timerate < 0.25 or modifierset.timerate > 4 or
@@ -226,6 +230,7 @@ score_c.process_score = function(score)
 		accuracy > 0.1
 	then
 		rating = 0
+		score_value = 0
 		difficulty = 0
 	end
 
@@ -233,7 +238,7 @@ score_c.process_score = function(score)
 	score.inputmode = inputmode_for_db
 	score.is_complete = true
 	score.is_valid = true
-	score.score = response_score.normalscore.scoreAdjusted
+	score.score = score_value
 	score.accuracy = accuracy
 	score.max_combo = response_score.base.maxCombo
 	score.misses_count = misses_count
