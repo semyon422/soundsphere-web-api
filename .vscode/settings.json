@@ -4,7 +4,7 @@
 		"ngx"
 	],
 	"editor.stickyTabStops": true,
-	"editor.formatOnSave": true,
+	"editor.formatOnSave": false,
 	"editor.detectIndentation": false,
 	"editor.insertSpaces": false,
 	"Lua.runtime.version": "LuaJIT",
