@@ -31,6 +31,7 @@ config({"development", "production"}, {
 	is_ranked_check_enabled = true,
 	is_register_enabled = true,
 	is_login_enabled = true,
+	is_login_captcha_enabled = true,
 	is_score_submit_enabled = true,
 	ip_register_delay = 3600 * 24 * 30,
 	game_server_port = 8082,

@@ -101,14 +101,16 @@ login_c.POST = function(self)
 			return {status = 401, json = {message = "Logging in is disabled"}}
 		end
 
-		local success, message = util.recaptcha_verify(
-			self.context.ip,
-			params.recaptcha_token,
-			"login",
-			0.5
-		)
-		if not success then
-			return {status = 401, json = {message = message}}
+		if config.is_login_captcha_enabled then
+			local success, message = util.recaptcha_verify(
+				self.context.ip,
+				params.recaptcha_token,
+				"login",
+				0.5
+			)
+			if not success then
+				return {status = 401, json = {message = message}}
+			end
 		end
 	end
 
