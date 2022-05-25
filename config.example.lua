@@ -35,4 +35,5 @@ config({"development", "production"}, {
 	is_score_submit_enabled = true,
 	ip_register_delay = 3600 * 24 * 30,
 	game_server_port = 8082,
+	multiplayer_http_port = 9001,
 })

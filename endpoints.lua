@@ -12,6 +12,7 @@ return {
 	"auth.keys",
 	"auth.key",
 	"auth.reset",
+	"auth.multiplayer",
 	"db",
 	"db.schema",
 	"db.migrations",
