@@ -20,6 +20,7 @@ multiplayer_c.POST = function(self)
 		url = "http://127.0.0.1:" .. port .. "/login",
 		method = "POST",
 		body = {
+			token = config.multiplayer_http_token,
 			key = self.params.key,
 			user_id = session_user.id,
 			user_name = session_user.name,
