@@ -126,6 +126,10 @@ notechart_c.process_notechart = function(notechart)
 		return false, 500, "Invalid notechart"
 	end
 
+	if status_code == 404 then
+		return false, 404, "Notechart not found"
+	end
+
 	if status_code ~= 200 then
 		return false, status_code, body
 	end
