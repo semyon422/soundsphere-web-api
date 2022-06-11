@@ -30,7 +30,7 @@ register_c.validations.POST = {
 register_c.POST = function(self)
 	local params = self.params
 
-	if params.game_name ~= "soundsphere" then
+	if params.game_name:lower() ~= "soundsphere" then
 		return {status = 400, json = {message = "Wrong game name"}}
 	end
 
