@@ -27,6 +27,7 @@ notecharts_c.validations.GET = {
 	{"is_not_complete", type = "boolean", optional = true},
 	{"is_not_valid", type = "boolean", optional = true},
 	{"hash", type = "string", optional = true, nil_if = "", min_length = 32, max_length = 32},
+	{"index", type = "number", optional = true, nil_if = ""},
 }
 util.add_belongs_to_validations(Notecharts.relations, notecharts_c.validations.GET)
 util.add_has_many_validations(Notecharts.relations, notecharts_c.validations.GET)
@@ -50,6 +51,9 @@ notecharts_c.GET = function(self)
 	if params.hash then
 		jq:select("left join files f on n.file_id = f.id")
 		jq:where("f.hash = ?", Filehash:for_db(params.hash))
+		if params.index then
+			jq:where("n.index = ?", params.index)
+		end
 	end
 	if params.search then
 		jq:where(util.db_search(
