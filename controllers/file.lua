@@ -11,23 +11,24 @@ file_c.methods = {"GET", "PUT", "DELETE"}
 
 file_c.context.GET = {"file", "request_session", "session_user", "user_roles"}
 file_c.policies.GET = {
-	{"authed", {not_params = "download"}},
-	{"authed", {role = "moderator"}},
-	{"authed", {role = "admin"}},
-	{"authed", {role = "creator"}},
+	{"authed"},
 }
 file_c.validations.GET = {
 	{"download", type = "boolean", optional = true},
 }
 util.add_belongs_to_validations(Files.relations, file_c.validations.GET)
 file_c.GET = function(self)
+	local file = self.context.file:to_name()
+
 	local params = self.params
-
-	local file = self.context.file
-
 	if not params.download then
-		util.get_relatives(file, self.params, true)
-		return {json = {file = file:to_name()}}
+		util.get_relatives(file, params, true)
+		return {json = {file = file}}
+	end
+
+	local donator = file_c:check_policies(self, "donator_policies")
+	if not donator and file.storage ~= "replays" then
+		return {status = 403}
 	end
 
 	return {
