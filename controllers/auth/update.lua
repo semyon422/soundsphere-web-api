@@ -15,7 +15,7 @@ update_c.POST = function(self)
 	if session.updated_at - self.session.updated_at ~= 0 then
 		session.active = false
 		session:update("active")
-		return {json = {message = "session.updated_at ~= request.session.updated_at"}}
+		return {status = 403, json = {message = "session.updated_at ~= request.session.updated_at"}}
 	end
 
 	session.updated_at = os.time()
