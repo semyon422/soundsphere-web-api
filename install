@@ -2,3 +2,4 @@
 . ./setpaths
 $LUAROCKS install lapis
 $LUAROCKS install bcrypt
+$LUAROCKS install lua-resty-rsa
