@@ -9,5 +9,9 @@
 	"editor.insertSpaces": false,
 	"Lua.runtime.version": "LuaJIT",
 	"rest-client.rememberCookiesForSubsequentRequests": false,
-	"Lua.completion.autoRequire": false
+	"Lua.completion.autoRequire": false,
+	"Lua.workspace.library": [
+		"${3rd}/OpenResty/library"
+	],
+	"Lua.workspace.checkThirdParty": false
 }
