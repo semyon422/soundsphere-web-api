@@ -15,14 +15,14 @@ function requestBlock() {return {
 	params: {
 		query: {
 			<% for _, method in ipairs(controller.methods) do %>
-				<% local query_struct = controller:get_params_struct(self, "query", method) %>
+				<% local query_struct = controller:get_params_struct(request, "query", method) %>
 				<%= method %>: <%- to_json(query_struct) %>,
 				<%= method %>_have: <%= next(query_struct) ~= nil %>,
 			<% end %>
 		},
 		body: {
 			<% for _, method in ipairs(controller.methods) do %>
-				<% local body_struct = controller:get_params_struct(self, "body", method) %>
+				<% local body_struct = controller:get_params_struct(request, "body", method) %>
 				<%= method %>: <%- to_json(body_struct) %>,
 				<%= method %>_have: <%= next(body_struct) ~= nil %>,
 			<% end %>
@@ -31,14 +31,14 @@ function requestBlock() {return {
 	disabled: {
 		query: {
 			<% for _, method in ipairs(controller.methods) do %>
-				<% local query_struct = controller:get_params_struct(self, "query", method, true) %>
+				<% local query_struct = controller:get_params_struct(request, "query", method, true) %>
 				<%= method %>: <%- to_json(query_struct) %>,
 				<%= method %>_have: <%= next(query_struct) ~= nil %>,
 			<% end %>
 		},
 		body: {
 			<% for _, method in ipairs(controller.methods) do %>
-				<% local body_struct = controller:get_params_struct(self, "body", method, true) %>
+				<% local body_struct = controller:get_params_struct(request, "body", method, true) %>
 				<%= method %>: <%- to_json(body_struct) %>,
 				<%= method %>_have: <%= next(body_struct) ~= nil %>,
 			<% end %>

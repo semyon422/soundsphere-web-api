@@ -267,6 +267,7 @@ local function route_api(controller, html)
 		self.response = response
 		self.controller = controller
 		self.methods = methods
+		self.request = self
 		return {render = "index", status = response.status}
 	end)
 	json_respond_to("/ac" .. controller.path, function(self)
