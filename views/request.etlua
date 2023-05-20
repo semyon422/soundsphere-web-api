@@ -142,7 +142,7 @@ function requestBlock() {return {
 	<div class="field">
 		<div class="control">
 			<% for _, method in ipairs(controller.methods) do %>
-				<% local disabled = self.permited_methods[method] and "" or "disabled" %>
+				<% local disabled = permited_methods[method] and "" or "disabled" %>
 				<label class="radio" <%= disabled %>>
 					<input type="radio" name="method" value="<%= method %>" x-model="method">
 					<%= method %>
