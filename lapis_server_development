@@ -1,3 +1,0 @@
-#!/bin/bash
-. ./setpaths  #use source or . to execute the script in the context of the calling shell
-lapis server development

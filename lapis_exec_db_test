@@ -1,0 +1,3 @@
+#!/bin/bash
+. ./setenv
+lapis exec "require('db_test').create()"

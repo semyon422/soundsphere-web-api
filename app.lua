@@ -1,3 +1,5 @@
+require("package_path")
+
 local lapis = require("lapis")
 local util = require("lapis.util")
 local respond_to = require("lapis.application").respond_to

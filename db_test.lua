@@ -1,3 +1,5 @@
+require("package_path")
+
 local db = require("db")
 local Difficulty_calculators = require("enums.difficulty_calculators")
 local Rating_calculators = require("enums.rating_calculators")

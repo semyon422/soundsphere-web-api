@@ -2,7 +2,7 @@ local config = require("lapis.config")
 
 -- lapis
 config({"development", "production"}, {
-	port = 8080,
+	port = 8090,
 	secret = "please-change-me",
 	hmac_digest = "sha256",
 	session_name = "lapis_session",
