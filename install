@@ -1,8 +1,5 @@
 #!/bin/bash
 . ./setenv
-# luarocks install lapis
-# luarocks install bcrypt
-# luarocks install lua-resty-rsa
-
-# echo "#!/bin/sh
-# luajit -e 'require[[lapis.cmd.actions]].execute(arg)'" > tree/bin/lapis
+luarocks install lapis
+luarocks install bcrypt
+luarocks install lua-resty-rsa
