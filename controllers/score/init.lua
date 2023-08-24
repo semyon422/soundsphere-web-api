@@ -184,7 +184,7 @@ score_c.process_score = function(score)
 	local json_response = from_json(body)
 	local response_score = json_response.score
 
-	if response_score.base.hitCount / response_score.base.noteCount < 0.5 then
+	if response_score.base.hitCount / response_score.base.notesCount < 0.5 then
 		score.is_complete = true
 		score.is_valid = false
 		score:update("is_complete", "is_valid")
