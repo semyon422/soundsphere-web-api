@@ -37,9 +37,6 @@ score_leaderboards_c.get_available = function(score)
 		if score_leaderboards_c.match_requirements(score, community_leaderboard.leaderboard) then
 			table.insert(leaderboards, community_leaderboard.leaderboard)
 		end
-		community_leaderboard.leaderboard.leaderboard_requirements = nil
-		community_leaderboard.leaderboard.leaderboard_inputmodes = nil
-		community_leaderboard.leaderboard.leaderboard_difftables = nil
 	end
 
 	return leaderboards
