@@ -123,7 +123,7 @@ notechart_c.process_notechart = function(notechart)
 	if status_code == 500 then  -- Internal Server Error
 		notechart.is_complete = true
 		notechart:update("is_complete")
-		return false, 500, "Invalid notechart"
+		return false, 500, body
 	end
 
 	if status_code == 404 then
