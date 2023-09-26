@@ -216,7 +216,7 @@ score_c.process_score = function(score)
 	local inputmode = Inputmodes[json_response.inputMode] and json_response.inputMode or "undefined"
 	local inputmode_for_db = Inputmodes:for_db(inputmode)
 
-	local difficulty = response_score.normalscore.enps
+	local difficulty = json_response.difficulty
 	local accuracy = response_score.normalscore.accuracyAdjusted
 	local s = erfunc.erf(0.032 / (accuracy * math.sqrt(2)))
 
