@@ -37,6 +37,7 @@ function Scores:load(row)
 	row.is_valid = toboolean(row.is_valid)
 	row.is_ranked = toboolean(row.is_ranked)
 	row.is_top = toboolean(row.is_top)
+	row.const = toboolean(row.const)
 	row.replay_uploaded = toboolean(row.replay_uploaded)
 	row.created_at = tonumber(row.created_at)
 	row.to_name = to_name

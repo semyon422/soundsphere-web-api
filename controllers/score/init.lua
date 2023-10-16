@@ -183,6 +183,7 @@ score_c.process_score = function(score)
 
 	local json_response = from_json(body)
 	local response_score = json_response.score
+	local playContext = json_response.playContext
 
 	if response_score.base.hitCount / response_score.base.notesCount < 0.5 then
 		score.is_complete = true
@@ -205,12 +206,10 @@ score_c.process_score = function(score)
 	local modifierset = Modifiersets:find(new_modifierset)
 	if not modifierset then
 		new_modifierset.displayed = displayed
-		new_modifierset.timerate = response_score.base.timeRate
 		modifierset = Modifiersets:create(new_modifierset)
 	else
 		modifierset.displayed = displayed
-		modifierset.timerate = response_score.base.timeRate
-		modifierset:update("displayed", "timerate")
+		modifierset:update("displayed")
 	end
 
 	local inputmode = Inputmodes[json_response.inputMode] and json_response.inputMode or "undefined"
@@ -222,10 +221,11 @@ score_c.process_score = function(score)
 
 	local score_value = s * 10000
 	local rating = difficulty * s
+	local rate = playContext.rate
 	local misses_count = response_score.base.missCount
 	if
 		misses_count > notechart.notes_count / 2 or
-		modifierset.timerate < 0.25 or modifierset.timerate > 4 or
+		rate < 0.25 or rate > 4 or
 		accuracy == 0 or
 		accuracy > 0.1
 	then
@@ -244,6 +244,8 @@ score_c.process_score = function(score)
 	score.misses_count = misses_count
 	score.difficulty = difficulty
 	score.rating = rating
+	score.rate = rate
+	score.const = playContext.const
 	score:update(
 		"modifierset_id",
 		"inputmode",
@@ -254,7 +256,9 @@ score_c.process_score = function(score)
 		"max_combo",
 		"misses_count",
 		"difficulty",
-		"rating"
+		"rating",
+		"rate",
+		"const"
 	)
 
 	replay_file.loaded = true
